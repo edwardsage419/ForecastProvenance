@@ -113,11 +113,12 @@ omission_policy_ref
 
 Rules:
 
-1. `plan_commitment_deadline <= execution_window_open`.
-2. The exact plan must obtain accepted external existence evidence whose verified bound is at or before `plan_commitment_deadline`.
-3. Local attempt timestamps do not establish valid precommitment.
-4. Any substantive plan change creates a new plan ID and requires a new external precommitment before its execution window.
-5. A version 1 expected slot has `forecast_cardinality = 1` and binds exact target instance, method, output schema, horizon, evidence contract, and deterministic slot ID.
+1. `plan_commitment_deadline < execution_window_open`.
+2. Genesis binds a minimum safety margin between the plan commitment deadline and execution window open that is compatible with the selected anchor precision.
+3. The exact plan must obtain accepted external existence evidence whose verified bound is at or before `plan_commitment_deadline`.
+4. Local attempt timestamps do not establish valid precommitment.
+5. Any substantive plan change creates a new plan ID and requires a new external precommitment before its execution window.
+6. A version 1 expected slot has `forecast_cardinality = 1` and binds exact target instance, method, output schema, horizon, evidence contract, and deterministic slot ID.
 
 ## IssuanceCycleManifest
 
