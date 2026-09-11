@@ -1,6 +1,6 @@
 # Genesis External Readiness Runbook
 
-Version: 0.2
+Version: 0.3
 Status: OWNER ACTION REQUIRED
 
 This runbook performs only non-forecast Genesis readiness rehearsals.
@@ -75,7 +75,9 @@ This step supplies GR011 evidence. It does not yet close GR032 because Bootstrap
 
 The current design snapshot is recorded in `docs/GENESIS_PROVIDER_SNAPSHOT_2026_09_11.md`.
 
-Genesis version 1 currently plans to qualify two independent RFC 3161 provider groups. Cloudflare Roughtime is optional and does not need to be enabled if both RFC 3161 groups qualify.
+Genesis version 1 requires two independently qualifying provider groups. The primary plan is FreeTSA plus DigiCert. Sectigo is a backup RFC 3161 candidate. Cloudflare Roughtime is optional.
+
+Run at least the two primary candidates. Running Sectigo as a third rehearsal is recommended because it gives the final review another independent provider option without weakening quorum.
 
 ### FreeTSA candidate
 
@@ -93,6 +95,15 @@ bash scripts/genesis/rfc3161_rehearsal.sh \
   ~/fpp-genesis-rehearsal/subject.txt \
   http://timestamp.digicert.com \
   ~/fpp-genesis-rehearsal/digicert
+```
+
+### Sectigo backup candidate
+
+```bash
+bash scripts/genesis/rfc3161_rehearsal.sh \
+  ~/fpp-genesis-rehearsal/subject.txt \
+  http://timestamp.sectigo.com \
+  ~/fpp-genesis-rehearsal/sectigo
 ```
 
 The rehearsal script records raw request and response bytes, parsed request and response text, HTTP headers, tool versions, hashes, and operational metadata.
@@ -114,7 +125,7 @@ For each provider, review must freeze:
 
 If a provider cannot supply a defensible conservative upper time bound, it cannot count toward `DEADLINE_RECEIPT_QUORUM_V1`.
 
-These steps are intended to close GR005 and GR006 after artifact review.
+GR005 and GR006 close only after two independent rehearsals are converted into qualifying sealed ProviderProfile objects.
 
 ## Step 4 Run OpenTimestamps rehearsal
 
@@ -151,7 +162,7 @@ A remote explorer-only check is insufficient for the strong Genesis verification
 
 These steps are intended to close GR008 and GR009 after independent review.
 
-## Step 5 Capture retrospective official source fixtures
+## Step 5 Capture and validate retrospective official source fixtures
 
 These fixtures are historical source-adapter rehearsals. They are permanently non-prospective.
 
@@ -173,11 +184,29 @@ PYTHONPATH=src python3 scripts/genesis/fetch_retrospective_source_fixture.py \
   ~/fpp-genesis-source-fixtures
 ```
 
-Each fixture directory contains `artifact.html` and `metadata.json` with raw SHA256, retrieval time, resolved official URL, HTTP metadata, and the frozen expected target semantics.
+Each fixture directory contains `artifact.html` and `metadata.json` with raw SHA256, retrieval time, resolved official URL, HTTP metadata, and frozen expected target semantics.
 
-Do not edit the downloaded HTML before hashing or adapter testing.
+Do not edit downloaded HTML before hashing or adapter validation.
 
-These artifacts are intended to close GR017, GR018, and GR019 after the source adapters produce the expected unique semantic records and the retained bytes pass review.
+Validate each retained raw artifact:
+
+```bash
+PYTHONPATH=src python3 scripts/genesis/validate_retrospective_source_fixture.py \
+  ~/fpp-genesis-source-fixtures/bls_cpi_2026_07_first_release \
+  --output ~/fpp-genesis-source-fixtures/bls_cpi_2026_07_first_release/adapter_report.json
+
+PYTHONPATH=src python3 scripts/genesis/validate_retrospective_source_fixture.py \
+  ~/fpp-genesis-source-fixtures/bls_u3_2026_08_first_release \
+  --output ~/fpp-genesis-source-fixtures/bls_u3_2026_08_first_release/adapter_report.json
+
+PYTHONPATH=src python3 scripts/genesis/validate_retrospective_source_fixture.py \
+  ~/fpp-genesis-source-fixtures/bea_gdp_2026_q2_advance \
+  --output ~/fpp-genesis-source-fixtures/bea_gdp_2026_q2_advance/adapter_report.json
+```
+
+Each successful report is a sealed `SourceAdapterReport` with `prospective_eligible=false`.
+
+These artifacts are intended to close GR017, GR018, and GR019 after review.
 
 ## Step 6 Materialize the current candidate inventory
 
@@ -191,7 +220,37 @@ sha256sum ~/fpp-genesis-rehearsal/effective_candidate_inventory_v0_3.json
 
 The materializer validates base and patch lineage, object seals, predecessor hashes, effective object count, and full dependency closure before emitting the deterministic inventory.
 
-## Step 7 Preserve rehearsal packages
+## Step 7 Run repository readiness tests from a clean commit
+
+Do this after all repository-side review changes intended for the final candidate have been committed.
+
+The working tree must be clean.
+
+```bash
+bash scripts/genesis/run_final_readiness_tests.sh \
+  ~/fpp-genesis-rehearsal/final-tests
+```
+
+The runner records the exact 40-hex Git commit, Python version, compile check, full unittest output, test exit status, report file, and sidecar SHA256.
+
+If any test fails, preserve the report and do not build a final ValidatorContract.
+
+## Step 8 Build the exact ValidatorContract
+
+Only after Step 7 succeeds:
+
+```bash
+COMMIT="$(git rev-parse HEAD)"
+
+PYTHONPATH=src python3 scripts/genesis/build_validator_binding.py \
+  --git-commit "$COMMIT" \
+  --test-report ~/fpp-genesis-rehearsal/final-tests/final_readiness_test_report.txt \
+  --output ~/fpp-genesis-rehearsal/validator_contract.json
+```
+
+This step prepares GR031 evidence. The output is still only a candidate dependency until the final Genesis TrustedManifest is constructed and accepted.
+
+## Step 9 Preserve rehearsal packages
 
 Keep the full directories:
 
@@ -213,15 +272,15 @@ The project may receive only:
 2. non-secret RFC 3161 request and response artifacts;
 3. provider public certificates and policy or revocation evidence;
 4. OTS subject copy, proof, info, upgrade, and verification records;
-5. retrospective BLS and BEA fixture bytes and metadata;
-6. rehearsal metadata, tool versions, reports, and hashes.
+5. retrospective BLS and BEA fixture bytes, metadata, and adapter reports;
+6. candidate inventory, final test report, ValidatorContract, tool versions, reports, and hashes.
 
 ## Acceptance status after runbook
 
 Completing this runbook still does not create Genesis.
 
-The project must independently verify every artifact, freeze qualifying ProviderProfile and verifier objects, insert the exact public key into BootstrapGovernanceRoot, bind the final validator implementation, construct the candidate Genesis TrustedManifest, run final adversarial review, sign ManifestAcceptance, externally evidence that acceptance, and pass the separate Genesis acceptance gate.
+The project must independently verify every artifact, freeze qualifying ProviderProfile and verifier objects, insert the exact public key into BootstrapGovernanceRoot, construct the candidate Genesis TrustedManifest, run final adversarial review, sign ManifestAcceptance, externally evidence that acceptance, and pass the separate Genesis acceptance gate.
 
 ## Abort rule
 
-If any command exposes a private key, produces an unexpected subject hash, overwrites prior proof material, redirects an official fixture outside its admitted host, or cannot be independently verified, stop that rehearsal and preserve the failed artifacts for review.
+If any command exposes a private key, produces an unexpected subject hash, overwrites prior proof material, redirects an official fixture outside its admitted host, runs from a dirty final-freeze working tree, or cannot be independently verified, stop that rehearsal and preserve the failed artifacts for review.
