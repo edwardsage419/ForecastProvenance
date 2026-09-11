@@ -24,11 +24,9 @@ Forecast Trust Core is the first implementation phase. Prospective forecasting i
 
 ## D004 Primary prospective time anchor candidate
 
-Status: SELECTED FOR GENESIS ACCEPTANCE TEST
+Status: SUPERSEDED BY D014 FOR GENESIS READINESS
 
-Scheme name: OTS_BTC_BATCH_V1
-
-OpenTimestamps with Bitcoin attestation remains the preferred zero cost candidate. Exact proof parsing and conservative time bound semantics remain Genesis blockers.
+The original OpenTimestamps-only candidate was insufficient for precise wall-clock deadline claims. OpenTimestamps remains part of the durability layer under D014.
 
 ## D005 Cost doctrine
 
@@ -97,3 +95,87 @@ Date: 2026-09-11
 Forecast Trust Core normative design version 0.4 is frozen for synthetic implementation after three adversarial design review passes and remediation.
 
 This decision authorizes synthetic implementation only. It does not authorize Forecast Ledger creation, genuine prospective forecasting, or Genesis acceptance.
+
+## D014 Dual external time evidence architecture
+
+Status: GEN_001 REVIEW CANDIDATE
+Date: 2026-09-11
+
+Scheme family: FPP_TIME_EVIDENCE_V1
+
+Precise deadline evidence uses signed external wall-clock receipts. Durable anchoring uses OpenTimestamps with Bitcoin attestation over the accepted evidence bundle.
+
+Bitcoin block header time is not used as the precise issuance clock.
+
+Final initial-cohort prospective eligibility also requires externally receipted DurabilityVerificationRecord completion before the target outcome information barrier.
+
+Reason: the two mechanisms establish different time claims and have different trust and precision properties.
+
+## D015 Deadline receipt quorum
+
+Status: GEN_001 REVIEW CANDIDATE
+Date: 2026-09-11
+
+Policy ID: DEADLINE_RECEIPT_QUORUM_V1
+
+At least two independent provider groups must supply qualifying signed receipts for the exact subject hash, and at least one qualifying receipt must use RFC 3161.
+
+Provider failure never lowers the threshold. A provider without a defensible conservative upper time bound cannot count toward quorum.
+
+## D016 GitHub time is auxiliary only
+
+Status: GEN_001 REVIEW CANDIDATE
+Date: 2026-09-11
+
+GitHub server timestamps may be retained as public auxiliary witnesses. They do not count toward deadline receipt quorum and do not establish bootstrap governance authority.
+
+## D017 Genesis bootstrap key model
+
+Status: GEN_001 REVIEW CANDIDATE
+Date: 2026-09-11
+
+Genesis uses a single owner-controlled Ed25519 bootstrap signing key for the first ManifestAcceptance.
+
+The private key stays outside GitHub, CI, repository fixtures, and ChatGPT-managed artifacts. The exact public key remains a Genesis readiness blocker until generated locally by the owner.
+
+## D018 Initial Genesis target candidate set
+
+Status: GEN_001 REVIEW CANDIDATE
+Date: 2026-09-11
+
+Genesis version 1 candidate targets are:
+
+1. U.S. CPI all-items monthly change, seasonally adjusted, first release.
+2. U.S. official U-3 unemployment rate, seasonally adjusted, first release.
+3. U.S. real GDP quarter-over-quarter annualized growth, Advance Estimate.
+
+Selection was based on official-source quality, release-calendar clarity, first-release archival semantics, low frequency, and zero-cost resolution before any production forecast values were generated.
+
+## D019 Genesis timing safety margin
+
+Status: GEN_001 REVIEW CANDIDATE
+Date: 2026-09-11
+
+Initial target instances require at least a seven-calendar-day forecast horizon and an external proof deadline no later than 24 hours before the frozen outcome information barrier.
+
+Intraday and same-day targets are excluded from Genesis version 1.
+
+## D020 Genesis point-forecast evaluation
+
+Status: GEN_001 REVIEW CANDIDATE
+Date: 2026-09-11
+
+Genesis version 1 uses continuous scalar point forecasts for the initial candidate targets.
+
+Primary metrics are absolute error and squared error. Reporting remains target-specific and includes deltas versus the frozen transparent baseline. No authoritative universal cross-target aggregate score is allowed.
+
+## D021 Transparent baseline
+
+Status: GEN_001 REVIEW CANDIDATE
+Date: 2026-09-11
+
+Method ID: method:last-observed-value:v1
+
+The baseline uses the immediately preceding first-release value of the same target statistic when that exact archived artifact was available by the current information cutoff.
+
+Current revised historical databases cannot substitute for the point-in-time first-release artifact.
