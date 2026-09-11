@@ -1,6 +1,6 @@
 # Forecast Trust Core Adversarial Review Matrix
 
-Version: 0.1 candidate
+Version: 0.2 candidate
 Status: FTC_001 REVIEW CANDIDATE
 
 All test material for FTC_001 is synthetic. No test fixture may be represented as genuine prospective history.
@@ -47,6 +47,30 @@ All test material for FTC_001 is synthetic. No test fixture may be represented a
 | ADV038 | Unresolved case deletion | Unresolved forecast omitted from cohort accounting | INVALID EVALUATION INPUT |
 | ADV039 | Anchor scheme substitution | Receipt uses scheme not admitted by trusted manifest | INVALID |
 | ADV040 | Validator version substitution | Result produced under unbound validator contract | INELIGIBLE_TRUST_UNKNOWN |
+| ADV041 | Circular event identifier | Event ID is included in payload used to derive that same ID | INVALID CANONICALIZATION |
+| ADV042 | Mutable forecast lifecycle | IssuedForecast bytes are edited to change pending into verified | INVALID |
+| ADV043 | Mutable anchor upgrade | Existing anchor event is overwritten with upgraded proof | INVALID |
+| ADV044 | Local latency backdating | Local submitted_at is changed to satisfy latency target | No prospective effect |
+| ADV045 | External proof after deadline | Verified external existence bound is later than frozen slot deadline | LATE_OR_INELIGIBLE |
+| ADV046 | Unplanned slot insertion | Forecast appears in cycle without a precommitted expected slot | INVALID |
+| ADV047 | Planned slot omission | Expected slot disappears from cycle accounting | INVALID |
+| ADV048 | Output based retry | Retry is triggered because first successful probability is undesirable | INVALID |
+| ADV049 | Excess retry | Attempt count exceeds precommitted retry budget | INVALID |
+| ADV050 | Source contract mutation | Availability rule changes under same source contract version | INVALID |
+| ADV051 | Transform definition mutation | Transform code or parameters change under same version | INVALID |
+| ADV052 | Fitted state missing fit evidence | Fitted state lacks bound fit snapshot or cutoff | INELIGIBLE_TRUST_UNKNOWN |
+| ADV053 | Unauthorized human override | ReviewDecision attempts to override hash mismatch | INVALID |
+| ADV054 | Synthetic human evidence | Machine generated output is labelled independent human review | INVALID |
+| ADV055 | Manifest self acceptance | Candidate manifest sets itself to accepted without ManifestAcceptance | INVALID |
+| ADV056 | Acceptance hash mismatch | ManifestAcceptance points to different candidate hash | INVALID |
+| ADV057 | Correction self scoring | Correction object attempts to choose favorable scoring treatment | INVALID |
+| ADV058 | Withdrawal cohort deletion | Issued forecast is removed from confirmatory cohort after withdrawal | INVALID EVALUATION INPUT |
+| ADV059 | Unicode identifier confusable | Non ASCII machine identifier is supplied | INVALID CANONICALIZATION |
+| ADV060 | Unsorted set array | Set like reference array violates required deterministic ordering | INVALID CANONICALIZATION |
+| ADV061 | Resolution cutoff misuse | Outcome evidence is rejected solely because it arrived after forecast cutoff | INVALID VALIDATOR BEHAVIOR |
+| ADV062 | Opaque model overclaim | PARTIAL_EXTERNAL method is reported as complete evidence provenance | INVALID TRUST REPORT |
+| ADV063 | Fragile artifact loss | Required external bytes disappear and validator still reports full trust | INVALID |
+| ADV064 | Runtime timestamp nondeterminism | ValidationReport hash changes only because validation run time changes | INVALID VALIDATOR BEHAVIOR |
 
 ## Required matrix coverage
 
