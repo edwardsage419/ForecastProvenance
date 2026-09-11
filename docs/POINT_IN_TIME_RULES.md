@@ -1,110 +1,56 @@
 # Point in Time Eligibility Rules
 
-Version: 0.1 candidate
-Status: FTC_001 REVIEW CANDIDATE
+Version: 0.2 candidate
+Status: FTC_001 REMEDIATION CANDIDATE
 
-## 1. Core rule
+## Forecast evidence rule
 
-Every evidentiary input used by an IssuedForecast must have a defensible `available_at` that is less than or equal to the forecast `information_cutoff`.
+Every consequential external evidentiary input used by an IssuedForecast must have a defensible `available_at <= information_cutoff`.
 
 Unknown required availability fails closed.
 
-## 2. Distinct times
+`reference_start`, `reference_end`, `published_at`, `available_at`, `retrieved_at`, revision time, and snapshot closure time are distinct.
 
-An evidence record may carry:
+A SourceContract defines how `available_at` is established for a source.
 
-1. `reference_start`.
-2. `reference_end`.
-3. `published_at`.
-4. `available_at`.
-5. `retrieved_at`.
-6. `revision_published_at`.
-7. `source_snapshot_closed_at`.
+Retrieval time establishes project retrieval, not historical availability.
 
-These fields are not interchangeable.
+## Revisions
 
-## 3. available_at semantics
+A revised observation is a distinct evidentiary state. Later revisions cannot replace the bound revision in an issued snapshot.
 
-`available_at` is the earliest time the protocol can defensibly establish that the exact evidentiary value or artifact was available to the forecasting process under the accepted source contract.
+## Transformations
 
-It is a protocol claim supported by source specific evidence.
+Stateless transformations bind TransformationDefinition.
 
-A source contract must define how `available_at` is determined.
+Fitted transformations additionally bind FittedState, fit evidence snapshots, and `fit_information_cutoff`.
 
-## 4. Publication and retrieval
+Every consequential fit input must satisfy its applicable availability rule at the fit cutoff.
 
-`published_at` can support `available_at` when the source contract establishes that publication made the data accessible under the required conditions.
+## Retrieval enabled methods
 
-`retrieved_at` proves when this project retrieved something. It does not by itself prove when the information first became available.
+External retrievals must be logged and validated under SourceContracts. Unlogged consequential retrieval yields `INELIGIBLE_TRUST_UNKNOWN`.
 
-## 5. Revisions
+## Model internal state
 
-A revised observation is a distinct evidentiary state.
+ForecastMethod declares an evidence observability class.
 
-A forecast input binds the exact revision or source snapshot used.
+Trust Core does not claim item level provenance for opaque internal learned knowledge. Closed models can still be prospectively evaluated after Genesis under a truthful `PARTIAL_EXTERNAL` or `OPAQUE_INTERNAL` classification.
 
-A later revision cannot replace an earlier observation inside an issued forecast's evidence graph.
+## Resolution evidence is separate
 
-## 6. Source snapshots
+Outcome resolution evidence is governed by ResolutionRule and its resolution source contracts. It can legitimately become available after forecast issuance or target reference periods.
 
-EvidenceSnapshot must bind:
+Forecast `information_cutoff` is not applied mechanically to outcome resolution evidence.
 
-```text
-information_cutoff
-snapshot_closed_at
-member identities
-member content hashes
-source contract identities
-transformation identities
-```
+## Historical replay
 
-Every member that can influence the forecast must pass eligibility individually or through a recursively validated snapshot contract.
+Faithful replay requires defensible historical availability for every consequential externally observable input. Unknown availability prevents promotion to faithful replay.
 
-## 7. Fitted transformations
+## Validation
 
-A fitted transform must bind:
+Known availability after cutoff is INVALID.
 
-1. fitting window.
-2. fit information cutoff.
-3. training or fitting evidence snapshot.
-4. fitted state content hash.
-5. implementation identity.
-6. hyperparameter or configuration identity where consequential.
+Required availability that cannot be established is INELIGIBLE_TRUST_UNKNOWN.
 
-The fit information cutoff must not exceed the forecast information cutoff.
-
-## 8. Retrieval enabled methods
-
-A ForecastMethod that can retrieve information during execution must declare a retrieval policy.
-
-ForecastRunAttempt must retain enough evidence to show which retrievals occurred and their temporal eligibility.
-
-Unlogged consequential retrieval produces `INELIGIBLE_TRUST_UNKNOWN`.
-
-## 9. LLM and agent methods
-
-Language models and agents are treated as forecast methods, not trusted clocks or evidence sources.
-
-A model's internal knowledge cutoff statement cannot establish the availability time of a consequential fact used in a confirmatory forecast.
-
-Any external retrieved evidence remains subject to ordinary source contracts and availability checks.
-
-## 10. Historical replay
-
-For faithful replay classification, every consequential evidence item must independently satisfy the historical cutoff rule.
-
-If historical availability cannot be established, the experiment may remain retrospective but cannot be promoted to faithful replay.
-
-## 11. Validation rule
-
-For every required dependency:
-
-```text
-verified available_at <= information_cutoff
-```
-
-If true for all required dependencies, point in time eligibility passes.
-
-If any verified `available_at` is later than cutoff, validation is `INVALID`.
-
-If a required `available_at` cannot be established, validation is `INELIGIBLE_TRUST_UNKNOWN`.
+All required eligible external inputs at or before cutoff pass the point in time check.
