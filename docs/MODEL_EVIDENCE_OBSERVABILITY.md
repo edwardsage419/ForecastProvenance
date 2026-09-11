@@ -1,20 +1,20 @@
 # Model Evidence Observability
 
-Version: 0.2 candidate
-Status: FTC_001 REMEDIATION CANDIDATE
+Version: 0.3 candidate
+Status: FTC_001 FREEZE CANDIDATE
 
-Forecast provenance claims must state what portion of a method's information state is observable.
+Forecast provenance claims must state what portion of a method's declared information inputs can be independently inspected.
 
 Allowed `evidence_observability_class` values:
 
-`FULL_EXTERNAL`: every consequential information input is represented through validated external evidence contracts.
+`FULL_DECLARED_EXTERNAL_INPUTS`: every declared external information input is represented through validated evidence contracts. This does not claim complete causal provenance of runtime, hardware, libraries, model parameters, or hidden upstream processes.
 
-`PARTIAL_EXTERNAL`: consequential external retrievals are logged and validated, while some internal model state or learned knowledge is opaque.
+`PARTIAL_EXTERNAL`: consequential external retrievals are logged and validated, while some declared or internal information state remains opaque.
 
-`OPAQUE_INTERNAL`: the method can be identified and prospectively evaluated, while its internal informational provenance cannot be independently enumerated.
+`OPAQUE_INTERNAL`: the method can be identified and prospectively evaluated, while internal informational provenance cannot be independently enumerated.
 
 A closed language model will normally be `PARTIAL_EXTERNAL` or `OPAQUE_INTERNAL`.
 
-Prospective evaluation is allowed for these classes after Genesis if all other protocol conditions pass. Trust reports must not describe them as having complete evidence provenance.
+Prospective evaluation may later include any class when all other Genesis conditions pass. Trust reports must state the observability class and cannot promote partial or opaque provenance into complete provenance.
 
-Model statements about their own training cutoff do not establish item level historical availability.
+A model statement about its own training cutoff does not establish item level historical availability.
