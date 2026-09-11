@@ -5,11 +5,7 @@ Status: CURRENT READ ONLY ARCHITECTURE REVIEW
 
 ## Decision
 
-The Genesis minimum time evidence profile should pursue zero recurring cash cost.
-
-Commercial QTSP qualification is paused for the Genesis minimum profile.
-
-The preferred candidate is:
+The Genesis minimum time evidence profile uses a zero recurring cash cost candidate:
 
 ```text
 FPP_TIME_EVIDENCE_V1
@@ -25,140 +21,89 @@ owner Ed25519 identity
 
 RFC 3161 remains optional auxiliary evidence.
 
+Commercial QTSP qualification is paused for the Genesis minimum profile.
+
 This review does not authorize any provider request.
+
+## Current Roughtime rehearsal entry state
+
+The provider entry review in `GEN_001_ROUGHTIME_REHEARSAL_ENTRY_REVIEW_2026_09_11.md` closes the public evidence gate for the selected pool.
+
+```text
+roughtime.se = READY FOR NON_FORECAST_REHEARSAL
+time.txryan.com = READY FOR NON_FORECAST_REHEARSAL
+Cloudflare-Roughtime-2 = READY FOR NON_FORECAST_REHEARSAL
+```
+
+The exact rehearsal protocols are draft 15, draft 19, and draft 08 respectively.
+
+The common verifier candidate is `github.com/tannerryan/roughtime` at exact commit `56b346a16cd7e8317bb0d24f1ec15549cf93a4c9`.
+
+Entry readiness does not authorize a network request.
 
 ## VERIFIED FACT
 
-The existing `FPP_TIME_EVIDENCE_V1` already separates signed wall clock deadline evidence from OpenTimestamps and Bitcoin durability evidence.
+The existing `FPP_TIME_EVIDENCE_V1` separates signed wall clock deadline evidence from OpenTimestamps and Bitcoin durability evidence.
 
-The existing Roughtime profile already defines subject bound nonce construction and the conservative upper bound:
+The Roughtime deadline upper bound remains:
 
-```text
-verified_receipt_upper_bound = midpoint + radius
-```
+`verified_receipt_upper_bound = midpoint + radius`
 
-The current issuance schedule leaves a large safety margin between forecast execution and the external proof deadline.
+The selected quorum object is `policy:deadline-receipt-quorum:v2`, created as a successor rather than rewriting historical v1.
 
-The current candidate object set contains `policy:deadline-receipt-quorum:v1`, whose own change policy requires a new policy version when quorum or qualification semantics change.
-
-The selected zero cost design therefore uses a new `policy:deadline-receipt-quorum:v2` rather than rewriting v1.
-
-Current public Roughtime review inputs identify three distinct operational candidates:
+The selected public provider pool contains three distinct operational candidates:
 
 1. `roughtime.se`
 2. `time.txryan.com`
 3. `Cloudflare-Roughtime-2`
 
-Current public information indicates distinct operators and distinct signing keys.
+Public evidence identifies distinct operators and distinct root signing keys.
 
-OpenTimestamps can create timestamp commitments through public calendars without a user paid Bitcoin transaction.
+The pinned Tanner Ryan verifier source supports IETF Roughtime drafts 01 through 19 and includes all three selected provider roots in its ecosystem file.
 
-The OpenTimestamps client supports verification with a local pruned Bitcoin Core node.
+OpenTimestamps remains the durability layer.
 
-The current RFC 3161 checker remains version 1.3 with report schema 1.2 and is closed absent a new concrete correctness or security defect.
+The historical RFC 3161 checker remains version 1.3 with report schema 1.2 and is closed absent a new concrete correctness or security defect.
 
 ## INFERENCE
 
-A two of three frozen Roughtime pool is a better fit for the project's zero recurring cash cost constraint than requiring commercial qualified timestamp providers.
+A two of three frozen Roughtime pool fits the project's zero recurring cash cost constraint better than requiring commercial qualified timestamp providers.
 
-The existing seven day forecast information horizon and 24 hour external proof margin make second level Roughtime uncertainty operationally acceptable for the initial target set when every accepted receipt independently satisfies its conservative upper bound.
+The seven day information horizon and 24 hour external proof margin make second level uncertainty operationally acceptable for the initial target set when every accepted receipt independently satisfies its conservative upper bound.
 
-Using three frozen providers with a threshold of two improves availability without weakening the quorum requirement.
+Keeping RFC 3161 as auxiliary evidence preserves the completed engineering and retained rehearsals without making commercial entitlement a Genesis blocker.
 
-Keeping RFC 3161 as auxiliary evidence preserves the value of the completed checker and retained rehearsals without making commercial entitlement a Genesis blocker.
-
-Provider key rotation must be fail closed. A changed root key cannot silently replace the key frozen in a ProviderProfile.
+Provider key rotation must fail closed. A changed root key cannot silently replace the key frozen in a ProviderProfile.
 
 ## UNKNOWN
 
-No Roughtime provider is yet qualified for Genesis use.
+No selected Roughtime provider is yet rehearsal verified.
 
-No Roughtime request has been sent under this review.
+No Roughtime request has been sent.
 
-The following still require separately authorized synthetic rehearsal evidence:
+Live rehearsal must still establish:
 
-1. Exact protocol compatibility with the selected verifier implementation.
-2. Exact root key observed at rehearsal time.
+1. Endpoint reachability from the owner controlled environment.
+2. Exact negotiated response compatibility with the frozen requested draft.
 3. Delegation verification.
 4. Response signature verification.
 5. Subject bound nonce inclusion.
 6. Observed midpoint and radius behavior.
 7. Raw request and response retention.
-8. Operational availability under the project's low request rate.
-9. Final provider independence review.
-10. Final usage authorization evidence sufficient for the selected low volume non abusive use.
+8. Final provider independence review against observed evidence.
+9. Exact build and toolchain reproducibility for the pinned verifier.
 
-The project also has not yet completed strong OpenTimestamps verification against owner controlled Bitcoin Core.
+Strong OpenTimestamps verification against owner controlled Bitcoin Core also remains open.
 
-## RFC 3161 candidates after the architecture review
+## RFC 3161 boundary
 
-FreeTSA, DigiCert, Sectigo ordinary, Sectigo Qualified, Sigstore, and any other RFC 3161 service are outside the minimum Genesis provider requirement unless a later versioned governance decision changes the profile.
+FreeTSA, DigiCert, Sectigo ordinary, Sectigo Qualified, Signicat, and other RFC 3161 services are outside the minimum Genesis provider requirement unless a later versioned governance decision changes the profile.
 
-The retained RFC 3161 evidence remains historical and may be used as auxiliary corroboration.
+Retained RFC 3161 evidence remains historical and may be used as auxiliary corroboration.
 
-Sectigo and Signicat commercial qualification work is paused.
-
-No paid contract or subscription should be entered for the current Genesis minimum profile.
-
-## Current candidate provider pool
-
-### roughtime.se
-
-Role: Roughtime candidate group.
-
-Read only evidence indicates a public Stratum 1 Roughtime service with an independently published Ed25519 public key and direct UTC tracking infrastructure.
-
-Status:
-
-`NOT READY FOR NON_FORECAST_REHEARSAL`
-
-### time.txryan.com
-
-Role: Roughtime candidate group.
-
-Read only evidence indicates a public Roughtime service open to individual users, with an independently published Ed25519 public key and support for current IETF Roughtime drafts.
-
-Status:
-
-`NOT READY FOR NON_FORECAST_REHEARSAL`
-
-### Cloudflare-Roughtime-2
-
-Role: Roughtime candidate group.
-
-Read only evidence indicates a public anycast Roughtime service with an independently published Ed25519 root key.
-
-The service is still described as beta and the root key is subject to change.
-
-Status:
-
-`NOT READY FOR NON_FORECAST_REHEARSAL`
-
-## Rehearsal gate
-
-Before any request is sent, a separate review must freeze:
-
-```text
-provider_id
-operator_identity
-endpoint
-protocol_version
-root_public_key
-subject_nonce_construction
-verifier_implementation
-raw_evidence_retention
-upper_bound_rule
-usage_authorization_basis
-independence_classification
-```
-
-Only after those fields are reviewed may a separate task authorize an exact synthetic `NON_FORECAST_REHEARSAL` request.
-
-A successful rehearsal does not authorize Genesis and does not create prospective evidence.
+No paid contract or subscription is required for the current Genesis minimum profile.
 
 ## Safety state
-
-The review preserves:
 
 ```text
 Genesis = NOT STARTED
