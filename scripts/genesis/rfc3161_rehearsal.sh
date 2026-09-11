@@ -21,12 +21,25 @@ QUERY="$OUTDIR/request.tsq"
 RESPONSE="$OUTDIR/response.tsr"
 QUERY_TEXT="$OUTDIR/request.txt"
 RESPONSE_TEXT="$OUTDIR/response.txt"
+HTTP_HEADERS="$OUTDIR/http_headers.txt"
+TOOL_VERSIONS="$OUTDIR/tool_versions.txt"
 REPORT="$OUTDIR/rehearsal_report.txt"
 
+{
+  openssl version -a
+  echo
+  curl --version
+  echo
+  python3 --version
+} > "$TOOL_VERSIONS"
+
+# OpenSSL includes a request nonce by default. Do not add -no_nonce.
+# -cert asks the TSA to include its signing certificate when supported.
 openssl ts -query -data "$SUBJECT" -sha256 -cert -out "$QUERY"
 openssl ts -query -in "$QUERY" -text -out "$QUERY_TEXT"
 
 curl --fail --silent --show-error \
+  --dump-header "$HTTP_HEADERS" \
   -H "Content-Type: application/timestamp-query" \
   -H "Accept: application/timestamp-reply" \
   --data-binary "@$QUERY" \
@@ -43,11 +56,15 @@ openssl ts -reply -in "$RESPONSE" -text -out "$RESPONSE_TEXT"
   echo "subject_sha256=$(sha256sum "$SUBJECT" | awk '{print $1}')"
   echo "request_sha256=$(sha256sum "$QUERY" | awk '{print $1}')"
   echo "response_sha256=$(sha256sum "$RESPONSE" | awk '{print $1}')"
+  echo "http_headers_sha256=$(sha256sum "$HTTP_HEADERS" | awk '{print $1}')"
+  echo "tool_versions_sha256=$(sha256sum "$TOOL_VERSIONS" | awk '{print $1}')"
   echo "captured_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  echo "request_nonce_policy=OPENSSL_DEFAULT_NONCE_REQUIRED"
   echo
   echo "Verification status is intentionally NOT QUALIFIED yet."
   echo "Freeze and verify provider certificate chain, policy OID, accuracy semantics,"
-  echo "nonce behavior, and revocation evidence before this provider can count toward quorum."
+  echo "nonce behavior, revocation evidence, and exact tool versions before this provider"
+  echo "can count toward DEADLINE_RECEIPT_QUORUM_V1."
 } > "$REPORT"
 
 if [[ -n "${TSA_CAFILE:-}" ]]; then
