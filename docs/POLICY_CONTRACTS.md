@@ -1,9 +1,9 @@
 # Consequential Policy Contracts
 
-Version: 0.3 candidate
-Status: FTC_001 FREEZE CANDIDATE
+Version: 0.4 candidate
+Status: FTC_001 FINAL FREEZE CANDIDATE
 
-Every policy capable of changing trust, issuance, omission, correction, evaluation, retention, or review behavior is a first class versioned normative object.
+Every policy capable of changing trust, issuance, omission, correction, evaluation, retention, review, schedule, randomness, or governance behavior is a first class versioned normative object.
 
 ## Shared PolicyDefinition envelope
 
@@ -19,9 +19,48 @@ change_policy
 content_sha256
 ```
 
-A policy change that can alter any scientific outcome requires a new policy version and, where applicable, a successor trusted manifest.
+A policy change that can alter a scientific result, cohort, eligibility state, or trust claim requires a new policy version and, where applicable, a successor trusted manifest.
+
+Historical objects always use the exact policy version and full hash bound by their applicable manifest.
 
 Unknown policy fields are rejected by the active schema.
+
+## IssuanceSchedulePolicy
+
+Required rule fields:
+
+```text
+cycle_identity_rule
+calendar_rule
+active_target_set_rule
+active_method_set_rule
+target_method_matrix
+slot_generation_rule
+slot_order_rule
+execution_window_rule
+plan_commitment_deadline_rule
+minimum_precommitment_margin_rule
+```
+
+For confirmatory cycles, required slots are derived deterministically from this policy and the accepted protocol state. The operator cannot choose a smaller or more favorable slot set after inspecting candidate outputs.
+
+A cycle plan that does not equal the deterministic policy output is invalid.
+
+## PublicRandomnessPolicy
+
+Required rule fields:
+
+```text
+randomness_source_contract_ref
+eligible_event_selection_rule
+minimum_availability_relation
+randomness_derivation_rule
+source_failure_rule
+```
+
+The selected public randomness event must become available after the cycle plan commitment deadline. Its selection rule is fixed before the value is known.
+
+An operator chosen seed or operator chosen public event after value inspection is invalid for confirmatory use.
 
 ## RetryPolicy
 
@@ -120,13 +159,16 @@ required_validation_reports
 required_external_anchor_evidence
 decision_values
 predecessor_binding_rule
+successor_fork_rule
 ```
 
 For Genesis, authority is supplied through an out of graph BootstrapGovernanceRoot. After Genesis, successor acceptance follows the previously accepted governance state.
 
+`successor_fork_rule` must define whether multiple successors are prohibited, explicitly ordered, or require a separate conflict resolution object. If an observed fork cannot be resolved by the predecessor rule, trust resolution fails closed.
+
 ## AnchorScheme
 
-Trust Core freezes the interface, while Genesis freezes a concrete scheme.
+Trust Core freezes the interface. Genesis freezes a concrete scheme.
 
 Required rule fields:
 
@@ -140,7 +182,7 @@ malformed_proof_rule
 conflict_rule
 ```
 
-A real AnchorScheme must return a conservative externally verifiable existence bound or a non verified state. Synthetic implementations may mock this interface and must remain ineligible for prospective status.
+A real AnchorScheme returns a conservative externally verifiable existence bound or a non verified state. Synthetic implementations may mock this interface and remain permanently ineligible for prospective status.
 
 ## ResolutionEvidencePolicy
 
@@ -151,6 +193,7 @@ source_priority
 publication_semantics
 retrieval_semantics
 vintage_selection
+artifact_selection_rule
 conflict_rule
 evidence_sufficiency
 resolution_deadline_rule
@@ -158,3 +201,7 @@ human_review_rule_or_none
 ```
 
 Resolution evidence is evaluated under this policy and is not constrained by the forecast information cutoff.
+
+## Policy closure rule
+
+Every policy reference used by a confirmatory object must be admitted by the applicable trusted manifest and must match both semantic ID and full content hash. A policy cannot authorize its own replacement retroactively.
