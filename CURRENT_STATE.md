@@ -2,7 +2,7 @@
 
 Date: 2026-09-11
 Project: Forecast Provenance Project
-State: PRE_GENESIS_DESIGN
+State: TRUST_CORE_BUILD
 
 ## Native scientific state
 
@@ -22,21 +22,31 @@ Forecast Ledger: NOT CREATED
 
 Forecast Ledger Genesis: NOT STARTED
 
-## Design state
+## Trust Core state
 
-Forecast Trust Core: FTC_001 REMEDIATION CANDIDATE
+FTC_001 normative design: FROZEN FOR SYNTHETIC IMPLEMENTATION, version 0.4
 
-First adversarial design review: COMPLETE, 20 findings
+Adversarial design review pass 1: COMPLETE
 
-Blocking finding remediation: DESIGN RESOLUTIONS WRITTEN
+Adversarial design review pass 2: COMPLETE
 
-Second adversarial design review: REQUIRED
+Adversarial design review pass 3 and freeze review: COMPLETE
 
-Adversarial matrix: 64 synthetic attack cases defined
+Adversarial design matrix: 96 synthetic cases defined
 
-Trust Core implementation: NOT STARTED
+Trust Core implementation: AUTHORIZED, NOT STARTED
+
+Synthetic adversarial execution: NOT STARTED
+
+## Genesis state
 
 External anchor candidate: OpenTimestamps with Bitcoin attestation, Genesis testing only
+
+Concrete AnchorScheme semantics: NOT FROZEN
+
+Bootstrap governance instance: NOT CREATED
+
+Initial target set: NOT FROZEN
 
 Genesis Protocol: DRAFT, NOT ACCEPTED
 
@@ -44,8 +54,8 @@ Prospective forecasting: PROHIBITED
 
 ## Current gate
 
-The first review findings have contract level resolutions. This does not freeze FTC_001.
+The project may now create only the minimal implementation structure needed for Forecast Trust Core schemas, validators, synthetic fixtures, and tests.
 
-A second adversarial design review must test the revised boundaries, especially issuance completeness, immutable anchor events, ManifestAcceptance, external proof deadline semantics, source and transformation contracts, human review, correction treatment, and opaque model provenance.
+No live production model execution, Forecast Ledger creation, genuine prospective issuance, or native outcome history is authorized.
 
-No implementation directories are authorized before that review disposition.
+The next accepted task is FTC_002, synthetic Trust Core implementation and adversarial execution.
