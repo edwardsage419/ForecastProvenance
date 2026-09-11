@@ -2,197 +2,203 @@
 
 Date: 2026-09-11
 Review target: Genesis readiness candidate on design/gen-001
-Disposition: BLOCKING READINESS ITEMS REMAIN
+Disposition: EXTERNAL READINESS BLOCKERS REMAIN
 
 ## Review objective
 
-Attack the proposed Genesis trust root, time evidence, manifest acceptance, target admissibility, and operational zero cost assumptions before any Forecast Ledger Genesis can occur.
+Attack the proposed Genesis trust root, time evidence, manifest acceptance, target admissibility, evaluation, and zero-cost operating assumptions before Forecast Ledger Genesis can occur.
 
-## G-B01 Single wall clock provider would create excessive trust concentration
+## G-B01 Single wall-clock provider concentration
 
 Severity: BLOCKING, RESOLVED IN DESIGN
-
-A single TSA or Roughtime server could issue an incorrect or compromised time claim.
-
-Resolution:
 
 DEADLINE_RECEIPT_QUORUM_V1 requires two independent provider groups. At least one qualifying receipt must be RFC 3161. Provider outage never lowers quorum.
 
-## G-B02 Bitcoin block time is unsuitable as the precise forecast deadline clock
+## G-B02 Bitcoin block time used as precise forecast clock
 
 Severity: BLOCKING, RESOLVED IN DESIGN
 
-OpenTimestamps can establish durable Bitcoin inclusion, while Bitcoin header time does not provide the precise wall clock semantics required for a forecast cutoff.
+Wall-clock deadline evidence and Bitcoin durability evidence are separate. Bitcoin block header time cannot replace signed deadline receipts.
 
-Resolution:
+## G-B03 RFC 3161 accuracy and provider-profile ambiguity
 
-Wall clock deadline evidence and Bitcoin durability evidence are separate. Block header time cannot replace signed deadline receipts.
+Severity: BLOCKING FOR GEN_001 EXIT, OPEN
 
-## G-B03 RFC 3161 token accuracy may be absent or unrelated to a cited provider policy
-
-Severity: BLOCKING, OPEN
-
-RFC 3161 allows accuracy to be omitted. A generic provider accuracy statement cannot be applied to a token unless the frozen signer, policy OID, chain, and policy actually correspond.
+A generic provider statement cannot be applied to an arbitrary timestamp token.
 
 Required closure:
 
-Run non forecast rehearsals for each RFC 3161 provider. Freeze raw token examples, signer chain fingerprints, policy OID, nonce behavior, accuracy field or hashed policy accuracy statement, CRL or OCSP capture procedure, and verifier output.
+Run non-forecast rehearsals for every RFC 3161 provider that will count toward quorum. Freeze raw request and response bytes, signer chain fingerprints, policy OID, nonce behavior, accuracy field or exact hashed accuracy policy, revocation capture procedure, and verifier output.
 
-A token with no defensible conservative accuracy cannot count toward quorum.
+A receipt without a defensible conservative upper time bound cannot count toward deadline quorum.
 
-## G-B04 Roughtime protocol and provider profiles remain operationally unstable
+## G-B04 Roughtime protocol and provider stability
 
 Severity: HIGH, OPEN FOR QUORUM ELIGIBILITY
 
-Cloudflare labels its Roughtime service beta and states its root key may change. The associated implementation also tracks evolving IETF drafts.
+Roughtime remains optional for Genesis version 1.
 
-Required closure:
+It becomes quorum eligible only after freezing the exact protocol version, root key, verifier version, response contract, and successful non-forecast rehearsal evidence.
 
-Roughtime is optional in Genesis version 1. It becomes quorum eligible only after a provider profile freezes the exact protocol version, root key, verifier version, response format, and successful rehearsal evidence.
+Genesis must remain operable with accepted RFC 3161 profiles if Roughtime is excluded.
 
-Genesis must remain operable using accepted RFC 3161 provider profiles if Roughtime is excluded.
-
-## G-B05 Long term RFC 3161 verification can degrade after certificate expiry or revocation information disappears
+## G-B05 Long-term RFC 3161 verification degradation
 
 Severity: BLOCKING, RESOLVED IN DESIGN SUBJECT TO REHEARSAL
 
-Resolution:
-
-At stamping time retain content addressed request bytes, response bytes, signer certificate, required chain, provider policy, and required CRL or OCSP evidence. Retention failure degrades current verifiability and cannot be silently ignored.
+At stamping time retain content-addressed request bytes, response bytes, signer certificate, required chain, provider policy, and required revocation evidence.
 
 Rehearsal must demonstrate the exact capture procedure.
 
-## G-B06 Delayed OTS completion could occur after outcome information becomes public
+## G-B06 OTS completion after outcome disclosure
 
 Severity: BLOCKING, RESOLVED IN DESIGN
 
-A valid pre deadline TSA receipt plus a much later OTS completion should not be promoted silently into the initial confirmatory cohort.
+After strong OTS verification, create a DurabilityVerificationRecord and obtain deadline receipt quorum for that exact record before the target outcome information barrier.
 
-Resolution:
+Late durability completion remains in historical evidence and is ineligible for the initial confirmatory cohort.
 
-After strong OTS verification, create a DurabilityVerificationRecord and obtain deadline receipt quorum for that exact record before the target outcome information barrier. Late durability completion is recorded but initial confirmatory eligibility fails closed.
-
-## G-B07 GitHub server timestamps are platform evidence rather than portable signed time receipts
+## G-B07 GitHub server timestamps as trust root
 
 Severity: HIGH, RESOLVED IN DESIGN
 
-Resolution:
+GitHub timestamps may be auxiliary public witnesses only. They do not count toward deadline quorum or bootstrap authority.
 
-GitHub timestamps may be auxiliary witnesses only. They do not count toward deadline quorum or bootstrap authority.
+## G-B08 Exact bootstrap authority key absent
 
-## G-B08 Bootstrap governance remains unresolved without the exact owner key
+Severity: BLOCKING FOR GEN_001 EXIT, OPEN
 
-Severity: BLOCKING, OPEN
-
-The structure and Ed25519 algorithm are selected, while the exact owner public key has not been generated and frozen.
+Ed25519 and the bootstrap root structure are selected. The exact owner public key has not been generated and frozen.
 
 Required closure:
 
-The owner generates the key offline or on an owner controlled local machine. The private key remains outside GitHub, CI, repository fixtures, and ChatGPT managed artifacts. Only the public key enters BootstrapGovernanceRoot.
+Generate the key on an owner-controlled local or offline machine. Keep the private key outside GitHub, CI, repository fixtures, and ChatGPT-managed artifacts. Only the public key enters BootstrapGovernanceRoot.
 
-## G-B09 Bootstrap root could still self authorize if it is first introduced by the candidate manifest
+## G-B09 Bootstrap self-authorization
 
 Severity: BLOCKING, RESOLVED IN DESIGN
-
-Resolution:
 
 A separate GenesisGovernanceEnvelope containing the bootstrap root and acceptance policy must receive external time evidence before the candidate Genesis manifest can rely on it.
 
-## G-B10 Manifest acceptance could be backdated after the first production cycle starts
+## G-B10 Manifest acceptance backdating
 
 Severity: BLOCKING, RESOLVED IN DESIGN
 
-Resolution:
+The signed ManifestAcceptance itself receives FPP_TIME_EVIDENCE_V1 evidence. The first issuance execution window begins strictly after final acceptance verification.
 
-The signed ManifestAcceptance itself must receive FPP_TIME_EVIDENCE_V1 evidence. The first issuance execution window begins strictly after final acceptance verification.
-
-## G-B11 Target release timing could leak outcome information before a nominal release timestamp
+## G-B11 Outcome disclosure before nominal release
 
 Severity: BLOCKING FOR TARGETS, RESOLVED AT POLICY LEVEL
 
-Resolution:
+Initial targets require an independently defined outcome information barrier and a 24-hour issuance safety margin. Schedule advances and early disclosure fail closed under GENESIS_SCHEDULE_POLICY.md.
 
-Initial targets require an independently defined outcome information barrier and a 24 hour issuance safety margin. Targets with unscheduled early disclosure risk that cannot be handled deterministically are excluded.
-
-Exact target candidates still require individual review.
-
-## G-B12 High frequency targets are incompatible with the initial external time evidence operating model
+## G-B12 High-frequency target incompatibility
 
 Severity: HIGH, RESOLVED IN DESIGN
 
-Resolution:
+Genesis version 1 requires at least a seven-calendar-day forecast horizon and excludes intraday and same-day targets.
 
-Genesis version 1 requires at least a seven day forecast horizon and excludes intraday, same day, and next hour targets.
-
-## G-B13 Provider selection could be changed after observing a failed or inconvenient receipt
+## G-B13 Provider substitution after failed receipt
 
 Severity: HIGH, RESOLVED IN DESIGN
 
-Resolution:
+Accepted provider profiles and quorum policy are bound in the Genesis manifest. Failed attempts remain operational records and cannot justify silent provider substitution.
 
-Accepted provider profiles and quorum policy are bound in the Genesis manifest. Receipts from unlisted providers cannot qualify. Failed provider attempts remain operational records and cannot justify silent provider substitution.
-
-## G-B14 Two provider groups may share correlated upstream time sources
+## G-B14 Correlated upstream UTC infrastructure
 
 Severity: MEDIUM, ACCEPTED WITH DISCLOSURE
 
-Independent provider operation does not prove fully independent upstream UTC realization.
+The protocol claims a quorum of independently operated signed time authorities. It does not claim mathematically independent realizations of UTC.
 
-Disposition:
-
-The protocol requires independent operators and retains provider time source disclosures where available. It does not claim statistical independence of global UTC infrastructure. The wall clock claim is therefore a quorum of independent signed authorities, not a mathematically independent time ensemble.
-
-## G-B15 Rehearsal success from the assistant execution environment is unavailable
+## G-B15 Live provider rehearsal unavailable in current assistant environment
 
 Severity: BLOCKING FOR GEN_001 EXIT, OPEN
 
-A FreeTSA non forecast rehearsal was attempted. External DNS is unavailable in the execution environment, so the request did not reach the provider.
+A FreeTSA non-forecast rehearsal was prepared, while external DNS was unavailable in the current execution environment. No provider request was completed.
 
 Required closure:
 
-Run provider and OTS rehearsals from a networked owner controlled environment. Preserve both successes and failures. This environment limitation is not classified as a provider outage.
+Run provider rehearsals from a networked owner-controlled environment. Preserve successful and failed attempts. The current environment limitation is not classified as provider failure.
 
-## G-B16 Strong OpenTimestamps verification has not been executed with a locally controlled Bitcoin node
+## G-B16 Strong OpenTimestamps verification not yet executed
 
 Severity: BLOCKING FOR GEN_001 EXIT, OPEN
 
-OpenTimestamps documentation states that creation can use remote calendars while verification requires Bitcoin Core, with pruned mode acceptable.
+Required closure:
+
+Perform at least one non-forecast OTS stamp, proof upgrade, and strong verification against an owner-controlled pruned or full Bitcoin Core node. Retain proof bytes and a content-addressed verification report.
+
+## G-B17 Initial target set unspecified
+
+Severity: BLOCKING, RESOLVED TO CANDIDATE SET
+
+A three-target candidate set is now selected before any production forecast values are generated:
+
+1. CPI all-items monthly change, seasonally adjusted, first release.
+2. Official U-3 unemployment rate, seasonally adjusted, first release.
+3. Real GDP quarter-over-quarter annualized growth, Advance Estimate.
+
+Target-specific review found the set viable. Exact TargetDefinition and ResolutionRule objects, parser fixtures, precision rules, and archive procedures remain required before manifest freeze.
+
+## G-B18 Evaluation policy dependent on target type
+
+Severity: BLOCKING, RESOLVED IN DESIGN
+
+All three candidate targets use continuous scalar point forecasts under Genesis version 1.
+
+GENESIS_EVALUATION_POLICY.md freezes absolute error, squared error, target-specific aggregation, complete cohort accounting, and prohibition of an authoritative universal cross-target score.
+
+GENESIS_BASELINE_METHOD.md freezes a deterministic point-in-time last-observed-value baseline using archived first-release artifacts.
+
+## G-B19 Baseline can leak later revisions
+
+Severity: BLOCKING, RESOLVED IN DESIGN SUBJECT TO FIXTURE TESTING
+
+The baseline may use only the immediately preceding first-release official artifact that was available by the current information cutoff.
+
+Current revised historical databases are inadmissible substitutes.
 
 Required closure:
 
-Perform at least one non forecast OTS stamp, upgrade, and strong verification against an owner controlled pruned or full Bitcoin Core node. Retain proof bytes and verification report.
+Archived non-production fixtures must demonstrate rejection of later revised artifacts and exact target-specific extraction.
 
-## G-B17 Initial production target set remains unspecified
+## G-B20 Official release pages can mutate after publication
 
-Severity: BLOCKING FOR GEN_001 EXIT, OPEN
+Severity: BLOCKING FOR SOURCE IMPLEMENTATION, OPEN
 
-Target admissibility rules are now defined, but the exact initial TargetDefinition, ResolutionRule, SourceContract, schedule binding, and scoring rule set has not been frozen.
-
-Required closure:
-
-Select a minimal candidate set without generating forecast values, then conduct target specific adversarial review.
-
-## G-B18 Genesis evaluation policy cannot freeze before target outcome types are selected
-
-Severity: BLOCKING FOR GEN_001 EXIT, OPEN
-
-Scoring rules depend on whether initial targets are binary, categorical, continuous, or distributional.
+A URL is insufficient as a durable first-release identity.
 
 Required closure:
 
-Freeze target set first, then bind target compatible scoring rules and transparent baselines in the candidate Genesis manifest.
+For each candidate target, validate a content-addressed archive procedure and parser against archived non-production official releases. When only a mutable official page exists, the frozen source rule requires a second official representation before full resolution trust.
+
+## G-B21 Parser layout drift and displayed precision
+
+Severity: BLOCKING FOR SOURCE IMPLEMENTATION, OPEN
+
+Hard-coded HTML positions or implicit hidden precision could change outcomes.
+
+Required closure:
+
+Build target-specific parsers that bind semantic labels, reference period, units, seasonal-adjustment status, estimate type, and displayed precision. Rehearsal fixtures must include mutation and layout-failure cases.
+
+## G-B22 Cross-target composite score could obscure heterogeneous scales
+
+Severity: HIGH, RESOLVED IN DESIGN
+
+Genesis version 1 prohibits an authoritative single aggregate score across the three target definitions. Reporting remains target-specific with transparent baseline deltas.
 
 ## Current disposition
 
-The core Genesis architecture is viable and materially stronger than the original OTS only design.
+The Genesis architecture is viable. The remaining blockers have moved from broad scientific architecture to externally verifiable readiness work and source-parser evidence.
 
-The following readiness blockers remain:
+GEN_001 cannot exit until all of the following are complete:
 
-1. Exact RFC 3161 provider profiles and live rehearsals.
-2. Optional Roughtime profile rehearsal if retained.
-3. Exact owner Ed25519 bootstrap public key.
-4. Strong OTS rehearsal against an owner controlled Bitcoin Core node.
-5. Exact minimal initial target set.
-6. Target compatible evaluation and baseline policies.
+1. At least two qualifying independent wall-clock provider profiles with successful live non-forecast rehearsals, including at least one RFC 3161 provider.
+2. Exact owner Ed25519 bootstrap public key frozen in BootstrapGovernanceRoot.
+3. Non-forecast OpenTimestamps stamp, upgrade, and strong Bitcoin Core verification.
+4. Target-specific official source archive and parser fixtures for CPI, U-3, and GDP Advance Estimate.
+5. Exact TargetDefinition, ResolutionRule, source, schedule, baseline, and evaluation object hashes prepared for the candidate Genesis manifest.
+6. Final Genesis readiness adversarial review with no blocking finding.
 
 Forecast Ledger Genesis and genuine prospective forecasting remain prohibited.
