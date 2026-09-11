@@ -26,11 +26,9 @@ Forecast Ledger Genesis: NOT STARTED
 
 FTC_001 normative design: FROZEN, version 0.4
 
-FTC_002 synthetic implementation: ACCEPTED FOR MERGE
+FTC_002 synthetic implementation: COMPLETE AND MERGED
 
-Implementation branch: build/ftc-002
-
-Implementation PR: #4
+FTC_002 merge commit: 6d519c3147f2d4d8a17e1d75d6482430a159a4f3
 
 Adversarial matrix: ADV001 through ADV096 executed as synthetic attack scenarios
 
@@ -64,4 +62,4 @@ Forecast Trust Core has passed normative design review and synthetic implementat
 
 This establishes fail closed Trust Layer interfaces. It does not create positive external evidence and does not establish predictive skill.
 
-The next work is Genesis readiness design. No Forecast Ledger, genuine prospective issuance, production model execution, native outcome history, or real Genesis anchoring is authorized until the Genesis gate is separately accepted.
+The next accepted task is GEN_001 Genesis readiness design, tracked in Issue #5. No Forecast Ledger, genuine prospective issuance, production model execution, native outcome history, or real Genesis anchoring is authorized until the Genesis gate is separately accepted.
