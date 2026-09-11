@@ -2,7 +2,7 @@
 
 Date: 2026-09-11
 Project: Forecast Provenance Project
-State: PRE_GENESIS_DESIGN
+State: TRUST_CORE_BUILD
 
 ## Native scientific state
 
@@ -22,40 +22,40 @@ Forecast Ledger: NOT CREATED
 
 Forecast Ledger Genesis: NOT STARTED
 
-## Design state
+## Trust Core state
 
-Project name: SELECTED, Forecast Provenance Project
+FTC_001 normative design: FROZEN FOR SYNTHETIC IMPLEMENTATION, version 0.4
 
-Project positioning: SELECTED, independent model neutral forecast evidence and audit layer
+Adversarial design review pass 1: COMPLETE
 
-Scientific Invariants: DRAFT 1.0
+Adversarial design review pass 2: COMPLETE
 
-Architecture: DRAFT 0.1
+Adversarial design review pass 3 and freeze review: COMPLETE
 
-Governance: DRAFT 1.0
+Adversarial design matrix: 96 synthetic cases defined
 
-Forecast Trust Core: DESIGN DEFINED, IMPLEMENTATION NOT STARTED
+Trust Core implementation: AUTHORIZED, NOT STARTED
 
-Adversarial review: NOT STARTED
+Synthetic adversarial execution: NOT STARTED
 
-External anchor candidate: SELECTED FOR GENESIS TESTING, OpenTimestamps with Bitcoin attestation
+## Genesis state
 
-Genesis Protocol: DRAFT REQUIRED BEFORE GENESIS
+External anchor candidate: OpenTimestamps with Bitcoin attestation, Genesis testing only
 
-Prospective forecasting: PROHIBITED BY CURRENT STATE
+Concrete AnchorScheme semantics: NOT FROZEN
 
-## Migration provenance
+Bootstrap governance instance: NOT CREATED
 
-The design handoff source is Successor_Project_Migration_Packet_v2 dated 2026-09-11.
+Initial target set: NOT FROZEN
 
-The Markdown and TXT payloads in the supplied archive are byte identical.
+Genesis Protocol: DRAFT, NOT ACCEPTED
 
-SHA256 of the authoritative payload:
+Prospective forecasting: PROHIBITED
 
-3d64b60107f8c686d6ca2411c9a771849451b7317b636549d2e223d0fca54ffe
+## Current gate
 
-This provenance records methodological ancestry only. It does not import Psychohistory research evidence.
+The project may now create only the minimal implementation structure needed for Forecast Trust Core schemas, validators, synthetic fixtures, and tests.
 
-## Next accepted work
+No live production model execution, Forecast Ledger creation, genuine prospective issuance, or native outcome history is authorized.
 
-Complete the Trust Core normative contracts and adversarial test specification using synthetic fixtures only. Do not issue forecasts.
+The next accepted task is FTC_002, synthetic Trust Core implementation and adversarial execution.

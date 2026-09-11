@@ -1,6 +1,6 @@
 # Forecast Provenance Project
 
-Status: PRE_GENESIS_DESIGN
+Status: TRUST_CORE_BUILD
 
 Forecast Provenance Project is an independent, model neutral evidence and audit layer for forecasting systems.
 
@@ -10,4 +10,8 @@ Which forecasts deserve trust, based on what was actually knowable, committed, r
 
 The project begins with zero native forecast history. Psychohistory is an archived predecessor and methodology provenance source. Psychohistory datasets, GKG artifacts, historical phases, frozen samples, old research conclusions, and old project state are not native evidence of this project.
 
-The first program is Forecast Trust Core. No genuine prospective forecast may be issued until Trust Core, adversarial review, Genesis Protocol, and the external prospective time anchor have passed acceptance.
+Forecast Trust Core normative design version 0.4 has completed three adversarial design review passes and is frozen for synthetic implementation.
+
+The active task is FTC_002: implement the frozen Trust Core contracts using synthetic fixtures and execute the adversarial matrix.
+
+No genuine prospective forecast may be issued until Trust Core implementation and adversarial execution pass, the Genesis Protocol is frozen and accepted, the external time anchor semantics are instantiated and verified, and Forecast Ledger Genesis is formally accepted.
