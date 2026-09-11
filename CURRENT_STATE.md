@@ -96,7 +96,9 @@ Owner action packet: PREPARED
 
 External readiness runbook and non-forecast rehearsal scripts: PREPARED
 
-RFC 3161 rehearsal evidence capture: RAW REQUEST/RESPONSE, HTTP HEADERS, TOOL VERSIONS, HASHES, NONCE POLICY
+RFC 3161 qualification rehearsal checker: IMPLEMENTED, SEALED NON-FORECAST REPORTS FOR FREETSA, DIGICERT, AND SECTIGO
+
+RFC 3161 provider status: ALL THREE REHEARSALS INCOMPLETE; NONE PRODUCTION QUALIFIED
 
 Candidate materializer: IMPLEMENTED, EXECUTION IN OWNER OR FINAL REVIEW ENVIRONMENT PENDING
 
@@ -132,8 +134,8 @@ ManifestAcceptance: NOT CREATED
 
 ### Owner-controlled external evidence
 
-1. Live non-forecast RFC 3161 rehearsals. At least two independent provider groups must qualify. Primary candidates are FreeTSA and DigiCert; Sectigo is the backup candidate.
-2. Exact qualifying ProviderProfiles with signer chain, policy OID, accuracy, nonce behavior, revocation capture, and verifier evidence.
+1. Close RFC 3161 rehearsal blockers. FreeTSA cryptography, independent signer/root, and CRL checks pass, but `tsa_policy1` semantics and a conservative accuracy bound remain undocumented. DigiCert and Sectigo still lack retained independent signer, trust-anchor, revocation, applicable policy, and accuracy evidence.
+2. Exact qualifying ProviderProfiles with signer chain, policy OID, accuracy, nonce behavior, revocation capture, and verifier evidence. No rehearsal checker status grants production qualification.
 3. Owner-generated Ed25519 bootstrap public key. Private key must remain outside repository, GitHub, CI, and ChatGPT-managed artifacts.
 4. Non-forecast OpenTimestamps stamp, proof upgrade, and strong verification with explicit owner-controlled Bitcoin Core RPC.
 5. Owner-network retrieval of the three retrospective official BLS/BEA raw fixture byte sets and retained SHA256 metadata.

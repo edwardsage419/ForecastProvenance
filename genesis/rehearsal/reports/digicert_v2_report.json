@@ -1,0 +1,140 @@
+{
+  "accuracy_semantics_documented": false,
+  "captured_utc": "2026-09-11T07:25:48Z",
+  "certificate_chain_verification": {
+    "detail": "not attempted because TSA certificate selection failed",
+    "verified": false
+  },
+  "certificate_requested": true,
+  "checker_tool_version": "OpenSSL 3.5.7 9 Jun 2026 (Library: OpenSSL 3.5.7 9 Jun 2026)",
+  "checker_version": "1.0",
+  "classification": "NON_FORECAST_REHEARSAL",
+  "content_sha256": "d5f97b97a605412588bb3bcaf9a2bd92941b7421fa5889d0835d1989d44e7d6f",
+  "crl_evidence": {
+    "available": false
+  },
+  "embedded_certificate_inventory": [
+    {
+      "extended_key_usage": [],
+      "extended_key_usage_critical": false,
+      "issuer": "C=US, O=DigiCert Inc, OU=www.digicert.com, CN=DigiCert Assured ID Root CA",
+      "not_after": "2031-11-09T23:59:59Z",
+      "not_before": "2022-08-01T00:00:00Z",
+      "role": "EMBEDDED_CHAIN",
+      "serial": "0E9B188EF9D02DE7EFDB50E20840185A",
+      "sha256_der": "33846b545a49c9be4903c60e01713c1bd4e4ef31ea65cd95d69e62794f30b941",
+      "subject": "C=US, O=DigiCert Inc, OU=www.digicert.com, CN=DigiCert Trusted Root G4"
+    },
+    {
+      "extended_key_usage": [
+        "Time Stamping"
+      ],
+      "extended_key_usage_critical": false,
+      "issuer": "C=US, O=DigiCert Inc, OU=www.digicert.com, CN=DigiCert Trusted Root G4",
+      "not_after": "2038-01-14T23:59:59Z",
+      "not_before": "2025-05-07T00:00:00Z",
+      "role": "EMBEDDED_CHAIN",
+      "serial": "0DC7AC5705FF21992E4043220C3A4986",
+      "sha256_der": "ca0b1554ecd901ea19dcad8749e9f2648c8d6dfcea1add9d2c2109415bb82ccd",
+      "subject": "C=US, O=DigiCert, Inc., CN=DigiCert Trusted G4 TimeStamping RSA4096 SHA256 2025 CA1"
+    },
+    {
+      "extended_key_usage": [
+        "Time Stamping"
+      ],
+      "extended_key_usage_critical": true,
+      "issuer": "C=US, O=DigiCert, Inc., CN=DigiCert Trusted G4 TimeStamping RSA4096 SHA256 2025 CA1",
+      "not_after": "2037-11-04T23:59:59Z",
+      "not_before": "2026-08-05T00:00:00Z",
+      "role": "TSA_SIGNER",
+      "serial": "084FDC334F7E454EDBC30F8FF9921835",
+      "sha256_der": "2da09da7f4131f9fe72db6c5e6e9c9656755af043f1ea742cc0d2120e141ebfc",
+      "subject": "C=US, O=DigiCert, Inc., CN=DigiCert SHA256 RSA4096 Timestamp Responder 2026 1"
+    }
+  ],
+  "final_rehearsal_status": "REHEARSAL_INCOMPLETE",
+  "independent_tsa_certificate_matches_embedded": false,
+  "independent_tsa_certificate_sha256_der": "UNAVAILABLE",
+  "message_imprint": "3837b8ce2e012a913cbdab6f7e52bdc045013bdc4acfbc88abc99cee149275c6",
+  "message_imprint_algorithm": "sha256",
+  "message_imprint_matches_subject": true,
+  "nonce_equal": true,
+  "object_id": "rfc3161qualificationrehearsalreport:digicert_rfc3161:6aaf35d51cd4",
+  "object_type": "RFC3161QualificationRehearsalReport",
+  "payload_sha256": "6aaf35d51cd40f13bda0e849c76ad2b554d87e453a58942c93dd2fde41a53f67",
+  "policy_semantics_documented": false,
+  "prospective_eligible": false,
+  "provider_id": "digicert_rfc3161",
+  "provider_policy_evidence_source": "UNAVAILABLE",
+  "raw_evidence_sha256": {
+    "request": "a996f84fe5ed69cb099c61534b9bee7e7f6afe065274af5999ad0f9f7dd7a9d6",
+    "response": "62c7a0b525553200276aab6d20d73a4ab7e908e835761aa005678786e0302d59",
+    "subject": "3837b8ce2e012a913cbdab6f7e52bdc045013bdc4acfbc88abc99cee149275c6",
+    "tool_versions": "be199f46afcc2923aa8be1acb9974a60387d54c42e49497aebdf1cc6d294e956"
+  },
+  "request_nonce": "1b4b738c891d56df",
+  "request_sha256": "a996f84fe5ed69cb099c61534b9bee7e7f6afe065274af5999ad0f9f7dd7a9d6",
+  "response_nonce": "1b4b738c891d56df",
+  "response_sha256": "62c7a0b525553200276aab6d20d73a4ab7e908e835761aa005678786e0302d59",
+  "rfc3161_response_status": "GRANTED",
+  "rfc3161_signature_verification": {
+    "detail": "not attempted because TSA certificate selection failed",
+    "verified": false
+  },
+  "schema_version": "1.0",
+  "subject_sha256": "3837b8ce2e012a913cbdab6f7e52bdc045013bdc4acfbc88abc99cee149275c6",
+  "token_accuracy": "unspecified",
+  "token_gen_time": "2026-09-11T07:25:47Z",
+  "token_ordering": "no",
+  "token_policy_oid": "2.16.840.1.114412.7.1",
+  "tool_versions": [
+    "OpenSSL 3.5.7 9 Jun 2026 (Library: OpenSSL 3.5.7 9 Jun 2026)",
+    "built on: Wed Jun 10 12:22:25 2026 UTC",
+    "platform: mingw64",
+    "options:  bn(64,64)",
+    "compiler: gcc -m64 -Wall -O3 -DL_ENDIAN -DOPENSSL_PIC -DUNICODE -D_UNICODE -DWIN32_LEAN_AND_MEAN -D_MT -DOPENSSL_BUILDING_OPENSSL -DZLIB -DZLIB_SHARED -DNDEBUG -DOPENSSLBIN=\"\\\\\"/mingw64/bin\\\\\"\"",
+    "OPENSSLDIR: \"/mingw64/etc/ssl\"",
+    "ENGINESDIR: \"/mingw64/lib/engines-3\"",
+    "MODULESDIR: \"/mingw64/lib/ossl-modules\"",
+    "Seeding source: os-specific",
+    "CPUINFO: OPENSSL_ia32cap=0x7ed8320b078bffff:0x00400004219c91a9:0x0000000000000000:0x0000000000000000:0x0000000000000000",
+    "curl 8.21.0 (x86_64-w64-mingw32) libcurl/8.21.0 Schannel zlib/1.3.2 brotli/1.2.0 zstd/1.5.7 libidn2/2.3.8 libpsl/0.21.5 libssh2/1.11.1 WinLDAP",
+    "Release-Date: 2026-06-24",
+    "Protocols: dict file ftp ftps gopher gophers http https imap imaps ipfs ipns ldap ldaps mqtt mqtts pop3 pop3s rtsp scp sftp smtp smtps telnet tftp ws wss",
+    "Features: alt-svc AsynchDNS brotli HSTS HTTPS-proxy IDN IPv6 Kerberos Largefile libz NTLM PSL SPNEGO SSL SSPI threadsafe UnixSockets zstd",
+    "Python 3.13.11"
+  ],
+  "trust_anchor_matches_embedded_certificate": false,
+  "trust_anchor_sha256_der": "UNAVAILABLE",
+  "trust_anchor_source": "UNAVAILABLE",
+  "tsa_certificate_extended_key_usage": [
+    "Time Stamping"
+  ],
+  "tsa_certificate_extended_key_usage_critical": true,
+  "tsa_certificate_not_after": "2037-11-04T23:59:59Z",
+  "tsa_certificate_not_before": "2026-08-05T00:00:00Z",
+  "tsa_certificate_serial": "084FDC334F7E454EDBC30F8FF9921835",
+  "tsa_certificate_sha256_der": "2da09da7f4131f9fe72db6c5e6e9c9656755af043f1ea742cc0d2120e141ebfc",
+  "unresolved_qualification_blockers": [
+    {
+      "code": "MISSING_QUALIFICATION_EVIDENCE",
+      "detail": "missing independent_tsa_certificate: digicert_v2/independent_tsa_certificate.pem"
+    },
+    {
+      "code": "MISSING_QUALIFICATION_EVIDENCE",
+      "detail": "missing trust_anchor: digicert_v2/trust_anchor.pem"
+    },
+    {
+      "code": "REVOCATION_EVIDENCE_MISSING",
+      "detail": "no retained CRL was configured"
+    },
+    {
+      "code": "TIMESTAMP_ACCURACY_UNSPECIFIED",
+      "detail": "token omits accuracy and no applicable conservative bound is documented"
+    },
+    {
+      "code": "TOKEN_POLICY_SEMANTICS_UNDOCUMENTED",
+      "detail": "no frozen applicable semantics for 2.16.840.1.114412.7.1"
+    }
+  ]
+}

@@ -108,6 +108,15 @@ bash scripts/genesis/rfc3161_rehearsal.sh \
 
 The rehearsal script records raw request and response bytes, parsed request and response text, HTTP headers, tool versions, hashes, and operational metadata.
 
+After independently retrieving the provider trust anchor, chain, revocation
+material, and policy evidence, create a provider profile following
+`docs/RFC3161_QUALIFICATION_REHEARSAL.md` and run
+`scripts/genesis/check_rfc3161_rehearsal.py`. Use a new output filename for every
+attempt; the checker refuses to overwrite an existing report.
+
+The checker can emit only `REHEARSAL_VERIFIED`, `REHEARSAL_INCOMPLETE`, or
+`REHEARSAL_FAILED`. None of these statuses grants production qualification.
+
 A successful HTTP response is not yet a qualifying Genesis receipt.
 
 For each provider, review must freeze:

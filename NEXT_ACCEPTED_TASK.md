@@ -30,10 +30,11 @@ Complete Genesis readiness without creating Forecast Ledger history or issuing g
 19. Final validator-binding builder binds final commit, source files, schemas, pyproject, and final test-report SHA256.
 20. Owner external-readiness runbook and non-forecast Ed25519, RFC 3161, OpenTimestamps, and source-fixture retrieval tooling are prepared.
 21. GENESIS_READINESS_EVIDENCE_MATRIX.md is the authoritative closure checklist.
+22. Reusable RFC 3161 qualification rehearsal automation emits sealed, permanently non-prospective reports for FreeTSA, DigiCert, and Sectigo.
 
 ## Required owner-controlled external closure
 
-1. Run live non-forecast FreeTSA and DigiCert RFC 3161 rehearsals from a networked owner-controlled environment.
+1. Resolve the retained RFC 3161 rehearsal blockers. FreeTSA still needs directly applicable `tsa_policy1` semantics and a conservative accuracy bound; DigiCert and Sectigo still need independent trust, revocation, policy, and accuracy packages.
 2. Generate the owner Ed25519 bootstrap key locally and provide only the public key and its SHA256.
 3. Run a non-forecast OpenTimestamps stamp, proof upgrade, and strong Bitcoin Core verification.
 4. Retrieve and retain the three selected retrospective official BLS and BEA raw source fixtures with SHA256 metadata.

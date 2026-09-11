@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://forecastprovenance.org/schemas/rfc3161_qualification_rehearsal_report.schema.json",
+  "title": "RFC 3161 Qualification Rehearsal Report",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "checker_version",
+    "classification",
+    "prospective_eligible",
+    "provider_id",
+    "captured_utc",
+    "trust_anchor_source",
+    "provider_policy_evidence_source",
+    "policy_semantics_documented",
+    "accuracy_semantics_documented",
+    "tool_versions",
+    "raw_evidence_sha256",
+    "embedded_certificate_inventory",
+    "unresolved_qualification_blockers",
+    "final_rehearsal_status",
+    "object_type",
+    "object_id",
+    "payload_sha256",
+    "content_sha256"
+  ],
+  "properties": {
+    "classification": {"const": "NON_FORECAST_REHEARSAL"},
+    "prospective_eligible": {"const": false},
+    "final_rehearsal_status": {
+      "enum": ["REHEARSAL_VERIFIED", "REHEARSAL_INCOMPLETE", "REHEARSAL_FAILED"]
+    },
+    "provider_id": {"type": "string", "minLength": 1},
+    "captured_utc": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"},
+    "raw_evidence_sha256": {
+      "type": "object",
+      "additionalProperties": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+    },
+    "unresolved_qualification_blockers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["code", "detail"],
+        "properties": {
+          "code": {"type": "string"},
+          "detail": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "object_type": {"const": "RFC3161QualificationRehearsalReport"},
+    "payload_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "additionalProperties": true
+}

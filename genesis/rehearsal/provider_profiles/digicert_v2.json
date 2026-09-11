@@ -1,0 +1,23 @@
+{
+  "accuracy_semantics": {
+    "documented": false
+  },
+  "captured_utc": "2026-09-11T07:25:48Z",
+  "classification": "NON_FORECAST_REHEARSAL",
+  "evidence_files": {
+    "independent_tsa_certificate": "digicert_v2/independent_tsa_certificate.pem",
+    "request": "digicert_v2/request.tsq",
+    "response": "digicert_v2/response.tsr",
+    "subject": "subject.txt",
+    "tool_versions": "digicert_v2/tool_versions.txt",
+    "trust_anchor": "digicert_v2/trust_anchor.pem"
+  },
+  "policy_semantics": {
+    "applicable_policy_oids": [],
+    "documented": false
+  },
+  "prospective_eligible": false,
+  "provider_id": "digicert_rfc3161",
+  "provider_policy_evidence_source": "UNAVAILABLE",
+  "trust_anchor_source": "UNAVAILABLE"
+}

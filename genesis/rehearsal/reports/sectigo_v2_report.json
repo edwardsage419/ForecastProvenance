@@ -1,0 +1,142 @@
+{
+  "accuracy_semantics_documented": false,
+  "captured_utc": "2026-09-11T07:27:51Z",
+  "certificate_chain_verification": {
+    "detail": "not attempted because TSA certificate selection failed",
+    "verified": false
+  },
+  "certificate_requested": true,
+  "checker_tool_version": "OpenSSL 3.5.7 9 Jun 2026 (Library: OpenSSL 3.5.7 9 Jun 2026)",
+  "checker_version": "1.0",
+  "classification": "NON_FORECAST_REHEARSAL",
+  "content_sha256": "6ecae2f8fd13d94f76212cceaeb971ccda6a06b2f76a442c0b85c23025560950",
+  "crl_evidence": {
+    "available": false
+  },
+  "embedded_certificate_inventory": [
+    {
+      "extended_key_usage": [
+        "Time Stamping"
+      ],
+      "extended_key_usage_critical": false,
+      "issuer": "C=GB, O=Sectigo Limited, CN=Sectigo Public Time Stamping Root R46",
+      "not_after": "2041-03-24T23:59:59Z",
+      "not_before": "2026-03-25T00:00:00Z",
+      "role": "EMBEDDED_CHAIN",
+      "serial": "90AC087220FDC5A7C46B5CC70DF73D06",
+      "sha256_der": "38b52fe70bdde4ecf34d77498d7cbfe48efd83294dca04de01868f7735d2db79",
+      "subject": "C=GB, O=Sectigo Limited, CN=Sectigo Public Time Stamping CA R41"
+    },
+    {
+      "extended_key_usage": [
+        "Time Stamping"
+      ],
+      "extended_key_usage_critical": false,
+      "issuer": "C=US, ST=New Jersey, L=Jersey City, O=The USERTRUST Network, CN=USERTrust RSA Certification Authority",
+      "not_after": "2038-01-18T23:59:59Z",
+      "not_before": "2021-03-22T00:00:00Z",
+      "role": "EMBEDDED_CHAIN",
+      "serial": "36C2B0BD7C1B3AE7A3B3DD36CBC97568",
+      "sha256_der": "b53ac15cc1afb6e2ac06828f555bb3bf5bad8b2bac1733ce4cb7aafe729356de",
+      "subject": "C=GB, O=Sectigo Limited, CN=Sectigo Public Time Stamping Root R46"
+    },
+    {
+      "extended_key_usage": [
+        "Time Stamping"
+      ],
+      "extended_key_usage_critical": true,
+      "issuer": "C=GB, O=Sectigo Limited, CN=Sectigo Public Time Stamping CA R41",
+      "not_after": "2037-06-24T23:59:59Z",
+      "not_before": "2026-03-25T00:00:00Z",
+      "role": "TSA_SIGNER",
+      "serial": "E74EF255B0504FFADBA6DFF7FC8BA315",
+      "sha256_der": "d14751ba71cd8883e560166406cf62cd229a5fe91e308d301976feb23ea90156",
+      "subject": "C=GB, ST=Greater London, O=Sectigo Limited, CN=Sectigo Public Time Stamping Signer R37"
+    }
+  ],
+  "final_rehearsal_status": "REHEARSAL_INCOMPLETE",
+  "independent_tsa_certificate_matches_embedded": false,
+  "independent_tsa_certificate_sha256_der": "UNAVAILABLE",
+  "message_imprint": "3837b8ce2e012a913cbdab6f7e52bdc045013bdc4acfbc88abc99cee149275c6",
+  "message_imprint_algorithm": "sha256",
+  "message_imprint_matches_subject": true,
+  "nonce_equal": true,
+  "object_id": "rfc3161qualificationrehearsalreport:sectigo_rfc3161:cc687b123950",
+  "object_type": "RFC3161QualificationRehearsalReport",
+  "payload_sha256": "cc687b123950470a0ac989fa3ad3ef71f56d53912740f2fbcddda43093d018ec",
+  "policy_semantics_documented": false,
+  "prospective_eligible": false,
+  "provider_id": "sectigo_rfc3161",
+  "provider_policy_evidence_source": "UNAVAILABLE",
+  "raw_evidence_sha256": {
+    "request": "a827cf3788c04f216990ea7a8d8851944f0dbf14c40d352cf5ade565ce757e42",
+    "response": "436cafc3c76e85caab485a92818bb45f297db44ef483fe73d9895e2a8142e620",
+    "subject": "3837b8ce2e012a913cbdab6f7e52bdc045013bdc4acfbc88abc99cee149275c6",
+    "tool_versions": "be199f46afcc2923aa8be1acb9974a60387d54c42e49497aebdf1cc6d294e956"
+  },
+  "request_nonce": "f726d81b82689727",
+  "request_sha256": "a827cf3788c04f216990ea7a8d8851944f0dbf14c40d352cf5ade565ce757e42",
+  "response_nonce": "f726d81b82689727",
+  "response_sha256": "436cafc3c76e85caab485a92818bb45f297db44ef483fe73d9895e2a8142e620",
+  "rfc3161_response_status": "GRANTED",
+  "rfc3161_signature_verification": {
+    "detail": "not attempted because TSA certificate selection failed",
+    "verified": false
+  },
+  "schema_version": "1.0",
+  "subject_sha256": "3837b8ce2e012a913cbdab6f7e52bdc045013bdc4acfbc88abc99cee149275c6",
+  "token_accuracy": "unspecified",
+  "token_gen_time": "2026-09-11T07:27:50Z",
+  "token_ordering": "no",
+  "token_policy_oid": "1.3.6.1.4.1.6449.2.1.1",
+  "tool_versions": [
+    "OpenSSL 3.5.7 9 Jun 2026 (Library: OpenSSL 3.5.7 9 Jun 2026)",
+    "built on: Wed Jun 10 12:22:25 2026 UTC",
+    "platform: mingw64",
+    "options:  bn(64,64)",
+    "compiler: gcc -m64 -Wall -O3 -DL_ENDIAN -DOPENSSL_PIC -DUNICODE -D_UNICODE -DWIN32_LEAN_AND_MEAN -D_MT -DOPENSSL_BUILDING_OPENSSL -DZLIB -DZLIB_SHARED -DNDEBUG -DOPENSSLBIN=\"\\\\\"/mingw64/bin\\\\\"\"",
+    "OPENSSLDIR: \"/mingw64/etc/ssl\"",
+    "ENGINESDIR: \"/mingw64/lib/engines-3\"",
+    "MODULESDIR: \"/mingw64/lib/ossl-modules\"",
+    "Seeding source: os-specific",
+    "CPUINFO: OPENSSL_ia32cap=0x7ed8320b078bffff:0x00400004219c91a9:0x0000000000000000:0x0000000000000000:0x0000000000000000",
+    "curl 8.21.0 (x86_64-w64-mingw32) libcurl/8.21.0 Schannel zlib/1.3.2 brotli/1.2.0 zstd/1.5.7 libidn2/2.3.8 libpsl/0.21.5 libssh2/1.11.1 WinLDAP",
+    "Release-Date: 2026-06-24",
+    "Protocols: dict file ftp ftps gopher gophers http https imap imaps ipfs ipns ldap ldaps mqtt mqtts pop3 pop3s rtsp scp sftp smtp smtps telnet tftp ws wss",
+    "Features: alt-svc AsynchDNS brotli HSTS HTTPS-proxy IDN IPv6 Kerberos Largefile libz NTLM PSL SPNEGO SSL SSPI threadsafe UnixSockets zstd",
+    "Python 3.13.11"
+  ],
+  "trust_anchor_matches_embedded_certificate": false,
+  "trust_anchor_sha256_der": "UNAVAILABLE",
+  "trust_anchor_source": "UNAVAILABLE",
+  "tsa_certificate_extended_key_usage": [
+    "Time Stamping"
+  ],
+  "tsa_certificate_extended_key_usage_critical": true,
+  "tsa_certificate_not_after": "2037-06-24T23:59:59Z",
+  "tsa_certificate_not_before": "2026-03-25T00:00:00Z",
+  "tsa_certificate_serial": "E74EF255B0504FFADBA6DFF7FC8BA315",
+  "tsa_certificate_sha256_der": "d14751ba71cd8883e560166406cf62cd229a5fe91e308d301976feb23ea90156",
+  "unresolved_qualification_blockers": [
+    {
+      "code": "MISSING_QUALIFICATION_EVIDENCE",
+      "detail": "missing independent_tsa_certificate: sectigo_v2/independent_tsa_certificate.pem"
+    },
+    {
+      "code": "MISSING_QUALIFICATION_EVIDENCE",
+      "detail": "missing trust_anchor: sectigo_v2/trust_anchor.pem"
+    },
+    {
+      "code": "REVOCATION_EVIDENCE_MISSING",
+      "detail": "no retained CRL was configured"
+    },
+    {
+      "code": "TIMESTAMP_ACCURACY_UNSPECIFIED",
+      "detail": "token omits accuracy and no applicable conservative bound is documented"
+    },
+    {
+      "code": "TOKEN_POLICY_SEMANTICS_UNDOCUMENTED",
+      "detail": "no frozen applicable semantics for 1.3.6.1.4.1.6449.2.1.1"
+    }
+  ]
+}

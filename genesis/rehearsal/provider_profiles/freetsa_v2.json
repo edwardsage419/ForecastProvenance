@@ -1,0 +1,26 @@
+{
+  "accuracy_semantics": {
+    "documented": false
+  },
+  "captured_utc": "2026-09-11T07:24:22Z",
+  "classification": "NON_FORECAST_REHEARSAL",
+  "crl_source": "independently retrieved FreeTSA Root CA CRL",
+  "evidence_files": {
+    "crl": "freetsa_v2/root_ca.crl",
+    "independent_tsa_certificate": "freetsa_v2/freetsa_tsa_independent.crt",
+    "provider_policy": "freetsa_v2/freetsa_cps.html",
+    "request": "freetsa_v2/request.tsq",
+    "response": "freetsa_v2/response.tsr",
+    "subject": "subject.txt",
+    "tool_versions": "freetsa_v2/tool_versions.txt",
+    "trust_anchor": "freetsa_v2/freetsa_root_independent.pem"
+  },
+  "policy_semantics": {
+    "applicable_policy_oids": [],
+    "documented": false
+  },
+  "prospective_eligible": false,
+  "provider_id": "freetsa_rfc3161",
+  "provider_policy_evidence_source": "retained FreeTSA CPS capture; no observed direct definition of tsa_policy1",
+  "trust_anchor_source": "independently retrieved FreeTSA Root CA certificate"
+}

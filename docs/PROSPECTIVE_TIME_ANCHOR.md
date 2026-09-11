@@ -81,11 +81,15 @@ A candidate provider cannot count toward quorum until its exact trust roots, tok
 
 ## Rehearsal status
 
-A FreeTSA non-forecast request was prepared in the current execution environment on 2026-09-11, but external DNS was unavailable. No request reached the provider.
+Owner-controlled non-forecast FreeTSA, DigiCert, and Sectigo requests reached the
+providers on 2026-09-11. The sealed checker reports remain
+`REHEARSAL_INCOMPLETE` and permanently `prospective_eligible=false`.
 
-This is recorded as an environment limitation rather than provider failure.
-
-Live network rehearsals remain required before GEN_001 can exit.
+FreeTSA cryptographic, independent-certificate, trust-anchor, and CRL checks
+succeed, but `tsa_policy1` semantics and a conservative accuracy bound remain
+undocumented. DigiCert and Sectigo still lack independent signer, trust-anchor,
+revocation, applicable policy, and accuracy evidence. No provider is production
+qualified or eligible for receipt quorum.
 
 ## Detailed contract
 

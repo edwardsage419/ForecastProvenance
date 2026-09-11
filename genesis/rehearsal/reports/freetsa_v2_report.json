@@ -1,0 +1,133 @@
+{
+  "accuracy_semantics_documented": false,
+  "captured_utc": "2026-09-11T07:24:22Z",
+  "certificate_chain_verification": {
+    "detail": "OpenSSL certificate verification succeeded",
+    "verified": true
+  },
+  "certificate_requested": true,
+  "checker_tool_version": "OpenSSL 3.5.7 9 Jun 2026 (Library: OpenSSL 3.5.7 9 Jun 2026)",
+  "checker_version": "1.0",
+  "classification": "NON_FORECAST_REHEARSAL",
+  "content_sha256": "e8ef1e83acc94ed5e638b1ddf03a3725e9a7755df5dac57a40b9836e7faee01e",
+  "crl_evidence": {
+    "available": true,
+    "certificate_revocation_check": {
+      "detail": "CRL check and capture window verified",
+      "verified": true
+    },
+    "issuer": "O=Free TSA, OU=Root CA, CN=www.freetsa.org, emailAddress=busilezas@gmail.com, L=Wuerzburg, ST=Bayern, C=DE",
+    "issuer_matches_trust_anchor": true,
+    "last_update": "2025-09-18T14:45:18Z",
+    "next_update": "2026-09-18T14:45:18Z",
+    "sha256": "78df0dee282af4379c71907e3ec181082635cf8ee3d6dae619c713bd1f829d92",
+    "signature_verification": {
+      "detail": "OpenSSL CRL signature verification succeeded",
+      "verified": true
+    },
+    "source": "independently retrieved FreeTSA Root CA CRL"
+  },
+  "embedded_certificate_inventory": [
+    {
+      "extended_key_usage": [],
+      "extended_key_usage_critical": false,
+      "issuer": "O=Free TSA, OU=Root CA, CN=www.freetsa.org, emailAddress=busilezas@gmail.com, L=Wuerzburg, ST=Bayern, C=DE",
+      "not_after": "2041-03-07T01:52:13Z",
+      "not_before": "2016-03-13T01:52:13Z",
+      "role": "EMBEDDED_CHAIN",
+      "serial": "C1E986160DA8E980",
+      "sha256_der": "a6379e7cecc05faa3cbf076013d745e327bbbaa38c0b9af22469d4701d18aabc",
+      "subject": "O=Free TSA, OU=Root CA, CN=www.freetsa.org, emailAddress=busilezas@gmail.com, L=Wuerzburg, ST=Bayern, C=DE"
+    },
+    {
+      "extended_key_usage": [
+        "Time Stamping"
+      ],
+      "extended_key_usage_critical": true,
+      "issuer": "O=Free TSA, OU=Root CA, CN=www.freetsa.org, emailAddress=busilezas@gmail.com, L=Wuerzburg, ST=Bayern, C=DE",
+      "not_after": "2040-02-02T19:44:22Z",
+      "not_before": "2026-02-15T19:44:22Z",
+      "role": "TSA_SIGNER",
+      "serial": "C2E986160DA8E9CD",
+      "sha256_der": "32e841a95cc1164101ffde41298ef2fc75c1c4372ef095e88a6bbd47dfb191fc",
+      "subject": "O=Free TSA, OU=TSA, description=This certificate digitally signs documents and time stamp requests made using the freetsa.org online services, CN=www.freetsa.org, emailAddress=busilezas@mailbox.org, L=Wuerzburg, C=DE, ST=Bayern"
+    }
+  ],
+  "final_rehearsal_status": "REHEARSAL_INCOMPLETE",
+  "independent_tsa_certificate_matches_embedded": true,
+  "independent_tsa_certificate_sha256_der": "32e841a95cc1164101ffde41298ef2fc75c1c4372ef095e88a6bbd47dfb191fc",
+  "message_imprint": "3837b8ce2e012a913cbdab6f7e52bdc045013bdc4acfbc88abc99cee149275c6",
+  "message_imprint_algorithm": "sha256",
+  "message_imprint_matches_subject": true,
+  "nonce_equal": true,
+  "object_id": "rfc3161qualificationrehearsalreport:freetsa_rfc3161:338cf54b2eef",
+  "object_type": "RFC3161QualificationRehearsalReport",
+  "payload_sha256": "338cf54b2eef24c7e464cedd7a292df188ca7cbe187d3f6e873d6a42e5f8d266",
+  "policy_semantics_documented": false,
+  "prospective_eligible": false,
+  "provider_id": "freetsa_rfc3161",
+  "provider_policy_evidence_source": "retained FreeTSA CPS capture; no observed direct definition of tsa_policy1",
+  "raw_evidence_sha256": {
+    "crl": "78df0dee282af4379c71907e3ec181082635cf8ee3d6dae619c713bd1f829d92",
+    "independent_tsa_certificate": "8bfb0305bb64e2571ca507552ef3245cb1c2fee8728e0ff8689225081ea13467",
+    "provider_policy": "69ca0a04dabc1e42062dd6e944a411a215407ed479320384dc0980b10b6c393b",
+    "request": "c24fde38ef17c8569fdb43ec1a3636b244f9b82a31d7e112d6ed11392b843443",
+    "response": "fed52110a5ca92f8b8ed699e6fe84ccdbad983d78c768c2b7aebdc1683cbc85e",
+    "subject": "3837b8ce2e012a913cbdab6f7e52bdc045013bdc4acfbc88abc99cee149275c6",
+    "tool_versions": "be199f46afcc2923aa8be1acb9974a60387d54c42e49497aebdf1cc6d294e956",
+    "trust_anchor": "2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438"
+  },
+  "request_nonce": "51c57709a19f8c1c",
+  "request_sha256": "c24fde38ef17c8569fdb43ec1a3636b244f9b82a31d7e112d6ed11392b843443",
+  "response_nonce": "51c57709a19f8c1c",
+  "response_sha256": "fed52110a5ca92f8b8ed699e6fe84ccdbad983d78c768c2b7aebdc1683cbc85e",
+  "rfc3161_response_status": "GRANTED",
+  "rfc3161_signature_verification": {
+    "detail": "OpenSSL RFC 3161 verification succeeded",
+    "verified": true
+  },
+  "schema_version": "1.0",
+  "subject_sha256": "3837b8ce2e012a913cbdab6f7e52bdc045013bdc4acfbc88abc99cee149275c6",
+  "token_accuracy": "unspecified",
+  "token_gen_time": "2026-09-11T07:24:21Z",
+  "token_ordering": "yes",
+  "token_policy_oid": "tsa_policy1",
+  "tool_versions": [
+    "OpenSSL 3.5.7 9 Jun 2026 (Library: OpenSSL 3.5.7 9 Jun 2026)",
+    "built on: Wed Jun 10 12:22:25 2026 UTC",
+    "platform: mingw64",
+    "options:  bn(64,64)",
+    "compiler: gcc -m64 -Wall -O3 -DL_ENDIAN -DOPENSSL_PIC -DUNICODE -D_UNICODE -DWIN32_LEAN_AND_MEAN -D_MT -DOPENSSL_BUILDING_OPENSSL -DZLIB -DZLIB_SHARED -DNDEBUG -DOPENSSLBIN=\"\\\\\"/mingw64/bin\\\\\"\"",
+    "OPENSSLDIR: \"/mingw64/etc/ssl\"",
+    "ENGINESDIR: \"/mingw64/lib/engines-3\"",
+    "MODULESDIR: \"/mingw64/lib/ossl-modules\"",
+    "Seeding source: os-specific",
+    "CPUINFO: OPENSSL_ia32cap=0x7ed8320b078bffff:0x00400004219c91a9:0x0000000000000000:0x0000000000000000:0x0000000000000000",
+    "curl 8.21.0 (x86_64-w64-mingw32) libcurl/8.21.0 Schannel zlib/1.3.2 brotli/1.2.0 zstd/1.5.7 libidn2/2.3.8 libpsl/0.21.5 libssh2/1.11.1 WinLDAP",
+    "Release-Date: 2026-06-24",
+    "Protocols: dict file ftp ftps gopher gophers http https imap imaps ipfs ipns ldap ldaps mqtt mqtts pop3 pop3s rtsp scp sftp smtp smtps telnet tftp ws wss",
+    "Features: alt-svc AsynchDNS brotli HSTS HTTPS-proxy IDN IPv6 Kerberos Largefile libz NTLM PSL SPNEGO SSL SSPI threadsafe UnixSockets zstd",
+    "Python 3.13.11"
+  ],
+  "trust_anchor_matches_embedded_certificate": true,
+  "trust_anchor_sha256_der": "a6379e7cecc05faa3cbf076013d745e327bbbaa38c0b9af22469d4701d18aabc",
+  "trust_anchor_source": "independently retrieved FreeTSA Root CA certificate",
+  "tsa_certificate_extended_key_usage": [
+    "Time Stamping"
+  ],
+  "tsa_certificate_extended_key_usage_critical": true,
+  "tsa_certificate_not_after": "2040-02-02T19:44:22Z",
+  "tsa_certificate_not_before": "2026-02-15T19:44:22Z",
+  "tsa_certificate_serial": "C2E986160DA8E9CD",
+  "tsa_certificate_sha256_der": "32e841a95cc1164101ffde41298ef2fc75c1c4372ef095e88a6bbd47dfb191fc",
+  "unresolved_qualification_blockers": [
+    {
+      "code": "TIMESTAMP_ACCURACY_UNSPECIFIED",
+      "detail": "token omits accuracy and no applicable conservative bound is documented"
+    },
+    {
+      "code": "TOKEN_POLICY_SEMANTICS_UNDOCUMENTED",
+      "detail": "no frozen applicable semantics for tsa_policy1"
+    }
+  ]
+}
