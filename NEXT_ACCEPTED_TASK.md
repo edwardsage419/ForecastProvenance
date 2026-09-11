@@ -1,31 +1,48 @@
 # Next Accepted Task
 
 Task ID: FTC_002
-State: AUTHORIZED, NOT STARTED
+State: IMPLEMENTATION REVIEW OPEN
 
 ## Objective
 
-Implement Forecast Trust Core version 0.4 against synthetic fixtures only, then execute the adversarial matrix.
+Review the first synthetic implementation of Forecast Trust Core version 0.4 and close remaining implementation defects before merge.
 
-## Allowed work
+## Delivered implementation candidate
 
-1. Create the minimal `src/`, `schemas/`, `tests/`, and `fixtures/synthetic/` structure.
-2. Implement FPP_JCS_1 canonicalization and two stage object identity.
-3. Implement dependency reference validation.
-4. Implement TrustedManifest and BootstrapGovernanceRoot interfaces using synthetic keys and fixtures.
-5. Implement SourceContract, TransformationDefinition, FittedState, policy, cycle plan, cycle manifest, anchor evidence, correction, review, and validation schemas.
-6. Implement point in time checks and derived lifecycle rules.
-7. Implement deterministic cycle slot generation from synthetic IssuanceSchedulePolicy fixtures.
-8. Implement selection control validation using synthetic deterministic, public randomness, and externally audited examples.
-9. Implement all adversarial cases in `ADVERSARIAL_REVIEW_MATRIX.md` as tests or explicit review fixtures.
-10. Use only synthetic or retrospective test material clearly marked as non prospective.
+1. Minimal `src/`, `schemas/`, `tests/`, and `fixtures/synthetic/` structure.
+2. Restricted FPP_JCS_1 canonicalization for the frozen v0.4 domain.
+3. Two stage object identity and SHA256 content sealing.
+4. Full object ID plus hash dependency validation.
+5. Point in time validation with explicit UNKNOWN handling.
+6. Cycle plan external precommitment validation.
+7. Exact cycle plan binding, full slot hash accounting, and version 1 slot cardinality checks.
+8. Selection control primitives.
+9. External proof deadline state handling.
+10. ADV001 through ADV096 coverage registry with explicit automation boundaries.
+
+## Current evidence
+
+Local test command: `PYTHONPATH=src python -m unittest discover -s tests -v`
+
+Current result: 18 tests passed.
+
+21 adversarial cases are directly executable in the primitive layer. 60 are explicit object or governance design boundaries. 15 require concrete Genesis external proof or bootstrap instances.
+
+## Allowed work during review
+
+1. Inspect implementation against frozen v0.4 contracts.
+2. Add regression tests for implementation defects.
+3. Tighten fail closed behavior.
+4. Refine synthetic schemas and fixtures without changing frozen scientific semantics.
+5. Reclassify an adversarial boundary only when executable evidence justifies the change.
+6. Prepare FTC_002 acceptance or blocking finding record.
 
 ## Prohibited work
 
 1. Genuine prospective forecast issuance.
 2. Forecast Ledger Genesis creation.
-3. Real target selection for production forecasting.
-4. Import of Psychohistory research artifacts as native evidence.
+3. Production target selection.
+4. Psychohistory research artifacts as native evidence.
 5. Production model or LLM forecast execution.
 6. Real OpenTimestamps Genesis anchoring.
 7. Paid infrastructure.
@@ -33,6 +50,6 @@ Implement Forecast Trust Core version 0.4 against synthetic fixtures only, then 
 
 ## Exit criteria
 
-FTC_002 exits when the frozen version 0.4 contracts have executable validation coverage, all deterministic adversarial cases produce the expected fail closed behavior, non automatable review cases have explicit testable boundaries, and there are no unresolved blocking implementation findings.
+FTC_002 exits when repository level implementation review has no unresolved blocking defect, directly executable adversarial cases fail closed as specified, all remaining boundary cases are explicitly classified, and the synthetic implementation is reproducible from the repository alone.
 
-Completion of FTC_002 still does not authorize genuine prospective forecasting. A separate adversarial implementation review and Genesis readiness decision are required.
+FTC_002 completion does not authorize genuine prospective forecasting. Genesis readiness remains a separate gated task.
