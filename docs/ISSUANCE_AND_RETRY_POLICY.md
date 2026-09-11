@@ -7,13 +7,15 @@ Status: FTC_001 FREEZE CANDIDATE
 
 Every confirmatory issuance cycle begins with an immutable `IssuanceCyclePlan`.
 
-The plan fixes the execution window, expected slots, exact target and method bindings, output schema, forecast cardinality, information cutoff, retry policy, omission policy, plan commitment deadline, and forecast external proof deadline.
+The plan fixes the execution window, expected slots, exact target and method bindings, output schema, forecast cardinality, information cutoff, retry policy, omission policy, selection control requirements, plan commitment deadline, and forecast external proof deadline.
 
 The exact plan must have accepted external existence evidence satisfying:
 
 ```text
-verified_plan_existence_bound <= plan_commitment_deadline <= execution_window_open
+verified_plan_existence_bound <= plan_commitment_deadline < execution_window_open
 ```
+
+Genesis binds a minimum safety margin appropriate for the selected anchor precision.
 
 The protocol does not use local attempt start timestamps to prove precommitment ordering.
 
@@ -32,10 +34,21 @@ method_ref
 output_schema_ref
 forecast_horizon
 evidence_contract_refs
+selection_control_class
 forecast_cardinality = 1
 ```
 
 Every slot must later appear exactly once in cycle accounting.
+
+## Execution selection control
+
+Each method must satisfy the class specific rules in `EXECUTION_SELECTION_CONTROL.md`.
+
+Confirmatory issuance allows `DETERMINISTIC_REPLAY`, `PRECOMMITTED_RANDOMNESS`, or `EXTERNALLY_AUDITED_ATTEMPTS` only when their validation conditions pass.
+
+`UNCONTROLLED_NONDETERMINISM` remains eligible for exploratory research and is ineligible for confirmatory prospective claims.
+
+This rule prevents a complete recorded retry chain from being treated as proof that hidden alternative outputs were impossible.
 
 ## Retry policy
 
@@ -47,7 +60,7 @@ The policy fixes maximum attempts, retry eligible failures, randomness handling,
 
 Default rule: the first successful attempt reached under the precommitted retry algorithm is issuance eligible.
 
-Every attempt is retained and referenced by the cycle manifest.
+Every eligible attempt is retained and referenced by the cycle manifest. The selection control class determines what additional evidence is required to establish attempt completeness.
 
 ## Omission policy
 
@@ -57,9 +70,9 @@ An omission requires a reason code admitted by the precommitted OmissionPolicy a
 
 ## Cycle manifest
 
-The immutable `IssuanceCycleManifest` accounts for every expected slot, every attempt, every issued forecast, and every permitted omission.
+The immutable `IssuanceCycleManifest` accounts for every expected slot, every eligible attempt, every issued forecast, and every permitted omission.
 
-Its own final `content_sha256` is the anchor subject. No `anchor_subject_hash` is embedded in the manifest.
+Its own final `content_sha256` is the anchor subject. No self referential anchor hash is embedded in the manifest.
 
 ## Correction policy
 
@@ -77,6 +90,6 @@ Any exception must be precommitted in EvaluationPolicy and CorrectionPolicy befo
 
 ## Prospective eligibility
 
-A confirmatory prospective forecast requires an accepted trusted manifest, valid externally precommitted cycle plan, complete slot and attempt accounting, valid point in time evidence, immutable issued forecast, and accepted external existence proof for the cycle manifest satisfying the frozen external proof deadline.
+A confirmatory prospective forecast requires an accepted trusted manifest, valid externally precommitted cycle plan, complete slot and eligible attempt accounting under the method's selection control class, valid point in time evidence, immutable issued forecast, and accepted external existence proof for the cycle manifest satisfying the frozen external proof deadline.
 
 Prospective eligibility is derived by ValidationReport and is never asserted by the forecast payload.
