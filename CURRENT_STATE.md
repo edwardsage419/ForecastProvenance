@@ -34,13 +34,23 @@ Architecture: DRAFT 0.1
 
 Governance: DRAFT 1.0
 
-Forecast Trust Core: DESIGN DEFINED, IMPLEMENTATION NOT STARTED
+Forecast Trust Core: FTC_001 REVIEW CANDIDATE
 
-Adversarial review: NOT STARTED
+Canonicalization contract: FTC_001 REVIEW CANDIDATE, FPP_JCS_1
+
+Trusted manifest contract: FTC_001 REVIEW CANDIDATE
+
+Point in time rules: FTC_001 REVIEW CANDIDATE
+
+Adversarial review matrix: FTC_001 REVIEW CANDIDATE, 40 synthetic attack cases defined
+
+Trust Core implementation: NOT STARTED
+
+Adversarial execution: NOT STARTED
 
 External anchor candidate: SELECTED FOR GENESIS TESTING, OpenTimestamps with Bitcoin attestation
 
-Genesis Protocol: DRAFT REQUIRED BEFORE GENESIS
+Genesis Protocol: DRAFT, NOT ACCEPTED
 
 Prospective forecasting: PROHIBITED BY CURRENT STATE
 
@@ -56,6 +66,10 @@ SHA256 of the authoritative payload:
 
 This provenance records methodological ancestry only. It does not import Psychohistory research evidence.
 
-## Next accepted work
+## Current review gate
 
-Complete the Trust Core normative contracts and adversarial test specification using synthetic fixtures only. Do not issue forecasts.
+FTC_001 design review is open.
+
+The next state transition is not automatic. Acceptance requires review of the exact normative contracts, resolution of blocking design findings, and a recorded decision before any `src/`, `schemas/`, `tests/`, or synthetic fixture implementation is created.
+
+Native prospective history remains exactly zero throughout this review.
