@@ -17,6 +17,10 @@ forecast_provenance/
     docs/
         POINT_IN_TIME_RULES.md
         FORECAST_TRUST_CORE.md
+        TRUST_CORE_CONTRACTS.md
+        CANONICALIZATION_AND_IDENTIFIERS.md
+        TRUSTED_MANIFEST.md
+        ADVERSARIAL_REVIEW_MATRIX.md
         PROSPECTIVE_TIME_ANCHOR.md
         GENESIS_PROTOCOL.md
 ```
