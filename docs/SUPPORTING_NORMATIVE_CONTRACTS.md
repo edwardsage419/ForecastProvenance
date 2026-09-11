@@ -1,7 +1,7 @@
 # Supporting Normative Contracts
 
-Version: 0.3 candidate
-Status: FTC_001 FREEZE CANDIDATE
+Version: 0.4 candidate
+Status: FTC_001 FINAL FREEZE CANDIDATE
 
 These objects are first class normative dependencies of Forecast Trust Core. They create no prospective history by themselves.
 
@@ -15,6 +15,7 @@ source_contract_version
 source_identity
 access_mode
 artifact_identity_rule
+artifact_selection_rule
 availability_rule
 publication_rule
 revision_rule
@@ -22,7 +23,9 @@ retention_class
 failure_semantics
 ```
 
-The availability rule defines how `available_at` is established. Retrieval time cannot silently substitute for historical availability.
+`artifact_selection_rule` must deterministically identify the eligible artifact or define an ordered selection policy when more than one artifact could satisfy the source identity.
+
+The availability rule defines how `available_at` is established. Retrieval time cannot silently substitute for historical availability. A discretionary favorable artifact choice is invalid for confirmatory use.
 
 ## TransformationDefinition
 
@@ -100,6 +103,7 @@ Required substantive fields:
 cycle_plan_id
 protocol_id
 trusted_manifest_ref
+issuance_schedule_policy_ref
 cycle_label
 information_cutoff
 execution_window_open
@@ -109,16 +113,18 @@ external_proof_deadline
 expected_slots
 retry_policy_ref
 omission_policy_ref
+public_randomness_policy_ref_or_none
 ```
 
 Rules:
 
-1. `plan_commitment_deadline < execution_window_open`.
-2. Genesis binds a minimum safety margin between the plan commitment deadline and execution window open that is compatible with the selected anchor precision.
-3. The exact plan must obtain accepted external existence evidence whose verified bound is at or before `plan_commitment_deadline`.
-4. Local attempt timestamps do not establish valid precommitment.
-5. Any substantive plan change creates a new plan ID and requires a new external precommitment before its execution window.
-6. A version 1 expected slot has `forecast_cardinality = 1` and binds exact target instance, method, output schema, horizon, evidence contract, and deterministic slot ID.
+1. The plan must equal the deterministic output of the active IssuanceSchedulePolicy for its cycle identity.
+2. `plan_commitment_deadline < execution_window_open`.
+3. Genesis binds a minimum safety margin between the plan commitment deadline and execution window open that is compatible with the selected anchor precision.
+4. The exact plan must obtain accepted external existence evidence whose verified bound is at or before `plan_commitment_deadline`.
+5. Local attempt timestamps do not establish valid precommitment.
+6. Any substantive plan change creates a new plan ID and requires a new external precommitment before its execution window.
+7. A version 1 expected slot has `forecast_cardinality = 1` and binds exact target instance, method, output schema, horizon, evidence contract, selection control class, and deterministic slot ID.
 
 ## IssuanceCycleManifest
 
@@ -181,7 +187,17 @@ Runtime execution time is excluded. `historical_validation_result` is immutable 
 
 ## CurrentVerifiabilityReport
 
-A separate derived report states whether the bytes and proofs needed for independent verification are currently available.
+A separate derived operational report states whether the bytes and proofs needed for independent verification are available at a declared `as_of` timestamp.
+
+Required fields:
+
+```text
+subject_ref
+as_of
+required_dependency_refs
+availability_states
+current_verifiability_state
+```
 
 Loss of retained evidence can degrade current verifiability to `PARTIAL` or `UNVERIFIABLE` without rewriting a prior ValidationReport.
 
