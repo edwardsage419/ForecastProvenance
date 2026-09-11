@@ -46,9 +46,11 @@ External time evidence architecture: FPP_TIME_EVIDENCE_V1 REVIEW CANDIDATE
 
 Deadline receipt quorum: two independent provider groups, at least one RFC 3161
 
-Primary RFC 3161 candidates: FreeTSA and DigiCert
+Historical provider design snapshot: FreeTSA and DigiCert primary, Sectigo backup; see `docs/GENESIS_PROVIDER_SNAPSHOT_2026_09_11.md`
 
-Backup RFC 3161 candidate: Sectigo
+Current provider qualification state: see `docs/GENESIS_PROVIDER_QUALIFICATION_STATUS_2026_09_11.md`
+
+Current second-provider candidate: Signicat AS, `SIGNICAT NOT READY FOR NON_FORECAST_REHEARSAL`
 
 Roughtime: OPTIONAL, NOT A MINIMUM GENESIS DEPENDENCY
 
@@ -96,9 +98,17 @@ Owner action packet: PREPARED
 
 External readiness runbook and non-forecast rehearsal scripts: PREPARED
 
-RFC 3161 qualification rehearsal checker: IMPLEMENTED, SEALED NON-FORECAST REPORTS FOR FREETSA, DIGICERT, AND SECTIGO
+RFC 3161 qualification rehearsal checker: IMPLEMENTED, VERSION 1.3, REPORT SCHEMA 1.2, ENGINEERING CLOSED ABSENT A NEW CONCRETE DEFECT
 
-RFC 3161 provider status: ALL THREE REHEARSALS INCOMPLETE; NONE PRODUCTION QUALIFIED
+Retained RFC 3161 reports: FreeTSA, DigiCert, Sectigo ordinary, and Sectigo Qualified
+
+RFC 3161 provider status: FreeTSA `REHEARSAL_INCOMPLETE`; DigiCert `REHEARSAL_INCOMPLETE`; Sectigo ordinary `REHEARSAL_INCOMPLETE`; Sectigo Qualified `REHEARSAL_VERIFIED`; NONE PRODUCTION QUALIFIED
+
+Sectigo Qualified production status: `CONTINUE QUALIFICATION`; commercial production entitlement and controlling terms unresolved
+
+Signicat status: leading second-provider candidate; `SIGNICAT NOT READY FOR NON_FORECAST_REHEARSAL`; no request authorized
+
+Production-qualified provider count: 0
 
 Candidate materializer: IMPLEMENTED, EXECUTION IN OWNER OR FINAL REVIEW ENVIRONMENT PENDING
 
@@ -134,8 +144,8 @@ ManifestAcceptance: NOT CREATED
 
 ### Owner-controlled external evidence
 
-1. Close RFC 3161 rehearsal blockers. FreeTSA cryptography, independent signer/root, and CRL checks pass, but `tsa_policy1` semantics and a conservative accuracy bound remain undocumented. DigiCert and Sectigo still lack retained independent signer, trust-anchor, revocation, applicable policy, and accuracy evidence.
-2. Exact qualifying ProviderProfiles with signer chain, policy OID, accuracy, nonce behavior, revocation capture, and verifier evidence. No rehearsal checker status grants production qualification.
+1. Complete two independent provider groups. FreeTSA remains incomplete because directly applicable `tsa_policy1` semantics and a conservative accuracy bound remain undocumented. DigiCert remains `INSUFFICIENT_EVIDENCE`. Sectigo ordinary remains `INSUFFICIENT_EVIDENCE`. Sectigo Qualified is `REHEARSAL_VERIFIED` but remains non-production and lacks closed production entitlement and controlling commercial terms. Signicat is the current leading second-provider candidate but remains `NOT READY FOR NON_FORECAST_REHEARSAL` pending explicit authorization and critical signer-identity details.
+2. Close production qualification prerequisites and create exact qualifying ProviderProfiles only in a separately authorized final-freeze task. No rehearsal status grants production qualification. `REHEARSAL_AUTHORIZATION != PRODUCTION_AUTHORIZATION` and `REHEARSAL_VERIFIED != PRODUCTION_QUALIFIED`.
 3. Owner-generated Ed25519 bootstrap public key. Private key must remain outside repository, GitHub, CI, and ChatGPT-managed artifacts.
 4. Non-forecast OpenTimestamps stamp, proof upgrade, and strong verification with explicit owner-controlled Bitcoin Core RPC.
 5. Owner-network retrieval of the three retrospective official BLS/BEA raw fixture byte sets and retained SHA256 metadata.
@@ -167,8 +177,10 @@ Prospective forecasting: PROHIBITED
 
 Forecast Trust Core is complete through synthetic implementation.
 
-GEN_001 repository-side design and tooling are now intentionally constrained. New design surface should not be added unless owner external evidence exposes a concrete blocking defect.
+GEN_001 repository-side design and tooling are now intentionally constrained. New checker or design surface should not be added unless owner external evidence exposes a concrete blocking defect.
 
-The next progress requires owner-controlled external evidence using `docs/GENESIS_OWNER_ACTION_PACKET.md`. After those artifacts exist, work resumes with provider qualification, final source reports, exact validator binding, final manifest construction, and final adversarial review.
+Current provider work is evidence closure rather than checker expansion. Sectigo Qualified requires direct commercial and contractual confirmation before production qualification can proceed. Signicat requires explicit rehearsal authorization and resolution of critical operative-signer identity details before any `NON_FORECAST_REHEARSAL` request may be separately authorized.
 
-No Forecast Ledger, genuine prospective issuance, production model execution, native outcome history, or Genesis acceptance is authorized.
+The remaining owner-controlled external evidence path also includes `docs/GENESIS_OWNER_ACTION_PACKET.md`. After required evidence exists, work resumes with provider qualification, final source reports, exact validator binding, final manifest construction, and final adversarial review.
+
+No Forecast Ledger, genuine prospective issuance, production model execution, native outcome history, production-qualified provider, or Genesis acceptance is authorized.
