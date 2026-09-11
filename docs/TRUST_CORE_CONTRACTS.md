@@ -1,17 +1,17 @@
 # Forecast Trust Core Normative Contracts
 
-Version: 0.2 candidate
-Status: FTC_001 REMEDIATION CANDIDATE
+Version: 0.3 candidate
+Status: FTC_001 FREEZE CANDIDATE
 
 All consequential references bind semantic identity plus full SHA256 content identity.
 
 ## Shared semantics
 
-`object_role` and `evidence_class` are separate.
+`object_role` and stored origin class are separate.
 
-Definition and policy objects use `object_role = NORMATIVE`.
+Definition, policy, and governance objects use `object_role = NORMATIVE`.
 
-Evidence bearing objects use `evidence_class = SYNTHETIC`, `RETROSPECTIVE`, or after Genesis eligibility validation, a derived prospective classification. Prospective status is never self asserted in the immutable forecast payload.
+Evidence bearing objects may persist only an origin classification such as `SYNTHETIC`, `RETROSPECTIVE`, or `NATIVE_POST_GENESIS`. Prospective eligibility is never persisted as self asserted truth. It is derived by ValidationReport under the applicable trusted manifest, acceptance state, anchor evidence, and protocol.
 
 All machine identifiers are ASCII.
 
@@ -23,19 +23,17 @@ Required fields include target identity and version, forecast class, question, o
 
 The deadline rule must be determinable before forecast output inspection.
 
-Set like compatible reference arrays use deterministic reference sorting.
-
 ### ResolutionRule
 
-Binds compatible targets, ordered source priority, vintage selection, conflict policy, evidence sufficiency, allowed resolution states, ambiguity policy, resolution deadline, and any authorized human review rule.
+Binds compatible targets, ordered source priority, vintage selection, conflict policy, evidence sufficiency, allowed resolution states, ambiguity policy, resolution deadline, ResolutionEvidencePolicy, and any authorized human review rule.
 
-Forecast point in time evidence rules are not reused as outcome resolution admissibility rules.
+Forecast information cutoff rules do not govern outcome resolution evidence.
 
 ### EvidenceSnapshot
 
 Binds information cutoff, closure metadata, deterministically sorted member references, SourceContract references, TransformationDefinition references, FittedState references where applicable, and upstream snapshots.
 
-Each member binds exact content hash, available_at claim, source contract, and revision identity.
+Each consequential member binds exact content identity, availability claim, source contract, and revision identity.
 
 ### ForecastMethod
 
@@ -45,29 +43,29 @@ Binds method version, family, compatible targets, required inputs, implementatio
 
 One execution is one immutable attempt.
 
-Required fields bind method, target, planned slot, information cutoff, input snapshots, runtime configuration, randomness, retrieval log, terminal status, failure code, output artifact, attempt sequence, and predecessor attempt.
+Required fields bind method, target instance, planned slot, information cutoff, input snapshots, runtime configuration, randomness, retrieval log, terminal status, failure code, output artifact, attempt sequence, and predecessor attempt.
 
-Terminal attempt objects never mutate.
+Local `started_at` and `ended_at` may be retained as operational metadata. They do not prove cycle precommitment ordering.
 
 ### IssuedForecast
 
 IssuedForecast is immutable.
 
-Required fields bind target, resolution rule, method, successful issuance eligible run attempt, evidence snapshots, information cutoff, forecast horizon, prediction, operational claimed issuance time, cycle plan, correction policy, retry policy, and protocol.
+Required fields bind target instance, resolution rule, method, successful issuance eligible run attempt, evidence snapshots, information cutoff, forecast horizon, prediction, operational claimed issuance time, cycle plan, correction policy, retry policy, and protocol.
 
-It contains no mutable trust status.
+It contains no mutable trust status and no self asserted prospective flag.
 
 ### AnchorReceipt
 
-The previous mutable AnchorReceipt design is retired.
+The mutable AnchorReceipt design is retired.
 
-Version 0.2 uses immutable `AnchorEvidenceEvent` objects defined in SUPPORTING_NORMATIVE_CONTRACTS.md. Anchor state is derived from the ordered event graph under the active validator contract.
+Trust Core uses immutable `AnchorEvidenceEvent` objects. Anchor state is derived from a validated event DAG under an admitted AnchorScheme and validator contract.
 
 ### ForecastCorrection
 
 ForecastCorrection is immutable and records original forecast, correction type, reason, affected fields, replacement forecast when required, authority, and evidence.
 
-It does not contain a self selected scoring consequence. Evaluation derives treatment from the precommitted CorrectionPolicy.
+It cannot select its own scoring consequence. Evaluation treatment comes from the precommitted CorrectionPolicy and EvaluationPolicy.
 
 ## Supporting first class normative contracts
 
@@ -82,14 +80,15 @@ Trust Core also depends on:
 7. IssuanceCycleManifest.
 8. AnchorEvidenceEvent.
 9. ValidationReport.
-
-Their schemas are defined in SUPPORTING_NORMATIVE_CONTRACTS.md.
+10. CurrentVerifiabilityReport.
+11. BootstrapGovernanceRoot.
+12. PolicyDefinition subtypes defined in `POLICY_CONTRACTS.md`.
 
 ## Derived lifecycle
 
-Lifecycle is validator output over immutable objects and events.
+Lifecycle is validator output over immutable objects and evidence.
 
-An IssuedForecast can be derived as:
+An IssuedForecast may derive to:
 
 ```text
 INTERNALLY_VALID
@@ -100,29 +99,21 @@ LATE_OR_INELIGIBLE
 TRUST_UNKNOWN
 ```
 
-No lifecycle transition rewrites IssuedForecast.
+No derived lifecycle transition rewrites IssuedForecast.
 
 ## Validation results
 
-Core aggregate results are:
+Required checks use `PASS`, `FAIL`, or `UNKNOWN`. `UNKNOWN` on a required trust condition cannot aggregate into a stronger valid trust claim.
 
-```text
-VALID
-INVALID
-INELIGIBLE_TRUST_UNKNOWN
-PENDING_EXTERNAL_ANCHOR
-VALID_NON_PROSPECTIVE
-```
+ValidationReport contains deterministic scientific validation content. Runtime execution metadata is separate.
 
-Required checks use PASS, FAIL, or UNKNOWN. UNKNOWN cannot aggregate into VALID.
-
-ValidationReport excludes runtime validation timestamps from deterministic scientific content.
+Historical validation and current verifiability are separate claims. Loss of evidence bytes can degrade current verifiability without rewriting an earlier immutable report.
 
 ## Human review
 
-Human discretion exists only where an accepted normative rule explicitly authorizes it. ReviewDecision binds authority, evidence, rule, decision, and rationale.
+Human discretion exists only where an accepted ReviewRule explicitly authorizes it. ReviewDecision binds authority, evidence, rule, decision, and rationale.
 
-Human review cannot override cryptographic mismatch or known future information leakage.
+Human review cannot override cryptographic mismatch, known future information leakage, or other hard prohibitions defined by the active contract.
 
 ## Array semantics
 
@@ -130,6 +121,6 @@ Priority arrays preserve declared order.
 
 Set like dependency arrays sort by object ID and full hash.
 
-Attempt and anchor event sequences use explicit integer sequence fields.
+Attempt and anchor evidence relationships use explicit immutable references. Local sequence numbers do not establish external chronology.
 
-Any schema that omits array semantics is incomplete and fails design acceptance.
+Any normative schema that omits array semantics is incomplete.
