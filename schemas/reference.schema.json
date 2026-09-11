@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "fpp:reference:v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["object_id", "content_sha256"],
+  "properties": {
+    "object_id": {"type": "string", "pattern": "^[A-Za-z0-9._:/-]+$"},
+    "content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

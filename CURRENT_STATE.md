@@ -24,29 +24,35 @@ Forecast Ledger Genesis: NOT STARTED
 
 ## Trust Core state
 
-FTC_001 normative design: FROZEN FOR SYNTHETIC IMPLEMENTATION, version 0.4
+FTC_001 normative design: FROZEN, version 0.4
 
-Adversarial design review pass 1: COMPLETE
+FTC_002 synthetic implementation: ACCEPTED FOR MERGE
 
-Adversarial design review pass 2: COMPLETE
+Implementation branch: build/ftc-002
 
-Adversarial design review pass 3 and freeze review: COMPLETE
+Implementation PR: #4
 
-Adversarial design matrix: 96 synthetic cases defined
+Adversarial matrix: ADV001 through ADV096 executed as synthetic attack scenarios
 
-Trust Core implementation: AUTHORIZED, NOT STARTED
+Implementation findings resolved: full slot hash binding, exact cycle plan binding, malformed trust root fail closed handling, Unicode surrogate rejection, retry predecessor and trigger validation, exact plan proof subject binding, public randomness timing and source binding, and operator seed rejection
 
-Synthetic adversarial execution: NOT STARTED
+Runtime dependencies: 0
+
+Synthetic fixtures only: YES
 
 ## Genesis state
 
 External anchor candidate: OpenTimestamps with Bitcoin attestation, Genesis testing only
 
-Concrete AnchorScheme semantics: NOT FROZEN
+Concrete OTS_BTC_BATCH_V1 AnchorScheme semantics: NOT FROZEN
 
-Bootstrap governance instance: NOT CREATED
+BootstrapGovernanceRoot instance: NOT CREATED
 
-Initial target set: NOT FROZEN
+Initial production target set: NOT FROZEN
+
+Resolution policies: NOT FROZEN
+
+Issuance schedule: NOT FROZEN
 
 Genesis Protocol: DRAFT, NOT ACCEPTED
 
@@ -54,8 +60,8 @@ Prospective forecasting: PROHIBITED
 
 ## Current gate
 
-The project may now create only the minimal implementation structure needed for Forecast Trust Core schemas, validators, synthetic fixtures, and tests.
+Forecast Trust Core has passed normative design review and synthetic implementation adversarial review.
 
-No live production model execution, Forecast Ledger creation, genuine prospective issuance, or native outcome history is authorized.
+This establishes fail closed Trust Layer interfaces. It does not create positive external evidence and does not establish predictive skill.
 
-The next accepted task is FTC_002, synthetic Trust Core implementation and adversarial execution.
+The next work is Genesis readiness design. No Forecast Ledger, genuine prospective issuance, production model execution, native outcome history, or real Genesis anchoring is authorized until the Genesis gate is separately accepted.
