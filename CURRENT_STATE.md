@@ -42,6 +42,8 @@ External time evidence architecture: FPP_TIME_EVIDENCE_V1 REVIEW CANDIDATE
 
 Deadline receipt quorum: two independent provider groups, at least one RFC 3161
 
+Minimal provider plan: FreeTSA RFC 3161 plus DigiCert RFC 3161; Roughtime optional
+
 Bitcoin durability layer: OTS_BTC_BUNDLE_V1 REVIEW CANDIDATE
 
 Bootstrap authority model: owner-controlled Ed25519, exact public key PENDING OWNER ACTION
@@ -64,15 +66,27 @@ Official BLS and BEA source contracts: REVIEW CANDIDATE
 
 Semantic target parser: IMPLEMENTED AND SYNTHETICALLY TESTED
 
+Retrospective official-source fixture manifest: CREATED FOR CPI 2026-07, U-3 2026-08, GDP 2026-Q2 ADVANCE
+
+Official fixture fetcher: IMPLEMENTED, OWNER NETWORK EXECUTION PENDING
+
 Transparent baseline: last-observed first-release value, REVIEW CANDIDATE
 
 Evaluation policy: continuous scalar point forecast, absolute error and squared error, REVIEW CANDIDATE
 
 Genesis abort conditions: REVIEW CANDIDATE
 
+GEN_001 readiness evidence matrix: ACTIVE REVIEW CONTROL
+
 External readiness runbook and non-forecast rehearsal scripts: PREPARED
 
-GEN_001 adversarial readiness review: PASS 1 COMPLETE, EXTERNAL BLOCKERS REMAIN
+RFC 3161 rehearsal evidence capture: RAW REQUEST/RESPONSE, HTTP HEADERS, TOOL VERSIONS, HASHES, NONCE POLICY
+
+Candidate materializer: IMPLEMENTED, EXECUTION IN OWNER OR FINAL REVIEW ENVIRONMENT PENDING
+
+Final validator-binding builder: IMPLEMENTED, FINAL COMMIT AND TEST REPORT PENDING
+
+GEN_001 adversarial readiness review: PASS 1 REFRESHED, EXTERNAL AND FINAL-FREEZE BLOCKERS REMAIN
 
 ## Candidate object state
 
@@ -88,6 +102,8 @@ Effective candidate composition: v0.2 base plus v0.3 patch
 
 Full dependency closure tests: PRESENT
 
+Deterministic effective-inventory materializer: PRESENT
+
 All candidate objects: NON-PROSPECTIVE
 
 Candidate Genesis TrustedManifest: NOT CREATED
@@ -98,17 +114,20 @@ ManifestAcceptance: NOT CREATED
 
 ### Owner-controlled external evidence
 
-1. Live non-forecast wall-clock provider rehearsals from a networked owner-controlled environment.
-2. Exact qualifying RFC 3161 provider profiles with signer chain, policy OID, accuracy, nonce behavior, and revocation capture evidence.
-3. Owner-generated Ed25519 bootstrap public key. Private key must remain outside the repository, GitHub, CI, and ChatGPT-managed artifacts.
-4. Non-forecast OpenTimestamps stamp, proof upgrade, and strong verification with an owner-controlled Bitcoin Core node.
+1. Live non-forecast FreeTSA and DigiCert RFC 3161 rehearsals from a networked owner-controlled environment.
+2. Exact qualifying ProviderProfiles with signer chain, policy OID, accuracy, nonce behavior, revocation capture, and verifier evidence.
+3. Owner-generated Ed25519 bootstrap public key. Private key must remain outside repository, GitHub, CI, and ChatGPT-managed artifacts.
+4. Non-forecast OpenTimestamps stamp, proof upgrade, and strong verification with owner-controlled Bitcoin Core.
+5. Owner-network retrieval of the three retrospective official BLS/BEA raw fixture byte sets and retained SHA256 metadata.
 
-### Repository and source closure
+### Final repository freeze
 
-5. Real official BLS and BEA archive bytes and adapter fixtures proving the semantic parser against retained first-release artifacts.
-6. Exact Genesis validator implementation binding at the final candidate commit.
-7. Construction and validation of the final candidate Genesis TrustedManifest after all required external profiles and evidence are fixed.
-8. Final Genesis readiness adversarial review with no blocking finding.
+6. Successful source-adapter reports over retained real official fixture bytes.
+7. Final full test report under the final candidate code.
+8. Exact ValidatorContract built against final candidate commit and test report.
+9. Final BootstrapGovernanceRoot and qualifying ProviderProfile/verifier objects.
+10. Construction and validation of the final candidate Genesis TrustedManifest.
+11. Final Genesis readiness adversarial review with no blocking finding.
 
 ## Genesis state
 
@@ -128,6 +147,8 @@ Prospective forecasting: PROHIBITED
 
 Forecast Trust Core is complete through synthetic implementation.
 
-GEN_001 has closed the general architecture, target-selection, schedule, baseline, evaluation, operational-policy, semantic-parser, and candidate-object design work. The remaining gates require real external evidence, real official source fixtures, final implementation binding, and a final adversarial review.
+GEN_001 has closed the general architecture, target selection, schedule, minimal method set, baseline, evaluation, operational policies, semantic parser, candidate-object lineage, provider planning, rehearsal tooling, source-fixture specification, candidate materialization procedure, and final validator-binding procedure.
 
-No Forecast Ledger, genuine prospective issuance, production model execution, native outcome history, or real Genesis acceptance is authorized.
+The remaining gates require owner-controlled external evidence and a final freeze over real provider, source, key, Bitcoin, validator, and manifest artifacts.
+
+No Forecast Ledger, genuine prospective issuance, production model execution, native outcome history, or Genesis acceptance is authorized.
