@@ -37,7 +37,9 @@ Each consequential member binds exact content identity, availability claim, sour
 
 ### ForecastMethod
 
-Binds method version, family, compatible targets, required inputs, implementation, model identity, fitted state, prompt or configuration, retrieval policy, randomness policy, output semantics, probability semantics, known limitations, and `evidence_observability_class`.
+Binds method version, family, compatible targets, required inputs, implementation, model identity, fitted state, prompt or configuration, retrieval policy, randomness policy, output semantics, probability semantics, known limitations, `evidence_observability_class`, and `selection_control_class`.
+
+Confirmatory eligibility for stochastic or opaque execution is governed by `EXECUTION_SELECTION_CONTROL.md`. A method with uncontrolled nondeterminism cannot gain a confirmatory prospective claim merely because one recorded run exists.
 
 ### ForecastRunAttempt
 
@@ -83,6 +85,7 @@ Trust Core also depends on:
 10. CurrentVerifiabilityReport.
 11. BootstrapGovernanceRoot.
 12. PolicyDefinition subtypes defined in `POLICY_CONTRACTS.md`.
+13. Execution selection control rules defined in `EXECUTION_SELECTION_CONTROL.md`.
 
 ## Derived lifecycle
 
