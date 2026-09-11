@@ -1,7 +1,7 @@
 # Forecast Trust Core Normative Contracts
 
-Version: 0.3 candidate
-Status: FTC_001 FREEZE CANDIDATE
+Version: 0.4 candidate
+Status: FTC_001 FINAL FREEZE CANDIDATE
 
 All consequential references bind semantic identity plus full SHA256 content identity.
 
@@ -11,7 +11,7 @@ All consequential references bind semantic identity plus full SHA256 content ide
 
 Definition, policy, and governance objects use `object_role = NORMATIVE`.
 
-Evidence bearing objects may persist only an origin classification such as `SYNTHETIC`, `RETROSPECTIVE`, or `NATIVE_POST_GENESIS`. Prospective eligibility is never persisted as self asserted truth. It is derived by ValidationReport under the applicable trusted manifest, acceptance state, anchor evidence, and protocol.
+Evidence bearing objects may persist only an origin classification such as `SYNTHETIC`, `RETROSPECTIVE`, or `LIVE_OPERATIONAL`. `LIVE_OPERATIONAL` states where an object originated and grants no prospective trust status. Prospective eligibility is derived only by ValidationReport under the applicable trusted manifest, acceptance state, anchor evidence, and protocol.
 
 All machine identifiers are ASCII.
 
@@ -19,9 +19,17 @@ All machine identifiers are ASCII.
 
 ### TargetDefinition
 
-Required fields include target identity and version, forecast class, question, outcome type, unit, entity and geography scope, reference period rule, horizon rule, measurement source rule, vintage policy, ambiguity policy, unresolved policy, resolution deadline rule, compatible resolution rules, and `external_proof_deadline_rule`.
+Required fields include target identity and version, forecast class, question, outcome type, unit, entity and geography scope, reference period rule, horizon rule, measurement source rule, vintage policy, ambiguity policy, unresolved policy, resolution deadline rule, compatible resolution rules, `external_proof_deadline_rule`, and `outcome_information_barrier_rule`.
 
-The deadline rule must be determinable before forecast output inspection.
+Both deadline rules must be determinable before forecast output inspection.
+
+For confirmatory prospective use, every instantiated slot must satisfy:
+
+```text
+external_proof_deadline <= outcome_information_barrier
+```
+
+The barrier is an ex ante protocol boundary indicating when outcome information is considered potentially available for the target class. It is not inferred from the realized outcome.
 
 ### ResolutionRule
 
@@ -33,7 +41,7 @@ Forecast information cutoff rules do not govern outcome resolution evidence.
 
 Binds information cutoff, closure metadata, deterministically sorted member references, SourceContract references, TransformationDefinition references, FittedState references where applicable, and upstream snapshots.
 
-Each consequential member binds exact content identity, availability claim, source contract, and revision identity.
+Each consequential member binds exact content identity, availability claim, source contract, and revision identity. Source artifact selection must comply with the bound SourceContract.
 
 ### ForecastMethod
 
@@ -45,7 +53,7 @@ Confirmatory eligibility for stochastic or opaque execution is governed by `EXEC
 
 One execution is one immutable attempt.
 
-Required fields bind method, target instance, planned slot, information cutoff, input snapshots, runtime configuration, randomness, retrieval log, terminal status, failure code, output artifact, attempt sequence, and predecessor attempt.
+Required fields bind method, target instance, planned slot, information cutoff, input snapshots, runtime configuration, randomness evidence where applicable, retrieval log, terminal status, failure code, output artifact, attempt sequence, and predecessor attempt.
 
 Local `started_at` and `ended_at` may be retained as operational metadata. They do not prove cycle precommitment ordering.
 
@@ -86,6 +94,15 @@ Trust Core also depends on:
 11. BootstrapGovernanceRoot.
 12. PolicyDefinition subtypes defined in `POLICY_CONTRACTS.md`.
 13. Execution selection control rules defined in `EXECUTION_SELECTION_CONTROL.md`.
+14. Resolution evidence semantics defined in `RESOLUTION_EVIDENCE_SEMANTICS.md`.
+
+## Deterministic schedule requirement
+
+Confirmatory IssuanceCyclePlan objects must be the deterministic output of the IssuanceSchedulePolicy bound by the applicable trusted manifest.
+
+Target and method inclusion is therefore a protocol decision made before cycle outputs exist, rather than an operator selection at issuance time.
+
+Historical cycle validation always uses the exact schedule policy version bound by that historical manifest.
 
 ## Derived lifecycle
 
