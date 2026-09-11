@@ -7,14 +7,24 @@ if [[ $# -ne 3 ]]; then
   exit 2
 fi
 
-SUBJECT="$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$1")"
+if command -v python3 >/dev/null 2>&1 && python3 -c 'import sys; raise SystemExit(0)' >/dev/null 2>&1; then
+  PYTHON_CMD=(python3)
+elif command -v python >/dev/null 2>&1 && python -c 'import sys; raise SystemExit(0)' >/dev/null 2>&1; then
+  PYTHON_CMD=(python)
+elif command -v py >/dev/null 2>&1 && py -c 'import sys; raise SystemExit(0)' >/dev/null 2>&1; then
+  PYTHON_CMD=(py)
+else
+  echo "A working Python interpreter is required (python3, python, or py)." >&2
+  exit 2
+fi
+
+SUBJECT="$("${PYTHON_CMD[@]}" -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$1")"
 TSA_URL="$2"
 OUTDIR="$3"
 
 command -v openssl >/dev/null
 command -v curl >/dev/null
 command -v sha256sum >/dev/null
-command -v python3 >/dev/null
 
 mkdir -p "$OUTDIR"
 QUERY="$OUTDIR/request.tsq"
@@ -30,11 +40,9 @@ REPORT="$OUTDIR/rehearsal_report.txt"
   echo
   curl --version
   echo
-  python3 --version
+  "${PYTHON_CMD[@]}" --version
 } > "$TOOL_VERSIONS"
 
-# OpenSSL includes a request nonce by default. Do not add -no_nonce.
-# -cert asks the TSA to include its signing certificate when supported.
 openssl ts -query -data "$SUBJECT" -sha256 -cert -out "$QUERY"
 openssl ts -query -in "$QUERY" -text -out "$QUERY_TEXT"
 
