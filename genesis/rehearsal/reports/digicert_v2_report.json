@@ -7,9 +7,9 @@
   },
   "certificate_requested": true,
   "checker_tool_version": "OpenSSL 3.5.7 9 Jun 2026 (Library: OpenSSL 3.5.7 9 Jun 2026)",
-  "checker_version": "1.2",
+  "checker_version": "1.3",
   "classification": "NON_FORECAST_REHEARSAL",
-  "content_sha256": "f40170443478b6191e7ea22783d2ab908c779dad082dd954b758f536a8f0d7a7",
+  "content_sha256": "1fd6dea16ac0a77b145676b32ff5e87fe20c50cee4bfbdd316e6802527ed621e",
   "crl_evidence": {
     "available": false
   },
@@ -59,9 +59,9 @@
   "message_imprint_algorithm": "sha256",
   "message_imprint_matches_subject": true,
   "nonce_equal": true,
-  "object_id": "rfc3161qualificationrehearsalreport:digicert_rfc3161:673cad3dd5e3",
+  "object_id": "rfc3161qualificationrehearsalreport:digicert_rfc3161:e86ac57ac74e",
   "object_type": "RFC3161QualificationRehearsalReport",
-  "payload_sha256": "673cad3dd5e34bc8624f3ad83e60bc7216ba8b2eefe6a7e5e81d219e48f2db2b",
+  "payload_sha256": "e86ac57ac74e863e762c0b2c9f5d59e032665c423b2ba56cf45639a7f71e50a7",
   "policy_semantics_documented": false,
   "prospective_eligible": false,
   "provider_id": "digicert_rfc3161",
@@ -82,7 +82,7 @@
     "detail": "not attempted because TSA certificate selection failed",
     "verified": false
   },
-  "schema_version": "1.1",
+  "schema_version": "1.2",
   "semantic_assertion_evidence": {
     "available": false,
     "verified": false

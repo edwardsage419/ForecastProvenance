@@ -18,7 +18,7 @@ FINAL_STATUSES = {
     "REHEARSAL_INCOMPLETE",
     "REHEARSAL_FAILED",
 }
-CHECKER_VERSION = "1.2"
+CHECKER_VERSION = "1.3"
 REVIEWED_ASSERTION_CLASSIFICATION = "REVIEWED_RFC3161_QUALIFICATION_SEMANTICS"
 REVOCATION_VERIFICATION_SCOPE = "TSA_SIGNER_ONLY"
 HEX_64 = re.compile(r"^[0-9a-f]{64}$")
@@ -79,6 +79,7 @@ class VerificationBackend(Protocol):
     def parse_request(self, request: Path) -> RequestObservation: ...
     def parse_response(self, response: Path) -> TokenObservation: ...
     def inspect_trust_anchor(self, trust_anchor: Path) -> CertificateObservation: ...
+    def inspect_certificate_chain(self, chain: Path) -> tuple[CertificateObservation, ...]: ...
     def verify_chain(
         self,
         tsa_certificate: bytes,
@@ -95,7 +96,7 @@ class VerificationBackend(Protocol):
         untrusted_chain: Path | None,
     ) -> tuple[bool, str]: ...
     def inspect_crl(self, crl: Path) -> CrlObservation: ...
-    def verify_crl_signature(self, crl: Path, trust_anchor: Path) -> tuple[bool, str]: ...
+    def verify_crl_signature(self, crl: Path, issuer_certificate: bytes) -> tuple[bool, str]: ...
 
 
 def _sha256(path: Path) -> str:
@@ -389,7 +390,7 @@ def check_rehearsal(
                 incomplete.append(_blocker("MISSING_RAW_EVIDENCE", f"missing {name}: {files[name]}"))
 
     base_report: dict[str, Any] = {
-        "schema_version": "1.1",
+        "schema_version": "1.2",
         "checker_version": CHECKER_VERSION,
         "classification": CLASSIFICATION,
         "prospective_eligible": False,
@@ -444,11 +445,16 @@ def check_rehearsal(
 
     anchor = None
     independent_tsa = None
+    retained_chain_certificates: tuple[CertificateObservation, ...] = ()
     try:
         if paths.get("trust_anchor", Path()).is_file():
             anchor = backend.inspect_trust_anchor(paths["trust_anchor"])
         if paths.get("independent_tsa_certificate", Path()).is_file():
             independent_tsa = backend.inspect_trust_anchor(paths["independent_tsa_certificate"])
+        if optional_paths.get("untrusted_chain", Path()).is_file():
+            retained_chain_certificates = backend.inspect_certificate_chain(
+                optional_paths["untrusted_chain"]
+            )
     except (RehearsalEvidenceError, OSError, subprocess.SubprocessError) as exc:
         failed.append(_blocker("MALFORMED_CERTIFICATE_EVIDENCE", str(exc)))
 
@@ -533,7 +539,7 @@ def check_rehearsal(
                 tsa.pem,
                 paths["trust_anchor"],
                 optional_paths.get("untrusted_chain"),
-                optional_paths.get("crl"),
+                None,
                 token.gen_time,
             )
             signature_ok, signature_detail = backend.verify_response(
@@ -551,12 +557,44 @@ def check_rehearsal(
     if "crl" in optional_paths and anchor is not None:
         try:
             crl_observation = backend.inspect_crl(optional_paths["crl"])
-            crl_signature_ok, crl_signature_detail = backend.verify_crl_signature(
-                optional_paths["crl"], paths["trust_anchor"]
-            )
+            issuer_candidates = [
+                certificate
+                for certificate in (anchor, *retained_chain_certificates)
+                if tsa is not None and certificate.subject == tsa.issuer
+            ]
+            selected_issuer = issuer_candidates[0] if len(issuer_candidates) == 1 else None
+            if selected_issuer is None:
+                detail = (
+                    "no independently retained certificate matches the TSA signer issuer"
+                    if not issuer_candidates
+                    else "multiple independently retained certificates match the TSA signer issuer"
+                )
+                failed.append(_blocker("SIGNER_ISSUER_CERTIFICATE_SELECTION_FAILED", detail))
+                crl_signature_detail = f"not attempted: {detail}"
+            else:
+                crl_signature_ok, crl_signature_detail = backend.verify_crl_signature(
+                    optional_paths["crl"], selected_issuer.pem
+                )
             crl_window_ok = _parse_utc(crl_observation.last_update) <= _parse_utc(token.gen_time) <= _parse_utc(crl_observation.next_update)
-            crl_issuer_matches = crl_observation.issuer == anchor.subject
-            revocation_ok = chain_ok and crl_signature_ok and crl_window_ok and crl_issuer_matches
+            crl_issuer_matches = bool(tsa and crl_observation.issuer == tsa.issuer)
+            revocation_chain_ok = False
+            revocation_chain_detail = "not attempted because direct signer issuer selection failed"
+            if selected_issuer is not None and crl_issuer_matches:
+                revocation_chain_ok, revocation_chain_detail = backend.verify_chain(
+                    tsa.pem,
+                    paths["trust_anchor"],
+                    optional_paths.get("untrusted_chain"),
+                    optional_paths["crl"],
+                    token.gen_time,
+                )
+            revocation_ok = (
+                chain_ok
+                and selected_issuer is not None
+                and crl_signature_ok
+                and crl_window_ok
+                and crl_issuer_matches
+                and revocation_chain_ok
+            )
             revocation_detail = "CRL check and capture window verified" if revocation_ok else "CRL verification or capture window failed"
             crl_report = {
                 "available": True,
@@ -564,16 +602,26 @@ def check_rehearsal(
                 "source": profile.get("crl_source", "UNSPECIFIED"),
                 "sha256": _sha256(optional_paths["crl"]),
                 "issuer": crl_observation.issuer,
-                "issuer_matches_trust_anchor": crl_issuer_matches,
+                "signer_issuer_subject": tsa.issuer if tsa else "UNAVAILABLE",
+                "selected_crl_issuer_certificate_subject": (
+                    selected_issuer.subject if selected_issuer else "UNAVAILABLE"
+                ),
+                "selected_crl_issuer_certificate_sha256_der": (
+                    selected_issuer.sha256_der if selected_issuer else "UNAVAILABLE"
+                ),
+                "crl_issuer_matches_signer_issuer": crl_issuer_matches,
                 "last_update": crl_observation.last_update,
                 "next_update": crl_observation.next_update,
                 "signature_verification": _result(crl_signature_ok, crl_signature_detail),
+                "chain_revocation_verification": _result(
+                    revocation_chain_ok, revocation_chain_detail
+                ),
                 "certificate_revocation_check": _result(revocation_ok, revocation_detail),
             }
             if not crl_signature_ok:
                 failed.append(_blocker("CRL_SIGNATURE_VERIFICATION_FAILED", crl_signature_detail))
             if not crl_issuer_matches:
-                failed.append(_blocker("CRL_ISSUER_MISMATCH", "CRL issuer differs from trust anchor subject"))
+                failed.append(_blocker("CRL_ISSUER_MISMATCH", "CRL issuer differs from TSA signer issuer"))
             if not crl_window_ok:
                 failed.append(_blocker("CRL_WINDOW_EXCLUDES_GENTIME", "token genTime is outside retained CRL window"))
             if not revocation_ok:
@@ -776,6 +824,12 @@ class OpenSSLBackend:
             raise RehearsalEvidenceError("trust anchor file must contain exactly one certificate")
         return self._inspect_certificate_bytes(matches[0])
 
+    def inspect_certificate_chain(self, chain: Path) -> tuple[CertificateObservation, ...]:
+        matches = PEM_CERTIFICATE.findall(chain.read_bytes())
+        if not matches:
+            raise RehearsalEvidenceError("untrusted chain file must contain at least one certificate")
+        return tuple(self._inspect_certificate_bytes(match) for match in matches)
+
     @staticmethod
     def _epoch(value: str) -> str:
         return str(int(_parse_utc(value).timestamp()))
@@ -816,12 +870,15 @@ class OpenSSLBackend:
             next_update=self._openssl_time(self._field(text, "nextUpdate")),
         )
 
-    def verify_crl_signature(self, crl: Path, trust_anchor: Path) -> tuple[bool, str]:
-        result = subprocess.run(
-            [self.executable, "crl", "-in", str(crl), "-noout", "-verify", "-CAfile", str(trust_anchor)],
-            capture_output=True,
-            check=False,
-        )
+    def verify_crl_signature(self, crl: Path, issuer_certificate: bytes) -> tuple[bool, str]:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            issuer_path = Path(tmpdir) / "crl-issuer.pem"
+            issuer_path.write_bytes(issuer_certificate)
+            result = subprocess.run(
+                [self.executable, "crl", "-in", str(crl), "-noout", "-verify", "-CAfile", str(issuer_path)],
+                capture_output=True,
+                check=False,
+            )
         detail = (result.stdout + result.stderr).decode("utf-8", errors="replace").strip()
         return (
             (True, "OpenSSL CRL signature verification succeeded")

@@ -1,0 +1,2 @@
+genesis/rehearsal/reports/*.json text eol=lf
+genesis/rehearsal/reviewed_semantic_assertions/*.json text eol=lf

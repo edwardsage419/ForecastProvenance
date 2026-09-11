@@ -7,9 +7,9 @@
   },
   "certificate_requested": true,
   "checker_tool_version": "OpenSSL 3.5.7 9 Jun 2026 (Library: OpenSSL 3.5.7 9 Jun 2026)",
-  "checker_version": "1.2",
+  "checker_version": "1.3",
   "classification": "NON_FORECAST_REHEARSAL",
-  "content_sha256": "d77445a0e3772abd55f07934161019a339d6fb9fe0e821db096ca27b0b8c1c51",
+  "content_sha256": "85b2b256b57da00cf571fcef375a11f70b657f9d1ac4a97d76d0d829d101a24e",
   "crl_evidence": {
     "available": false
   },
@@ -61,9 +61,9 @@
   "message_imprint_algorithm": "sha256",
   "message_imprint_matches_subject": true,
   "nonce_equal": true,
-  "object_id": "rfc3161qualificationrehearsalreport:sectigo_rfc3161:4823ec683f3f",
+  "object_id": "rfc3161qualificationrehearsalreport:sectigo_rfc3161:1658509b3680",
   "object_type": "RFC3161QualificationRehearsalReport",
-  "payload_sha256": "4823ec683f3f143cedcbe38a94fc9100f9941a3af7cd8965bc57eb43a0138fb7",
+  "payload_sha256": "1658509b368095ba19021800d448ce7f8e18db8c3da360215971812e7a0e3ec6",
   "policy_semantics_documented": false,
   "prospective_eligible": false,
   "provider_id": "sectigo_rfc3161",
@@ -84,7 +84,7 @@
     "detail": "not attempted because TSA certificate selection failed",
     "verified": false
   },
-  "schema_version": "1.1",
+  "schema_version": "1.2",
   "semantic_assertion_evidence": {
     "available": false,
     "verified": false

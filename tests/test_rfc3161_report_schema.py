@@ -118,6 +118,16 @@ class RFC3161ReportSchemaTests(unittest.TestCase):
         report["accuracy_semantics_documented"] = True
         report["revocation_verification_scope"] = "TSA_SIGNER_ONLY"
         report["crl_evidence"]["verification_scope"] = "TSA_SIGNER_ONLY"
+        crl = report["crl_evidence"]
+        crl.pop("issuer_matches_trust_anchor", None)
+        crl["signer_issuer_subject"] = crl["issuer"]
+        crl["selected_crl_issuer_certificate_subject"] = crl["issuer"]
+        crl["selected_crl_issuer_certificate_sha256_der"] = report["trust_anchor_sha256_der"]
+        crl["crl_issuer_matches_signer_issuer"] = True
+        crl["chain_revocation_verification"] = {
+            "verified": True,
+            "detail": "OpenSSL signer revocation verification succeeded",
+        }
         report["unresolved_qualification_blockers"] = []
         report["raw_evidence_sha256"]["reviewed_semantic_assertion"] = "f" * 64
         report["semantic_assertion_evidence"] = {
@@ -180,6 +190,16 @@ class RFC3161ReportSchemaTests(unittest.TestCase):
         report = self.verified_report()
         report["revocation_verification_scope"] = "FULL_CERTIFICATION_PATH"
         report["crl_evidence"]["verification_scope"] = "FULL_CERTIFICATION_PATH"
+        self.assert_rejected(report)
+
+    def test_schema_rejects_verified_missing_selected_crl_issuer(self):
+        report = self.verified_report()
+        report["crl_evidence"].pop("selected_crl_issuer_certificate_sha256_der")
+        self.assert_rejected(report)
+
+    def test_schema_rejects_verified_crl_issuer_mismatch(self):
+        report = self.verified_report()
+        report["crl_evidence"]["crl_issuer_matches_signer_issuer"] = False
         self.assert_rejected(report)
 
     def test_schema_rejects_verified_missing_conservative_bound(self):

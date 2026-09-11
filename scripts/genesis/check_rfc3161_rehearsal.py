@@ -37,7 +37,9 @@ def main() -> int:
     if args.output.exists():
         print(f"refusing to overwrite existing report: {args.output}", file=sys.stderr)
         return 2
-    args.output.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    rendered = json.dumps(report, indent=2, sort_keys=True) + "\n"
+    with args.output.open("w", encoding="utf-8", newline="\n") as handle:
+        handle.write(rendered)
     print(f"{report['provider_id']}: {report['final_rehearsal_status']}")
     print(f"Report: {args.output}")
     return 0 if report["final_rehearsal_status"] == "REHEARSAL_VERIFIED" else 1

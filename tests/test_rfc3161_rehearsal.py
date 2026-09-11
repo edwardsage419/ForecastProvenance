@@ -1,19 +1,26 @@
 import hashlib
 import json
+import os
+import shutil
+import subprocess
 import tempfile
 import unittest
 from dataclasses import replace
+from datetime import datetime, timezone
 from pathlib import Path
 
 from forecast_trust_core.canonical import seal_object, verify_sealed_object
 from forecast_trust_core.rfc3161_rehearsal import (
     CertificateObservation,
     CrlObservation,
+    OpenSSLBackend,
     RehearsalEvidenceError,
     RequestObservation,
     TokenObservation,
     check_rehearsal,
 )
+
+OPENSSL_EXECUTABLE = os.environ.get("OPENSSL_EXECUTABLE") or shutil.which("openssl")
 
 
 class FakeBackend:
@@ -46,9 +53,12 @@ class FakeBackend:
             "2026-09-11T08:00:00Z", "tsa_policy1", "1 second", "yes", (tsa, root), tsa.sha256_der,
         )
         self.anchor = root
+        self.chain_certificates = ()
         self.chain_result = (True, "tsa.pem: OK")
+        self.revocation_result = (True, "tsa.pem: OK")
         self.signature_result = (True, "Verification: OK")
         self.crl_signature_result = (True, "verify OK")
+        self.crl_signature_issuer = None
         self.crl = CrlObservation(
             "CN=FreeTSA Root CA", "2025-09-18T14:45:18Z", "2026-09-18T14:45:18Z"
         )
@@ -70,8 +80,11 @@ class FakeBackend:
             return self.token.certificates[0]
         return self.anchor
 
+    def inspect_certificate_chain(self, chain):
+        return self.chain_certificates
+
     def verify_chain(self, tsa_certificate, trust_anchor, untrusted_chain, crl, at_time):
-        return self.chain_result
+        return self.revocation_result if crl is not None else self.chain_result
 
     def verify_response(self, request, response, trust_anchor, untrusted_chain):
         return self.signature_result
@@ -79,7 +92,8 @@ class FakeBackend:
     def inspect_crl(self, crl):
         return self.crl
 
-    def verify_crl_signature(self, crl, trust_anchor):
+    def verify_crl_signature(self, crl, issuer_certificate):
+        self.crl_signature_issuer = issuer_certificate
         return self.crl_signature_result
 
 
@@ -169,6 +183,26 @@ class RFC3161RehearsalTests(unittest.TestCase):
     @staticmethod
     def blocker_codes(report):
         return {item["code"] for item in report["unresolved_qualification_blockers"]}
+
+    def configure_intermediate_issued_signer(self):
+        tsa, root = self.backend.token.certificates
+        intermediate = replace(
+            root,
+            subject="CN=Intermediate TSA CA",
+            issuer=root.subject,
+            serial="02",
+            sha256_der="2" * 64,
+            pem=b"intermediate certificate",
+        )
+        tsa = replace(tsa, issuer=intermediate.subject)
+        self.backend.token = replace(
+            self.backend.token,
+            certificates=(tsa, intermediate, root),
+            signer_sha256_der=tsa.sha256_der,
+        )
+        self.backend.chain_certificates = (intermediate,)
+        self.backend.crl = replace(self.backend.crl, issuer=intermediate.subject)
+        return tsa, intermediate, root
 
     def test_successful_rehearsal_is_verified_but_never_production_qualified(self):
         report = self.check()
@@ -352,6 +386,88 @@ class RFC3161RehearsalTests(unittest.TestCase):
         self.assertEqual(report["revocation_verification_scope"], "TSA_SIGNER_ONLY")
         self.assertEqual(report["crl_evidence"]["verification_scope"], "TSA_SIGNER_ONLY")
 
+    def test_direct_root_signer_selects_root_as_crl_issuer(self):
+        report = self.check()
+        crl = report["crl_evidence"]
+        self.assertEqual(crl["signer_issuer_subject"], self.backend.anchor.subject)
+        self.assertEqual(crl["selected_crl_issuer_certificate_subject"], self.backend.anchor.subject)
+        self.assertEqual(
+            crl["selected_crl_issuer_certificate_sha256_der"], self.backend.anchor.sha256_der
+        )
+        self.assertTrue(crl["crl_issuer_matches_signer_issuer"])
+        self.assertEqual(self.backend.crl_signature_issuer, self.backend.anchor.pem)
+
+    def test_intermediate_issued_signer_crl_passes_signer_only_revocation(self):
+        _, intermediate, _ = self.configure_intermediate_issued_signer()
+        report = self.check()
+        self.assertEqual(report["final_rehearsal_status"], "REHEARSAL_VERIFIED")
+        self.assertEqual(
+            report["crl_evidence"]["selected_crl_issuer_certificate_sha256_der"],
+            intermediate.sha256_der,
+        )
+        self.assertEqual(self.backend.crl_signature_issuer, intermediate.pem)
+
+    def test_wrong_intermediate_fails_chain_validation(self):
+        self.configure_intermediate_issued_signer()
+        self.backend.chain_result = (False, "certificate signature failure")
+        report = self.check()
+        self.assertEqual(report["final_rehearsal_status"], "REHEARSAL_FAILED")
+        self.assertIn("CERTIFICATE_CHAIN_VERIFICATION_FAILED", self.blocker_codes(report))
+        self.assertIn("CERTIFICATE_REVOCATION_CHECK_FAILED", self.blocker_codes(report))
+
+    def test_root_issued_crl_for_intermediate_issued_signer_fails(self):
+        _, _, root = self.configure_intermediate_issued_signer()
+        self.backend.crl = replace(self.backend.crl, issuer=root.subject)
+        report = self.check()
+        self.assertIn("CRL_ISSUER_MISMATCH", self.blocker_codes(report))
+        self.assertFalse(report["crl_evidence"]["crl_issuer_matches_signer_issuer"])
+
+    def test_crl_issuer_subject_mismatch_fails(self):
+        self.backend.crl = replace(self.backend.crl, issuer="CN=Unrelated CRL Issuer")
+        self.assertIn("CRL_ISSUER_MISMATCH", self.blocker_codes(self.check()))
+
+    def test_missing_direct_issuer_fails_closed(self):
+        tsa, root = self.backend.token.certificates
+        tsa = replace(tsa, issuer="CN=Missing Intermediate")
+        self.backend.token = replace(
+            self.backend.token, certificates=(tsa, root), signer_sha256_der=tsa.sha256_der
+        )
+        report = self.check()
+        self.assertIn("SIGNER_ISSUER_CERTIFICATE_SELECTION_FAILED", self.blocker_codes(report))
+        self.assertEqual(
+            report["crl_evidence"]["selected_crl_issuer_certificate_subject"], "UNAVAILABLE"
+        )
+
+    def test_ambiguous_direct_issuer_fails_closed(self):
+        _, intermediate, _ = self.configure_intermediate_issued_signer()
+        duplicate_subject = replace(
+            intermediate,
+            serial="03",
+            sha256_der="3" * 64,
+            pem=b"different intermediate certificate",
+        )
+        self.backend.chain_certificates = (intermediate, duplicate_subject)
+        report = self.check()
+        self.assertIn("SIGNER_ISSUER_CERTIFICATE_SELECTION_FAILED", self.blocker_codes(report))
+        self.assertIsNone(self.backend.crl_signature_issuer)
+
+    def test_unrelated_untrusted_intermediate_cannot_satisfy_signer_issuer(self):
+        tsa, root = self.backend.token.certificates
+        tsa = replace(tsa, issuer="CN=Expected Intermediate")
+        unrelated = replace(
+            root,
+            subject="CN=Unrelated Intermediate",
+            serial="04",
+            sha256_der="4" * 64,
+            pem=b"unrelated intermediate certificate",
+        )
+        self.backend.token = replace(
+            self.backend.token, certificates=(tsa, root), signer_sha256_der=tsa.sha256_der
+        )
+        self.backend.chain_certificates = (unrelated,)
+        report = self.check()
+        self.assertIn("SIGNER_ISSUER_CERTIFICATE_SELECTION_FAILED", self.blocker_codes(report))
+
     def test_multi_level_inventory_does_not_claim_full_path_revocation(self):
         tsa, root = self.backend.token.certificates
         intermediate = replace(
@@ -371,8 +487,95 @@ class RFC3161RehearsalTests(unittest.TestCase):
         self.assertIn("MISSING_RAW_EVIDENCE", self.blocker_codes(report))
 
 
+@unittest.skipUnless(OPENSSL_EXECUTABLE, "OpenSSL is required for PKI integration coverage")
+class OpenSSLSignerCrlIntegrationTests(unittest.TestCase):
+    def test_intermediate_issued_signer_and_crl_validate_to_independent_root(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+
+            def run(*args):
+                subprocess.run(
+                    [OPENSSL_EXECUTABLE, *args], cwd=root, check=True, capture_output=True
+                )
+
+            run(
+                "req", "-x509", "-newkey", "rsa:2048", "-nodes",
+                "-keyout", "root.key", "-out", "root.pem", "-days", "3650",
+                "-subj", "/CN=Synthetic Root",
+                "-addext", "basicConstraints=critical,CA:TRUE",
+                "-addext", "keyUsage=critical,keyCertSign,cRLSign",
+            )
+            run(
+                "req", "-new", "-newkey", "rsa:2048", "-nodes",
+                "-keyout", "intermediate.key", "-out", "intermediate.csr",
+                "-subj", "/CN=Synthetic Intermediate",
+                "-addext", "basicConstraints=critical,CA:TRUE",
+                "-addext", "keyUsage=critical,keyCertSign,cRLSign",
+            )
+            run(
+                "x509", "-req", "-in", "intermediate.csr", "-CA", "root.pem",
+                "-CAkey", "root.key", "-set_serial", "2", "-days", "3650",
+                "-copy_extensions", "copy", "-out", "intermediate.pem",
+            )
+            run(
+                "req", "-new", "-newkey", "rsa:2048", "-nodes",
+                "-keyout", "signer.key", "-out", "signer.csr",
+                "-subj", "/CN=Synthetic TSA Signer",
+                "-addext", "basicConstraints=critical,CA:FALSE",
+                "-addext", "keyUsage=critical,digitalSignature",
+                "-addext", "extendedKeyUsage=critical,timeStamping",
+            )
+            run(
+                "x509", "-req", "-in", "signer.csr", "-CA", "intermediate.pem",
+                "-CAkey", "intermediate.key", "-set_serial", "3", "-days", "3650",
+                "-copy_extensions", "copy", "-out", "signer.pem",
+            )
+            (root / "index.txt").write_text("", encoding="ascii")
+            (root / "serial").write_text("1000\n", encoding="ascii")
+            (root / "crlnumber").write_text("1000\n", encoding="ascii")
+            (root / "ca.cnf").write_text(
+                """[ca]
+default_ca=issuer_ca
+[issuer_ca]
+database=index.txt
+new_certs_dir=.
+certificate=intermediate.pem
+private_key=intermediate.key
+serial=serial
+crlnumber=crlnumber
+default_md=sha256
+default_days=365
+default_crl_days=30
+policy=policy_any
+[policy_any]
+commonName=supplied
+""",
+                encoding="ascii",
+            )
+            run("ca", "-gencrl", "-config", "ca.cnf", "-out", "intermediate.crl", "-batch")
+
+            backend = OpenSSLBackend(OPENSSL_EXECUTABLE)
+            at_time = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+            chain_ok, _ = backend.verify_chain(
+                (root / "signer.pem").read_bytes(),
+                root / "root.pem",
+                root / "intermediate.pem",
+                root / "intermediate.crl",
+                at_time,
+            )
+            signature_ok, _ = backend.verify_crl_signature(
+                root / "intermediate.crl", (root / "intermediate.pem").read_bytes()
+            )
+            wrong_issuer_ok, _ = backend.verify_crl_signature(
+                root / "intermediate.crl", (root / "root.pem").read_bytes()
+            )
+            self.assertTrue(chain_ok)
+            self.assertTrue(signature_ok)
+            self.assertFalse(wrong_issuer_ok)
+
+
 class RetainedRFC3161ReportTests(unittest.TestCase):
-    def test_retained_reports_are_sealed_non_forecast_and_incomplete(self):
+    def test_retained_reports_are_sealed_and_non_forecast(self):
         reports_dir = Path(__file__).resolve().parents[1] / "genesis" / "rehearsal" / "reports"
         reports = {
             path.stem: json.loads(path.read_text(encoding="utf-8"))
@@ -380,17 +583,27 @@ class RetainedRFC3161ReportTests(unittest.TestCase):
         }
         self.assertEqual(
             set(reports),
-            {"freetsa_v2_report", "digicert_v2_report", "sectigo_v2_report"},
+            {
+                "freetsa_v2_report",
+                "digicert_v2_report",
+                "sectigo_v2_report",
+                "sectigo_qualified_v1_report",
+            },
         )
         for report in reports.values():
             self.assertTrue(verify_sealed_object(report))
             self.assertEqual(report["classification"], "NON_FORECAST_REHEARSAL")
             self.assertIs(report["prospective_eligible"], False)
-            self.assertEqual(report["final_rehearsal_status"], "REHEARSAL_INCOMPLETE")
             self.assertEqual(
                 report["subject_sha256"],
                 "3837b8ce2e012a913cbdab6f7e52bdc045013bdc4acfbc88abc99cee149275c6",
             )
+        for name in ("freetsa_v2_report", "digicert_v2_report", "sectigo_v2_report"):
+            self.assertEqual(reports[name]["final_rehearsal_status"], "REHEARSAL_INCOMPLETE")
+        self.assertEqual(
+            reports["sectigo_qualified_v1_report"]["final_rehearsal_status"],
+            "REHEARSAL_VERIFIED",
+        )
 
     def test_freetsa_report_reproduces_known_observations(self):
         path = Path(__file__).resolve().parents[1] / "genesis" / "rehearsal" / "reports" / "freetsa_v2_report.json"
@@ -422,6 +635,29 @@ class RetainedRFC3161ReportTests(unittest.TestCase):
                 {item["code"] for item in report["unresolved_qualification_blockers"]}
             )
         )
+
+    def test_sectigo_qualified_report_reproduces_reviewed_observations(self):
+        path = (
+            Path(__file__).resolve().parents[1]
+            / "genesis"
+            / "rehearsal"
+            / "reports"
+            / "sectigo_qualified_v1_report.json"
+        )
+        report = json.loads(path.read_text(encoding="utf-8"))
+        self.assertEqual(report["final_rehearsal_status"], "REHEARSAL_VERIFIED")
+        self.assertEqual(report["token_policy_oid"], "0.4.0.2023.1.1")
+        self.assertEqual(
+            report["token_accuracy"],
+            "0x01 seconds, unspecified millis, unspecified micros",
+        )
+        self.assertEqual(report["request_nonce"], "20812634066f3b14")
+        self.assertEqual(report["response_nonce"], "20812634066f3b14")
+        self.assertEqual(
+            report["crl_evidence"]["selected_crl_issuer_certificate_sha256_der"],
+            "cd0a3e00a1bdae3a159fa9e3d70f8e664f560fdce16357cbe440ed0b0d88244f",
+        )
+        self.assertTrue(report["semantic_assertion_evidence"]["verified"])
 
 
 if __name__ == "__main__":

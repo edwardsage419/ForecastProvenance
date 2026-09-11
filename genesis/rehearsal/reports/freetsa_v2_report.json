@@ -7,24 +7,31 @@
   },
   "certificate_requested": true,
   "checker_tool_version": "OpenSSL 3.5.7 9 Jun 2026 (Library: OpenSSL 3.5.7 9 Jun 2026)",
-  "checker_version": "1.2",
+  "checker_version": "1.3",
   "classification": "NON_FORECAST_REHEARSAL",
-  "content_sha256": "1a6901943e8f59e38b4e1c49bbfb8ce943f9f61a495ea94c3f92d8ebb3ab99d6",
+  "content_sha256": "50094139bb16fadb06b939c45a6c83a18a46af4acb73dc293af96a9a35b091b5",
   "crl_evidence": {
     "available": true,
     "certificate_revocation_check": {
       "detail": "CRL check and capture window verified",
       "verified": true
     },
+    "chain_revocation_verification": {
+      "detail": "OpenSSL certificate verification succeeded",
+      "verified": true
+    },
+    "crl_issuer_matches_signer_issuer": true,
     "issuer": "O=Free TSA, OU=Root CA, CN=www.freetsa.org, emailAddress=busilezas@gmail.com, L=Wuerzburg, ST=Bayern, C=DE",
-    "issuer_matches_trust_anchor": true,
     "last_update": "2025-09-18T14:45:18Z",
     "next_update": "2026-09-18T14:45:18Z",
+    "selected_crl_issuer_certificate_sha256_der": "a6379e7cecc05faa3cbf076013d745e327bbbaa38c0b9af22469d4701d18aabc",
+    "selected_crl_issuer_certificate_subject": "O=Free TSA, OU=Root CA, CN=www.freetsa.org, emailAddress=busilezas@gmail.com, L=Wuerzburg, ST=Bayern, C=DE",
     "sha256": "78df0dee282af4379c71907e3ec181082635cf8ee3d6dae619c713bd1f829d92",
     "signature_verification": {
       "detail": "OpenSSL CRL signature verification succeeded",
       "verified": true
     },
+    "signer_issuer_subject": "O=Free TSA, OU=Root CA, CN=www.freetsa.org, emailAddress=busilezas@gmail.com, L=Wuerzburg, ST=Bayern, C=DE",
     "source": "independently retrieved FreeTSA Root CA CRL",
     "verification_scope": "TSA_SIGNER_ONLY"
   },
@@ -61,9 +68,9 @@
   "message_imprint_algorithm": "sha256",
   "message_imprint_matches_subject": true,
   "nonce_equal": true,
-  "object_id": "rfc3161qualificationrehearsalreport:freetsa_rfc3161:67094f15f99e",
+  "object_id": "rfc3161qualificationrehearsalreport:freetsa_rfc3161:ab9f7425d39b",
   "object_type": "RFC3161QualificationRehearsalReport",
-  "payload_sha256": "67094f15f99e0a9a5665c121b3a6984a0867b1862d000da1cc7d5c5b52ca06a5",
+  "payload_sha256": "ab9f7425d39b327f6a116203040cd3192e9a9253aa610740452222ff2b3d4ec9",
   "policy_semantics_documented": false,
   "prospective_eligible": false,
   "provider_id": "freetsa_rfc3161",
@@ -88,7 +95,7 @@
     "detail": "OpenSSL RFC 3161 verification succeeded",
     "verified": true
   },
-  "schema_version": "1.1",
+  "schema_version": "1.2",
   "semantic_assertion_evidence": {
     "available": false,
     "verified": false
