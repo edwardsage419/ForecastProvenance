@@ -1,11 +1,11 @@
 # Trusted Manifest Contract
 
-Version: 0.2 candidate
-Status: FTC_001 REMEDIATION CANDIDATE
+Version: 0.3 candidate
+Status: FTC_001 FREEZE CANDIDATE
 
 ## Purpose
 
-The trusted manifest is the explicit trust root for a declared protocol state. It is supplied to the validator from outside the candidate scientific object graph.
+The trusted manifest is the explicit protocol trust root for a declared project state. It is supplied to the validator from outside the candidate scientific object graph.
 
 ## Candidate manifest
 
@@ -30,52 +30,59 @@ retry_policy
 omission_policy
 evaluation_policy
 retention_policy
+acceptance_rule
 previous_manifest
 content_sha256
 ```
 
-Set like reference arrays are sorted by object ID and full hash.
+Set like reference arrays are sorted by object ID and full hash. Consequential policies are first class content bound objects.
 
-A candidate contains no authoritative mutable `status` field.
+A candidate contains no authoritative mutable acceptance status.
 
-## Acceptance
+## Genesis acceptance
 
-Manifest authority is established by a separate immutable ManifestAcceptance object.
+Genesis authority is not derived from the candidate manifest.
 
-A valid acceptance binds the exact candidate manifest hash, required external anchor evidence, acceptance rule, authority, decision, and predecessor acceptance.
+The validator receives an out of graph `BootstrapGovernanceRoot` that binds project identity, authority identity and public key, acceptance rule identity, canonicalization scheme, hash algorithm, and bootstrap version.
 
-A validator trust root is the pair:
+A Genesis ManifestAcceptance must bind the exact candidate manifest hash, required external anchor evidence, bootstrap root, exact acceptance rule, authority proof, required validation reports, and decision.
+
+FTC_001 freezes this interface. Genesis must instantiate the exact bootstrap key and exact rule bytes before any prospective operation.
+
+## Successor acceptance
+
+After Genesis, a successor manifest binds the prior accepted manifest and prior acceptance object and follows the governance change rule already authorized by the accepted predecessor state.
+
+## Validator trust inputs
+
+Genesis validation logically receives:
 
 ```text
-accepted_manifest_ref
-manifest_acceptance_ref
-```
-
-Both objects must validate.
-
-External timestamping proves existence. Governance acceptance proves that the project selected that exact candidate as authoritative. Neither substitutes for the other.
-
-## Validator inputs
-
-```text
+bootstrap_governance_root
 trusted_manifest
 manifest_acceptance
 candidate_object
 dependency_store
 ```
 
-Candidate objects cannot select these trust root inputs.
+Post Genesis validation uses the accepted governance lineage rooted in Genesis.
 
-## Successor manifests
+Candidate objects cannot select or regenerate these trust roots.
 
-A successor binds the prior accepted manifest and prior ManifestAcceptance. It follows the change policy active before the successor was proposed.
+## External anchoring and governance
 
-A verifier never substitutes the newest manifest for the manifest applicable to a historical object.
+External time evidence establishes content existence under the AnchorScheme's conservative time semantics.
 
-## Loss or ambiguity
+ManifestAcceptance establishes project governance approval.
 
-If the exact accepted manifest, its acceptance object, or required dependencies cannot be produced and hash verified, the stronger trust claim becomes `INELIGIBLE_TRUST_UNKNOWN`.
+Both are required where the active protocol requires both claims.
+
+## Historical manifest selection
+
+A verifier never substitutes the newest manifest for the exact manifest applicable to a historical object or issuance cycle.
+
+If the required manifest, acceptance object, governance lineage, or required dependencies cannot be produced and verified, the stronger trust claim fails closed.
 
 ## Retention
 
-Canonical manifest bytes, acceptance bytes, hashes, external anchor proof, referenced normative compact objects, and successor records are retained by content for the life of the project.
+Canonical manifest bytes, acceptance bytes, bootstrap governance root bytes, hashes, external anchor evidence, referenced compact normative objects, and successor lineage records are retained by content for the life of the project.
