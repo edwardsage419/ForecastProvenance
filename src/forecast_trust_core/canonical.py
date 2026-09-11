@@ -63,6 +63,8 @@ def _validate_tree(value: Any, path: str = "$") -> None:
     if isinstance(value, float):
         raise CanonicalizationError(f"JSON floating point prohibited at {path}")
     if isinstance(value, str):
+        if any(0xD800 <= ord(ch) <= 0xDFFF for ch in value):
+            raise CanonicalizationError(f"unpaired surrogate prohibited at {path}")
         return
     if isinstance(value, list):
         for idx, member in enumerate(value):
@@ -80,13 +82,7 @@ def _validate_tree(value: Any, path: str = "$") -> None:
 def canonical_json(value: Any) -> bytes:
     """Restricted RFC 8785-compatible canonical JSON for the frozen v0.4 domain."""
     _validate_tree(value)
-    return json.dumps(
-        value,
-        ensure_ascii=False,
-        allow_nan=False,
-        sort_keys=True,
-        separators=(",", ":"),
-    ).encode("utf-8")
+    return json.dumps(value, ensure_ascii=False, allow_nan=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
 
 
 def sha256_hex(value: bytes) -> str:

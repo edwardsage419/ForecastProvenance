@@ -54,6 +54,11 @@ def validate_dependency(ref: Mapping[str, Any], store: Mapping[str, Mapping[str,
         validate_ref(ref)
     except CanonicalizationError:
         return _check("dependency_ref", False, "MALFORMED_REFERENCE")
+    try:
+        for allowed_ref in allowed_refs:
+            validate_ref(allowed_ref)
+    except (CanonicalizationError, KeyError, TypeError):
+        return _check("dependency_ref", False, "TRUST_ROOT_MALFORMED")
     allowed = {(r["object_id"], r["content_sha256"]) for r in allowed_refs}
     pair = (ref["object_id"], ref["content_sha256"])
     if pair not in allowed:
@@ -122,6 +127,10 @@ def validate_cycle_plan(plan: Mapping[str, Any], *, verified_plan_existence_boun
         normalized_expected = sorted_refs(expected)
         normalized_required = sorted_refs(required_slots)
         checks.append(_check("slot_order", expected == normalized_expected, "UNSORTED_SLOT_SET"))
+        expected_pairs = [(r["object_id"], r["content_sha256"]) for r in normalized_expected]
+        required_pairs = [(r["object_id"], r["content_sha256"]) for r in normalized_required]
+        checks.append(_check("slot_uniqueness", len(expected_pairs) == len(set(expected_pairs)), "DUPLICATE_EXPECTED_SLOT"))
+        checks.append(_check("required_slot_uniqueness", len(required_pairs) == len(set(required_pairs)), "DUPLICATE_REQUIRED_SLOT"))
         checks.append(_check("deterministic_slots", normalized_expected == normalized_required, "SLOT_SET_MISMATCH"))
     except CanonicalizationError:
         checks.append(_check("deterministic_slots", False, "INVALID_SLOT_REFERENCE"))
@@ -130,19 +139,48 @@ def validate_cycle_plan(plan: Mapping[str, Any], *, verified_plan_existence_boun
 
 def validate_cycle_manifest(plan: Mapping[str, Any], manifest: Mapping[str, Any]) -> Validation:
     checks: list[Check] = []
+    if not verify_sealed_object(plan):
+        return aggregate([_check("plan_seal", False, "INVALID_PLAN_SEAL")])
     if not verify_sealed_object(manifest):
         return aggregate([_check("manifest_seal", False, "INVALID_SEAL")])
     if "anchor_subject_hash" in manifest:
         checks.append(_check("anchor_self_reference", False, "ANCHOR_SUBJECT_SELF_REFERENCE"))
-    expected_ids = [r["object_id"] for r in plan.get("expected_slots", [])]
-    accounting = manifest.get("slot_accounting", [])
-    seen = [row.get("slot_ref", {}).get("object_id") for row in accounting]
-    checks.append(_check("slot_completeness", sorted(seen) == sorted(expected_ids) and len(seen) == len(set(seen)), "INCOMPLETE_OR_DUPLICATE_SLOT_ACCOUNTING"))
+    expected_plan_ref = {"object_id": plan["object_id"], "content_sha256": plan["content_sha256"]}
+    actual_plan_ref = manifest.get("cycle_plan_ref")
+    try:
+        validate_ref(actual_plan_ref)
+        plan_binding_ok = actual_plan_ref == expected_plan_ref
+    except (CanonicalizationError, TypeError):
+        plan_binding_ok = False
+    checks.append(_check("cycle_plan_binding", plan_binding_ok, "CYCLE_PLAN_REF_MISMATCH"))
+    try:
+        expected_refs = sorted_refs(plan.get("expected_slots", []))
+        accounting = manifest.get("slot_accounting", [])
+        if not isinstance(accounting, list):
+            raise CanonicalizationError("slot_accounting must be a list")
+        seen_refs = []
+        for row in accounting:
+            slot_ref = row.get("slot_ref")
+            validate_ref(slot_ref)
+            seen_refs.append(dict(slot_ref))
+        seen_sorted = sorted_refs(seen_refs)
+        expected_pairs = [(r["object_id"], r["content_sha256"]) for r in expected_refs]
+        seen_pairs = [(r["object_id"], r["content_sha256"]) for r in seen_sorted]
+        completeness_ok = seen_pairs == expected_pairs and len(seen_pairs) == len(set(seen_pairs))
+    except (CanonicalizationError, AttributeError, TypeError):
+        accounting = []
+        completeness_ok = False
+    checks.append(_check("slot_completeness", completeness_ok, "INCOMPLETE_DUPLICATE_OR_MISMATCHED_SLOT_ACCOUNTING"))
     cardinality_ok = True
     for row in accounting:
         if row.get("outcome") == "ISSUED":
             refs = row.get("issued_forecast_refs", [])
             if not isinstance(refs, list) or len(refs) != 1:
+                cardinality_ok = False
+                continue
+            try:
+                validate_ref(refs[0])
+            except CanonicalizationError:
                 cardinality_ok = False
     checks.append(_check("slot_cardinality", cardinality_ok, "VERSION1_SLOT_CARDINALITY_NOT_ONE"))
     return aggregate(checks)
