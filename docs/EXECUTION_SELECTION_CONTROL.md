@@ -1,11 +1,11 @@
 # Execution Selection Control
 
-Version: 0.3 candidate
-Status: FTC_001 FREEZE CANDIDATE
+Version: 0.4 candidate
+Status: FTC_001 FINAL FREEZE CANDIDATE
 
 ## Threat
 
-A complete ledger of recorded retries does not detect hidden runs performed before or outside the recorded attempt chain. This matters when a method can produce multiple outputs from the same declared inputs.
+Recorded retry completeness does not detect hidden runs performed before or outside the recorded attempt chain. This matters whenever the same declared forecast slot can produce multiple candidate outputs.
 
 ## Method selection control class
 
@@ -13,9 +13,9 @@ Every ForecastMethod declares one `selection_control_class`.
 
 `DETERMINISTIC_REPLAY`: the same bound method, configuration, fitted state, and evidence produce one deterministic prediction under the supported execution contract.
 
-`PRECOMMITTED_RANDOMNESS`: stochasticity is fully determined by a seed or randomness object fixed by the accepted cycle plan or by an accepted post commitment challenge rule. The randomness binding is part of the eligible run attempt.
+`POSTCOMMIT_PUBLIC_RANDOMNESS`: stochasticity is derived deterministically from an admitted public randomness value that is unavailable before the cycle plan commitment boundary and is selected by a frozen PublicRandomnessPolicy. Operator chosen seeds are ineligible.
 
-`EXTERNALLY_AUDITED_ATTEMPTS`: a third party execution service supplies independently verifiable request identities or receipts sufficient to establish complete eligible attempt accounting under the active policy.
+`EXTERNALLY_AUDITED_ATTEMPTS`: a third party execution service supplies independently verifiable request identities or receipts sufficient to establish the complete eligible request set under the active policy.
 
 `UNCONTROLLED_NONDETERMINISM`: hidden alternative outputs cannot be ruled out under the current evidence contract.
 
@@ -23,18 +23,34 @@ Every ForecastMethod declares one `selection_control_class`.
 
 Version 1 confirmatory prospective issuance admits only the first three classes when their class specific validation rules pass.
 
-`UNCONTROLLED_NONDETERMINISM` may be retained for exploratory or operational research and is ineligible for confirmatory trust claims.
+`UNCONTROLLED_NONDETERMINISM` may be retained for exploratory or operational research and is ineligible for confirmatory prospective trust claims.
 
-## Precomputed output rule
+## Deterministic methods
 
-For deterministic methods, precomputation does not create output selection freedom when exact inputs and configuration are bound and replay verification succeeds.
+Precomputation does not create output selection freedom only when the applicable IssuanceSchedulePolicy already fixes the required slot and exact bound inputs and replay verification reproduces the prediction.
 
-For stochastic methods, the eligible randomness must be fixed by the precommitted protocol. Operator chosen randomness after inspecting candidate outputs is invalid.
+An operator cannot choose whether a deterministic slot exists after inspecting its output because slot existence is derived from the accepted schedule policy.
 
-For externally audited methods, the policy must establish the complete eligible request set. An unverifiable claim that a recorded request was the only request is insufficient.
+## Public randomness methods
+
+The cycle plan binds the PublicRandomnessPolicy rather than a selectable seed.
+
+The policy must define a public randomness source, the deterministic rule selecting the eligible randomness event, the temporal relation requiring that event to become available after the plan commitment deadline, the derivation algorithm from public randomness to method seed or randomness object, and failure handling.
+
+The eligible random value must satisfy:
+
+```text
+public_randomness_available_at > plan_commitment_deadline
+```
+
+The operator cannot substitute a different random event after inspecting outputs.
+
+## Externally audited methods
+
+The active policy must establish the complete eligible request set. An unverifiable claim that one recorded request was the only request is insufficient.
 
 ## Closed model limitation
 
-A closed model that provides nondeterministic outputs without enforceable seed semantics or independently auditable request completeness is classified `UNCONTROLLED_NONDETERMINISM` for confirmatory issuance, even if the model can otherwise be identified.
+A closed model providing nondeterministic outputs without enforceable postcommit randomness or independently auditable request completeness is classified `UNCONTROLLED_NONDETERMINISM` for confirmatory issuance.
 
-This does not prevent prospective exploratory use. It prevents a stronger claim about freedom from output selection bias.
+This does not prevent prospective exploratory use. It limits the stronger claim that output selection bias has been controlled.
