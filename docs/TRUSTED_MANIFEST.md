@@ -1,7 +1,7 @@
 # Trusted Manifest Contract
 
-Version: 0.3 candidate
-Status: FTC_001 FREEZE CANDIDATE
+Version: 0.4 candidate
+Status: FTC_001 FINAL FREEZE CANDIDATE
 
 ## Purpose
 
@@ -25,6 +25,8 @@ source_contracts
 transformation_definitions
 review_rules
 anchor_schemes
+issuance_schedule_policy
+public_randomness_policies
 correction_policy
 retry_policy
 omission_policy
@@ -53,6 +55,8 @@ FTC_001 freezes this interface. Genesis must instantiate the exact bootstrap key
 
 After Genesis, a successor manifest binds the prior accepted manifest and prior acceptance object and follows the governance change rule already authorized by the accepted predecessor state.
 
+If two successor acceptances compete for the same predecessor and the predecessor AcceptanceRule does not deterministically resolve that fork, historical trust resolution fails closed until an authorized conflict process resolves it.
+
 ## Validator trust inputs
 
 Genesis validation logically receives:
@@ -69,6 +73,14 @@ Post Genesis validation uses the accepted governance lineage rooted in Genesis.
 
 Candidate objects cannot select or regenerate these trust roots.
 
+## Schedule and output selection
+
+Every confirmatory issuance cycle must validate against the exact IssuanceSchedulePolicy bound by its historical trusted manifest.
+
+The schedule policy determines the required target and method slots before cycle outputs exist.
+
+Any PublicRandomnessPolicy used by a method is likewise content bound by the trusted manifest. An operator cannot substitute a later randomness source or event after inspecting candidate outputs.
+
 ## External anchoring and governance
 
 External time evidence establishes content existence under the AnchorScheme's conservative time semantics.
@@ -79,9 +91,9 @@ Both are required where the active protocol requires both claims.
 
 ## Historical manifest selection
 
-A verifier never substitutes the newest manifest for the exact manifest applicable to a historical object or issuance cycle.
+A verifier never substitutes the newest manifest or policy version for the exact manifest applicable to a historical object or issuance cycle.
 
-If the required manifest, acceptance object, governance lineage, or required dependencies cannot be produced and verified, the stronger trust claim fails closed.
+If the required manifest, acceptance object, governance lineage, policy object, or required dependency cannot be produced and verified, the stronger trust claim fails closed.
 
 ## Retention
 
