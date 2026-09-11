@@ -1,46 +1,69 @@
 # Issuance Completeness, Retry, Correction, and Withdrawal Policy
 
-Version: 0.2 candidate
-Status: FTC_001 REMEDIATION CANDIDATE
+Version: 0.3 candidate
+Status: FTC_001 FREEZE CANDIDATE
 
-## Precommitment
+## Cycle precommitment
 
-Every confirmatory issuance cycle begins with an IssuanceCyclePlan committed before eligible forecast outputs are inspected.
+Every confirmatory issuance cycle begins with an immutable `IssuanceCyclePlan`.
 
-The plan fixes expected slots, target and method bindings, information cutoff, retry policy, omission policy, and external proof deadline.
+The plan fixes the execution window, expected slots, exact target and method bindings, output schema, forecast cardinality, information cutoff, retry policy, omission policy, plan commitment deadline, and forecast external proof deadline.
 
-A later cycle manifest must account for every planned slot.
+The exact plan must have accepted external existence evidence satisfying:
+
+```text
+verified_plan_existence_bound <= plan_commitment_deadline <= execution_window_open
+```
+
+The protocol does not use local attempt start timestamps to prove precommitment ordering.
+
+Any substantive plan change creates a new plan and requires a new external precommitment. A changed plan cannot inherit the prior plan proof.
+
+## Expected slots
+
+Version 1 uses one forecast artifact per slot.
+
+Each slot binds:
+
+```text
+slot_id
+target_instance_ref
+method_ref
+output_schema_ref
+forecast_horizon
+evidence_contract_refs
+forecast_cardinality = 1
+```
+
+Every slot must later appear exactly once in cycle accounting.
 
 ## Retry policy
 
-Each method and slot has a precommitted maximum attempt count.
+Each slot has a precommitted maximum attempt count.
 
-Retries are permitted only for enumerated failure codes that are independent of forecast desirability.
+Retries are permitted only for enumerated failure codes independent of forecast desirability.
 
-The policy must define:
+The policy fixes maximum attempts, retry eligible failures, randomness handling, infrastructure timeout treatment, exhausted retry treatment, and the issuance eligible success selection rule.
 
-1. maximum attempts.
-2. retry eligible failure codes.
-3. whether randomness is reused or deterministically advanced.
-4. which successful attempt is issuance eligible.
-5. infrastructure timeout treatment.
-6. treatment when the retry budget is exhausted.
+Default rule: the first successful attempt reached under the precommitted retry algorithm is issuance eligible.
 
-Default selection rule: the first successful attempt reached under the precommitted retry rule is issuance eligible. A later success cannot replace it because its forecast is more desirable.
-
-Every attempt is retained and bound into cycle accounting.
+Every attempt is retained and referenced by the cycle manifest.
 
 ## Omission policy
 
 A planned slot cannot disappear.
 
-An omission requires a precommitted reason code. Operator discretion after inspecting a prediction is prohibited.
+An omission requires a reason code admitted by the precommitted OmissionPolicy and evidence required by that policy. Operator discretion after inspecting a prediction is prohibited.
+
+## Cycle manifest
+
+The immutable `IssuanceCycleManifest` accounts for every expected slot, every attempt, every issued forecast, and every permitted omission.
+
+Its own final `content_sha256` is the anchor subject. No `anchor_subject_hash` is embedded in the manifest.
 
 ## Correction policy
 
-ForecastCorrection records facts. It does not choose its own scoring treatment.
-
-The active trusted manifest binds a CorrectionPolicy. Evaluation derives scoring consequences from that precommitted policy.
+ForecastCorrection records facts and references the applicable CorrectionPolicy. It does not select its own scoring consequence.
 
 Probability, target, horizon, method, information cutoff, substantive evidence, or resolution rule changes require a new forecast object.
 
@@ -50,17 +73,10 @@ Withdrawal never deletes or rewrites the issued forecast.
 
 Default confirmatory rule: an issued forecast remains in its original confirmatory cohort after withdrawal.
 
-A protocol may define a narrower exception only before issuance and only for an independently observable reason unrelated to forecast performance. The exception and evidence requirements must be bound in the trusted manifest.
+Any exception must be precommitted in EvaluationPolicy and CorrectionPolicy before issuance, depend on independently observable conditions unrelated to forecast desirability, and remain auditable.
 
-## Prospective classification
+## Prospective eligibility
 
-Prospective eligibility is derived by validation. It is never asserted by an IssuedForecast field.
+A confirmatory prospective forecast requires an accepted trusted manifest, valid externally precommitted cycle plan, complete slot and attempt accounting, valid point in time evidence, immutable issued forecast, and accepted external existence proof for the cycle manifest satisfying the frozen external proof deadline.
 
-A confirmatory forecast requires:
-
-1. an accepted trusted manifest.
-2. a valid precommitted cycle plan.
-3. complete slot and attempt accounting.
-4. valid point in time evidence.
-5. an immutable issued forecast.
-6. an accepted external existence proof satisfying the target's external proof deadline.
+Prospective eligibility is derived by ValidationReport and is never asserted by the forecast payload.
