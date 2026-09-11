@@ -16,8 +16,10 @@ Each IssuanceCyclePlan binds `plan_commitment_deadline` and a fixed `execution_w
 Eligibility requires:
 
 ```text
-verified_plan_existence_bound <= plan_commitment_deadline <= execution_window_open
+verified_plan_existence_bound <= plan_commitment_deadline < execution_window_open
 ```
+
+Genesis must bind a minimum safety margin between the deadline and the execution window that is adequate for the selected anchor's conservative time precision.
 
 The protocol does not rely on locally asserted attempt start times to prove that planning preceded execution.
 
@@ -61,4 +63,4 @@ Operational submission latency may be monitored for reliability. It cannot decid
 
 FTC_001 freezes the abstract requirement that an AnchorScheme return a conservative verified existence bound for exact content.
 
-Genesis must freeze the exact OTS_BTC_BATCH_V1 proof parser, accepted attestation types, conservative Bitcoin time bound construction, confirmation policy, verifier version, and malformed proof behavior before any genuine prospective forecast is permitted.
+Genesis must freeze the exact OTS_BTC_BATCH_V1 proof parser, accepted attestation types, conservative Bitcoin time bound construction, confirmation policy, verifier version, malformed proof behavior, and safety margin before any genuine prospective forecast is permitted.
