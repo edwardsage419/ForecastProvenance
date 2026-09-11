@@ -26,17 +26,25 @@ Forecast Ledger Genesis: NOT STARTED
 
 FTC_001 normative design: FROZEN FOR SYNTHETIC IMPLEMENTATION, version 0.4
 
-Adversarial design review pass 1: COMPLETE
+FTC_002 implementation branch: build/ftc-002
 
-Adversarial design review pass 2: COMPLETE
+FTC_002 implementation PR: #4, DRAFT REVIEW OPEN
 
-Adversarial design review pass 3 and freeze review: COMPLETE
+Primitive Trust Core implementation: IMPLEMENTED FOR REVIEW
 
-Adversarial design matrix: 96 synthetic cases defined
+Local test result: 18 tests passed
 
-Trust Core implementation: AUTHORIZED, NOT STARTED
+Adversarial registry: ADV001 through ADV096 accounted for exactly once
 
-Synthetic adversarial execution: NOT STARTED
+Directly executable primitive cases: 21
+
+Explicit design boundary cases: 60
+
+Explicit Genesis boundary cases: 15
+
+Implementation adversarial findings resolved so far: slot hash substitution, exact cycle plan binding, malformed trust root handling, Unicode surrogate handling
+
+Synthetic fixtures only: YES
 
 ## Genesis state
 
@@ -54,8 +62,10 @@ Prospective forecasting: PROHIBITED
 
 ## Current gate
 
-The project may now create only the minimal implementation structure needed for Forecast Trust Core schemas, validators, synthetic fixtures, and tests.
+FTC_002 is in implementation review.
 
-No live production model execution, Forecast Ledger creation, genuine prospective issuance, or native outcome history is authorized.
+The current code may validate synthetic Trust Core primitives only. It cannot create or certify genuine prospective evidence.
 
-The next accepted task is FTC_002, synthetic Trust Core implementation and adversarial execution.
+No live production model execution, Forecast Ledger creation, genuine prospective issuance, native outcome history, or real Genesis anchoring is authorized.
+
+FTC_002 remains open until repository level implementation review finds no blocking defect and the boundary classification of all 96 adversarial cases is accepted.
