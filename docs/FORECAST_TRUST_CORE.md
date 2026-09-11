@@ -1,12 +1,25 @@
 # Forecast Trust Core
 
 Version: 0.1 design
+Status: FTC_001 REVIEW CANDIDATE
 
 ## Purpose
 
 Forecast Trust Core defines the minimum model neutral contracts required to determine whether a forecast record is internally coherent, temporally admissible, externally anchored, reproducibly bound to its dependencies, and valid under the accepted protocol state.
 
 It does not establish predictive skill.
+
+## Normative documents
+
+FTC_001 is split into the following normative design documents:
+
+1. `TRUST_CORE_CONTRACTS.md` for the eight object families and lifecycle rules.
+2. `CANONICALIZATION_AND_IDENTIFIERS.md` for deterministic bytes, hashes, identifiers, and dependency references.
+3. `TRUSTED_MANIFEST.md` for validator trust roots and manifest acceptance.
+4. `POINT_IN_TIME_RULES.md` for evidence eligibility.
+5. `ADVERSARIAL_REVIEW_MATRIX.md` for the synthetic threat and failure matrix.
+
+This file is the architectural summary. Where details conflict, the dedicated normative document controls during FTC_001 review.
 
 ## Core objects
 
@@ -44,6 +57,16 @@ Binds anchor receipt identity, anchor scheme version, forecast or batch manifest
 
 Binds correction identity, original forecast identity, correction time, type, reason, affected fields, authority reference, corrected metadata or replacement forecast reference, scoring consequence, and content identity.
 
+## Trust model
+
+Object identity and content identity are separate.
+
+Every consequential dependency reference binds both semantic object ID and full SHA256.
+
+The trusted manifest is supplied externally to candidate objects. A candidate object graph cannot choose its own trust root.
+
+A consistent chain of recomputed hashes is insufficient when the chain does not match the accepted trusted manifest.
+
 ## Minimum validation outcomes
 
 1. VALID.
@@ -52,4 +75,10 @@ Binds correction identity, original forecast identity, correction time, type, re
 4. PENDING_EXTERNAL_ANCHOR.
 5. VALID_NON_PROSPECTIVE.
 
-The implementation may refine these names later through a versioned contract decision.
+Required trust checks can return PASS, FAIL, or UNKNOWN. UNKNOWN cannot aggregate upward into VALID.
+
+## Pre Genesis restriction
+
+No object can enter `PROSPECTIVE_VERIFIED` before Genesis Protocol acceptance.
+
+All FTC_001 fixtures are synthetic or retrospective and remain permanently ineligible for native prospective classification.
