@@ -225,8 +225,9 @@ class _SnapshotBackend:
 def _snapshot_source_paths(
     evidence_dir: Path,
     files: Mapping[str, Any],
-) -> dict[Path, Path]:
+) -> tuple[dict[str, Path], dict[Path, Path]]:
     resolved_root = evidence_dir.resolve()
+    resolved_fields: dict[str, Path] = {}
     resolved_paths: dict[Path, Path] = {}
     for name in (*REQUIRED_EVIDENCE_NAMES, *QUALIFICATION_EVIDENCE_NAMES):
         try:
@@ -235,6 +236,7 @@ def _snapshot_source_paths(
             )
         except RehearsalEvidenceError:
             continue
+        resolved_fields[name] = source
         resolved_paths[source] = source.relative_to(resolved_root)
     for name in OPTIONAL_EVIDENCE_NAMES:
         if name not in files:
@@ -242,8 +244,9 @@ def _snapshot_source_paths(
         source = _resolve_evidence_path(
             evidence_dir, files[name], f"evidence_files.{name}"
         )
+        resolved_fields[name] = source
         resolved_paths[source] = source.relative_to(resolved_root)
-    return resolved_paths
+    return resolved_fields, resolved_paths
 
 
 def check_rehearsal(
@@ -259,12 +262,16 @@ def check_rehearsal(
             raise RehearsalEvidenceError(
                 "profile field crl_source must be a non-empty string"
             )
-    source_paths = _snapshot_source_paths(evidence_dir, files)
+    resolved_fields, source_paths = _snapshot_source_paths(evidence_dir, files)
+    snapshot_profile = dict(profile)
+    snapshot_files = dict(files)
+    snapshot_profile["evidence_files"] = snapshot_files
 
     with tempfile.TemporaryDirectory(prefix="rfc3161-evidence-") as tmpdir:
         snapshot_root = Path(tmpdir)
         if os.name != "nt":
             snapshot_root.chmod(0o700)
+        materialized_sources: set[Path] = set()
         for source, relative_path in source_paths.items():
             if not source.is_file():
                 continue
@@ -277,9 +284,13 @@ def check_rehearsal(
                     "unable to create the private evidence snapshot"
                 ) from exc
             snapshot_path.chmod(0o400)
+            materialized_sources.add(source)
+        for name, source in resolved_fields.items():
+            if source in materialized_sources:
+                snapshot_files[name] = source_paths[source].as_posix()
         return _check_snapshotted_rehearsal(
             snapshot_root,
-            profile,
+            snapshot_profile,
             backend=_SnapshotBackend(backend, snapshot_root),
         )
 

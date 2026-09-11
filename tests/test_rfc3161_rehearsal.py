@@ -184,6 +184,21 @@ class RFC3161RehearsalTests(unittest.TestCase):
     def blocker_codes(report):
         return {item["code"] for item in report["unresolved_qualification_blockers"]}
 
+    def create_directory_link(self, link, target):
+        try:
+            link.symlink_to(target, target_is_directory=True)
+            return
+        except (NotImplementedError, OSError) as exc:
+            if os.name != "nt":
+                self.skipTest(f"directory symlinks are unavailable: {exc}")
+        result = subprocess.run(
+            ["cmd.exe", "/d", "/c", "mklink", "/J", str(link), str(target)],
+            capture_output=True,
+            check=False,
+        )
+        if result.returncode != 0:
+            self.skipTest("directory symlinks and junctions are unavailable")
+
     def configure_intermediate_issued_signer(self):
         tsa, root = self.backend.token.certificates
         intermediate = replace(
@@ -435,6 +450,55 @@ class RFC3161RehearsalTests(unittest.TestCase):
         second = self.check()
         self.assertEqual(first, second)
         self.assertEqual(first["subject_sha256"], self.subject_sha256)
+
+    def test_internal_symlink_uses_canonical_snapshotted_response(self):
+        real_dir = self.root / "real"
+        real_dir.mkdir()
+        response_bytes = (self.root / "response.tsr").read_bytes()
+        (real_dir / "response.tsr").write_bytes(response_bytes)
+        alias_dir = self.root / "alias"
+        self.create_directory_link(alias_dir, real_dir)
+        self.profile["evidence_files"]["response"] = "alias/response.tsr"
+        caller_profile = json.loads(json.dumps(self.profile))
+
+        class ReadingBackend(FakeBackend):
+            def __init__(self, subject_sha256):
+                super().__init__(subject_sha256)
+                self.consumed_response = None
+                self.consumed_response_path = None
+
+            def parse_response(self, response):
+                self.consumed_response_path = response
+                self.consumed_response = response.read_bytes()
+                return super().parse_response(response)
+
+        self.backend = ReadingBackend(self.subject_sha256)
+        report = self.check()
+
+        self.assertEqual(report["final_rehearsal_status"], "REHEARSAL_VERIFIED")
+        self.assertEqual(self.backend.consumed_response, response_bytes)
+        self.assertNotEqual(
+            self.backend.consumed_response_path,
+            self.root / "alias" / "response.tsr",
+        )
+        self.assertFalse(self.backend.consumed_response_path.exists())
+        self.assertEqual(self.profile, caller_profile)
+
+    def test_symlink_escaping_evidence_root_remains_rejected(self):
+        outside_dir = self.root.parent / "outside"
+        outside_dir.mkdir()
+        outside_response = outside_dir / "response.tsr"
+        outside_response.write_bytes(b"outside evidence root")
+        escaping_link = self.root / "escaping"
+        self.create_directory_link(escaping_link, outside_dir)
+        self.profile["evidence_files"]["response"] = "escaping/response.tsr"
+        caller_profile = json.loads(json.dumps(self.profile))
+
+        report = self.check()
+
+        self.assertEqual(report["final_rehearsal_status"], "REHEARSAL_INCOMPLETE")
+        self.assertIn("MISSING_RAW_EVIDENCE", self.blocker_codes(report))
+        self.assertEqual(self.profile, caller_profile)
 
     def test_revocation_scope_is_explicitly_signer_only(self):
         report = self.check()
