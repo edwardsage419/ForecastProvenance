@@ -179,3 +179,45 @@ Method ID: method:last-observed-value:v1
 The baseline uses the immediately preceding first-release value of the same target statistic when that exact archived artifact was available by the current information cutoff.
 
 Current revised historical databases cannot substitute for the point-in-time first-release artifact.
+
+## D022 One cycle per official release instance
+
+Status: GEN_001 REVIEW CANDIDATE
+Date: 2026-09-11
+
+Genesis version 1 creates a separate issuance cycle for each admitted official target release instance.
+
+A cycle contains every manifest-admitted confirmatory method compatible with that target instance. Targets with different official release barriers are not forced into one shared cycle.
+
+Reason: one cycle per release instance gives each cycle one unambiguous information cutoff, precommitment deadline, execution window, external proof deadline, outcome information barrier, and completeness account.
+
+## D023 Minimal Genesis method set
+
+Status: GEN_001 REVIEW CANDIDATE
+Date: 2026-09-11
+
+The initial Genesis candidate admits only `method:last-observed-value:v1`.
+
+The first prospective history, if later authorized by a separate Genesis acceptance decision, is intended to establish real provenance, external time evidence, release-instance completeness, official-source resolution, evaluation, and Failure Corpus mechanics with the smallest operational and selection surface.
+
+Additional statistical models, LLMs, agents, experts, or other methods require an accepted successor manifest. They cannot be added retrospectively to Genesis history.
+
+## D024 Genesis candidate object lineage
+
+Status: GEN_001 REVIEW CANDIDATE
+Date: 2026-09-11
+
+The current effective normative candidate is `candidate_object_set_v0_2.json` plus `candidate_patch_v0_3.json`.
+
+The v0.3 patch replaces the issuance schedule policy only when the predecessor full hash matches and adds six operational policies. The resulting effective candidate contains 22 sealed objects.
+
+Earlier object sets remain immutable non-prospective review artifacts and are never silently rewritten.
+
+## D025 GEN_001 readiness closure evidence
+
+Status: GEN_001 REVIEW CONTROL
+Date: 2026-09-11
+
+`docs/GENESIS_READINESS_EVIDENCE_MATRIX.md` is the authoritative closure checklist for GEN_001.
+
+A readiness item closes only through the retained evidence specified by that matrix. Rehearsal success without retained verifiable artifacts, narrative confidence, or operator assertion does not close a blocker.
