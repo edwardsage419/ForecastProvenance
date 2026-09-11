@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "fpp:issuance-cycle-plan:v0.4",
+  "allOf": [{"$ref": "sealed_object.schema.json"}],
+  "type": "object",
+  "required": ["plan_commitment_deadline", "execution_window_open", "execution_window_close", "expected_slots"],
+  "properties": {
+    "plan_commitment_deadline": {"type": "string"},
+    "execution_window_open": {"type": "string"},
+    "execution_window_close": {"type": "string"},
+    "expected_slots": {"type": "array", "items": {"$ref": "reference.schema.json"}}
+  }
+}

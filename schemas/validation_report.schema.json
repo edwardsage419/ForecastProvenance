@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "fpp:validation-report:v0.4",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["validator_contract_ref", "trusted_manifest_ref", "candidate_object_ref", "dependency_refs", "result", "checks"],
+  "properties": {
+    "validator_contract_ref": {"$ref": "reference.schema.json"},
+    "trusted_manifest_ref": {"$ref": "reference.schema.json"},
+    "candidate_object_ref": {"$ref": "reference.schema.json"},
+    "dependency_refs": {"type": "array", "items": {"$ref": "reference.schema.json"}},
+    "result": {"enum": ["VALID", "INVALID", "INELIGIBLE_TRUST_UNKNOWN", "PENDING_EXTERNAL_ANCHOR", "VALID_NON_PROSPECTIVE", "LATE_OR_INELIGIBLE"]},
+    "checks": {"type": "array"}
+  }
+}

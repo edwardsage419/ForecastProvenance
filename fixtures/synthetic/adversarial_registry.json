@@ -1,0 +1,8 @@
+{
+  "origin_class": "SYNTHETIC",
+  "prospective_eligible": false,
+  "automated": [1,2,21,27,30,31,33,41,42,45,47,59,60,63,65,66,69,72,73,74,78],
+  "genesis_boundary": [18,19,20,39,44,55,56,75,76,77,87,91,92,93,96],
+  "design_boundary": [3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,22,23,24,25,26,28,29,32,34,35,36,37,38,40,43,46,48,49,50,51,52,53,54,57,58,61,62,64,67,68,70,71,79,80,81,82,83,84,85,86,88,89,90,94,95],
+  "boundary_rule": "Every ADV001 through ADV096 appears in exactly one coverage class. Design and Genesis boundary cases remain fail-closed and cannot be represented as automated prospective verification."
+}
