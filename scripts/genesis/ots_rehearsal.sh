@@ -26,6 +26,16 @@ TOOL_VERSIONS="$OUTDIR/tool_versions.txt"
   python3 --version 2>&1
 } > "$TOOL_VERSIONS"
 
+check_subject_hash() {
+  (cd "$OUTDIR" && sha256sum --check subject.sha256)
+}
+
+write_subject_hash() {
+  local digest
+  digest="$(sha256sum "$COPY" | awk '{print $1}')"
+  printf '%s  subject.bin\n' "$digest" > "$OUTDIR/subject.sha256"
+}
+
 case "$MODE" in
   stamp)
     if [[ -e "$PROOF" || -e "$COPY" ]]; then
@@ -33,14 +43,15 @@ case "$MODE" in
       exit 2
     fi
     cp "$SUBJECT" "$COPY"
-    sha256sum "$COPY" > "$OUTDIR/subject.sha256"
+    write_subject_hash
     ots stamp "$COPY" | tee "$OUTDIR/ots_stamp.txt"
     ots info "$PROOF" > "$OUTDIR/ots_info_after_stamp.txt"
     ;;
   upgrade)
     [[ -f "$COPY" ]] || { echo "Missing retained subject copy: $COPY" >&2; exit 2; }
     [[ -f "$PROOF" ]] || { echo "Missing proof: $PROOF" >&2; exit 2; }
-    sha256sum --check "$OUTDIR/subject.sha256"
+    [[ -f "$OUTDIR/subject.sha256" ]] || { echo "Missing subject hash record" >&2; exit 2; }
+    check_subject_hash
     sha256sum "$PROOF" > "$OUTDIR/proof_before_upgrade.sha256"
     ots upgrade "$PROOF" | tee "$OUTDIR/ots_upgrade.txt"
     ots info "$PROOF" > "$OUTDIR/ots_info_after_upgrade.txt"
@@ -50,7 +61,7 @@ case "$MODE" in
     [[ -f "$COPY" ]] || { echo "Missing retained subject copy: $COPY" >&2; exit 2; }
     [[ -f "$PROOF" ]] || { echo "Missing proof: $PROOF" >&2; exit 2; }
     [[ -f "$OUTDIR/subject.sha256" ]] || { echo "Missing subject hash record" >&2; exit 2; }
-    sha256sum --check "$OUTDIR/subject.sha256"
+    check_subject_hash
     if [[ -z "${OTS_BITCOIN_NODE:-}" ]]; then
       echo "verify requires OTS_BITCOIN_NODE pointing to the owner-controlled Bitcoin Core RPC endpoint" >&2
       echo "Example: export OTS_BITCOIN_NODE='http://USER:PASS@127.0.0.1:8332/'" >&2
