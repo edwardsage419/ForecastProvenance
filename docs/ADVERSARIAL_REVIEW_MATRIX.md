@@ -1,7 +1,7 @@
 # Forecast Trust Core Adversarial Review Matrix
 
-Version: 0.3 candidate
-Status: FTC_001 FREEZE CANDIDATE
+Version: 0.4 candidate
+Status: FTC_001 FINAL FREEZE CANDIDATE
 
 All FTC_001 test material is synthetic. No fixture may be represented as genuine prospective history.
 
@@ -72,39 +72,45 @@ All FTC_001 test material is synthetic. No fixture may be represented as genuine
 | ADV063 | Fragile artifact loss | Missing required bytes leave current report at full verifiability | INVALID CURRENT VERIFIABILITY REPORT |
 | ADV064 | Runtime timestamp nondeterminism | ValidationReport hash changes only because run time changes | INVALID VALIDATOR BEHAVIOR |
 | ADV065 | Plan committed after plan deadline | Verified plan existence bound exceeds plan commitment deadline | INVALID CYCLE PLAN ELIGIBILITY |
-| ADV066 | Zero safety interval | Plan deadline equals execution window open where Genesis requires positive margin | INVALID CYCLE PLAN ELIGIBILITY |
+| ADV066 | Zero safety interval | Plan deadline equals execution window open where positive margin is required | INVALID CYCLE PLAN ELIGIBILITY |
 | ADV067 | Local attempt time used as ordering proof | Validator accepts backdated started_at as proof plan preceded execution | INVALID VALIDATOR BEHAVIOR |
 | ADV068 | Changed plan reuses old proof | Mutated plan inherits prior plan commitment evidence | INVALID |
 | ADV069 | Slot cardinality expansion | One version 1 slot emits multiple forecast artifacts | INVALID |
 | ADV070 | Output schema substitution | Slot output does not match precommitted output schema | INVALID |
-| ADV071 | Hidden stochastic preselection | Stochastic method uses operator chosen randomness after inspecting candidates | INVALID |
-| ADV072 | Uncontrolled nondeterminism promoted | UNCONTROLLED_NONDETERMINISM method receives confirmatory prospective status | INVALID |
+| ADV071 | Hidden stochastic preselection | Operator chooses randomness after inspecting candidates | INVALID |
+| ADV072 | Uncontrolled nondeterminism promoted | UNCONTROLLED_NONDETERMINISM receives confirmatory prospective status | INVALID |
 | ADV073 | Deterministic replay mismatch | Claimed deterministic method cannot reproduce bound output | INELIGIBLE_TRUST_UNKNOWN or INVALID per policy |
 | ADV074 | Incomplete external request accounting | Externally audited method cannot prove complete eligible request set | INELIGIBLE_TRUST_UNKNOWN |
 | ADV075 | Bootstrap root substitution | Genesis acceptance validated against different bootstrap governance root | INVALID |
-| ADV076 | Bootstrap self authorization | Candidate manifest defines the authority used to accept itself | INVALID |
-| ADV077 | Governance fork without rule | Two successor acceptances claim same predecessor without authorized fork handling | INELIGIBLE_TRUST_UNKNOWN |
-| ADV078 | Policy version substitution | Consequential policy ID matches but full policy hash differs | INVALID |
+| ADV076 | Bootstrap self authorization | Candidate manifest defines authority used to accept itself | INVALID |
+| ADV077 | Governance fork without rule | Competing successor acceptances lack authorized resolution | INELIGIBLE_TRUST_UNKNOWN |
+| ADV078 | Policy version substitution | Policy ID matches but full policy hash differs | INVALID |
 | ADV079 | Anchor evidence fork conflict | Proof DAG branches attest incompatible subjects | INVALID |
 | ADV080 | Operational failure promoted | Local failure record treated as proof external anchor service failed | INVALID TRUST REPORT |
 | ADV081 | Historical validation rewritten | Missing bytes cause prior immutable ValidationReport content to change | INVALID |
-| ADV082 | Stored prospective self label | Evidence payload asserts prospective eligibility without validator derivation | INVALID SCHEMA |
+| ADV082 | Stored prospective self label | Evidence payload asserts prospective eligibility | INVALID SCHEMA |
 | ADV083 | Resolution vintage hindsight | Later favorable vintage silently replaces frozen vintage rule | INVALID |
-| ADV084 | Resolution deadline discretion | Operator extends deadline after seeing ambiguous outcome | INVALID |
+| ADV084 | Resolution deadline discretion | Operator extends deadline after seeing outcome ambiguity | INVALID |
 | ADV085 | Undefined dependency root | Validator invents implementation specific dependency root | INVALID SCHEMA |
-| ADV086 | Target schedule shift | Cycle plan moves target timing outside target and Genesis schedule rules | INVALID |
-| ADV087 | Forecast deadline after outcome observability | Plan uses a deadline that permits anchoring after frozen outcome observability boundary | INVALID |
-| ADV088 | Source acquisition discretion | Two admissible source artifacts exist and operator selects favorable one contrary to source contract | INVALID |
+| ADV086 | Target schedule shift | Cycle plan moves target timing outside target and schedule policy | INVALID |
+| ADV087 | Forecast deadline after outcome barrier | External proof deadline exceeds frozen outcome information barrier | INVALID |
+| ADV088 | Source acquisition discretion | Operator selects favorable artifact contrary to source selection rule | INVALID |
+| ADV089 | Discretionary cycle menu | Operator removes an unfavorable target or method from deterministically required schedule | INVALID |
+| ADV090 | Alternate plan shopping | Multiple candidate plans are privately evaluated and a plan inconsistent with schedule policy is committed | INVALID |
+| ADV091 | Seed embedded in plan | Operator supplied seed known before external plan commitment is used for stochastic confirmatory forecast | INVALID |
+| ADV092 | Public randomness substitution | Different public randomness event is selected after values are known | INVALID |
+| ADV093 | Public randomness too early | Randomness event was already available at or before plan commitment deadline | INVALID |
+| ADV094 | Source artifact tie discretion | Source contract permits multiple artifacts without deterministic selection | INELIGIBLE_TRUST_UNKNOWN |
+| ADV095 | Historical schedule reinterpretation | New schedule policy is applied to an old cycle | INVALID VALIDATOR BEHAVIOR |
+| ADV096 | Verifiability report without as of | Current verifiability state lacks declared assessment time | INVALID REPORT |
 
 ## Required coverage
 
-FTC_001 design review cannot pass unless each Scientific Invariant S1 through S16 maps to at least one adversarial case or an explicit out of scope rationale.
-
-The final freeze review must also cover plan precommitment, output selection bias, governance bootstrap, policy substitution, anchor DAG conflicts, current verifiability, and resolution evidence semantics.
+FTC_001 freeze requires coverage of Scientific Invariants S1 through S16 plus plan precommitment, cycle completeness, output selection control, governance bootstrap, policy substitution, anchor DAG conflicts, current verifiability, target outcome barriers, source selection, and resolution evidence semantics.
 
 ## Synthetic fixture identity
 
-Future implementation fixtures live only under `fixtures/synthetic/` and persist an origin class of `SYNTHETIC`.
+Future implementation fixtures live only under `fixtures/synthetic/` and persist `origin_class = SYNTHETIC`.
 
 They must never carry a self asserted prospective eligibility field.
 
