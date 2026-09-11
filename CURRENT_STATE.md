@@ -24,25 +24,19 @@ Forecast Ledger Genesis: NOT STARTED
 
 ## Trust Core state
 
-FTC_001 normative design: FROZEN FOR SYNTHETIC IMPLEMENTATION, version 0.4
+FTC_001 normative design: FROZEN, version 0.4
 
-FTC_002 implementation branch: build/ftc-002
+FTC_002 synthetic implementation: ACCEPTED FOR MERGE
 
-FTC_002 implementation PR: #4, DRAFT REVIEW OPEN
+Implementation branch: build/ftc-002
 
-Primitive Trust Core implementation: IMPLEMENTED FOR REVIEW
+Implementation PR: #4
 
-Local test result: 18 tests passed
+Adversarial matrix: ADV001 through ADV096 executed as synthetic attack scenarios
 
-Adversarial registry: ADV001 through ADV096 accounted for exactly once
+Implementation findings resolved: full slot hash binding, exact cycle plan binding, malformed trust root fail closed handling, Unicode surrogate rejection, retry predecessor and trigger validation, exact plan proof subject binding, public randomness timing and source binding, and operator seed rejection
 
-Directly executable primitive cases: 21
-
-Explicit design boundary cases: 60
-
-Explicit Genesis boundary cases: 15
-
-Implementation adversarial findings resolved so far: slot hash substitution, exact cycle plan binding, malformed trust root handling, Unicode surrogate handling
+Runtime dependencies: 0
 
 Synthetic fixtures only: YES
 
@@ -50,11 +44,15 @@ Synthetic fixtures only: YES
 
 External anchor candidate: OpenTimestamps with Bitcoin attestation, Genesis testing only
 
-Concrete AnchorScheme semantics: NOT FROZEN
+Concrete OTS_BTC_BATCH_V1 AnchorScheme semantics: NOT FROZEN
 
-Bootstrap governance instance: NOT CREATED
+BootstrapGovernanceRoot instance: NOT CREATED
 
-Initial target set: NOT FROZEN
+Initial production target set: NOT FROZEN
+
+Resolution policies: NOT FROZEN
+
+Issuance schedule: NOT FROZEN
 
 Genesis Protocol: DRAFT, NOT ACCEPTED
 
@@ -62,10 +60,8 @@ Prospective forecasting: PROHIBITED
 
 ## Current gate
 
-FTC_002 is in implementation review.
+Forecast Trust Core has passed normative design review and synthetic implementation adversarial review.
 
-The current code may validate synthetic Trust Core primitives only. It cannot create or certify genuine prospective evidence.
+This establishes fail closed Trust Layer interfaces. It does not create positive external evidence and does not establish predictive skill.
 
-No live production model execution, Forecast Ledger creation, genuine prospective issuance, native outcome history, or real Genesis anchoring is authorized.
-
-FTC_002 remains open until repository level implementation review finds no blocking defect and the boundary classification of all 96 adversarial cases is accepted.
+The next work is Genesis readiness design. No Forecast Ledger, genuine prospective issuance, production model execution, native outcome history, or real Genesis anchoring is authorized until the Genesis gate is separately accepted.
