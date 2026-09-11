@@ -1,44 +1,52 @@
 # Next Accepted Task
 
 Task ID: GEN_001
-State: READINESS REVIEW OPEN
+State: OWNER EVIDENCE AND FINAL FREEZE REQUIRED
 
 ## Objective
 
 Complete Genesis readiness without creating Forecast Ledger history or issuing genuine forecasts.
 
-## Delivered design and repository closure
+## Repository work already delivered
 
 1. FPP_TIME_EVIDENCE_V1 separates signed wall-clock deadline evidence from Bitcoin durability evidence.
 2. DEADLINE_RECEIPT_QUORUM_V1 requires two independent provider groups and at least one RFC 3161 receipt.
-3. OTS_BTC_BUNDLE_V1 anchors the accepted external-time evidence bundle and requires strong Bitcoin Core verification.
-4. Bootstrap governance uses an owner-controlled Ed25519 key outside the candidate manifest graph.
-5. Genesis manifest and ManifestAcceptance sequence is defined.
-6. Deterministic IssuanceSchedulePolicy uses one cycle per official target release instance.
-7. Initial target candidate set contains CPI monthly change, U-3 unemployment rate, and real GDP Advance Estimate.
-8. Official source-contract candidates are defined for BLS and BEA schedule and first-release artifacts.
-9. Semantic target parsing is implemented with synthetic fail-closed regression tests.
-10. Transparent last-observed first-release baseline is defined.
-11. Continuous scalar evaluation uses absolute error and squared error with target-specific reporting.
-12. Retry, omission, correction, retention, human-review, and acceptance policies are materialized as sealed candidate objects.
-13. Genesis abort conditions and first-pass readiness adversarial review are recorded.
-14. Candidate object lineage is explicit: version 0.2 base plus version 0.3 patch, for 22 effective sealed objects.
-15. Candidate seal, predecessor-hash, effective-count, schedule, policy-presence, and full dependency-closure tests are present.
-16. Owner external-readiness runbook and non-forecast Ed25519, RFC 3161, and OpenTimestamps rehearsal scripts are prepared.
+3. Minimal provider plan is FreeTSA RFC 3161 plus DigiCert RFC 3161; Roughtime is optional.
+4. OTS_BTC_BUNDLE_V1 requires strong Bitcoin verification.
+5. Bootstrap governance uses an owner-controlled Ed25519 key outside the candidate manifest graph.
+6. Genesis manifest and ManifestAcceptance sequence is defined.
+7. Deterministic IssuanceSchedulePolicy uses one cycle per official target release instance.
+8. Initial target candidate set contains CPI monthly change, U-3 unemployment rate, and real GDP Advance Estimate.
+9. Official source-contract candidates are defined for BLS and BEA schedule and first-release artifacts.
+10. Semantic target parsing is implemented with synthetic fail-closed regression tests.
+11. Retrospective official fixture manifest fixes three historical releases and expected target semantics.
+12. Official fixture downloader restricts retrieval to admitted BLS and BEA HTTPS hosts and records raw SHA256 metadata.
+13. Transparent last-observed first-release baseline is defined.
+14. Continuous scalar evaluation uses absolute error and squared error with target-specific reporting.
+15. Retry, omission, correction, retention, human-review, and acceptance policies are materialized as sealed candidate objects.
+16. Candidate object lineage is explicit: version 0.2 base plus version 0.3 patch, for 22 effective sealed objects.
+17. Candidate seal, predecessor-hash, effective-count, schedule, policy-presence, and full dependency-closure tests are present.
+18. Deterministic candidate materializer emits a sorted effective inventory and inventory SHA256.
+19. Final validator-binding builder binds final commit, source files, schemas, pyproject, and final test-report SHA256.
+20. Owner external-readiness runbook and non-forecast Ed25519, RFC 3161, OpenTimestamps, and source-fixture retrieval tooling are prepared.
+21. GENESIS_READINESS_EVIDENCE_MATRIX.md is the authoritative closure checklist.
 
 ## Required owner-controlled external closure
 
-1. Run live non-forecast wall-clock provider rehearsals from a networked owner-controlled environment.
-2. Freeze exact qualifying provider profiles including signer chain, policy OID, accuracy, nonce behavior, and revocation capture.
-3. Generate the owner Ed25519 bootstrap key locally and supply only its public key to the project.
-4. Run a non-forecast OpenTimestamps stamp, proof upgrade, and strong Bitcoin Core verification.
+1. Run live non-forecast FreeTSA and DigiCert RFC 3161 rehearsals from a networked owner-controlled environment.
+2. Generate the owner Ed25519 bootstrap key locally and provide only the public key and its SHA256.
+3. Run a non-forecast OpenTimestamps stamp, proof upgrade, and strong Bitcoin Core verification.
+4. Retrieve and retain the three selected retrospective official BLS and BEA raw source fixtures with SHA256 metadata.
+5. Preserve all failed and successful rehearsal artifacts needed for provider and operational review.
 
-## Required repository and source closure
+## Required final-freeze closure after owner evidence is available
 
-5. Retain real official BLS and BEA first-release archive bytes and prove the source adapters and semantic parser against those fixtures.
-6. Bind the exact Genesis validator implementation at the final candidate commit.
-7. Construct the final candidate Genesis TrustedManifest only after all required profiles, public key, source fixtures, and validator binding are fixed.
-8. Run final Genesis readiness adversarial review with no unresolved blocking finding.
+6. Convert qualifying time-provider rehearsals into sealed ProviderProfile objects.
+7. Validate real official source bytes through the source adapters and retain exact semantic reports.
+8. Run the full final test suite and content-address the final report.
+9. Build exact ValidatorContract against the final candidate commit and final test report.
+10. Seal BootstrapGovernanceRoot, OTS verifier profile, final candidate TrustedManifest, and ManifestAcceptance inputs.
+11. Run final Genesis readiness adversarial review with no unresolved blocking finding.
 
 ## Allowed work
 
@@ -65,6 +73,6 @@ Complete Genesis readiness without creating Forecast Ledger history or issuing g
 
 ## Exit criteria
 
-GEN_001 exits only when external provider profiles and rehearsals, bootstrap public key, strong OTS verification, real official source fixtures, exact validator binding, final candidate TrustedManifest closure, and final adversarial review have no unresolved blocking finding.
+GEN_001 exits only when every required item through GR038 in `GENESIS_READINESS_EVIDENCE_MATRIX.md` is closed for the selected final Genesis profile and final adversarial review contains no blocking finding.
 
 Completion of GEN_001 authorizes only a separate Genesis acceptance decision. It does not create Forecast Ledger Genesis or authorize a genuine prospective forecast.
