@@ -14,6 +14,7 @@ The current effective candidate is constructed from:
 objects/candidate_object_set_v0_2.json
     + objects/candidate_patch_v0_3.json
     + objects/candidate_patch_v0_4.json
+    + objects/candidate_patch_v0_5.json
 ```
 
 Version 0.2 supplies the sealed base object set.
@@ -22,14 +23,16 @@ Version 0.3 replaces the issuance schedule policy and adds the operational polic
 
 Version 0.4 preserves the earlier files as append-only review history, retires `policy:deadline-receipt-quorum:v1` by exact predecessor content hash, and adds `policy:deadline-receipt-quorum:v2`.
 
-The effective version 0.4 candidate contains 22 sealed normative objects:
+Version 0.5 preserves the earlier files as append-only review history, retires `policy:deadline-receipt-quorum:v2` by exact predecessor content hash, and adds `policy:deadline-receipt-quorum:v3` with the frozen zero-cost pre-rehearsal Roughtime protocol rules.
+
+The effective version 0.5 candidate contains 22 sealed normative objects:
 
 1. Three TargetDefinition objects.
 2. Three ResolutionRule objects.
 3. Six SourceContract objects.
 4. One IssuanceSchedule PolicyDefinition.
 5. One Evaluation PolicyDefinition.
-6. One Deadline Receipt Quorum PolicyDefinition, version 2.
+6. One Deadline Receipt Quorum PolicyDefinition, version 3.
 7. One transparent ForecastMethod baseline.
 8. One Retry PolicyDefinition.
 9. One Omission PolicyDefinition.
@@ -38,7 +41,7 @@ The effective version 0.4 candidate contains 22 sealed normative objects:
 12. One Human Review PolicyDefinition.
 13. One Acceptance PolicyDefinition.
 
-The current Deadline Receipt Quorum candidate requires two independently qualifying Roughtime provider groups from an exactly three profile frozen pool. RFC 3161 is optional auxiliary evidence and is not required by the candidate minimum profile.
+The current Deadline Receipt Quorum candidate requires two independently qualifying Roughtime provider groups from an exactly three profile frozen pool. RFC 3161 is optional auxiliary evidence and is not required by the candidate minimum profile. The controlling pre-rehearsal protocol details are in `docs/GEN_001_PRE_REHEARSAL_PROTOCOL_FREEZE_2026_09_12.md`.
 
 The materializer applies the predecessor patch chain in order. A retirement or replacement must bind the exact predecessor content hash. Repository tests require the effective object count, sealed object validity, retirement and replacement predecessor hashes, full dependency closure, one cycle per release semantics, operational policy presence, and the fail closed zero recurring cash cost time quorum semantics.
 
@@ -60,9 +63,11 @@ Any later model or additional method requires an accepted successor manifest and
 
 `objects/candidate_object_set_v0_2.json` corrected full hash bindings and remains the base of the current lineage.
 
-`objects/candidate_patch_v0_3.json` remains the immutable predecessor patch for the current v0.4 candidate.
+`objects/candidate_patch_v0_3.json` remains an immutable predecessor patch.
 
-`policy:deadline-receipt-quorum:v1` remains preserved inside the v0.2 base as historical candidate content. It is retired only in v0.4 effective materialization. The historical object is never rewritten.
+`objects/candidate_patch_v0_4.json` remains the immutable predecessor patch that introduced `policy:deadline-receipt-quorum:v2`.
+
+`policy:deadline-receipt-quorum:v1` remains preserved inside the v0.2 base as historical candidate content. `policy:deadline-receipt-quorum:v2` remains preserved inside the v0.4 patch as historical candidate content. Neither historical object is rewritten; v0.5 retires v2 only in effective materialization.
 
 All earlier artifacts are permanently non prospective and must never be treated as an accepted Genesis manifest.
 

@@ -1,0 +1,302 @@
+{
+  "$defs": {
+    "digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "utc": {
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
+      "type": "string"
+    }
+  },
+  "$id": "https://forecastprovenance.org/schemas/roughtime_rehearsal_report.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "authorization_record_sha256": {
+      "$ref": "#/$defs/digest"
+    },
+    "classification": {
+      "const": "NON_FORECAST_REHEARSAL"
+    },
+    "content_sha256": {
+      "$ref": "#/$defs/digest"
+    },
+    "execution_transcript_sha256": {
+      "$ref": "#/$defs/digest"
+    },
+    "final_rehearsal_status": {
+      "enum": [
+        "REHEARSAL_VERIFIED",
+        "REHEARSAL_FAILED"
+      ]
+    },
+    "network_authorized_by_report": {
+      "const": false
+    },
+    "object_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "object_type": {
+      "const": "RoughtimeRehearsalReport"
+    },
+    "payload_sha256": {
+      "$ref": "#/$defs/digest"
+    },
+    "prospective_eligible": {
+      "const": false
+    },
+    "provider_attempt_order": {
+      "const": [
+        "roughtime.se",
+        "time.txryan.com",
+        "TimeNL-Roughtime"
+      ]
+    },
+    "provider_results": {
+      "items": {
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "else": {
+              "not": {
+                "required": [
+                  "receipt"
+                ]
+              },
+              "required": [
+                "final_failure_code"
+              ]
+            },
+            "if": {
+              "properties": {
+                "qualifies": {
+                  "const": true
+                }
+              },
+              "required": [
+                "qualifies"
+              ]
+            },
+            "then": {
+              "not": {
+                "required": [
+                  "final_failure_code"
+                ]
+              },
+              "properties": {
+                "attempts": {
+                  "minItems": 1
+                }
+              },
+              "required": [
+                "receipt"
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "final_failure_code": {
+                  "const": "BACKOFF_ACTIVE"
+                }
+              },
+              "required": [
+                "final_failure_code"
+              ]
+            },
+            "then": {
+              "properties": {
+                "attempts": {
+                  "maxItems": 0
+                },
+                "qualifies": {
+                  "const": false
+                }
+              }
+            }
+          }
+        ],
+        "properties": {
+          "attempts": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "attempt_number": {
+                  "maximum": 2,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "detail": {
+                  "type": "string"
+                },
+                "failure_code": {
+                  "enum": [
+                    "AUTHORIZATION_MISMATCH",
+                    "BACKOFF_ACTIVE",
+                    "DELEGATION_INVALID",
+                    "DNS_FAILURE",
+                    "MALFORMED_RESPONSE",
+                    "MERKLE_PROOF_INVALID",
+                    "MIDPOINT_OUTSIDE_DELEGATION",
+                    "NONCE_MISMATCH",
+                    "PLAN_MISMATCH",
+                    "RADIUS_INVALID",
+                    "RAW_EVIDENCE_INCOMPLETE",
+                    "RETRY_STATE_INVALID",
+                    "ROOT_KEY_MISMATCH",
+                    "SIGNATURE_INVALID",
+                    "TRANSPORT_ERROR",
+                    "TRANSPORT_TIMEOUT",
+                    "UPPER_BOUND_AFTER_DEADLINE",
+                    "VERIFIER_ERROR",
+                    "WIRE_VERSION_MISMATCH"
+                  ]
+                },
+                "outcome": {
+                  "enum": [
+                    "QUALIFYING_VERIFIED_RESPONSE",
+                    "VERIFIED_NONQUALIFYING_RESPONSE",
+                    "FAILED"
+                  ]
+                },
+                "request_base64": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "request_sha256": {
+                  "$ref": "#/$defs/digest"
+                },
+                "response_base64": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "response_sha256": {
+                  "$ref": "#/$defs/digest"
+                }
+              },
+              "required": [
+                "attempt_number",
+                "request_sha256",
+                "request_base64",
+                "outcome"
+              ],
+              "type": "object"
+            },
+            "maxItems": 2,
+            "minItems": 0,
+            "type": "array"
+          },
+          "final_failure_code": {
+            "enum": [
+              "AUTHORIZATION_MISMATCH",
+              "BACKOFF_ACTIVE",
+              "DELEGATION_INVALID",
+              "DNS_FAILURE",
+              "MALFORMED_RESPONSE",
+              "MERKLE_PROOF_INVALID",
+              "MIDPOINT_OUTSIDE_DELEGATION",
+              "NONCE_MISMATCH",
+              "PLAN_MISMATCH",
+              "RADIUS_INVALID",
+              "RAW_EVIDENCE_INCOMPLETE",
+              "RETRY_STATE_INVALID",
+              "ROOT_KEY_MISMATCH",
+              "SIGNATURE_INVALID",
+              "TRANSPORT_ERROR",
+              "TRANSPORT_TIMEOUT",
+              "UPPER_BOUND_AFTER_DEADLINE",
+              "VERIFIER_ERROR",
+              "WIRE_VERSION_MISMATCH"
+            ]
+          },
+          "provider_id": {
+            "enum": [
+              "roughtime.se",
+              "time.txryan.com",
+              "TimeNL-Roughtime"
+            ]
+          },
+          "qualifies": {
+            "type": "boolean"
+          },
+          "receipt": {
+            "$ref": "roughtime_receipt.schema.json"
+          }
+        },
+        "required": [
+          "provider_id",
+          "attempts",
+          "qualifies"
+        ],
+        "type": "object"
+      },
+      "maxItems": 3,
+      "minItems": 3,
+      "type": "array"
+    },
+    "qualifying_provider_count": {
+      "maximum": 3,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "quorum_threshold": {
+      "const": 2
+    },
+    "rehearsal_plan_sha256": {
+      "$ref": "#/$defs/digest"
+    },
+    "retry_state_after_sha256": {
+      "$ref": "#/$defs/digest"
+    },
+    "retry_state_before_sha256": {
+      "$ref": "#/$defs/digest"
+    },
+    "schema_version": {
+      "const": "1.1"
+    },
+    "subject_sha256": {
+      "$ref": "#/$defs/digest"
+    },
+    "verifier_build_profile_sha256": {
+      "$ref": "#/$defs/digest"
+    },
+    "verifier_commit": {
+      "const": "56b346a16cd7e8317bb0d24f1ec15549cf93a4c9"
+    },
+    "verifier_repository": {
+      "const": "github.com/tannerryan/roughtime"
+    },
+    "verifier_tag": {
+      "const": "v1.27.0"
+    }
+  },
+  "required": [
+    "schema_version",
+    "classification",
+    "prospective_eligible",
+    "network_authorized_by_report",
+    "rehearsal_plan_sha256",
+    "authorization_record_sha256",
+    "subject_sha256",
+    "provider_attempt_order",
+    "quorum_threshold",
+    "verifier_repository",
+    "verifier_tag",
+    "verifier_commit",
+    "provider_results",
+    "qualifying_provider_count",
+    "final_rehearsal_status",
+    "object_type",
+    "object_id",
+    "payload_sha256",
+    "content_sha256",
+    "verifier_build_profile_sha256",
+    "retry_state_before_sha256",
+    "retry_state_after_sha256",
+    "execution_transcript_sha256"
+  ],
+  "title": "Roughtime Non-Forecast Rehearsal Report",
+  "type": "object"
+}

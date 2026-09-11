@@ -15,3 +15,16 @@ exact retained provider-policy SHA256 and observed token policy OID. Provider
 profile booleans cannot substitute for this assertion. Version 1.1 also requires
 reviewer provenance and binds the exact normalized observed token accuracy; the
 provenance fields do not claim cryptographic reviewer authentication.
+
+The Roughtime pre-rehearsal schemas describe the offline plan, separate network
+authorization, qualifying receipt, and final rehearsal report:
+
+- `roughtime_rehearsal_plan.schema.json`
+- `roughtime_rehearsal_authorization.schema.json`
+- `roughtime_receipt.schema.json`
+- `roughtime_rehearsal_report.schema.json`
+
+These Roughtime schemas are descriptive interoperability constraints only.
+Cross-field trust decisions are enforced by the executable semantic validator in
+`forecast_trust_core.roughtime_rehearsal`, and cryptographic qualification still
+requires raw-evidence replay through the separately pinned low-level verifier.

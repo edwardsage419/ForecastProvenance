@@ -12,7 +12,7 @@ from forecast_trust_core.canonical import canonical_json, sha256_hex, verify_sea
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_BASE = ROOT / "genesis" / "candidate" / "objects" / "candidate_object_set_v0_2.json"
-DEFAULT_PATCH = ROOT / "genesis" / "candidate" / "objects" / "candidate_patch_v0_4.json"
+DEFAULT_PATCH = ROOT / "genesis" / "candidate" / "objects" / "candidate_patch_v0_5.json"
 
 
 def full_refs(value: Any):

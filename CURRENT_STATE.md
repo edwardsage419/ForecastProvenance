@@ -1,194 +1,165 @@
 # Current State
 
-Date: 2026-09-11
+Date: 2026-09-12
 Project: Forecast Provenance Project
 State: GENESIS_READINESS_DESIGN
 
 ## Native scientific state
 
-Native prospective forecasts: 0
+```text
+Native prospective forecasts = 0
+Native outcome resolutions = 0
+Native evaluation results = 0
+Native failure records = 0
+Accepted Genesis anchors = 0
+Forecast Ledger = NOT CREATED
+Forecast Ledger Genesis = NOT CREATED
+```
 
-Native outcome resolutions: 0
+## Trust Core
 
-Native evaluation results: 0
+FTC_001 normative design: FROZEN, version 0.4.
 
-Native failure records: 0
+FTC_002 synthetic implementation: COMPLETE AND MERGED.
 
-Accepted Genesis anchors: 0
+ADV001 through ADV096 remain the synthetic adversarial baseline.
 
-Imported Psychohistory artifacts admitted as native evidence: 0
+## GEN_001
 
-Forecast Ledger: NOT CREATED
+PR #6 remains Draft and unmerged.
 
-Forecast Ledger Genesis: NOT STARTED
+Current repository-side design target:
 
-## Trust Core state
+```text
+zero recurring cash cost minimum profile
+FPP_TIME_EVIDENCE_V1
+policy:deadline-receipt-quorum:v3
+2 of 3 frozen independent Roughtime groups
+OpenTimestamps + Bitcoin durability
+owner Ed25519 bootstrap authority
+RFC3161 = OPTIONAL_AUXILIARY
+```
 
-FTC_001 normative design: FROZEN, version 0.4
+Current effective candidate lineage:
 
-FTC_002 synthetic implementation: COMPLETE AND MERGED
+```text
+v0.2 base
++ v0.3 patch
++ v0.4 patch
++ v0.5 patch
+```
 
-FTC_002 merge commit: 6d519c3147f2d4d8a17e1d75d6482430a159a4f3
+Effective object count remains 22.
 
-Adversarial matrix: ADV001 through ADV096 executed as synthetic attack scenarios
+## Pre-rehearsal Roughtime pool
 
-Runtime dependencies: 0
+Current pool:
 
-## GEN_001 repository state
+1. `roughtime.se`
+2. `time.txryan.com`
+3. `TimeNL-Roughtime`
 
-Genesis readiness PR: #6, DRAFT REVIEW OPEN
+Cloudflare-Roughtime-2 is removed from the current pool after a concrete unresolved IETF interoperability issue was identified. It remains historical review evidence only.
 
-Repository side Genesis readiness design: ACTIVE ZERO COST TIME EVIDENCE REVISION
+Public entry evidence is sufficient to continue tooling qualification for all three current candidates.
 
-Current critical path: ZERO COST PROVIDER REHEARSAL READINESS, OWNER EXTERNAL EVIDENCE, THEN FINAL FREEZE
+No provider request is authorized.
 
-External time evidence architecture: FPP_TIME_EVIDENCE_V1 REVIEW CANDIDATE
+## Protocol freeze
 
-Deadline receipt quorum candidate: `policy:deadline-receipt-quorum:v2`, two of three frozen independent Roughtime provider groups
+Current nonce profile:
 
-RFC 3161 role: OPTIONAL AUXILIARY
+`FPP_ROUGHTIME_NONCE_V2`
 
-Historical commercial RFC 3161 qualification assessment: `docs/GENESIS_PROVIDER_QUALIFICATION_STATUS_2026_09_11.md`
+It produces an exact 32-byte SHA-256 nonce from the raw 32-byte subject SHA256 and fresh 32-byte provider-specific client randomness.
 
-Current zero cost time evidence review: `docs/GENESIS_ZERO_COST_TIME_EVIDENCE_REVIEW_2026_09_11.md`
+Current request profile:
 
-Current Roughtime candidate pool: `roughtime.se`, `time.txryan.com`, `Cloudflare-Roughtime-2`
+```text
+STANDARD_1024_BODY
+UDP_ONLY
+all three providers evaluated; each is attempted only when persistent retry state permits
+2 receipts required
+protocol fallback prohibited
+packet fallback prohibited
+transport fallback prohibited
+maximum 2 attempts per provider
+persistent exponential retry state per root
+properly signed but project-nonqualifying response stops retry and resets protocol backoff
+```
 
-Roughtime candidate status: all three `NOT READY FOR NON_FORECAST_REHEARSAL`; no request authorized
+Draft labels and verifiable wire profiles are recorded separately because drafts 12 through 19 share the testing wire version `0x8000000c`.
 
-Commercial Sectigo and Signicat qualification work: PAUSED FOR GENESIS MINIMUM PROFILE
+The current pinned verifier candidate is:
 
-Bitcoin durability layer: OTS_BTC_BUNDLE_V1 REVIEW CANDIDATE
+```text
+github.com/tannerryan/roughtime
+tag v1.27.0
+commit 56b346a16cd7e8317bb0d24f1ec15549cf93a4c9
+```
 
-OTS strong verification: REQUIRES EXPLICIT OWNER CONTROLLED BITCOIN CORE RPC; a pruned node may be used if it satisfies the frozen verifier contract
+A strict low-level wrapper build and offline fixture run under Go 1.27.x is still required before any network authorization. Every future rehearsal plan must bind an exact content-addressed verifier build profile and an exact pre-attempt retry-state snapshot.
 
-Bootstrap authority model: owner controlled Ed25519, exact public key PENDING OWNER ACTION
+## Evidence validation
 
-Genesis manifest and ManifestAcceptance procedure: REVIEW CANDIDATE
+Roughtime JSON Schemas are descriptive interoperability constraints.
 
-Issuance schedule model: ONE CYCLE PER TARGET RELEASE INSTANCE
+Cross-field acceptance is controlled by the executable semantic validator, which recomputes:
 
-Initial admitted method candidate: method:last-observed-value:v1 only
+```text
+plan and authorization content hashes
+nonce derivation
+raw request and response hashes
+midpoint + radius upper bound
+retry request-byte identity
+provider qualification count
+final quorum status
+sealed report and receipt hashes
+```
 
-Initial target candidate set: 3 continuous official macroeconomic targets
+Schema-valid but semantically inconsistent evidence fails closed. Semantic validation is not a substitute for cryptographic replay: every qualifying raw request/response/nonce/profile tuple must also replay successfully through the pinned low-level verifier, and each qualifying receipt must bind a verification transcript hash.
 
-Candidate targets:
+## OpenTimestamps
 
-1. U.S. CPI all items monthly change, seasonally adjusted, first release.
-2. U.S. official U-3 unemployment rate, seasonally adjusted, first release.
-3. U.S. real GDP quarter over quarter annualized growth, Advance Estimate.
+OTS remains the Bitcoin durability layer.
 
-Official BLS and BEA source contracts: REVIEW CANDIDATE
+The rehearsal script now uses append-only event directories for stamp, upgrade and verify steps so tool versions, output, proof hashes and failed attempts are not overwritten.
 
-Semantic target parser: IMPLEMENTED
+Strong verification still requires owner-controlled Bitcoin Core. RPC credentials remain local and are never retained.
 
-Fail closed raw official release adapters: IMPLEMENTED FOR CPI, U-3, GDP ADVANCE
+## RFC 3161
 
-Retrospective official source fixture manifest: CREATED FOR CPI 2026-07, U-3 2026-08, GDP 2026-Q2 ADVANCE
+Checker version 1.3 / report schema 1.2 remain closed absent a concrete new correctness or security defect.
 
-Official fixture fetcher: IMPLEMENTED, OWNER NETWORK EXECUTION PENDING
+Retained historical reports remain unchanged.
 
-Retrospective fixture validator: IMPLEMENTED, PRODUCES SEALED NON PROSPECTIVE SOURCE ADAPTER REPORTS
+Commercial Sectigo and Signicat qualification work remains paused for the zero-cost Genesis minimum profile.
 
-Transparent baseline: last observed first release value, REVIEW CANDIDATE
+## Other external blockers
 
-Evaluation policy: continuous scalar point forecast, absolute error and squared error, REVIEW CANDIDATE
+Still required:
 
-Genesis abort conditions: REVIEW CANDIDATE, UPDATED FOR ZERO COST ROUGHTIME QUORUM
+1. owner-generated bootstrap Ed25519 public key only;
+2. pinned Roughtime verifier/toolchain build and strict offline fixtures;
+3. separately authorized non-forecast Roughtime rehearsals and final ProviderProfiles;
+4. OTS/Bitcoin strong rehearsal and final verifier profile;
+5. three retrospective official BLS/BEA fixture byte sets and adapter reports;
+6. final clean test report and ValidatorContract;
+7. final BootstrapGovernanceRoot, TrustedManifest, ManifestAcceptance, external evidence and adversarial review.
 
-GEN_001 readiness evidence matrix: ACTIVE REVIEW CONTROL
+## Standards-transition gate
 
-Owner action packet: UPDATED; PROVIDER NETWORK REQUESTS PAUSED UNTIL SEPARATELY AUTHORIZED
+Roughtime draft-19 is in the RFC publication process. Any change in final wire version, provider protocol profile, endpoint, key, TYPE behavior, transport requirement or verifier semantics before final freeze requires read-only re-review and a versioned profile change. No automatic migration is permitted.
 
-External readiness runbook: EXISTING RFC 3161 PROVIDER STEP IS SUPERSEDED FOR THE CURRENT MINIMUM PROFILE; DO NOT EXECUTE PROVIDER REQUESTS UNTIL A SEPARATE TASK AUTHORIZES THEM
+## Safety state
 
-RFC 3161 qualification rehearsal checker: IMPLEMENTED, VERSION 1.3, REPORT SCHEMA 1.2, ENGINEERING CLOSED ABSENT A NEW CONCRETE DEFECT
+```text
+Genesis = NOT STARTED
+Forecast Ledger Genesis = NOT CREATED
+Forecast Ledger = NOT CREATED
+prospective forecast count = 0
+production-qualified provider count = 0
+PRODUCTION_QUALIFIED = NO
+```
 
-Retained RFC 3161 reports: FreeTSA, DigiCert, Sectigo ordinary, and Sectigo Qualified
-
-RFC 3161 retained status: FreeTSA `REHEARSAL_INCOMPLETE`; DigiCert `REHEARSAL_INCOMPLETE`; Sectigo ordinary `REHEARSAL_INCOMPLETE`; Sectigo Qualified `REHEARSAL_VERIFIED`; NONE PRODUCTION QUALIFIED
-
-Production qualified provider count: 0
-
-Candidate materializer: UPDATED FOR APPEND ONLY PATCH PREDECESSOR CHAIN AND EXACT HASH RETIREMENT
-
-Current effective candidate object lineage: v0.2 base plus v0.3 patch plus v0.4 patch
-
-Effective candidate object count: 22
-
-Current effective deadline quorum object: `policy:deadline-receipt-quorum:v2`
-
-Candidate Genesis TrustedManifest: NOT CREATED
-
-ManifestAcceptance: NOT CREATED
-
-Final readiness test runner: IMPLEMENTED, CLEAN FINAL CANDIDATE EXECUTION PENDING
-
-Final validator binding builder: IMPLEMENTED, FINAL COMMIT AND TEST REPORT PENDING
-
-## Candidate object state
-
-Original object set: SUPERSEDED REVIEW ARTIFACT
-
-Version 0.2 base object set: SEALED BASE
-
-Version 0.3 patch: RETAINED PREDECESSOR PATCH
-
-Version 0.4 patch: CURRENT EFFECTIVE PATCH
-
-Version 0.4 retires `policy:deadline-receipt-quorum:v1` by exact content hash and adds `policy:deadline-receipt-quorum:v2`.
-
-The historical v1 object remains preserved in the v0.2 base file and is not rewritten.
-
-Effective candidate object count: 22
-
-All candidate objects: NON PROSPECTIVE
-
-## Remaining Genesis readiness blockers
-
-### Zero cost external time evidence
-
-1. Independently review and freeze rehearsal entry criteria for `roughtime.se`, `time.txryan.com`, and `Cloudflare-Roughtime-2`.
-2. Run no Roughtime request until a separate task authorizes an exact synthetic `NON_FORECAST_REHEARSAL`.
-3. Obtain successful retained rehearsals and final ProviderProfiles for all three frozen candidate groups before Genesis acceptance.
-4. Each future deadline use still requires at least two independently qualifying receipts. Provider outage never lowers the threshold.
-5. RFC 3161 evidence remains auxiliary and does not close the version 2 Roughtime requirement.
-
-### Other owner controlled external evidence
-
-6. Owner generated Ed25519 bootstrap public key. Private key must remain outside repository, GitHub, CI, and ChatGPT managed artifacts.
-7. Non forecast OpenTimestamps stamp, proof upgrade, and strong verification with explicit owner controlled Bitcoin Core RPC.
-8. Owner network retrieval of the three retrospective official BLS and BEA raw fixture byte sets and retained SHA256 metadata.
-
-### Final repository freeze
-
-9. Successful sealed SourceAdapterReports over retained real official fixture bytes.
-10. Final full readiness test report from a clean final candidate commit.
-11. Exact ValidatorContract built against that commit and test report.
-12. Final BootstrapGovernanceRoot, three qualifying Roughtime ProviderProfiles, OTS verifier object, and related evidence objects.
-13. Construction and validation of the final candidate Genesis TrustedManifest.
-14. Final Genesis readiness adversarial review with no unresolved blocking finding.
-
-## Genesis state
-
-Genesis Protocol: NOT ACCEPTED
-
-BootstrapGovernanceRoot final instance: NOT CREATED
-
-Candidate Genesis TrustedManifest: NOT CREATED
-
-ManifestAcceptance: NOT CREATED
-
-Forecast Ledger Genesis: NOT STARTED
-
-Prospective forecasting: PROHIBITED
-
-## Current gate
-
-The current design target is a zero recurring cash cost Genesis minimum profile.
-
-The project will not enter a paid commercial TSA contract for the current minimum profile.
-
-No provider request is authorized by this state file.
-
-No Forecast Ledger, genuine prospective issuance, production model execution, native outcome history, production qualified provider, or Genesis acceptance is authorized.
+No Roughtime request, RFC3161 request, prospective forecast, production ProviderProfile, Genesis acceptance or Forecast Ledger creation is authorized by this state.

@@ -1,117 +1,123 @@
 # Next Accepted Task
 
 Task ID: GEN_001
-State: ROUGHTIME REHEARSAL ENTRY READY, NETWORK REQUEST NOT AUTHORIZED
+State: PRE-REHEARSAL TOOLING FREEZE REQUIRED, NETWORK REQUEST NOT AUTHORIZED
 
 ## Objective
 
-Complete Genesis readiness without creating Forecast Ledger history, issuing genuine forecasts, or introducing a recurring paid service dependency.
+Close the remaining offline Roughtime implementation gate without creating Forecast Ledger history, sending provider requests, or introducing a paid dependency.
 
-## Repository work already delivered
+## Repository work now targeted
 
-1. `FPP_TIME_EVIDENCE_V1` separates signed wall clock deadline evidence from Bitcoin durability evidence.
-2. The current deadline quorum candidate is `policy:deadline-receipt-quorum:v2`.
-3. Version 2 uses an exactly three frozen independent Roughtime provider pool with a two receipt threshold.
-4. RFC 3161 is optional auxiliary evidence for the current minimum profile.
-5. Candidate object lineage is append only: v0.2 base, v0.3 predecessor patch, and v0.4 current patch.
-6. The effective candidate contains 22 sealed objects.
-7. Roughtime provider entry review is closed in `docs/GEN_001_ROUGHTIME_REHEARSAL_ENTRY_REVIEW_2026_09_11.md`.
-8. The common rehearsal verifier candidate is `github.com/tannerryan/roughtime` at commit `56b346a16cd7e8317bb0d24f1ec15549cf93a4c9`.
-9. No Roughtime request has been sent.
+The current candidate design is:
 
-## Frozen rehearsal entry pool
+```text
+FPP_TIME_EVIDENCE_V1
+policy:deadline-receipt-quorum:v3
+FPP_ROUGHTIME_NONCE_V2
+candidate lineage v0.2 + v0.3 + v0.4 + v0.5
+```
+
+Current provider pool:
 
 ```text
 roughtime.se
-endpoint = roughtime.se:2002/udp
-protocol = draft-ietf-ntp-roughtime-15
-root key = S3AzfZJ5CjSdkJ21ZJGbxqdYP/SoE8fXKY0+aicsehI=
-status = READY FOR NON_FORECAST_REHEARSAL
-
 time.txryan.com
-endpoint = time.txryan.com:2002/udp
-protocol = draft-ietf-ntp-roughtime-19
-root key = iBVjxg/1j7y1+kQUTBYdTabxCppesU/07D4PMDJk2WA=
-status = READY FOR NON_FORECAST_REHEARSAL
-
-Cloudflare-Roughtime-2
-endpoint = roughtime.cloudflare.com:2003/udp
-protocol = draft-ietf-ntp-roughtime-08
-root key = 0GD7c3yP8xEc4Zl2zeuN2SlLvDVVocjsPSL8/Rl/7zg=
-status = READY FOR NON_FORECAST_REHEARSAL
+TimeNL-Roughtime
 ```
 
-Entry readiness does not authorize a request.
+Cloudflare-Roughtime-2 is historical only.
 
-## Required next closure
+## Next accepted work
 
-The next accepted work is offline rehearsal tooling and exact network authorization preparation.
+Allowed now:
 
-Allowed without another network authorization:
+1. obtain the pinned `github.com/tannerryan/roughtime` source at tag `v1.27.0`, commit `56b346a16cd7e8317bb0d24f1ec15549cf93a4c9`;
+2. freeze an exact Go 1.27.x toolchain and retain version/build metadata;
+3. build a project-controlled strict low-level wrapper that:
+   - uses the exact frozen provider wire profiles;
+   - creates one exact request per provider;
+   - uses `STANDARD_1024_BODY`;
+   - uses UDP only for the current profile;
+   - applies FPP_ROUGHTIME_NONCE_V2;
+   - does not negotiate beyond the frozen wire profile;
+   - does not use causal chaining;
+   - makes at most two attempts with identical request bytes;
+   - persists retry/backoff state across process invocations;
+   - stops after the first properly signed verified response, including a cryptographically verified response that is project-nonqualifying;
+   - retains all raw attempts;
+4. create offline fixtures covering all three wire profiles and every fail-closed error class;
+5. create a content-addressed verifier build profile binding source tree, exact Go toolchain, dependency graph, build command, strict-wrapper source and produced executable hashes;
+6. define and retain a content-addressed persistent retry-state snapshot before plan construction, and a post-run retry-state snapshot after execution;
+7. make the offline plan bind both `verifier_build_profile_sha256` and `retry_state_snapshot_sha256`;
+8. require every qualifying receipt to bind a verification transcript hash and require raw request/response/nonce/profile replay through the pinned low-level verifier;
+9. run the Python executable semantic validator against synthetic valid and adversarial evidence packages;
+10. recheck provider endpoints, roots, operator evidence and standards-transition status immediately before any future rehearsal plan is authorized.
 
-1. Freeze local build instructions for the pinned verifier commit.
-2. Add offline parser and verifier fixtures that issue no network request.
-3. Define the exact subject bound nonce derivation and retained evidence package.
-4. Define maximum attempts, timeout behavior, request order, and fail closed error codes.
-5. Prepare a single exact synthetic rehearsal command or script that remains disabled by default and cannot run without explicit operator authorization.
+No provider packet is authorized by this task.
 
-Before any actual UDP request, a separate task must explicitly authorize:
+## Required exact rehearsal boundary
+
+A later network task must separately supply and authorize:
 
 ```text
-synthetic_subject_bytes
-synthetic_subject_sha256
-exact three provider set
-draft 15 for roughtime.se
-draft 19 for time.txryan.com
-draft 08 for Cloudflare-Roughtime-2
-verifier commit 56b346a16cd7e8317bb0d24f1ec15549cf93a4c9
+exact synthetic subject bytes and SHA256
+exact frozen deadline
+exact current three-provider pool
+exact plan SHA256
+exact authorization-record SHA256
+pinned verifier commit
+verifier_build_profile_sha256
+retry_state_snapshot_sha256
+frozen singleton offered version and wire/TYPE/SRV profiles
 attempt limits
-timeouts
-request order
+timeout/backoff behavior
+persistent retry-state location
+verification/execution transcript output locations
 evidence output directory
-NON_FORECAST_REHEARSAL classification
-prospective_eligible=false
+classification = NON_FORECAST_REHEARSAL
+prospective_eligible = false
 ```
+
+The offline plan itself remains `network_authorized=false`.
+
+Only a separate explicit authorization record may set `network_authorized=true` for one exact plan.
 
 ## Provider qualification rules
 
-1. `REHEARSAL_AUTHORIZATION != GENESIS_AUTHORIZATION`.
-2. `READY FOR NON_FORECAST_REHEARSAL != REHEARSAL_VERIFIED`.
-3. `REHEARSAL_VERIFIED != PRODUCTION_QUALIFIED`.
-4. A successful rehearsal never creates prospective evidence or Forecast Ledger history.
-5. The Roughtime deadline upper bound is `midpoint + radius`.
-6. At least two receipts must independently satisfy the frozen deadline.
-7. Provider outage never lowers the required threshold.
-8. Unlisted providers cannot be substituted after observing failures.
-9. Provider key rotation requires a new ProviderProfile and accepted manifest change before the new key can qualify.
-10. Final provider groups are defined by independent operational trust authority.
-11. No paid commercial provider is required by the selected minimum profile.
-12. RFC 3161 cannot substitute for the required Roughtime threshold under version 2.
+1. `PUBLIC_ENTRY_EVIDENCE_READY != NETWORK_AUTHORIZED`.
+2. `REHEARSAL_AUTHORIZATION != GENESIS_AUTHORIZATION`.
+3. `REHEARSAL_VERIFIED != GENESIS_PROVIDER_QUALIFIED`.
+4. Every deadline event evaluates all three frozen providers; a provider under active protocol backoff is recorded as non-qualifying without a network attempt.
+5. At least two independently valid receipts are required.
+6. Provider outage never lowers quorum.
+7. No provider may be substituted after observing failures.
+8. Protocol, packet or transport fallback inside a deadline event is prohibited. A properly signed but project-nonqualifying response terminates retries and resets protocol backoff while remaining non-qualifying for quorum.
+9. Provider root/endpoint/wire-profile changes require versioned review.
+10. Final RFC or standards transition requires compatibility review before further qualification.
+11. JSON Schema alone never establishes receipt or quorum validity; executable semantic validation is required.
+12. Semantic validation alone never establishes cryptographic validity; raw evidence must replay under the pinned low-level verifier and exact content-addressed verifier build profile.
+13. The exact pre-attempt retry-state snapshot is bound into the plan and authorization; the post-attempt state snapshot and execution transcript are retained in the report.
+14. RFC3161 remains optional auxiliary evidence.
 
-## Other owner controlled closure
+## Other remaining GEN_001 closure
 
-After Roughtime rehearsal authorization and execution, GEN_001 still requires:
+After Roughtime tooling and separately authorized rehearsals:
 
-1. Independent review of all three rehearsal evidence packages.
-2. Owner generated Ed25519 public key only. The private key remains outside repository and connected systems.
-3. Non forecast OpenTimestamps stamp, proof upgrade, and strong Bitcoin Core verification.
-4. Retrieval and retention of the three selected retrospective official BLS and BEA raw source fixtures.
-5. Source adapter reports, final readiness tests, exact ValidatorContract, final ProviderProfiles, BootstrapGovernanceRoot, OTS verifier profile, TrustedManifest, ManifestAcceptance inputs, and final adversarial review.
+1. freeze three final ProviderProfiles and final verifier profile;
+2. obtain owner bootstrap Ed25519 public key only;
+3. complete OTS stamp/upgrade/strong Bitcoin verification;
+4. retrieve and validate the three retrospective official source fixtures;
+5. run a clean final repository test suite;
+6. build exact ValidatorContract;
+7. freeze BootstrapGovernanceRoot and candidate TrustedManifest;
+8. sign and externally evidence ManifestAcceptance;
+9. complete final adversarial review;
+10. require a separate explicit Genesis acceptance decision.
 
 ## Prohibited work
 
-1. Genuine prospective forecast issuance.
-2. Forecast Ledger Genesis creation.
-3. Production model or LLM forecast execution.
-4. Generating forecast values to choose or reject Genesis targets.
-5. Treating rehearsal artifacts as native prospective evidence.
-6. Uploading, reading, copying, referencing, or committing the owner private signing key.
-7. Weakening receipt quorum because of provider outage.
-8. Sending any Roughtime request without a separate explicit authorization containing the exact fields above.
-9. Sending an RFC 3161 request without separate explicit authorization.
-10. Treating public endpoint reachability as qualification.
-11. Entering a paid provider contract for the current zero cost minimum profile without a separate governance decision.
-12. Hosted API, frontend, persistent service, or production database work.
+No prospective forecast, Forecast Ledger, Genesis, provider network request, RFC3161 POST, private signing key access, paid provider contract, hosted production service or quorum weakening is authorized.
 
 ## Safety state
 
@@ -123,5 +129,3 @@ prospective forecast count = 0
 production-qualified provider count = 0
 PRODUCTION_QUALIFIED = NO
 ```
-
-Completion of this task does not create Genesis and does not authorize a genuine prospective forecast.

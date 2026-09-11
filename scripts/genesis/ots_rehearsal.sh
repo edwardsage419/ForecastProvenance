@@ -18,78 +18,120 @@ mkdir -p "$OUTDIR"
 
 COPY="$OUTDIR/subject.bin"
 PROOF="$COPY.ots"
-STATE="$OUTDIR/rehearsal_state.txt"
-TOOL_VERSIONS="$OUTDIR/tool_versions.txt"
+HASHFILE="$OUTDIR/subject.sha256"
+EVENTS="$OUTDIR/events"
+mkdir -p "$EVENTS"
+
+next_event_dir() {
+  local n=1
+  while [[ -e "$EVENTS/$(printf '%04d' "$n")-$MODE" ]]; do
+    n=$((n + 1))
+  done
+  printf '%s\n' "$EVENTS/$(printf '%04d' "$n")-$MODE"
+}
+
+EVENT="$(next_event_dir)"
+mkdir "$EVENT"
 
 {
   ots --version 2>&1 || true
   python3 --version 2>&1
-} > "$TOOL_VERSIONS"
+} > "$EVENT/tool_versions.txt"
+
+write_subject_hash() {
+  local digest
+  digest="$(sha256sum "$COPY" | awk '{print $1}')"
+  printf '%s  subject.bin\n' "$digest" > "$HASHFILE"
+}
 
 check_subject_hash() {
   (cd "$OUTDIR" && sha256sum --check subject.sha256)
 }
 
-write_subject_hash() {
-  local digest
-  digest="$(sha256sum "$COPY" | awk '{print $1}')"
-  printf '%s  subject.bin\n' "$digest" > "$OUTDIR/subject.sha256"
+record_state() {
+  local exit_status="$1"
+  {
+    echo "classification=NON_FORECAST_REHEARSAL"
+    echo "prospective_eligible=false"
+    echo "mode=$MODE"
+    echo "exit_status=$exit_status"
+    if [[ -f "$COPY" ]]; then
+      echo "subject_sha256=$(sha256sum "$COPY" | awk '{print $1}')"
+    elif [[ -f "$EVENT/subject.bin" ]]; then
+      echo "subject_sha256=$(sha256sum "$EVENT/subject.bin" | awk '{print $1}')"
+    fi
+    echo "tool_versions_sha256=$(sha256sum "$EVENT/tool_versions.txt" | awk '{print $1}')"
+    echo "captured_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+    if [[ "$MODE" == "verify" ]]; then
+      echo "bitcoin_verification_mode=EXPLICIT_OWNER_CONTROLLED_BITCOIN_CORE_RPC"
+      echo "bitcoin_rpc_credentials_retained=false"
+    else
+      echo "bitcoin_verification_mode=NOT_APPLICABLE_IN_THIS_STEP"
+    fi
+  } > "$EVENT/state.txt"
+}
+
+# Record the final script status, including failures after the external command.
+trap 'status=$?; record_state "$status"' EXIT
+
+run_logged() {
+  set +e
+  "$@" >"$EVENT/stdout.txt" 2>"$EVENT/stderr.txt"
+  local status=$?
+  set -e
+  cat "$EVENT/stdout.txt"
+  cat "$EVENT/stderr.txt" >&2
+  return "$status"
 }
 
 case "$MODE" in
   stamp)
-    if [[ -e "$PROOF" || -e "$COPY" ]]; then
-      echo "Refusing to overwrite existing OTS rehearsal material" >&2
+    if [[ -e "$PROOF" || -e "$COPY" || -e "$HASHFILE" ]]; then
+      echo "Refusing to overwrite existing successful OTS rehearsal material" >&2
       exit 2
     fi
-    cp "$SUBJECT" "$COPY"
+    # Work only inside the append-only event directory until stamping succeeds.
+    cp "$SUBJECT" "$EVENT/subject.bin"
+    sha256sum "$EVENT/subject.bin" > "$EVENT/subject.sha256"
+    run_logged ots stamp "$EVENT/subject.bin"
+    [[ -f "$EVENT/subject.bin.ots" ]] || { echo "OTS stamp succeeded without producing proof" >&2; exit 2; }
+    ots info "$EVENT/subject.bin.ots" > "$EVENT/ots_info_after_stamp.txt"
+    sha256sum "$EVENT/subject.bin.ots" > "$EVENT/proof_after.sha256"
+    # Publish canonical material only after the complete event succeeds.
+    cp "$EVENT/subject.bin" "$COPY"
+    cp "$EVENT/subject.bin.ots" "$PROOF"
     write_subject_hash
-    ots stamp "$COPY" | tee "$OUTDIR/ots_stamp.txt"
-    ots info "$PROOF" > "$OUTDIR/ots_info_after_stamp.txt"
     ;;
   upgrade)
-    [[ -f "$COPY" ]] || { echo "Missing retained subject copy: $COPY" >&2; exit 2; }
-    [[ -f "$PROOF" ]] || { echo "Missing proof: $PROOF" >&2; exit 2; }
-    [[ -f "$OUTDIR/subject.sha256" ]] || { echo "Missing subject hash record" >&2; exit 2; }
-    check_subject_hash
-    sha256sum "$PROOF" > "$OUTDIR/proof_before_upgrade.sha256"
-    ots upgrade "$PROOF" | tee "$OUTDIR/ots_upgrade.txt"
-    ots info "$PROOF" > "$OUTDIR/ots_info_after_upgrade.txt"
-    sha256sum "$PROOF" > "$OUTDIR/proof_after_upgrade.sha256"
+    [[ -f "$COPY" && -f "$PROOF" && -f "$HASHFILE" ]] || { echo "Missing retained OTS rehearsal material" >&2; exit 2; }
+    check_subject_hash > "$EVENT/subject_check.txt"
+    cp "$COPY" "$EVENT/subject.bin"
+    cp "$PROOF" "$EVENT/subject.bin.ots"
+    sha256sum "$EVENT/subject.bin.ots" > "$EVENT/proof_before.sha256"
+    cp "$EVENT/subject.bin.ots" "$EVENT/proof_before.ots"
+    # Upgrade an event-local copy so a failed upgrade cannot corrupt the last good canonical proof.
+    run_logged ots upgrade "$EVENT/subject.bin.ots"
+    ots info "$EVENT/subject.bin.ots" > "$EVENT/ots_info_after_upgrade.txt"
+    sha256sum "$EVENT/subject.bin.ots" > "$EVENT/proof_after.sha256"
+    cp "$EVENT/subject.bin.ots" "$EVENT/proof_after.ots"
+    PUBLISH_TMP="$OUTDIR/.subject.bin.ots.publish.$$"
+    cp "$EVENT/subject.bin.ots" "$PUBLISH_TMP"
+    mv -f "$PUBLISH_TMP" "$PROOF"
     ;;
   verify)
-    [[ -f "$COPY" ]] || { echo "Missing retained subject copy: $COPY" >&2; exit 2; }
-    [[ -f "$PROOF" ]] || { echo "Missing proof: $PROOF" >&2; exit 2; }
-    [[ -f "$OUTDIR/subject.sha256" ]] || { echo "Missing subject hash record" >&2; exit 2; }
-    check_subject_hash
-    if [[ -z "${OTS_BITCOIN_NODE:-}" ]]; then
-      echo "verify requires OTS_BITCOIN_NODE pointing to the owner-controlled Bitcoin Core RPC endpoint" >&2
-      echo "Example: export OTS_BITCOIN_NODE='http://USER:PASS@127.0.0.1:8332/'" >&2
-      exit 2
-    fi
-    # Do not echo or persist OTS_BITCOIN_NODE because it may contain RPC credentials.
-    ots --bitcoin-node "$OTS_BITCOIN_NODE" verify "$PROOF" | tee "$OUTDIR/ots_verify_owner_bitcoin_core.txt"
-    ots info "$PROOF" > "$OUTDIR/ots_info_verified.txt"
-    sha256sum "$PROOF" > "$OUTDIR/proof.sha256"
+    [[ -f "$COPY" && -f "$PROOF" && -f "$HASHFILE" ]] || { echo "Missing retained OTS rehearsal material" >&2; exit 2; }
+    check_subject_hash > "$EVENT/subject_check.txt"
+    [[ -n "${OTS_BITCOIN_NODE:-}" ]] || { echo "verify requires OTS_BITCOIN_NODE for owner-controlled Bitcoin Core RPC" >&2; exit 2; }
+    # Verify an event-local snapshot so the exact checked bytes remain replayable.
+    cp "$COPY" "$EVENT/subject.bin"
+    cp "$PROOF" "$EVENT/subject.bin.ots"
+    sha256sum "$EVENT/subject.bin.ots" > "$EVENT/proof_before.sha256"
+    run_logged ots --bitcoin-node "$OTS_BITCOIN_NODE" verify "$EVENT/subject.bin.ots"
+    ots info "$EVENT/subject.bin.ots" > "$EVENT/ots_info_verified.txt"
+    sha256sum "$EVENT/subject.bin.ots" > "$EVENT/proof_after.sha256"
     ;;
   *)
     echo "mode must be stamp, upgrade, or verify" >&2
     exit 2
     ;;
 esac
-
-{
-  echo "classification=NON_FORECAST_REHEARSAL"
-  echo "prospective_eligible=false"
-  echo "mode=$MODE"
-  echo "subject_sha256=$(sha256sum "$COPY" | awk '{print $1}')"
-  echo "tool_versions_sha256=$(sha256sum "$TOOL_VERSIONS" | awk '{print $1}')"
-  echo "captured_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-  if [[ "$MODE" == "verify" ]]; then
-    echo "bitcoin_verification_mode=EXPLICIT_OWNER_CONTROLLED_BITCOIN_CORE_RPC"
-    echo "bitcoin_rpc_credentials_retained=false"
-  else
-    echo "bitcoin_verification_mode=NOT_APPLICABLE_IN_THIS_STEP"
-  fi
-  echo "Strong Genesis verification remains subject to the frozen verifier contract and retained proof review."
-} > "$STATE"
