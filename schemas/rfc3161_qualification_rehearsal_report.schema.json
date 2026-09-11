@@ -3,54 +3,100 @@
   "$id": "https://forecastprovenance.org/schemas/rfc3161_qualification_rehearsal_report.schema.json",
   "title": "RFC 3161 Qualification Rehearsal Report",
   "type": "object",
-  "required": [
-    "schema_version",
-    "checker_version",
-    "classification",
-    "prospective_eligible",
-    "provider_id",
-    "captured_utc",
-    "trust_anchor_source",
-    "provider_policy_evidence_source",
-    "policy_semantics_documented",
-    "accuracy_semantics_documented",
-    "tool_versions",
-    "raw_evidence_sha256",
-    "embedded_certificate_inventory",
-    "unresolved_qualification_blockers",
-    "final_rehearsal_status",
-    "object_type",
-    "object_id",
-    "payload_sha256",
-    "content_sha256"
-  ],
+  "required": ["schema_version", "checker_version", "classification", "prospective_eligible", "provider_id", "captured_utc", "trust_anchor_source", "provider_policy_evidence_source", "policy_semantics_documented", "accuracy_semantics_documented", "semantic_assertion_evidence", "revocation_verification_scope", "tool_versions", "raw_evidence_sha256", "embedded_certificate_inventory", "unresolved_qualification_blockers", "final_rehearsal_status", "object_type", "object_id", "payload_sha256", "content_sha256"],
   "properties": {
+    "schema_version": {"const": "1.1"},
+    "checker_version": {"type": "string", "minLength": 1},
     "classification": {"const": "NON_FORECAST_REHEARSAL"},
     "prospective_eligible": {"const": false},
-    "final_rehearsal_status": {
-      "enum": ["REHEARSAL_VERIFIED", "REHEARSAL_INCOMPLETE", "REHEARSAL_FAILED"]
-    },
     "provider_id": {"type": "string", "minLength": 1},
-    "captured_utc": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"},
-    "raw_evidence_sha256": {
-      "type": "object",
-      "additionalProperties": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
-    },
-    "unresolved_qualification_blockers": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "required": ["code", "detail"],
-        "properties": {
-          "code": {"type": "string"},
-          "detail": {"type": "string"}
-        },
-        "additionalProperties": false
-      }
-    },
+    "captured_utc": {"$ref": "#/$defs/utc"},
+    "trust_anchor_source": {"type": "string"},
+    "provider_policy_evidence_source": {"type": "string"},
+    "policy_semantics_documented": {"type": "boolean"},
+    "accuracy_semantics_documented": {"type": "boolean"},
+    "semantic_assertion_evidence": {"type": "object"},
+    "revocation_verification_scope": {"const": "TSA_SIGNER_ONLY"},
+    "tool_versions": {"type": "array", "items": {"type": "string"}},
+    "raw_evidence_sha256": {"type": "object", "additionalProperties": {"$ref": "#/$defs/digest"}},
+    "embedded_certificate_inventory": {"type": "array"},
+    "unresolved_qualification_blockers": {"type": "array", "items": {"$ref": "#/$defs/blocker"}},
+    "final_rehearsal_status": {"enum": ["REHEARSAL_VERIFIED", "REHEARSAL_INCOMPLETE", "REHEARSAL_FAILED"]},
     "object_type": {"const": "RFC3161QualificationRehearsalReport"},
-    "payload_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-    "content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+    "object_id": {"type": "string", "minLength": 1},
+    "payload_sha256": {"$ref": "#/$defs/digest"},
+    "content_sha256": {"$ref": "#/$defs/digest"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"final_rehearsal_status": {"const": "REHEARSAL_VERIFIED"}}, "required": ["final_rehearsal_status"]},
+      "then": {
+        "required": ["subject_sha256", "request_sha256", "response_sha256", "rfc3161_response_status", "message_imprint_algorithm", "message_imprint", "message_imprint_matches_subject", "request_nonce", "response_nonce", "nonce_equal", "certificate_requested", "embedded_certificate_inventory", "tsa_certificate_sha256_der", "tsa_certificate_serial", "tsa_certificate_not_before", "tsa_certificate_not_after", "tsa_certificate_extended_key_usage", "tsa_certificate_extended_key_usage_critical", "token_gen_time", "token_policy_oid", "token_accuracy", "trust_anchor_sha256_der", "independent_tsa_certificate_sha256_der", "independent_tsa_certificate_matches_embedded", "certificate_chain_verification", "rfc3161_signature_verification", "crl_evidence", "semantic_assertion_evidence"],
+        "properties": {
+          "policy_semantics_documented": {"const": true},
+          "accuracy_semantics_documented": {"const": true},
+          "subject_sha256": {"$ref": "#/$defs/digest"},
+          "request_sha256": {"$ref": "#/$defs/digest"},
+          "response_sha256": {"$ref": "#/$defs/digest"},
+          "rfc3161_response_status": {"enum": ["GRANTED", "GRANTED_WITH_MODS"]},
+          "message_imprint_algorithm": {"const": "sha256"},
+          "message_imprint": {"$ref": "#/$defs/digest"},
+          "message_imprint_matches_subject": {"const": true},
+          "request_nonce": {"type": "string", "minLength": 1},
+          "response_nonce": {"type": "string", "minLength": 1},
+          "nonce_equal": {"const": true},
+          "certificate_requested": {"const": true},
+          "embedded_certificate_inventory": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/certificate"}},
+          "tsa_certificate_sha256_der": {"$ref": "#/$defs/digest"},
+          "tsa_certificate_serial": {"type": "string", "minLength": 1},
+          "tsa_certificate_not_before": {"$ref": "#/$defs/utc"},
+          "tsa_certificate_not_after": {"$ref": "#/$defs/utc"},
+          "tsa_certificate_extended_key_usage": {"const": ["Time Stamping"]},
+          "tsa_certificate_extended_key_usage_critical": {"const": true},
+          "token_gen_time": {"$ref": "#/$defs/utc"},
+          "token_policy_oid": {"type": "string", "minLength": 1},
+          "token_accuracy": {"type": "string", "minLength": 1},
+          "trust_anchor_sha256_der": {"$ref": "#/$defs/digest"},
+          "independent_tsa_certificate_sha256_der": {"$ref": "#/$defs/digest"},
+          "independent_tsa_certificate_matches_embedded": {"const": true},
+          "certificate_chain_verification": {"$ref": "#/$defs/success"},
+          "rfc3161_signature_verification": {"$ref": "#/$defs/success"},
+          "revocation_verification_scope": {"const": "TSA_SIGNER_ONLY"},
+          "crl_evidence": {"$ref": "#/$defs/verified_crl"},
+          "semantic_assertion_evidence": {"$ref": "#/$defs/verified_semantic_assertion"},
+          "unresolved_qualification_blockers": {"type": "array", "maxItems": 0},
+          "raw_evidence_sha256": {"type": "object", "required": ["subject", "request", "response", "tool_versions", "trust_anchor", "independent_tsa_certificate", "crl", "provider_policy", "reviewed_semantic_assertion"], "additionalProperties": {"$ref": "#/$defs/digest"}}
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "utc": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"},
+    "blocker": {"type": "object", "required": ["code", "detail"], "properties": {"code": {"type": "string"}, "detail": {"type": "string"}}, "additionalProperties": false},
+    "success": {"type": "object", "required": ["verified", "detail"], "properties": {"verified": {"const": true}, "detail": {"type": "string"}}, "additionalProperties": false},
+    "certificate": {
+      "type": "object",
+      "required": ["role", "subject", "issuer", "serial", "not_before", "not_after", "extended_key_usage", "extended_key_usage_critical", "sha256_der"],
+      "properties": {"role": {"enum": ["TSA_SIGNER", "EMBEDDED_CHAIN"]}, "subject": {"type": "string"}, "issuer": {"type": "string"}, "serial": {"type": "string"}, "not_before": {"$ref": "#/$defs/utc"}, "not_after": {"$ref": "#/$defs/utc"}, "extended_key_usage": {"type": "array", "items": {"type": "string"}}, "extended_key_usage_critical": {"type": "boolean"}, "sha256_der": {"$ref": "#/$defs/digest"}},
+      "additionalProperties": false
+    },
+    "verified_crl": {
+      "type": "object",
+      "required": ["available", "verification_scope", "source", "sha256", "issuer", "issuer_matches_trust_anchor", "last_update", "next_update", "signature_verification", "certificate_revocation_check"],
+      "properties": {"available": {"const": true}, "verification_scope": {"const": "TSA_SIGNER_ONLY"}, "source": {"type": "string"}, "sha256": {"$ref": "#/$defs/digest"}, "issuer": {"type": "string"}, "issuer_matches_trust_anchor": {"const": true}, "last_update": {"$ref": "#/$defs/utc"}, "next_update": {"$ref": "#/$defs/utc"}, "signature_verification": {"$ref": "#/$defs/success"}, "certificate_revocation_check": {"$ref": "#/$defs/success"}},
+      "additionalProperties": false
+    },
+    "verified_semantic_assertion": {
+      "type": "object",
+      "required": ["available", "verified", "raw_sha256", "classification", "content_sha256", "provider_id", "provider_policy_sha256", "token_policy_oid", "policy_review_disposition", "accuracy_review_disposition", "evidence_locator", "reviewed_at"],
+      "properties": {"available": {"const": true}, "verified": {"const": true}, "raw_sha256": {"$ref": "#/$defs/digest"}, "classification": {"const": "REVIEWED_RFC3161_QUALIFICATION_SEMANTICS"}, "content_sha256": {"$ref": "#/$defs/digest"}, "provider_id": {"type": "string", "minLength": 1}, "provider_policy_sha256": {"$ref": "#/$defs/digest"}, "token_policy_oid": {"type": "string", "minLength": 1}, "policy_review_disposition": {"const": "DOCUMENTED_APPLICABLE"}, "accuracy_review_disposition": {"enum": ["DOCUMENTED_CONSERVATIVE_BOUND", "TOKEN_ACCURACY_ACCEPTED"]}, "conservative_accuracy_bound_seconds": {"type": "integer", "minimum": 0}, "evidence_locator": {"type": "string", "minLength": 1}, "reviewed_at": {"$ref": "#/$defs/utc"}},
+      "allOf": [
+        {"if": {"properties": {"accuracy_review_disposition": {"const": "DOCUMENTED_CONSERVATIVE_BOUND"}}, "required": ["accuracy_review_disposition"]}, "then": {"required": ["conservative_accuracy_bound_seconds"]}},
+        {"if": {"properties": {"accuracy_review_disposition": {"const": "TOKEN_ACCURACY_ACCEPTED"}}, "required": ["accuracy_review_disposition"]}, "then": {"not": {"required": ["conservative_accuracy_bound_seconds"]}}}
+      ],
+      "additionalProperties": false
+    }
   },
   "additionalProperties": true
 }

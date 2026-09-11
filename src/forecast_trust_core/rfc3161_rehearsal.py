@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Mapping, Protocol, Sequence
 
-from .canonical import seal_object
+from .canonical import parse_json_strict, seal_object, verify_sealed_object
 
 
 CLASSIFICATION = "NON_FORECAST_REHEARSAL"
@@ -18,7 +18,9 @@ FINAL_STATUSES = {
     "REHEARSAL_INCOMPLETE",
     "REHEARSAL_FAILED",
 }
-CHECKER_VERSION = "1.0"
+CHECKER_VERSION = "1.1"
+REVIEWED_ASSERTION_CLASSIFICATION = "REVIEWED_RFC3161_QUALIFICATION_SEMANTICS"
+REVOCATION_VERIFICATION_SCOPE = "TSA_SIGNER_ONLY"
 HEX_64 = re.compile(r"^[0-9a-f]{64}$")
 PEM_CERTIFICATE = re.compile(
     rb"-----BEGIN CERTIFICATE-----\s+.*?-----END CERTIFICATE-----\s*",
@@ -163,6 +165,130 @@ def _result(ok: bool, detail: str) -> dict[str, object]:
     return {"verified": ok, "detail": detail}
 
 
+def _review_semantic_assertion(
+    path: Path | None,
+    *,
+    provider_id: str,
+    provider_policy_sha256: str | None,
+    token_policy_oid: str,
+    token_accuracy: str,
+) -> tuple[dict[str, Any], bool, bool, list[dict[str, str]], list[dict[str, str]]]:
+    summary: dict[str, Any] = {"available": False, "verified": False}
+    incomplete: list[dict[str, str]] = []
+    failed: list[dict[str, str]] = []
+    if path is None or not path.is_file():
+        incomplete.append(_blocker(
+            "REVIEWED_SEMANTIC_ASSERTION_MISSING",
+            "no retained reviewed semantic assertion was configured",
+        ))
+        return summary, False, False, incomplete, failed
+
+    summary["available"] = True
+    summary["raw_sha256"] = _sha256(path)
+    try:
+        assertion = parse_json_strict(path.read_text(encoding="utf-8"))
+        if not isinstance(assertion, dict) or not verify_sealed_object(assertion):
+            raise RehearsalEvidenceError("reviewed semantic assertion seal is invalid")
+        required = {
+            "schema_version",
+            "classification",
+            "prospective_eligible",
+            "provider_id",
+            "provider_policy_sha256",
+            "token_policy_oid",
+            "policy_review_disposition",
+            "accuracy_review_disposition",
+            "evidence_locator",
+            "reviewed_at",
+        }
+        allowed = required | {
+            "conservative_accuracy_bound_seconds",
+            "object_type",
+            "object_id",
+            "payload_sha256",
+            "content_sha256",
+        }
+        if not required.issubset(assertion):
+            raise RehearsalEvidenceError("reviewed semantic assertion is missing required fields")
+        if set(assertion) - allowed:
+            raise RehearsalEvidenceError("reviewed semantic assertion contains unexpected fields")
+        if assertion.get("object_type") != "RFC3161ReviewedSemanticAssertion":
+            raise RehearsalEvidenceError("reviewed semantic assertion has the wrong object type")
+        if assertion["schema_version"] != "1.0":
+            raise RehearsalEvidenceError("reviewed semantic assertion has an unsupported schema version")
+        if not isinstance(assertion["provider_policy_sha256"], str) or not HEX_64.fullmatch(
+            assertion["provider_policy_sha256"]
+        ):
+            raise RehearsalEvidenceError("reviewed semantic assertion policy hash is invalid")
+        if not isinstance(assertion["token_policy_oid"], str) or not assertion["token_policy_oid"].strip():
+            raise RehearsalEvidenceError("reviewed semantic assertion policy OID is empty")
+        if not isinstance(assertion["evidence_locator"], str) or not assertion["evidence_locator"].strip():
+            raise RehearsalEvidenceError("reviewed semantic assertion evidence locator is empty")
+        _parse_utc(assertion["reviewed_at"])
+        if assertion["policy_review_disposition"] not in {
+            "DOCUMENTED_APPLICABLE", "NOT_DOCUMENTED", "NOT_APPLICABLE", "REJECTED"
+        }:
+            raise RehearsalEvidenceError("invalid policy review disposition")
+        if assertion["accuracy_review_disposition"] not in {
+            "DOCUMENTED_CONSERVATIVE_BOUND", "TOKEN_ACCURACY_ACCEPTED", "NOT_DOCUMENTED", "REJECTED"
+        }:
+            raise RehearsalEvidenceError("invalid accuracy review disposition")
+        bound = assertion.get("conservative_accuracy_bound_seconds")
+        if assertion["accuracy_review_disposition"] == "DOCUMENTED_CONSERVATIVE_BOUND":
+            if type(bound) is not int or bound < 0:
+                raise RehearsalEvidenceError("conservative accuracy bound must be a non-negative integer")
+        elif "conservative_accuracy_bound_seconds" in assertion:
+            raise RehearsalEvidenceError("conservative accuracy bound is present for an incompatible disposition")
+    except (OSError, ValueError, RehearsalEvidenceError) as exc:
+        incomplete.append(_blocker("REVIEWED_SEMANTIC_ASSERTION_INVALID", str(exc)))
+        return summary, False, False, incomplete, failed
+
+    summary.update({
+        "classification": assertion["classification"],
+        "content_sha256": assertion["content_sha256"],
+        "provider_id": assertion["provider_id"],
+        "provider_policy_sha256": assertion["provider_policy_sha256"],
+        "token_policy_oid": assertion["token_policy_oid"],
+        "policy_review_disposition": assertion["policy_review_disposition"],
+        "accuracy_review_disposition": assertion["accuracy_review_disposition"],
+        "evidence_locator": assertion["evidence_locator"],
+        "reviewed_at": assertion["reviewed_at"],
+    })
+    if "conservative_accuracy_bound_seconds" in assertion:
+        summary["conservative_accuracy_bound_seconds"] = assertion["conservative_accuracy_bound_seconds"]
+
+    if (
+        assertion["classification"] != REVIEWED_ASSERTION_CLASSIFICATION
+        or assertion["prospective_eligible"] is not False
+        or assertion["provider_id"] != provider_id
+    ):
+        failed.append(_blocker(
+            "REVIEWED_SEMANTIC_ASSERTION_CONTRADICTION",
+            "assertion classification, eligibility, or provider contradicts the rehearsal",
+        ))
+        return summary, False, False, incomplete, failed
+    if provider_policy_sha256 is None or assertion["provider_policy_sha256"] != provider_policy_sha256:
+        incomplete.append(_blocker(
+            "REVIEWED_SEMANTIC_ASSERTION_POLICY_HASH_MISMATCH",
+            "assertion does not bind the exact retained provider policy artifact",
+        ))
+        return summary, False, False, incomplete, failed
+    if assertion["token_policy_oid"] != token_policy_oid:
+        incomplete.append(_blocker(
+            "REVIEWED_SEMANTIC_ASSERTION_POLICY_OID_MISMATCH",
+            "assertion does not cover the observed token policy OID",
+        ))
+        return summary, False, False, incomplete, failed
+
+    policy_ok = assertion["policy_review_disposition"] == "DOCUMENTED_APPLICABLE"
+    if token_accuracy.lower() == "unspecified":
+        accuracy_ok = assertion["accuracy_review_disposition"] == "DOCUMENTED_CONSERVATIVE_BOUND"
+    else:
+        accuracy_ok = assertion["accuracy_review_disposition"] == "TOKEN_ACCURACY_ACCEPTED"
+    summary["verified"] = policy_ok and accuracy_ok
+    return summary, policy_ok, accuracy_ok, incomplete, failed
+
+
 def check_rehearsal(
     evidence_dir: Path,
     profile: Mapping[str, Any],
@@ -183,8 +309,6 @@ def check_rehearsal(
     policy_source = profile.get("provider_policy_evidence_source", "UNAVAILABLE")
     if not isinstance(policy_source, str):
         raise RehearsalEvidenceError("provider_policy_evidence_source must be a string")
-    policy_semantics = _required_profile(profile, "policy_semantics", dict)
-    accuracy_semantics = _required_profile(profile, "accuracy_semantics", dict)
 
     required_names = ("subject", "request", "response", "tool_versions")
     qualification_names = ("trust_anchor", "independent_tsa_certificate")
@@ -215,7 +339,7 @@ def check_rehearsal(
             incomplete.append(_blocker("MISSING_QUALIFICATION_EVIDENCE", f"missing {name}: {files.get(name)}"))
 
     optional_paths: dict[str, Path] = {}
-    for name in ("untrusted_chain", "crl", "provider_policy"):
+    for name in ("untrusted_chain", "crl", "provider_policy", "reviewed_semantic_assertion"):
         if name in files:
             path = _resolve_evidence_path(evidence_dir, files[name], f"evidence_files.{name}")
             optional_paths[name] = path
@@ -223,7 +347,7 @@ def check_rehearsal(
                 incomplete.append(_blocker("MISSING_RAW_EVIDENCE", f"missing {name}: {files[name]}"))
 
     base_report: dict[str, Any] = {
-        "schema_version": "1.0",
+        "schema_version": "1.1",
         "checker_version": CHECKER_VERSION,
         "classification": CLASSIFICATION,
         "prospective_eligible": False,
@@ -231,8 +355,10 @@ def check_rehearsal(
         "captured_utc": captured_utc,
         "trust_anchor_source": trust_anchor_source,
         "provider_policy_evidence_source": policy_source,
-        "policy_semantics_documented": policy_semantics.get("documented") is True,
-        "accuracy_semantics_documented": accuracy_semantics.get("documented") is True,
+        "policy_semantics_documented": False,
+        "accuracy_semantics_documented": False,
+        "semantic_assertion_evidence": {"available": False, "verified": False},
+        "revocation_verification_scope": REVOCATION_VERIFICATION_SCOPE,
         "tool_versions": [],
         "raw_evidence_sha256": {},
         "embedded_certificate_inventory": [],
@@ -392,6 +518,7 @@ def check_rehearsal(
             revocation_detail = "CRL check and capture window verified" if revocation_ok else "CRL verification or capture window failed"
             crl_report = {
                 "available": True,
+                "verification_scope": REVOCATION_VERIFICATION_SCOPE,
                 "source": profile.get("crl_source", "UNSPECIFIED"),
                 "sha256": _sha256(optional_paths["crl"]),
                 "issuer": crl_observation.issuer,
@@ -416,25 +543,30 @@ def check_rehearsal(
     else:
         incomplete.append(_blocker("REVOCATION_EVIDENCE_UNVERIFIABLE", "CRL cannot be verified without a trust anchor"))
 
-    admitted_policies = policy_semantics.get("applicable_policy_oids", [])
-    policy_artifact_retained = "provider_policy" in optional_paths
-    if (
-        policy_semantics.get("documented") is not True
-        or token.policy_oid not in admitted_policies
-        or policy_source == "UNAVAILABLE"
-        or not policy_artifact_retained
-    ):
+    provider_policy_sha256 = (
+        _sha256(optional_paths["provider_policy"])
+        if optional_paths.get("provider_policy", Path()).is_file()
+        else None
+    )
+    assertion_summary, policy_ok, accuracy_ok, assertion_incomplete, assertion_failed = (
+        _review_semantic_assertion(
+            optional_paths.get("reviewed_semantic_assertion"),
+            provider_id=provider_id,
+            provider_policy_sha256=provider_policy_sha256,
+            token_policy_oid=token.policy_oid,
+            token_accuracy=token.accuracy,
+        )
+    )
+    incomplete.extend(assertion_incomplete)
+    failed.extend(assertion_failed)
+    base_report["semantic_assertion_evidence"] = assertion_summary
+    base_report["policy_semantics_documented"] = policy_ok
+    base_report["accuracy_semantics_documented"] = accuracy_ok
+    if not policy_ok:
         incomplete.append(_blocker("TOKEN_POLICY_SEMANTICS_UNDOCUMENTED", f"no frozen applicable semantics for {token.policy_oid}"))
-    if token.accuracy.lower() == "unspecified":
-        conservative_bound = accuracy_semantics.get("conservative_bound_seconds")
-        if (
-            accuracy_semantics.get("documented") is not True
-            or type(conservative_bound) is not int
-            or conservative_bound < 0
-            or not policy_artifact_retained
-        ):
-            incomplete.append(_blocker("TIMESTAMP_ACCURACY_UNSPECIFIED", "token omits accuracy and no applicable conservative bound is documented"))
-    elif accuracy_semantics.get("documented") is not True or not policy_artifact_retained:
+    if token.accuracy.lower() == "unspecified" and not accuracy_ok:
+        incomplete.append(_blocker("TIMESTAMP_ACCURACY_UNSPECIFIED", "token omits accuracy and no reviewed applicable conservative bound is retained"))
+    elif token.accuracy.lower() != "unspecified" and not accuracy_ok:
         incomplete.append(_blocker("ACCURACY_SEMANTICS_UNDOCUMENTED", "declared token accuracy semantics are not frozen"))
 
     base_report.update({

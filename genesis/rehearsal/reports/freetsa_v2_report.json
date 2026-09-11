@@ -7,9 +7,9 @@
   },
   "certificate_requested": true,
   "checker_tool_version": "OpenSSL 3.5.7 9 Jun 2026 (Library: OpenSSL 3.5.7 9 Jun 2026)",
-  "checker_version": "1.0",
+  "checker_version": "1.1",
   "classification": "NON_FORECAST_REHEARSAL",
-  "content_sha256": "e8ef1e83acc94ed5e638b1ddf03a3725e9a7755df5dac57a40b9836e7faee01e",
+  "content_sha256": "f44956d905d4927bf6097eb85cbf383303c4202ed9118882cdcaa012f9bdf988",
   "crl_evidence": {
     "available": true,
     "certificate_revocation_check": {
@@ -25,7 +25,8 @@
       "detail": "OpenSSL CRL signature verification succeeded",
       "verified": true
     },
-    "source": "independently retrieved FreeTSA Root CA CRL"
+    "source": "independently retrieved FreeTSA Root CA CRL",
+    "verification_scope": "TSA_SIGNER_ONLY"
   },
   "embedded_certificate_inventory": [
     {
@@ -60,9 +61,9 @@
   "message_imprint_algorithm": "sha256",
   "message_imprint_matches_subject": true,
   "nonce_equal": true,
-  "object_id": "rfc3161qualificationrehearsalreport:freetsa_rfc3161:338cf54b2eef",
+  "object_id": "rfc3161qualificationrehearsalreport:freetsa_rfc3161:bf6df15b40c0",
   "object_type": "RFC3161QualificationRehearsalReport",
-  "payload_sha256": "338cf54b2eef24c7e464cedd7a292df188ca7cbe187d3f6e873d6a42e5f8d266",
+  "payload_sha256": "bf6df15b40c0f49261944e60d5e37ac363a3f4d3a2e1bf11982ade89e000409d",
   "policy_semantics_documented": false,
   "prospective_eligible": false,
   "provider_id": "freetsa_rfc3161",
@@ -81,12 +82,17 @@
   "request_sha256": "c24fde38ef17c8569fdb43ec1a3636b244f9b82a31d7e112d6ed11392b843443",
   "response_nonce": "51c57709a19f8c1c",
   "response_sha256": "fed52110a5ca92f8b8ed699e6fe84ccdbad983d78c768c2b7aebdc1683cbc85e",
+  "revocation_verification_scope": "TSA_SIGNER_ONLY",
   "rfc3161_response_status": "GRANTED",
   "rfc3161_signature_verification": {
     "detail": "OpenSSL RFC 3161 verification succeeded",
     "verified": true
   },
-  "schema_version": "1.0",
+  "schema_version": "1.1",
+  "semantic_assertion_evidence": {
+    "available": false,
+    "verified": false
+  },
   "subject_sha256": "3837b8ce2e012a913cbdab6f7e52bdc045013bdc4acfbc88abc99cee149275c6",
   "token_accuracy": "unspecified",
   "token_gen_time": "2026-09-11T07:24:21Z",
@@ -122,8 +128,12 @@
   "tsa_certificate_sha256_der": "32e841a95cc1164101ffde41298ef2fc75c1c4372ef095e88a6bbd47dfb191fc",
   "unresolved_qualification_blockers": [
     {
+      "code": "REVIEWED_SEMANTIC_ASSERTION_MISSING",
+      "detail": "no retained reviewed semantic assertion was configured"
+    },
+    {
       "code": "TIMESTAMP_ACCURACY_UNSPECIFIED",
-      "detail": "token omits accuracy and no applicable conservative bound is documented"
+      "detail": "token omits accuracy and no reviewed applicable conservative bound is retained"
     },
     {
       "code": "TOKEN_POLICY_SEMANTICS_UNDOCUMENTED",

@@ -114,6 +114,11 @@ material, and policy evidence, create a provider profile following
 `scripts/genesis/check_rfc3161_rehearsal.py`. Use a new output filename for every
 attempt; the checker refuses to overwrite an existing report.
 
+Policy or accuracy semantics can be admitted only through a separately retained,
+canonically sealed reviewed semantic assertion bound to the exact policy file
+SHA256 and observed token policy OID. Provider profile assertions alone have no
+qualification effect.
+
 The checker can emit only `REHEARSAL_VERIFIED`, `REHEARSAL_INCOMPLETE`, or
 `REHEARSAL_FAILED`. None of these statuses grants production qualification.
 

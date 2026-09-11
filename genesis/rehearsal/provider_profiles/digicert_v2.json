@@ -1,7 +1,4 @@
 {
-  "accuracy_semantics": {
-    "documented": false
-  },
   "captured_utc": "2026-09-11T07:25:48Z",
   "classification": "NON_FORECAST_REHEARSAL",
   "evidence_files": {
@@ -11,10 +8,6 @@
     "subject": "subject.txt",
     "tool_versions": "digicert_v2/tool_versions.txt",
     "trust_anchor": "digicert_v2/trust_anchor.pem"
-  },
-  "policy_semantics": {
-    "applicable_policy_oids": [],
-    "documented": false
   },
   "prospective_eligible": false,
   "provider_id": "digicert_rfc3161",

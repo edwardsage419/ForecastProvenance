@@ -7,9 +7,9 @@
   },
   "certificate_requested": true,
   "checker_tool_version": "OpenSSL 3.5.7 9 Jun 2026 (Library: OpenSSL 3.5.7 9 Jun 2026)",
-  "checker_version": "1.0",
+  "checker_version": "1.1",
   "classification": "NON_FORECAST_REHEARSAL",
-  "content_sha256": "d5f97b97a605412588bb3bcaf9a2bd92941b7421fa5889d0835d1989d44e7d6f",
+  "content_sha256": "d252522a1a2dc0c3cf324e1b741a2d067ff582151495bd949649e011c3324189",
   "crl_evidence": {
     "available": false
   },
@@ -59,9 +59,9 @@
   "message_imprint_algorithm": "sha256",
   "message_imprint_matches_subject": true,
   "nonce_equal": true,
-  "object_id": "rfc3161qualificationrehearsalreport:digicert_rfc3161:6aaf35d51cd4",
+  "object_id": "rfc3161qualificationrehearsalreport:digicert_rfc3161:ab250c25fa7c",
   "object_type": "RFC3161QualificationRehearsalReport",
-  "payload_sha256": "6aaf35d51cd40f13bda0e849c76ad2b554d87e453a58942c93dd2fde41a53f67",
+  "payload_sha256": "ab250c25fa7c43aaefc3abb3fc94b16cb3c45ab49e59ba52a2ffba5b614e231e",
   "policy_semantics_documented": false,
   "prospective_eligible": false,
   "provider_id": "digicert_rfc3161",
@@ -76,12 +76,17 @@
   "request_sha256": "a996f84fe5ed69cb099c61534b9bee7e7f6afe065274af5999ad0f9f7dd7a9d6",
   "response_nonce": "1b4b738c891d56df",
   "response_sha256": "62c7a0b525553200276aab6d20d73a4ab7e908e835761aa005678786e0302d59",
+  "revocation_verification_scope": "TSA_SIGNER_ONLY",
   "rfc3161_response_status": "GRANTED",
   "rfc3161_signature_verification": {
     "detail": "not attempted because TSA certificate selection failed",
     "verified": false
   },
-  "schema_version": "1.0",
+  "schema_version": "1.1",
+  "semantic_assertion_evidence": {
+    "available": false,
+    "verified": false
+  },
   "subject_sha256": "3837b8ce2e012a913cbdab6f7e52bdc045013bdc4acfbc88abc99cee149275c6",
   "token_accuracy": "unspecified",
   "token_gen_time": "2026-09-11T07:25:47Z",
@@ -125,12 +130,16 @@
       "detail": "missing trust_anchor: digicert_v2/trust_anchor.pem"
     },
     {
+      "code": "REVIEWED_SEMANTIC_ASSERTION_MISSING",
+      "detail": "no retained reviewed semantic assertion was configured"
+    },
+    {
       "code": "REVOCATION_EVIDENCE_MISSING",
       "detail": "no retained CRL was configured"
     },
     {
       "code": "TIMESTAMP_ACCURACY_UNSPECIFIED",
-      "detail": "token omits accuracy and no applicable conservative bound is documented"
+      "detail": "token omits accuracy and no reviewed applicable conservative bound is retained"
     },
     {
       "code": "TOKEN_POLICY_SEMANTICS_UNDOCUMENTED",

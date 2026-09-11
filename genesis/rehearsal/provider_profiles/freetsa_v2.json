@@ -1,7 +1,4 @@
 {
-  "accuracy_semantics": {
-    "documented": false
-  },
   "captured_utc": "2026-09-11T07:24:22Z",
   "classification": "NON_FORECAST_REHEARSAL",
   "crl_source": "independently retrieved FreeTSA Root CA CRL",
@@ -14,10 +11,6 @@
     "subject": "subject.txt",
     "tool_versions": "freetsa_v2/tool_versions.txt",
     "trust_anchor": "freetsa_v2/freetsa_root_independent.pem"
-  },
-  "policy_semantics": {
-    "applicable_policy_oids": [],
-    "documented": false
   },
   "prospective_eligible": false,
   "provider_id": "freetsa_rfc3161",

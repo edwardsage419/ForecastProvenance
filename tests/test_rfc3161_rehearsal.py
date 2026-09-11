@@ -5,7 +5,7 @@ import unittest
 from dataclasses import replace
 from pathlib import Path
 
-from forecast_trust_core.canonical import verify_sealed_object
+from forecast_trust_core.canonical import seal_object, verify_sealed_object
 from forecast_trust_core.rfc3161_rehearsal import (
     CertificateObservation,
     CrlObservation,
@@ -124,14 +124,40 @@ class RFC3161RehearsalTests(unittest.TestCase):
                 "crl": "tsa.crl.pem",
                 "provider_policy": "provider-cps.pdf",
                 "independent_tsa_certificate": "independent-tsa.pem",
+                "reviewed_semantic_assertion": "reviewed-semantics.json",
             },
         }
+        self.write_assertion()
 
     def tearDown(self):
         self.tempdir.cleanup()
 
     def check(self):
         return check_rehearsal(self.root, self.profile, backend=self.backend)
+
+    def write_assertion(self, **overrides):
+        payload = {
+            "schema_version": "1.0",
+            "classification": "REVIEWED_RFC3161_QUALIFICATION_SEMANTICS",
+            "prospective_eligible": False,
+            "provider_id": "freetsa_rfc3161",
+            "provider_policy_sha256": hashlib.sha256(b"provider policy evidence").hexdigest(),
+            "token_policy_oid": "tsa_policy1",
+            "policy_review_disposition": "DOCUMENTED_APPLICABLE",
+            "accuracy_review_disposition": "TOKEN_ACCURACY_ACCEPTED",
+            "evidence_locator": "CPS section 1.2, test fixture",
+            "reviewed_at": "2026-09-11T08:00:00Z",
+        }
+        payload.update(overrides)
+        assertion = seal_object(
+            payload,
+            object_type="RFC3161ReviewedSemanticAssertion",
+            stable_context="freetsa_rfc3161",
+        )
+        (self.root / "reviewed-semantics.json").write_text(
+            json.dumps(assertion, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
 
     @staticmethod
     def blocker_codes(report):
@@ -170,6 +196,7 @@ class RFC3161RehearsalTests(unittest.TestCase):
         self.assertIn("CERTIFICATE_REVOCATION_CHECK_FAILED", self.blocker_codes(self.check()))
 
     def test_missing_policy_evidence_is_incomplete(self):
+        (self.root / "reviewed-semantics.json").unlink()
         self.profile["provider_policy_evidence_source"] = "UNAVAILABLE"
         self.profile["policy_semantics"] = {"documented": False, "applicable_policy_oids": []}
         report = self.check()
@@ -178,8 +205,57 @@ class RFC3161RehearsalTests(unittest.TestCase):
 
     def test_unspecified_accuracy_is_incomplete(self):
         self.backend.token = replace(self.backend.token, accuracy="unspecified")
+        (self.root / "reviewed-semantics.json").unlink()
         self.profile["accuracy_semantics"] = {"documented": False}
         self.assertIn("TIMESTAMP_ACCURACY_UNSPECIFIED", self.blocker_codes(self.check()))
+
+    def test_profile_semantic_booleans_without_reviewed_assertion_do_not_clear(self):
+        (self.root / "reviewed-semantics.json").unlink()
+        self.profile["policy_semantics"] = {
+            "documented": True,
+            "applicable_policy_oids": ["tsa_policy1"],
+        }
+        self.profile["accuracy_semantics"] = {"documented": True}
+        report = self.check()
+        self.assertEqual(report["final_rehearsal_status"], "REHEARSAL_INCOMPLETE")
+        self.assertIn("REVIEWED_SEMANTIC_ASSERTION_MISSING", self.blocker_codes(report))
+        self.assertFalse(report["policy_semantics_documented"])
+        self.assertFalse(report["accuracy_semantics_documented"])
+
+    def test_arbitrary_policy_bytes_and_profile_booleans_cannot_verify(self):
+        (self.root / "reviewed-semantics.json").unlink()
+        self.profile["policy_semantics"] = {"documented": True, "applicable_policy_oids": ["tsa_policy1"]}
+        self.profile["accuracy_semantics"] = {"documented": True}
+        self.assertNotEqual(self.check()["final_rehearsal_status"], "REHEARSAL_VERIFIED")
+
+    def test_semantic_assertion_policy_hash_mismatch_does_not_clear(self):
+        self.write_assertion(provider_policy_sha256="0" * 64)
+        report = self.check()
+        self.assertEqual(report["final_rehearsal_status"], "REHEARSAL_INCOMPLETE")
+        self.assertIn("REVIEWED_SEMANTIC_ASSERTION_POLICY_HASH_MISMATCH", self.blocker_codes(report))
+
+    def test_semantic_assertion_wrong_policy_oid_does_not_clear(self):
+        self.write_assertion(token_policy_oid="1.2.3.4")
+        report = self.check()
+        self.assertEqual(report["final_rehearsal_status"], "REHEARSAL_INCOMPLETE")
+        self.assertIn("REVIEWED_SEMANTIC_ASSERTION_POLICY_OID_MISMATCH", self.blocker_codes(report))
+
+    def test_negative_conservative_accuracy_bound_does_not_clear(self):
+        self.backend.token = replace(self.backend.token, accuracy="unspecified")
+        self.write_assertion(
+            accuracy_review_disposition="DOCUMENTED_CONSERVATIVE_BOUND",
+            conservative_accuracy_bound_seconds=-1,
+        )
+        report = self.check()
+        self.assertEqual(report["final_rehearsal_status"], "REHEARSAL_INCOMPLETE")
+        self.assertIn("REVIEWED_SEMANTIC_ASSERTION_INVALID", self.blocker_codes(report))
+
+    def test_present_assertion_without_accuracy_review_does_not_clear(self):
+        self.backend.token = replace(self.backend.token, accuracy="unspecified")
+        self.write_assertion(accuracy_review_disposition="NOT_DOCUMENTED")
+        report = self.check()
+        self.assertEqual(report["final_rehearsal_status"], "REHEARSAL_INCOMPLETE")
+        self.assertFalse(report["accuracy_semantics_documented"])
 
     def test_malformed_rfc3161_response_fails(self):
         self.backend.parse_error = "bad ASN.1"
@@ -198,6 +274,23 @@ class RFC3161RehearsalTests(unittest.TestCase):
         second = self.check()
         self.assertEqual(first, second)
         self.assertEqual(first["subject_sha256"], self.subject_sha256)
+
+    def test_revocation_scope_is_explicitly_signer_only(self):
+        report = self.check()
+        self.assertEqual(report["revocation_verification_scope"], "TSA_SIGNER_ONLY")
+        self.assertEqual(report["crl_evidence"]["verification_scope"], "TSA_SIGNER_ONLY")
+
+    def test_multi_level_inventory_does_not_claim_full_path_revocation(self):
+        tsa, root = self.backend.token.certificates
+        intermediate = replace(
+            tsa,
+            subject="CN=Intermediate TSA CA",
+            serial="02",
+            sha256_der="2" * 64,
+        )
+        self.backend.token = replace(self.backend.token, certificates=(tsa, intermediate, root))
+        report = self.check()
+        self.assertNotEqual(report["revocation_verification_scope"], "FULL_CERTIFICATION_PATH")
 
     def test_escaping_evidence_path_is_rejected(self):
         self.profile["evidence_files"]["subject"] = "../subject.txt"
@@ -252,9 +345,10 @@ class RetainedRFC3161ReportTests(unittest.TestCase):
         self.assertTrue(report["rfc3161_signature_verification"]["verified"])
         self.assertTrue(report["crl_evidence"]["signature_verification"]["verified"])
         self.assertTrue(report["crl_evidence"]["certificate_revocation_check"]["verified"])
-        self.assertEqual(
-            {item["code"] for item in report["unresolved_qualification_blockers"]},
-            {"TIMESTAMP_ACCURACY_UNSPECIFIED", "TOKEN_POLICY_SEMANTICS_UNDOCUMENTED"},
+        self.assertTrue(
+            {"TIMESTAMP_ACCURACY_UNSPECIFIED", "TOKEN_POLICY_SEMANTICS_UNDOCUMENTED"}.issubset(
+                {item["code"] for item in report["unresolved_qualification_blockers"]}
+            )
         )
 
 

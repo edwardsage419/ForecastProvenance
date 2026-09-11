@@ -1,6 +1,6 @@
 # RFC 3161 Provider Qualification Rehearsal Checker
 
-Version: 1.0
+Version: 1.1
 Status: GEN_001 QUALIFICATION READINESS TOOLING
 
 This checker evaluates retained RFC 3161 rehearsal evidence. It does not create
@@ -17,13 +17,6 @@ Every input profile must state:
   "captured_utc": "2026-09-11T00:00:00Z",
   "trust_anchor_source": "independently retrieved provider Root CA",
   "provider_policy_evidence_source": "UNAVAILABLE",
-  "policy_semantics": {
-    "documented": false,
-    "applicable_policy_oids": []
-  },
-  "accuracy_semantics": {
-    "documented": false
-  },
   "crl_source": "independently retrieved provider CRL",
   "evidence_files": {
     "subject": "subject.txt",
@@ -34,10 +27,43 @@ Every input profile must state:
     "untrusted_chain": "chain.pem",
     "crl": "tsa.crl.pem",
     "independent_tsa_certificate": "tsa_independent.pem",
-    "provider_policy": "provider-cps.pdf"
+    "provider_policy": "provider-cps.pdf",
+    "reviewed_semantic_assertion": "reviewed-semantics.json"
   }
 }
 ```
+
+Profile fields never establish policy or accuracy meaning. Clearing either
+semantic blocker requires a separately retained, canonically sealed
+`RFC3161ReviewedSemanticAssertion` with classification
+`REVIEWED_RFC3161_QUALIFICATION_SEMANTICS`. The assertion binds the exact policy
+file SHA256 and observed token policy OID, records independent review
+dispositions, identifies a document section/page/reference for audit, and
+records the review capture time. When an omitted token accuracy is admitted, the
+assertion also records a non-negative conservative bound in seconds.
+
+The assertion payload, before canonical sealing adds `object_type`, `object_id`,
+`payload_sha256`, and `content_sha256`, is:
+
+```json
+{
+  "schema_version": "1.0",
+  "classification": "REVIEWED_RFC3161_QUALIFICATION_SEMANTICS",
+  "prospective_eligible": false,
+  "provider_id": "provider_rfc3161",
+  "provider_policy_sha256": "64-lowercase-hex",
+  "token_policy_oid": "observed-policy-oid",
+  "policy_review_disposition": "DOCUMENTED_APPLICABLE",
+  "accuracy_review_disposition": "DOCUMENTED_CONSERVATIVE_BOUND",
+  "conservative_accuracy_bound_seconds": 1,
+  "evidence_locator": "CPS section/page/reference",
+  "reviewed_at": "2026-09-11T00:00:00Z"
+}
+```
+
+The checker treats `openssl verify -crl_check` as `TSA_SIGNER_ONLY` revocation
+verification. It does not claim `FULL_CERTIFICATION_PATH`; that stronger scope
+would require every necessary chain revocation artifact and separate support.
 
 Paths are relative to the evidence directory. Absolute paths and paths escaping
 the evidence directory are rejected. The checker reads raw evidence but never
