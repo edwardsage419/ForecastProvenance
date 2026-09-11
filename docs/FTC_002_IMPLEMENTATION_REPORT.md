@@ -1,43 +1,31 @@
 # FTC_002 Synthetic Implementation Report
 
-Status: IMPLEMENTATION REVIEW CANDIDATE
+Status: FULL MATRIX IMPLEMENTATION REVIEW CANDIDATE
 Date: 2026-09-11
 
-## Scope implemented
+## Implemented
 
-1. Standard library only Python package under `src/forecast_trust_core/`.
-2. Restricted FPP_JCS_1 canonical JSON validation for the frozen v0.4 domain.
-3. Canonical decimal and UTC timestamp checks.
-4. Two stage non circular object sealing and SHA256 content identity.
-5. Full object ID plus hash dependency validation with malformed trust root fail closed behavior.
-6. Point in time availability checks with explicit unknown state.
-7. Issuance cycle plan external precommitment, deterministic slot order, and uniqueness checks.
-8. Cycle manifest binding to exact plan hash, complete slot hash accounting, and version 1 cardinality checks.
-9. Selection control checks for deterministic replay, public randomness binding, audited attempts, and uncontrolled nondeterminism.
-10. External proof deadline state handling.
-11. Unicode surrogate rejection inside the frozen canonicalization domain.
-12. Minimal JSON Schema interoperability descriptions.
-13. Synthetic adversarial coverage registry for ADV001 through ADV096.
+The zero dependency Python implementation covers canonicalization, strict JSON parsing, two stage identity, dependency binding, point in time checks, exact cycle plan proof subject binding, deterministic slot completeness, retry accounting, fitted state cutoff, correction controls, evaluation cohort integrity, source contracts and deterministic selection, policy validation, human review hard boundaries, manifest acceptance and bootstrap binding, anchor event DAG checks, validation reports, current verifiability, public randomness, resolution evidence, output selection control, schedule policy binding, and outcome information barriers.
 
-## Test result
+## Adversarial execution
 
-Local command: `PYTHONPATH=src python -m unittest discover -s tests -v`
+ADV001 through ADV096 are each constructed as a synthetic attack scenario in `tests/test_full_adversarial_matrix.py`.
 
-Result after implementation adversarial review: 18 tests passed.
+Full local command: `PYTHONPATH=src python -m unittest discover -s tests -v`
 
-The adversarial registry accounts for all 96 frozen cases exactly once. 21 cases are directly executable against the current primitive layer, 60 are explicit design boundaries, and 15 are explicit Genesis boundaries.
+The complete suite passes and includes the full 96 case matrix. Synthetic execution tests exercise fail closed interface behavior. They do not claim that local code can create genuine human evidence, real source availability, a Genesis bootstrap identity, or external time evidence. Those remain external inputs.
 
-Boundary classification is deliberate. A boundary case is not represented as passed automation.
+## Implementation findings fixed during FTC_002
 
-## Implementation review findings resolved
+1. Slot accounting binds full ID plus SHA256.
+2. Cycle manifest binds the exact cycle plan.
+3. Malformed trust roots fail closed.
+4. Unicode surrogate code points are rejected.
+5. Retry lineage checks predecessor identity before adding the current attempt and validates retry trigger codes even when the retry succeeds.
+6. Cycle plan external proof binds the exact plan hash, preventing old proof reuse after plan mutation.
+7. Public randomness must be strictly later than plan commitment and can be pinned to the expected source.
+8. Operator supplied seeds embedded in cycle plans are rejected.
 
-1. Slot accounting originally compared only object IDs. It now binds full ID plus SHA256 references.
-2. Cycle manifest now verifies its exact cycle plan reference.
-3. Malformed trusted reference sets fail closed.
-4. Canonicalization now rejects Unicode surrogate code points.
+## Scientific boundary
 
-## Current limitations
-
-This is a primitive Trust Core implementation rather than the complete object-family validator set. Concrete OpenTimestamps verification and BootstrapGovernanceRoot remain uninstantiated Genesis boundaries. No production target, method, source, outcome, forecast, or Forecast Ledger exists.
-
-Native prospective forecasts remain 0. This implementation cannot produce genuine prospective evidence.
+Native prospective forecasts remain 0. Forecast Ledger remains uncreated. Concrete OpenTimestamps verification, BootstrapGovernanceRoot instantiation, production targets, production methods, and genuine prospective issuance remain outside FTC_002.

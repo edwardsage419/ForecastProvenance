@@ -1,0 +1,30 @@
+import unittest
+from forecast_trust_core import Result, seal_object, validate_anchor_event_dag, validate_manifest_acceptance, validate_origin_class, validate_outcome_information_barrier, validate_policy_definition, validate_public_randomness, validate_review_decision, validate_source_contract, validate_source_selection, validate_validation_report, validate_current_verifiability_report, validate_resolution_evidence, validate_trust_report
+
+def ref(obj): return {"object_id":obj["object_id"],"content_sha256":obj["content_sha256"]}
+
+class ContractValidators(unittest.TestCase):
+    def test_policy_requires_type_specific_rules(self):
+        p=seal_object({"policy_id":"p","policy_version":"1","policy_type":"OmissionPolicy","scope":"x","rules":{"allowed_omission_codes":[],"required_evidence_by_code":{},"operator_discretion_rule":"PROHIBITED_AFTER_OUTPUT_INSPECTION","cohort_accounting_rule":"RETAIN"},"change_policy":"NEW_VERSION"},object_type="PolicyDefinition",stable_context="p"); self.assertEqual(validate_policy_definition(p).result,Result.VALID)
+    def test_source_contract_requires_selection_rule(self):
+        base={"source_contract_id":"s","source_contract_version":"1","source_identity":"source","access_mode":"PUBLIC","artifact_identity_rule":"HASH","availability_rule":"PUBLISHED","publication_rule":"SOURCE_TIME","revision_rule":"BOUND","retention_class":"INLINE_CONTENT","failure_semantics":"UNKNOWN"}; bad=seal_object(base,object_type="SourceContract",stable_context="s"); self.assertEqual(validate_source_contract(bad).result,Result.INVALID); good=seal_object({**base,"artifact_selection_rule":"LEXICOGRAPHIC_FIRST"},object_type="SourceContract",stable_context="s2"); self.assertEqual(validate_source_contract(good).result,Result.VALID)
+    def test_review_cannot_override_hard_failure_or_fake_human(self):
+        d=seal_object({"review_rule_ref":{"object_id":"rule:x","content_sha256":"0"*64},"subject_ref":{"object_id":"subject:x","content_sha256":"1"*64},"reviewer_authority_ref":{"object_id":"human:x","content_sha256":"2"*64},"evidence_refs":[],"decision":"ACCEPT","reason_codes":["X"],"rationale":"synthetic"},object_type="ReviewDecision",stable_context="r"); self.assertEqual(validate_review_decision(d,hard_failure=True).result,Result.INVALID); self.assertEqual(validate_review_decision(d,human_authentic=False).result,Result.INVALID)
+    def test_manifest_acceptance_exact_binding_and_bootstrap(self):
+        m=seal_object({"manifest_sequence":1,"schema_version":"0.4"},object_type="TrustedManifest",stable_context="m"); root={"object_id":"bootstrap:root:v1","content_sha256":"3"*64}; a=seal_object({"candidate_manifest_ref":ref(m),"external_anchor_evidence_ref":{"object_id":"anchor:x","content_sha256":"4"*64},"acceptance_rule_ref":{"object_id":"rule:a","content_sha256":"5"*64},"authority_ref":root,"decision":"ACCEPT","reason_codes":["OK"]},object_type="ManifestAcceptance",stable_context="a"); self.assertEqual(validate_manifest_acceptance(m,a,bootstrap_root_ref=root).result,Result.VALID)
+    def test_anchor_dag_rejects_conflicting_subject(self):
+        subj={"object_id":"manifest:x","content_sha256":"7"*64}; other={"object_id":"manifest:y","content_sha256":"8"*64}; e=seal_object({"anchored_subject_ref":other,"event_type":"VERIFICATION_EVIDENCE","proof_artifact_ref":{"object_id":"proof:x","content_sha256":"9"*64},"external_attestation":"SYNTHETIC","predecessor_event_ref_or_none":"NONE","operational_record_ref_or_none":"NONE"},object_type="AnchorEvidenceEvent",stable_context="e"); self.assertEqual(validate_anchor_event_dag([e],subj).result,Result.INVALID)
+    def test_origin_self_prospective_rejected(self): self.assertEqual(validate_origin_class({"origin_class":"PROSPECTIVE","prospective_eligible":True}).result,Result.INVALID)
+    def test_validation_report_rejects_runtime_time_and_dependency_root(self):
+        report=seal_object({"validator_contract_ref":{"object_id":"v:x","content_sha256":"a"*64},"trusted_manifest_ref":{"object_id":"m:x","content_sha256":"b"*64},"candidate_object_ref":{"object_id":"c:x","content_sha256":"c"*64},"dependency_refs":[],"result":"VALID","checks":[],"validated_at":"2026-09-11T00:00:00Z","dependency_root":"x"},object_type="ValidationReport",stable_context="v"); self.assertEqual(validate_validation_report(report).result,Result.INVALID)
+    def test_outcome_information_barrier(self): self.assertEqual(validate_outcome_information_barrier("2026-09-11T11:00:00Z","2026-09-11T10:00:00Z").result,Result.INVALID)
+    def test_public_randomness_must_follow_plan_and_match_challenge(self):
+        good={"observed_external_bound":"2026-09-11T02:00:00Z","challenge":"abc","source_ref":{"object_id":"random:x","content_sha256":"d"*64}}; self.assertEqual(validate_public_randomness(good,plan_bound="2026-09-11T01:00:00Z",expected_challenge="abc").result,Result.VALID); self.assertEqual(validate_public_randomness({**good,"observed_external_bound":"2026-09-11T01:00:00Z"},plan_bound="2026-09-11T01:00:00Z",expected_challenge="abc").result,Result.INVALID)
+    def test_resolution_vintage_and_deadline_are_frozen(self):
+        policy={"vintage_selection":"FIRST_RELEASE","resolution_deadline":"2026-09-20T00:00:00Z"}; self.assertEqual(validate_resolution_evidence(policy,{"selected_vintage":"LATEST","resolved_at":"2026-09-19T00:00:00Z"}).result,Result.INVALID)
+    def test_current_verifiability_requires_assessment_time(self): self.assertEqual(validate_current_verifiability_report({"subject_ref":{},"current_verifiability_state":"FULL","evidence_refs":[]}).result,Result.INVALID)
+    def test_opaque_model_cannot_claim_complete_provenance(self): self.assertEqual(validate_trust_report({"evidence_observability_class":"PARTIAL_EXTERNAL"},{"evidence_provenance_claim":"COMPLETE"}).result,Result.INVALID)
+    def test_source_selection_is_deterministic(self):
+        a={"object_id":"source:a","content_sha256":"e"*64}; b={"object_id":"source:b","content_sha256":"f"*64}; self.assertEqual(validate_source_selection([b,a],a).result,Result.VALID); self.assertEqual(validate_source_selection([b,a],b).result,Result.INVALID)
+
+if __name__=="__main__": unittest.main()
