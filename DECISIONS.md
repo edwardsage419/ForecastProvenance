@@ -41,3 +41,38 @@ Genesis must define acceptable anchor latency and failure handling before issuan
 Status: ACCEPTED
 
 Recurring cash cost target is zero. Public Git hosting and bounded free CI may be used while available. Paid infrastructure requires a separate accepted decision.
+
+## D006 Canonicalization candidate
+
+Status: FTC_001 REVIEW CANDIDATE
+Date: 2026-09-11
+
+Scheme ID: FPP_JCS_1
+
+Use RFC 8785 JCS over a restricted project JSON data model.
+
+Consequential scientific decimal values are encoded as canonical decimal strings. JSON floating point values are prohibited in normative scientific objects.
+
+Reason: deterministic hashing must survive language and runtime differences without allowing implicit numeric reinterpretation.
+
+## D007 Dependency identity rule
+
+Status: FTC_001 REVIEW CANDIDATE
+Date: 2026-09-11
+
+Every consequential dependency binds both semantic object ID and full SHA256 content hash.
+
+Semantic identity alone cannot establish content identity.
+
+Reason: this prevents a changed upstream object from inheriting trust merely because its human readable ID was preserved.
+
+## D008 Explicit trusted manifest rule
+
+Status: FTC_001 REVIEW CANDIDATE
+Date: 2026-09-11
+
+Validators receive the trusted manifest as an external input.
+
+Candidate objects and their dependency graph cannot select or regenerate the trust root used to validate themselves.
+
+Reason: this prevents circular trust in which altered upstream objects and recomputed downstream hashes form a fully consistent but unauthorized alternate history.
