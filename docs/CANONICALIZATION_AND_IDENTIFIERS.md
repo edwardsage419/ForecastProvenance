@@ -1,184 +1,84 @@
 # Canonicalization and Identifiers
 
-Version: 0.1 candidate
-Status: FTC_001 REVIEW CANDIDATE
+Version: 0.2 candidate
+Status: FTC_001 REMEDIATION CANDIDATE
 
-## 1. Purpose
-
-This contract defines the exact bytes used for scientific object identity and dependency binding.
-
-The canonical bytes are the scientific truth for hashing. Human formatted JSON is a presentation form only.
-
-## 2. Canonicalization scheme
+## Canonicalization scheme
 
 Scheme ID: FPP_JCS_1
 
-FPP_JCS_1 uses RFC 8785 JSON Canonicalization Scheme over a restricted project data model.
+FPP_JCS_1 uses RFC 8785 JCS over a restricted project data model.
 
 Requirements:
 
-1. UTF 8 only.
-2. No byte order mark.
-3. No duplicate object keys.
-4. Object members are serialized according to RFC 8785 ordering.
-5. No insignificant whitespace is emitted.
-6. Strings are preserved exactly and are not Unicode normalized during hashing.
-7. JSON null is prohibited in consequential scientific objects. Absence and explicit unknown states use schema defined fields.
-8. JSON floating point numbers are prohibited in consequential scientific objects.
-9. Integers are permitted only where the schema defines bounded integer semantics and the value is within the interoperable integer range.
-10. Scientific decimal quantities use canonical decimal strings.
-11. Timestamps use canonical UTC strings defined below.
-12. Arrays preserve declared order. A schema must state when array order is scientifically meaningful.
-13. Map like collections whose order is not meaningful must be represented as objects keyed by stable identifiers or sorted before object construction according to the schema.
-14. Unknown extension fields are rejected by default for normative objects.
+1. UTF 8 only and no byte order mark.
+2. Duplicate object keys are rejected before canonicalization.
+3. Arbitrary scientific text is not Unicode normalized.
+4. Machine identifiers, field names, enum tokens, reason codes, and protocol tokens are ASCII only.
+5. JSON null and JSON floating point numbers are prohibited in consequential normative content.
+6. Scientific decimals use canonical decimal strings.
+7. Normative timestamps use whole second UTC strings `YYYY-MM-DDTHH:MM:SSZ`.
+8. Unknown extension fields are rejected unless the active schema explicitly defines an extension container.
+9. Every array field must declare ordered semantics or a deterministic sort key.
 
-## 3. Canonical decimal string
+## Decimal strings
 
-Type name: decimal_string_v1
+No plus sign, exponent notation, leading zeroes, trailing fractional zeroes, or negative zero. Probability values lie from `"0"` through `"1"`.
 
-Accepted grammar:
+## Two stage identity
 
-```text
-0
--?[1-9][0-9]*(\.[0-9]+)?
-0\.[0-9]+
--0\.[0-9]+
-```
+Version 0.1 contained a circular construction for content derived event IDs. Version 0.2 removes it.
 
-Additional rules:
-
-1. No leading plus sign.
-2. No exponent notation.
-3. No leading zeroes except the single integer zero.
-4. No trailing zeroes after the decimal point.
-5. A decimal point must be followed by at least one digit.
-6. Negative zero is prohibited.
-7. Values that mathematically equal zero canonicalize to `"0"`.
-8. Schema specific precision limits apply before canonicalization.
-9. Probability strings must lie in the closed interval from `"0"` through `"1"`.
-10. Quantization policy belongs to the field schema and must never be inferred during verification.
-
-Examples:
+Each immutable object has a `payload_projection_v1` that excludes both `object_id` and `content_sha256`.
 
 ```text
-"0"
-"1"
-"0.5"
-"0.125"
-"-12.75"
+payload_bytes = FPP_JCS_1(payload_projection_v1(object))
+payload_sha256 = lowercase_hex(SHA256(payload_bytes))
+object_id = derive_id(object_type, stable_context, payload_sha256)
 ```
 
-Invalid examples include `"01"`, `"+1"`, `"1.0"`, `"1e-3"`, and `"-0"`.
-
-## 4. Canonical timestamps
-
-Type name: utc_timestamp_v1
-
-Format:
+The final content projection includes the derived object ID and payload hash, while excluding only `content_sha256`.
 
 ```text
-YYYY-MM-DDTHH:MM:SSZ
+content_bytes = FPP_JCS_1(content_projection_v1(object))
+content_sha256 = lowercase_hex(SHA256(content_bytes))
 ```
 
-Rules:
+This produces a non circular final content identity.
 
-1. UTC only.
-2. Literal `Z` suffix.
-3. Whole second precision only in version 1 normative objects.
-4. No timezone offsets.
-5. No fractional seconds.
-6. Calendar validity must be checked.
-7. Claimed local wall clock timestamps have no external trust status merely because they satisfy this format.
+Stable versioned definition objects may use semantic IDs such as `target:us-cpi-yoy:v1`. Immutable event objects use an ASCII type prefix, stable context slug, and a suffix derived from `payload_sha256`.
 
-If future protocols require subsecond precision, they require a new timestamp type version.
+Short hash suffixes are display identifiers only. Dependency validation always binds the full final `content_sha256`.
 
-## 5. Hash envelope
+## Dependency references
 
-Each normative object contains:
-
-```json
-{
-  "object_type": "IssuedForecast",
-  "schema_version": "1.0",
-  "object_id": "forecast:...",
-  "content_sha256": "..."
-}
-```
-
-The `content_sha256` field is excluded from the hashed projection.
-
-Every schema defines a function named `substantive_projection_v1`. The projection includes every field capable of changing scientific interpretation, dependency binding, lifecycle meaning, trust classification, or scoring consequence.
-
-Metadata excluded from the substantive projection must be explicitly listed in the schema. Unlisted fields cannot be silently excluded.
-
-Hash construction:
+Every consequential reference contains:
 
 ```text
-canonical_bytes = FPP_JCS_1(substantive_projection_v1(object))
-content_sha256 = lowercase_hex(SHA256(canonical_bytes))
+object_id
+content_sha256
 ```
 
-## 6. Object identifiers
+Both must match.
 
-Object IDs are stable semantic handles. Hashes provide content identity.
+## Array rules
 
-Format:
+Set like reference arrays are sorted lexicographically by `object_id`, then `content_sha256`.
 
-```text
-<type-prefix>:<slug>:v<version>
-```
+Chronological event arrays are ordered by their explicit sequence field. Wall clock time is not used as a tie breaker.
 
-Examples:
+Priority arrays, such as resolution source priority, preserve declared order because order is substantive.
 
-```text
-target:us-cpi-yoy:v1
-resolution:us-cpi-yoy:v1
-method:transparent-baseline:v1
-```
+Schemas must identify which rule applies to every array.
 
-Immutable event objects that can have multiple occurrences use a content derived suffix:
+## Hash algorithm
 
-```text
-attempt:<method-slug>:<12-hex-hash>
-forecast:<target-slug>:<12-hex-hash>
-anchor:<scheme-slug>:<12-hex-hash>
-correction:<forecast-short-id>:<12-hex-hash>
-```
+Version 1 freezes SHA256. Algorithm migration requires new canonical reference, manifest, and affected object schema versions. A verifier never infers algorithm migration.
 
-The suffix is derived from the full `content_sha256`. Short IDs are presentation conveniences. Validation always compares full hashes.
+## Schema evolution
 
-## 7. Dependency references
+A field capable of changing interpretation, validation, resolution, scoring, time eligibility, or trust requires a schema version change.
 
-A consequential dependency reference contains both semantic identity and expected full content hash:
+A verifier never guesses an upgrade.
 
-```json
-{
-  "object_id": "target:us-cpi-yoy:v1",
-  "content_sha256": "64-lowercase-hex"
-}
-```
-
-A matching semantic ID with a different hash is a dependency mismatch and fails closed.
-
-## 8. Hash recursion rule
-
-Self hashes are excluded from their own projection.
-
-Downstream objects include upstream full hashes.
-
-No object is permitted to establish the trustworthiness of an upstream object merely because all downstream hashes were recomputed consistently.
-
-Trust status is determined against an externally supplied trusted manifest.
-
-## 9. Schema evolution
-
-A field addition is substantive when it changes validation, interpretation, resolution, scoring, time eligibility, or trust.
-
-Substantive schema changes require a new schema version.
-
-A verifier must never guess how to upgrade an old object to a new schema.
-
-## 10. Reference
-
-RFC 8785, JSON Canonicalization Scheme:
-https://www.rfc-editor.org/rfc/rfc8785.html
+Reference: RFC 8785.
