@@ -7,7 +7,18 @@ This file records current official provider information used to plan non-forecas
 
 It is not a frozen ProviderProfile and does not make any provider quorum eligible.
 
-A provider becomes eligible only after the owner-controlled rehearsal captures and independently verifies the exact response, signer material, policy, time-bound semantics, and required revocation evidence.
+A provider becomes eligible only after owner-controlled rehearsal captures and independently verifies the exact response, signer material, policy, time-bound semantics, and required revocation evidence.
+
+## Minimal Genesis v1 provider plan
+
+The minimum operating plan is to qualify two independent RFC 3161 provider groups:
+
+1. FreeTSA.
+2. DigiCert.
+
+This satisfies the current design requirement for two independent groups while ensuring at least one RFC 3161 provider because both candidates use RFC 3161.
+
+Cloudflare Roughtime is optional and is not a minimum Genesis dependency.
 
 ## FreeTSA RFC 3161
 
@@ -19,7 +30,7 @@ Official endpoint:
 https://freetsa.org/tsr
 ```
 
-FreeTSA's official documentation currently states that its TSA certificate was updated for timestamps from 2026-03-16 and publishes these current certificate fingerprints:
+FreeTSA's official documentation currently states that its TSA certificate was updated for timestamps from 2026-03-16 and publishes these certificate fingerprints:
 
 ```text
 TSA certificate SHA256
@@ -49,7 +60,7 @@ http://timestamp.digicert.com
 
 DigiCert's official knowledge base currently identifies that endpoint for RFC 3161 timestamping and publishes responder certificate-chain material.
 
-DigiCert also states that TSA certificates are updated at least every 15 months. Genesis therefore must not permanently hard-code the certificate file names or a chain merely because they were current during design review.
+DigiCert also states that TSA certificates are updated at least every 15 months. Genesis therefore must not permanently hard-code certificate filenames or a chain merely because they were current during design review.
 
 Official sources:
 
@@ -57,6 +68,8 @@ Official sources:
 https://knowledge.digicert.com/general-information/rfc3161-compliant-time-stamp-authority-server
 https://knowledge.digicert.com/solution/troubleshooting-timestamping-problems
 ```
+
+The endpoint uses HTTP transport in the provider's current documentation. Genesis trust therefore comes from successful RFC 3161 token signature, subject-imprint, nonce, chain, policy, and time-bound verification. Transport metadata is retained as operational evidence and is not itself the trust proof.
 
 Rehearsal must freeze the exact response signer and chain actually observed and verify that the accepted time-bound semantics apply to that exact token and policy.
 
@@ -86,8 +99,6 @@ Cloudflare currently labels the service beta and explicitly warns that the root 
 
 Genesis v1 therefore treats Roughtime as optional. It can become quorum eligible only after a successful nonce-bound rehearsal freezes the exact protocol implementation, root key, verifier version, and response semantics.
 
-The minimum Genesis v1 operating plan does not require Roughtime if two independent RFC 3161 provider groups qualify.
-
 ## OpenTimestamps
 
 OpenTimestamps remains the candidate Bitcoin durability layer rather than the precise wall-clock deadline authority.
@@ -98,12 +109,12 @@ Official source:
 https://opentimestamps.org/
 ```
 
-The project uses the free public calendars for rehearsal submission only. Final Genesis readiness requires retained proof bytes and strong verification against owner-controlled Bitcoin Core under the frozen verifier profile.
+The project uses free public calendars for rehearsal submission only. Final Genesis readiness requires retained proof bytes and strong verification against owner-controlled Bitcoin Core under the frozen verifier profile.
 
 ## Snapshot expiration rule
 
 This file is a historical design snapshot.
 
-Before any final ProviderProfile is sealed, the project must compare the live rehearsal evidence to this snapshot and current official provider information.
+Before any final ProviderProfile is sealed, the project must compare live rehearsal evidence to this snapshot and current official provider information.
 
 A changed endpoint, certificate, root key, policy, or verification behavior is handled as new evidence. The project never edits this snapshot to make past rehearsal evidence look current.
