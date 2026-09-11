@@ -11,12 +11,18 @@ A provider becomes eligible only after owner-controlled rehearsal captures and i
 
 ## Minimal Genesis v1 provider plan
 
-The minimum operating plan is to qualify two independent RFC 3161 provider groups:
+The minimum operating plan is to qualify two independent RFC 3161 provider groups.
+
+Primary candidates:
 
 1. FreeTSA.
 2. DigiCert.
 
-This satisfies the current design requirement for two independent groups while ensuring at least one RFC 3161 provider because both candidates use RFC 3161.
+Backup RFC 3161 candidate:
+
+3. Sectigo.
+
+Any two provider groups can satisfy the wall-clock quorum only after both individually qualify under the same frozen evidence standard. Provider failure never lowers the quorum count.
 
 Cloudflare Roughtime is optional and is not a minimum Genesis dependency.
 
@@ -72,6 +78,29 @@ https://knowledge.digicert.com/solution/troubleshooting-timestamping-problems
 The endpoint uses HTTP transport in the provider's current documentation. Genesis trust therefore comes from successful RFC 3161 token signature, subject-imprint, nonce, chain, policy, and time-bound verification. Transport metadata is retained as operational evidence and is not itself the trust proof.
 
 Rehearsal must freeze the exact response signer and chain actually observed and verify that the accepted time-bound semantics apply to that exact token and policy.
+
+## Sectigo RFC 3161 backup
+
+Provider group candidate: `sectigo_rfc3161`
+
+Sectigo's official documentation currently identifies:
+
+```text
+http://timestamp.sectigo.com
+```
+
+as its timestamping server and states that RFC 3161 is supported. Sectigo's Code Signing Certification Practice Statement also documents an RFC 3161 endpoint under the same timestamping service family.
+
+Official sources:
+
+```text
+https://www.sectigo.com/resource-library/time-stamping-server
+https://www.sectigo.com/legal
+```
+
+Sectigo is a backup candidate only. It becomes quorum eligible only if a non-forecast rehearsal proves the exact RFC 3161 response signer, trust chain, policy OID, nonce handling, time-bound semantics, revocation evidence, and verifier behavior required by FPP_TIME_EVIDENCE_V1.
+
+The project does not assume that a policy for a different Sectigo TSA service applies to the observed token.
 
 ## Cloudflare Roughtime
 
