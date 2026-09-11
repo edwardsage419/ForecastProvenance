@@ -1,9 +1,9 @@
 # Supporting Normative Contracts
 
-Version: 0.2 candidate
-Status: FTC_001 REMEDIATION CANDIDATE
+Version: 0.3 candidate
+Status: FTC_001 FREEZE CANDIDATE
 
-These contracts are first class normative dependencies of Forecast Trust Core. They do not create additional forecast history.
+These objects are first class normative dependencies of Forecast Trust Core. They create no prospective history by themselves.
 
 ## SourceContract
 
@@ -22,7 +22,7 @@ retention_class
 failure_semantics
 ```
 
-`availability_rule` must state exactly how `available_at` is established. Retrieval time cannot silently substitute for availability time.
+The availability rule defines how `available_at` is established. Retrieval time cannot silently substitute for historical availability.
 
 ## TransformationDefinition
 
@@ -55,7 +55,7 @@ configuration_ref
 state_artifact_ref
 ```
 
-Every fit input must satisfy `available_at <= fit_information_cutoff`.
+Every consequential fit input must satisfy its applicable point in time rule.
 
 ## ReviewDecision
 
@@ -73,7 +73,7 @@ rationale
 supersedes_or_none
 ```
 
-ReviewDecision is immutable. A later review creates a new object. Human review cannot override a cryptographic mismatch, a known future information violation, or a rule that does not authorize human discretion.
+ReviewDecision is immutable. Human review cannot override a cryptographic mismatch, known future information use, or a rule that does not authorize human discretion.
 
 ## ManifestAcceptance
 
@@ -85,16 +85,14 @@ candidate_manifest_ref
 external_anchor_evidence_ref
 acceptance_rule_ref
 authority_ref
-predecessor_acceptance_ref_or_none
+bootstrap_root_ref_or_predecessor_acceptance_ref
 decision
 reason_codes
 ```
 
-Only `decision = ACCEPT` under the applicable governance rule can make a candidate manifest an accepted trust root. Candidate manifest fields cannot self declare acceptance.
+Genesis validation receives a `BootstrapGovernanceRoot` from outside the candidate manifest graph. Later acceptances bind the predecessor accepted governance state. A candidate manifest never grants itself authority.
 
 ## IssuanceCyclePlan
-
-This object closes the selective omission gap before forecast outputs are inspected.
 
 Required substantive fields:
 
@@ -104,13 +102,22 @@ protocol_id
 trusted_manifest_ref
 cycle_label
 information_cutoff
+execution_window_open
+execution_window_close
+plan_commitment_deadline
 external_proof_deadline
 expected_slots
 retry_policy_ref
 omission_policy_ref
 ```
 
-Each expected slot binds target, method, evidence contract, and deterministic slot identity. The plan is externally committed under the Genesis defined precommitment rule before any eligible method output for the cycle is inspected.
+Rules:
+
+1. `plan_commitment_deadline <= execution_window_open`.
+2. The exact plan must obtain accepted external existence evidence whose verified bound is at or before `plan_commitment_deadline`.
+3. Local attempt timestamps do not establish valid precommitment.
+4. Any substantive plan change creates a new plan ID and requires a new external precommitment before its execution window.
+5. A version 1 expected slot has `forecast_cardinality = 1` and binds exact target instance, method, output schema, horizon, evidence contract, and deterministic slot ID.
 
 ## IssuanceCycleManifest
 
@@ -123,16 +130,15 @@ slot_accounting
 attempt_refs
 issued_forecast_refs
 omission_records
-anchor_subject_hash
 ```
 
-Every expected slot appears exactly once in slot accounting. Allowed terminal slot outcomes are `ISSUED`, `FAILED`, `INELIGIBLE_INPUT`, `OMITTED_BY_PRECOMMITTED_RULE`, and `INFRASTRUCTURE_ABORT`.
+The manifest contains no self referential anchor hash. Its final `content_sha256` is the subject referenced by anchor evidence.
 
-A cycle with an unexplained missing expected slot is invalid for confirmatory prospective accounting.
+Every planned slot appears exactly once in slot accounting. Allowed terminal outcomes are `ISSUED`, `FAILED`, `INELIGIBLE_INPUT`, `OMITTED_BY_PRECOMMITTED_RULE`, and `INFRASTRUCTURE_ABORT`.
 
 ## AnchorEvidenceEvent
 
-Anchor evidence is append only.
+Anchor evidence is an immutable DAG.
 
 Required substantive fields:
 
@@ -141,15 +147,17 @@ anchor_event_id
 anchor_scheme_ref
 anchored_subject_ref
 event_type
-proof_artifact_ref
-external_attestation
-predecessor_event_ref_or_none
+proof_artifact_ref_or_none
+external_attestation_or_none
+predecessor_event_refs
 operational_record_ref_or_none
 ```
 
-Allowed event types are `SUBMISSION_EVIDENCE`, `PROOF_UPGRADE`, `VERIFICATION_EVIDENCE`, and `FAILURE_EVIDENCE`.
+Allowed scientific event types are `SUBMISSION_EVIDENCE`, `PROOF_UPGRADE`, and `VERIFICATION_EVIDENCE`.
 
-No event mutates an earlier event.
+Local operational failure reports are separate operational records and do not prove external service failure.
+
+Multiple proof branches may coexist only when each independently validates the same anchored subject. Conflicting subject identity, malformed proof, or incompatible scheme claims fail closed. Local sequence numbers do not establish external chronology.
 
 ## ValidationReport
 
@@ -159,13 +167,22 @@ Deterministic scientific validation output:
 validation_report_id
 validator_contract_ref
 trusted_manifest_ref
+manifest_acceptance_ref
 candidate_object_ref
-dependency_root
-result
+dependency_refs
+historical_validation_result
 checks
 ```
 
-Runtime execution time is excluded. An optional operational execution record can state when a validator was run.
+`dependency_refs` is a deterministically sorted array of full object references. Version 1 has no undefined dependency root.
+
+Runtime execution time is excluded. `historical_validation_result` is immutable for the exact retained inputs and validator contract.
+
+## CurrentVerifiabilityReport
+
+A separate derived report states whether the bytes and proofs needed for independent verification are currently available.
+
+Loss of retained evidence can degrade current verifiability to `PARTIAL` or `UNVERIFIABLE` without rewriting a prior ValidationReport.
 
 ## Retention classes
 
@@ -173,8 +190,8 @@ Runtime execution time is excluded. An optional operational execution record can
 
 `CONTENT_ADDRESSED_LOCAL`: bytes retained in a content addressed project artifact store.
 
-`EXTERNAL_REPRODUCIBLE`: external bytes may be omitted only when a frozen acquisition rule and full content hash permit reproducible recovery.
+`EXTERNAL_REPRODUCIBLE`: bytes may be external when a frozen acquisition rule and full hash permit reproducible recovery.
 
 `EXTERNAL_FRAGILE`: insufficient for a durable high trust claim unless separately archived.
 
-If required bytes become unavailable, validation degrades to `INELIGIBLE_TRUST_UNKNOWN` where independent verification is no longer possible.
+Current verifiability degrades when required bytes are unavailable.
