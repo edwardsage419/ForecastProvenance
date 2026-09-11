@@ -7,9 +7,9 @@
   },
   "certificate_requested": true,
   "checker_tool_version": "OpenSSL 3.5.7 9 Jun 2026 (Library: OpenSSL 3.5.7 9 Jun 2026)",
-  "checker_version": "1.1",
+  "checker_version": "1.2",
   "classification": "NON_FORECAST_REHEARSAL",
-  "content_sha256": "f44956d905d4927bf6097eb85cbf383303c4202ed9118882cdcaa012f9bdf988",
+  "content_sha256": "1a6901943e8f59e38b4e1c49bbfb8ce943f9f61a495ea94c3f92d8ebb3ab99d6",
   "crl_evidence": {
     "available": true,
     "certificate_revocation_check": {
@@ -61,9 +61,9 @@
   "message_imprint_algorithm": "sha256",
   "message_imprint_matches_subject": true,
   "nonce_equal": true,
-  "object_id": "rfc3161qualificationrehearsalreport:freetsa_rfc3161:bf6df15b40c0",
+  "object_id": "rfc3161qualificationrehearsalreport:freetsa_rfc3161:67094f15f99e",
   "object_type": "RFC3161QualificationRehearsalReport",
-  "payload_sha256": "bf6df15b40c0f49261944e60d5e37ac363a3f4d3a2e1bf11982ade89e000409d",
+  "payload_sha256": "67094f15f99e0a9a5665c121b3a6984a0867b1862d000da1cc7d5c5b52ca06a5",
   "policy_semantics_documented": false,
   "prospective_eligible": false,
   "provider_id": "freetsa_rfc3161",

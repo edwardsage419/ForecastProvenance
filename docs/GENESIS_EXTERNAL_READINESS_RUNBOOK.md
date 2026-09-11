@@ -119,6 +119,11 @@ canonically sealed reviewed semantic assertion bound to the exact policy file
 SHA256 and observed token policy OID. Provider profile assertions alone have no
 qualification effect.
 
+That assertion must also bind the exact normalized token accuracy and record a
+nonempty reviewer identifier, review authority or governance role, and review
+basis. These fields preserve review provenance for later governance binding;
+they do not authenticate a human reviewer or grant production qualification.
+
 The checker can emit only `REHEARSAL_VERIFIED`, `REHEARSAL_INCOMPLETE`, or
 `REHEARSAL_FAILED`. None of these statuses grants production qualification.
 

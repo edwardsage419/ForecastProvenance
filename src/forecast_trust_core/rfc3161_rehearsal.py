@@ -18,7 +18,7 @@ FINAL_STATUSES = {
     "REHEARSAL_INCOMPLETE",
     "REHEARSAL_FAILED",
 }
-CHECKER_VERSION = "1.1"
+CHECKER_VERSION = "1.2"
 REVIEWED_ASSERTION_CLASSIFICATION = "REVIEWED_RFC3161_QUALIFICATION_SEMANTICS"
 REVOCATION_VERIFICATION_SCOPE = "TSA_SIGNER_ONLY"
 HEX_64 = re.compile(r"^[0-9a-f]{64}$")
@@ -153,6 +153,17 @@ def _normalize_nonce(value: str) -> str:
     return normalized
 
 
+def _normalize_token_accuracy(value: str) -> str:
+    if not isinstance(value, str):
+        raise RehearsalEvidenceError("token accuracy must be a string")
+    normalized = value.strip()
+    if not normalized:
+        raise RehearsalEvidenceError("token accuracy must be non-empty")
+    if normalized.lower() == "unspecified":
+        return "unspecified"
+    return normalized
+
+
 def _read_tool_versions(path: Path) -> list[str]:
     return [line.strip() for line in path.read_text(encoding="utf-8", errors="replace").splitlines() if line.strip()]
 
@@ -198,6 +209,10 @@ def _review_semantic_assertion(
             "token_policy_oid",
             "policy_review_disposition",
             "accuracy_review_disposition",
+            "observed_token_accuracy",
+            "reviewer_id",
+            "review_authority",
+            "review_basis",
             "evidence_locator",
             "reviewed_at",
         }
@@ -214,7 +229,7 @@ def _review_semantic_assertion(
             raise RehearsalEvidenceError("reviewed semantic assertion contains unexpected fields")
         if assertion.get("object_type") != "RFC3161ReviewedSemanticAssertion":
             raise RehearsalEvidenceError("reviewed semantic assertion has the wrong object type")
-        if assertion["schema_version"] != "1.0":
+        if assertion["schema_version"] != "1.1":
             raise RehearsalEvidenceError("reviewed semantic assertion has an unsupported schema version")
         if not isinstance(assertion["provider_policy_sha256"], str) or not HEX_64.fullmatch(
             assertion["provider_policy_sha256"]
@@ -224,6 +239,11 @@ def _review_semantic_assertion(
             raise RehearsalEvidenceError("reviewed semantic assertion policy OID is empty")
         if not isinstance(assertion["evidence_locator"], str) or not assertion["evidence_locator"].strip():
             raise RehearsalEvidenceError("reviewed semantic assertion evidence locator is empty")
+        for field in ("reviewer_id", "review_authority", "review_basis"):
+            if not isinstance(assertion[field], str) or not assertion[field].strip():
+                raise RehearsalEvidenceError(f"reviewed semantic assertion {field} is empty")
+        observed_accuracy = _normalize_token_accuracy(assertion["observed_token_accuracy"])
+        current_accuracy = _normalize_token_accuracy(token_accuracy)
         _parse_utc(assertion["reviewed_at"])
         if assertion["policy_review_disposition"] not in {
             "DOCUMENTED_APPLICABLE", "NOT_DOCUMENTED", "NOT_APPLICABLE", "REJECTED"
@@ -235,10 +255,22 @@ def _review_semantic_assertion(
             raise RehearsalEvidenceError("invalid accuracy review disposition")
         bound = assertion.get("conservative_accuracy_bound_seconds")
         if assertion["accuracy_review_disposition"] == "DOCUMENTED_CONSERVATIVE_BOUND":
+            if observed_accuracy != "unspecified":
+                raise RehearsalEvidenceError(
+                    "conservative accuracy review requires an unspecified observed token accuracy"
+                )
             if type(bound) is not int or bound < 0:
                 raise RehearsalEvidenceError("conservative accuracy bound must be a non-negative integer")
-        elif "conservative_accuracy_bound_seconds" in assertion:
-            raise RehearsalEvidenceError("conservative accuracy bound is present for an incompatible disposition")
+        else:
+            if "conservative_accuracy_bound_seconds" in assertion:
+                raise RehearsalEvidenceError("conservative accuracy bound is present for an incompatible disposition")
+            if (
+                assertion["accuracy_review_disposition"] == "TOKEN_ACCURACY_ACCEPTED"
+                and observed_accuracy == "unspecified"
+            ):
+                raise RehearsalEvidenceError(
+                    "accepted token accuracy review requires a specified observed token accuracy"
+                )
     except (OSError, ValueError, RehearsalEvidenceError) as exc:
         incomplete.append(_blocker("REVIEWED_SEMANTIC_ASSERTION_INVALID", str(exc)))
         return summary, False, False, incomplete, failed
@@ -251,6 +283,10 @@ def _review_semantic_assertion(
         "token_policy_oid": assertion["token_policy_oid"],
         "policy_review_disposition": assertion["policy_review_disposition"],
         "accuracy_review_disposition": assertion["accuracy_review_disposition"],
+        "observed_token_accuracy": observed_accuracy,
+        "reviewer_id": assertion["reviewer_id"],
+        "review_authority": assertion["review_authority"],
+        "review_basis": assertion["review_basis"],
         "evidence_locator": assertion["evidence_locator"],
         "reviewed_at": assertion["reviewed_at"],
     })
@@ -279,9 +315,15 @@ def _review_semantic_assertion(
             "assertion does not cover the observed token policy OID",
         ))
         return summary, False, False, incomplete, failed
+    if observed_accuracy != current_accuracy:
+        incomplete.append(_blocker(
+            "REVIEWED_SEMANTIC_ASSERTION_ACCURACY_MISMATCH",
+            "assertion does not bind the exact observed token accuracy",
+        ))
+        return summary, False, False, incomplete, failed
 
     policy_ok = assertion["policy_review_disposition"] == "DOCUMENTED_APPLICABLE"
-    if token_accuracy.lower() == "unspecified":
+    if current_accuracy == "unspecified":
         accuracy_ok = assertion["accuracy_review_disposition"] == "DOCUMENTED_CONSERVATIVE_BOUND"
     else:
         accuracy_ok = assertion["accuracy_review_disposition"] == "TOKEN_ACCURACY_ACCEPTED"

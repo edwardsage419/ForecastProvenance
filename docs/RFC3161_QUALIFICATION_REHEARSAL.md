@@ -1,6 +1,6 @@
 # RFC 3161 Provider Qualification Rehearsal Checker
 
-Version: 1.1
+Version: 1.2
 Status: GEN_001 QUALIFICATION READINESS TOOLING
 
 This checker evaluates retained RFC 3161 rehearsal evidence. It does not create
@@ -37,17 +37,21 @@ Profile fields never establish policy or accuracy meaning. Clearing either
 semantic blocker requires a separately retained, canonically sealed
 `RFC3161ReviewedSemanticAssertion` with classification
 `REVIEWED_RFC3161_QUALIFICATION_SEMANTICS`. The assertion binds the exact policy
-file SHA256 and observed token policy OID, records independent review
-dispositions, identifies a document section/page/reference for audit, and
-records the review capture time. When an omitted token accuracy is admitted, the
-assertion also records a non-negative conservative bound in seconds.
+file SHA256, observed token policy OID, and exact normalized token accuracy;
+records independent review dispositions; identifies a document
+section/page/reference for audit; and records the review capture time. It also
+records the reviewer identifier, authority or governance role, and review basis
+for later governance binding. These provenance fields are declarative records,
+not cryptographic authentication of a human reviewer. When an omitted token
+accuracy is admitted, the assertion also records a non-negative conservative
+bound in seconds.
 
 The assertion payload, before canonical sealing adds `object_type`, `object_id`,
 `payload_sha256`, and `content_sha256`, is:
 
 ```json
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "classification": "REVIEWED_RFC3161_QUALIFICATION_SEMANTICS",
   "prospective_eligible": false,
   "provider_id": "provider_rfc3161",
@@ -55,11 +59,19 @@ The assertion payload, before canonical sealing adds `object_type`, `object_id`,
   "token_policy_oid": "observed-policy-oid",
   "policy_review_disposition": "DOCUMENTED_APPLICABLE",
   "accuracy_review_disposition": "DOCUMENTED_CONSERVATIVE_BOUND",
+  "observed_token_accuracy": "unspecified",
   "conservative_accuracy_bound_seconds": 1,
+  "reviewer_id": "reviewer:example",
+  "review_authority": "GEN_001_REHEARSAL_REVIEWER",
+  "review_basis": "retained policy SHA256 and CPS section/page reference",
   "evidence_locator": "CPS section/page/reference",
   "reviewed_at": "2026-09-11T00:00:00Z"
 }
 ```
+
+Only surrounding whitespace and the case-insensitive `unspecified` sentinel are
+normalized. Other specified accuracy strings must match exactly. The assertion
+remains non-prospective and cannot grant production qualification.
 
 The checker treats `openssl verify -crl_check` as `TSA_SIGNER_ONLY` revocation
 verification. It does not claim `FULL_CERTIFICATION_PATH`; that stronger scope

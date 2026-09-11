@@ -12,4 +12,6 @@ vocabulary is `REHEARSAL_VERIFIED`, `REHEARSAL_INCOMPLETE`, and
 `rfc3161_reviewed_semantic_assertion.schema.json` describes the separately
 reviewed, sealed assertion that binds policy and accuracy conclusions to the
 exact retained provider-policy SHA256 and observed token policy OID. Provider
-profile booleans cannot substitute for this assertion.
+profile booleans cannot substitute for this assertion. Version 1.1 also requires
+reviewer provenance and binds the exact normalized observed token accuracy; the
+provenance fields do not claim cryptographic reviewer authentication.

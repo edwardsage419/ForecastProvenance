@@ -11,6 +11,11 @@ SCHEMA = json.loads(
         encoding="utf-8"
     )
 )
+SEMANTIC_SCHEMA = json.loads(
+    (ROOT / "schemas" / "rfc3161_reviewed_semantic_assertion.schema.json").read_text(
+        encoding="utf-8"
+    )
+)
 
 
 class SchemaRejection(ValueError):
@@ -27,6 +32,15 @@ def _resolve_ref(root, reference):
 
 
 def validate_schema(instance, schema, root=SCHEMA):
+    if "anyOf" in schema:
+        for alternative in schema["anyOf"]:
+            try:
+                validate_schema(instance, alternative, root)
+            except SchemaRejection:
+                continue
+            break
+        else:
+            raise SchemaRejection("no anyOf schema matched")
     if "not" in schema:
         try:
             validate_schema(instance, schema["not"], root)
@@ -117,7 +131,11 @@ class RFC3161ReportSchemaTests(unittest.TestCase):
             "token_policy_oid": report["token_policy_oid"],
             "policy_review_disposition": "DOCUMENTED_APPLICABLE",
             "accuracy_review_disposition": "DOCUMENTED_CONSERVATIVE_BOUND",
+            "observed_token_accuracy": "unspecified",
             "conservative_accuracy_bound_seconds": 1,
+            "reviewer_id": "reviewer:test",
+            "review_authority": "GEN_001_REHEARSAL_REVIEWER",
+            "review_basis": "retained policy hash and CPS section 1.2",
             "evidence_locator": "CPS section 1.2",
             "reviewed_at": "2026-09-11T08:00:00Z",
         }
@@ -174,6 +192,71 @@ class RFC3161ReportSchemaTests(unittest.TestCase):
         assertion = report["semantic_assertion_evidence"]
         assertion["accuracy_review_disposition"] = "TOKEN_ACCURACY_ACCEPTED"
         self.assert_rejected(report)
+
+    def test_schema_rejects_verified_missing_reviewer_provenance(self):
+        for field in ("reviewer_id", "review_authority", "review_basis"):
+            with self.subTest(field=field):
+                report = self.verified_report()
+                report["semantic_assertion_evidence"].pop(field)
+                self.assert_rejected(report)
+
+    def test_schema_rejects_invalid_observed_accuracy_structure(self):
+        report = self.verified_report()
+        report["semantic_assertion_evidence"]["observed_token_accuracy"] = "1 second"
+        self.assert_rejected(report)
+
+    def test_schema_rejects_conservative_review_for_specified_token_accuracy(self):
+        report = self.verified_report()
+        report["token_accuracy"] = "1 second"
+        self.assert_rejected(report)
+
+
+class ReviewedSemanticAssertionSchemaTests(unittest.TestCase):
+    def assertion(self):
+        return {
+            "schema_version": "1.1",
+            "classification": "REVIEWED_RFC3161_QUALIFICATION_SEMANTICS",
+            "prospective_eligible": False,
+            "provider_id": "provider_rfc3161",
+            "provider_policy_sha256": "a" * 64,
+            "token_policy_oid": "1.2.3.4",
+            "policy_review_disposition": "DOCUMENTED_APPLICABLE",
+            "accuracy_review_disposition": "TOKEN_ACCURACY_ACCEPTED",
+            "observed_token_accuracy": "1 second",
+            "reviewer_id": "reviewer:test",
+            "review_authority": "GEN_001_REHEARSAL_REVIEWER",
+            "review_basis": "retained policy hash and section 1.2",
+            "evidence_locator": "section 1.2",
+            "reviewed_at": "2026-09-11T08:00:00Z",
+            "object_type": "RFC3161ReviewedSemanticAssertion",
+            "object_id": "rfc3161reviewedsemanticassertion:test",
+            "payload_sha256": "b" * 64,
+            "content_sha256": "c" * 64,
+        }
+
+    def assert_rejected(self, assertion):
+        with self.assertRaises(SchemaRejection):
+            validate_schema(assertion, SEMANTIC_SCHEMA, SEMANTIC_SCHEMA)
+
+    def test_semantic_schema_accepts_matching_specified_accuracy(self):
+        validate_schema(self.assertion(), SEMANTIC_SCHEMA, SEMANTIC_SCHEMA)
+
+    def test_semantic_schema_rejects_missing_reviewer_provenance(self):
+        assertion = self.assertion()
+        assertion.pop("review_authority")
+        self.assert_rejected(assertion)
+
+    def test_semantic_schema_rejects_accepted_unspecified_accuracy(self):
+        assertion = self.assertion()
+        assertion["observed_token_accuracy"] = "unspecified"
+        self.assert_rejected(assertion)
+
+    def test_semantic_schema_accepts_unspecified_with_conservative_bound(self):
+        assertion = self.assertion()
+        assertion["accuracy_review_disposition"] = "DOCUMENTED_CONSERVATIVE_BOUND"
+        assertion["observed_token_accuracy"] = "unspecified"
+        assertion["conservative_accuracy_bound_seconds"] = 1
+        validate_schema(assertion, SEMANTIC_SCHEMA, SEMANTIC_SCHEMA)
 
 
 if __name__ == "__main__":

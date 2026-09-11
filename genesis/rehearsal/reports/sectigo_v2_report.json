@@ -7,9 +7,9 @@
   },
   "certificate_requested": true,
   "checker_tool_version": "OpenSSL 3.5.7 9 Jun 2026 (Library: OpenSSL 3.5.7 9 Jun 2026)",
-  "checker_version": "1.1",
+  "checker_version": "1.2",
   "classification": "NON_FORECAST_REHEARSAL",
-  "content_sha256": "b1494407e2c57a958be07ac01fc429ebc15979e01e64f146beac68cb5562328a",
+  "content_sha256": "d77445a0e3772abd55f07934161019a339d6fb9fe0e821db096ca27b0b8c1c51",
   "crl_evidence": {
     "available": false
   },
@@ -61,9 +61,9 @@
   "message_imprint_algorithm": "sha256",
   "message_imprint_matches_subject": true,
   "nonce_equal": true,
-  "object_id": "rfc3161qualificationrehearsalreport:sectigo_rfc3161:d534db0c8f10",
+  "object_id": "rfc3161qualificationrehearsalreport:sectigo_rfc3161:4823ec683f3f",
   "object_type": "RFC3161QualificationRehearsalReport",
-  "payload_sha256": "d534db0c8f1070c83d89d71afd20a7326537bb7b9f87007146ecac970a57d6fd",
+  "payload_sha256": "4823ec683f3f143cedcbe38a94fc9100f9941a3af7cd8965bc57eb43a0138fb7",
   "policy_semantics_documented": false,
   "prospective_eligible": false,
   "provider_id": "sectigo_rfc3161",

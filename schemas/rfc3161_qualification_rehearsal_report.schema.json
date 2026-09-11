@@ -32,6 +32,13 @@
       "if": {"properties": {"final_rehearsal_status": {"const": "REHEARSAL_VERIFIED"}}, "required": ["final_rehearsal_status"]},
       "then": {
         "required": ["subject_sha256", "request_sha256", "response_sha256", "rfc3161_response_status", "message_imprint_algorithm", "message_imprint", "message_imprint_matches_subject", "request_nonce", "response_nonce", "nonce_equal", "certificate_requested", "embedded_certificate_inventory", "tsa_certificate_sha256_der", "tsa_certificate_serial", "tsa_certificate_not_before", "tsa_certificate_not_after", "tsa_certificate_extended_key_usage", "tsa_certificate_extended_key_usage_critical", "token_gen_time", "token_policy_oid", "token_accuracy", "trust_anchor_sha256_der", "independent_tsa_certificate_sha256_der", "independent_tsa_certificate_matches_embedded", "certificate_chain_verification", "rfc3161_signature_verification", "crl_evidence", "semantic_assertion_evidence"],
+        "allOf": [
+          {
+            "if": {"properties": {"token_accuracy": {"const": "unspecified"}}, "required": ["token_accuracy"]},
+            "then": {"properties": {"semantic_assertion_evidence": {"properties": {"accuracy_review_disposition": {"const": "DOCUMENTED_CONSERVATIVE_BOUND"}, "observed_token_accuracy": {"const": "unspecified"}}}}},
+            "else": {"properties": {"semantic_assertion_evidence": {"properties": {"accuracy_review_disposition": {"const": "TOKEN_ACCURACY_ACCEPTED"}, "observed_token_accuracy": {"not": {"const": "unspecified"}}}}}}
+          }
+        ],
         "properties": {
           "policy_semantics_documented": {"const": true},
           "accuracy_semantics_documented": {"const": true},
@@ -89,11 +96,11 @@
     },
     "verified_semantic_assertion": {
       "type": "object",
-      "required": ["available", "verified", "raw_sha256", "classification", "content_sha256", "provider_id", "provider_policy_sha256", "token_policy_oid", "policy_review_disposition", "accuracy_review_disposition", "evidence_locator", "reviewed_at"],
-      "properties": {"available": {"const": true}, "verified": {"const": true}, "raw_sha256": {"$ref": "#/$defs/digest"}, "classification": {"const": "REVIEWED_RFC3161_QUALIFICATION_SEMANTICS"}, "content_sha256": {"$ref": "#/$defs/digest"}, "provider_id": {"type": "string", "minLength": 1}, "provider_policy_sha256": {"$ref": "#/$defs/digest"}, "token_policy_oid": {"type": "string", "minLength": 1}, "policy_review_disposition": {"const": "DOCUMENTED_APPLICABLE"}, "accuracy_review_disposition": {"enum": ["DOCUMENTED_CONSERVATIVE_BOUND", "TOKEN_ACCURACY_ACCEPTED"]}, "conservative_accuracy_bound_seconds": {"type": "integer", "minimum": 0}, "evidence_locator": {"type": "string", "minLength": 1}, "reviewed_at": {"$ref": "#/$defs/utc"}},
+      "required": ["available", "verified", "raw_sha256", "classification", "content_sha256", "provider_id", "provider_policy_sha256", "token_policy_oid", "policy_review_disposition", "accuracy_review_disposition", "observed_token_accuracy", "reviewer_id", "review_authority", "review_basis", "evidence_locator", "reviewed_at"],
+      "properties": {"available": {"const": true}, "verified": {"const": true}, "raw_sha256": {"$ref": "#/$defs/digest"}, "classification": {"const": "REVIEWED_RFC3161_QUALIFICATION_SEMANTICS"}, "content_sha256": {"$ref": "#/$defs/digest"}, "provider_id": {"type": "string", "minLength": 1}, "provider_policy_sha256": {"$ref": "#/$defs/digest"}, "token_policy_oid": {"type": "string", "minLength": 1}, "policy_review_disposition": {"const": "DOCUMENTED_APPLICABLE"}, "accuracy_review_disposition": {"enum": ["DOCUMENTED_CONSERVATIVE_BOUND", "TOKEN_ACCURACY_ACCEPTED"]}, "observed_token_accuracy": {"type": "string", "pattern": ".*\\S.*"}, "conservative_accuracy_bound_seconds": {"type": "integer", "minimum": 0}, "reviewer_id": {"type": "string", "pattern": ".*\\S.*"}, "review_authority": {"type": "string", "pattern": ".*\\S.*"}, "review_basis": {"type": "string", "pattern": ".*\\S.*"}, "evidence_locator": {"type": "string", "minLength": 1}, "reviewed_at": {"$ref": "#/$defs/utc"}},
       "allOf": [
-        {"if": {"properties": {"accuracy_review_disposition": {"const": "DOCUMENTED_CONSERVATIVE_BOUND"}}, "required": ["accuracy_review_disposition"]}, "then": {"required": ["conservative_accuracy_bound_seconds"]}},
-        {"if": {"properties": {"accuracy_review_disposition": {"const": "TOKEN_ACCURACY_ACCEPTED"}}, "required": ["accuracy_review_disposition"]}, "then": {"not": {"required": ["conservative_accuracy_bound_seconds"]}}}
+        {"if": {"properties": {"accuracy_review_disposition": {"const": "DOCUMENTED_CONSERVATIVE_BOUND"}}, "required": ["accuracy_review_disposition"]}, "then": {"required": ["conservative_accuracy_bound_seconds"], "properties": {"observed_token_accuracy": {"const": "unspecified"}}}},
+        {"if": {"properties": {"accuracy_review_disposition": {"const": "TOKEN_ACCURACY_ACCEPTED"}}, "required": ["accuracy_review_disposition"]}, "then": {"properties": {"observed_token_accuracy": {"not": {"const": "unspecified"}}}, "not": {"required": ["conservative_accuracy_bound_seconds"]}}}
       ],
       "additionalProperties": false
     }

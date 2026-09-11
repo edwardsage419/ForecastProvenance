@@ -7,9 +7,9 @@
   },
   "certificate_requested": true,
   "checker_tool_version": "OpenSSL 3.5.7 9 Jun 2026 (Library: OpenSSL 3.5.7 9 Jun 2026)",
-  "checker_version": "1.1",
+  "checker_version": "1.2",
   "classification": "NON_FORECAST_REHEARSAL",
-  "content_sha256": "d252522a1a2dc0c3cf324e1b741a2d067ff582151495bd949649e011c3324189",
+  "content_sha256": "f40170443478b6191e7ea22783d2ab908c779dad082dd954b758f536a8f0d7a7",
   "crl_evidence": {
     "available": false
   },
@@ -59,9 +59,9 @@
   "message_imprint_algorithm": "sha256",
   "message_imprint_matches_subject": true,
   "nonce_equal": true,
-  "object_id": "rfc3161qualificationrehearsalreport:digicert_rfc3161:ab250c25fa7c",
+  "object_id": "rfc3161qualificationrehearsalreport:digicert_rfc3161:673cad3dd5e3",
   "object_type": "RFC3161QualificationRehearsalReport",
-  "payload_sha256": "ab250c25fa7c43aaefc3abb3fc94b16cb3c45ab49e59ba52a2ffba5b614e231e",
+  "payload_sha256": "673cad3dd5e34bc8624f3ad83e60bc7216ba8b2eefe6a7e5e81d219e48f2db2b",
   "policy_semantics_documented": false,
   "prospective_eligible": false,
   "provider_id": "digicert_rfc3161",

@@ -137,7 +137,7 @@ class RFC3161RehearsalTests(unittest.TestCase):
 
     def write_assertion(self, **overrides):
         payload = {
-            "schema_version": "1.0",
+            "schema_version": "1.1",
             "classification": "REVIEWED_RFC3161_QUALIFICATION_SEMANTICS",
             "prospective_eligible": False,
             "provider_id": "freetsa_rfc3161",
@@ -145,10 +145,17 @@ class RFC3161RehearsalTests(unittest.TestCase):
             "token_policy_oid": "tsa_policy1",
             "policy_review_disposition": "DOCUMENTED_APPLICABLE",
             "accuracy_review_disposition": "TOKEN_ACCURACY_ACCEPTED",
+            "observed_token_accuracy": "1 second",
+            "reviewer_id": "reviewer:test",
+            "review_authority": "GEN_001_REHEARSAL_REVIEWER",
+            "review_basis": "retained provider policy SHA256 and CPS section 1.2",
             "evidence_locator": "CPS section 1.2, test fixture",
             "reviewed_at": "2026-09-11T08:00:00Z",
         }
         payload.update(overrides)
+        for key in tuple(payload):
+            if payload[key] is None:
+                del payload[key]
         assertion = seal_object(
             payload,
             object_type="RFC3161ReviewedSemanticAssertion",
@@ -244,6 +251,7 @@ class RFC3161RehearsalTests(unittest.TestCase):
         self.backend.token = replace(self.backend.token, accuracy="unspecified")
         self.write_assertion(
             accuracy_review_disposition="DOCUMENTED_CONSERVATIVE_BOUND",
+            observed_token_accuracy="unspecified",
             conservative_accuracy_bound_seconds=-1,
         )
         report = self.check()
@@ -252,10 +260,74 @@ class RFC3161RehearsalTests(unittest.TestCase):
 
     def test_present_assertion_without_accuracy_review_does_not_clear(self):
         self.backend.token = replace(self.backend.token, accuracy="unspecified")
-        self.write_assertion(accuracy_review_disposition="NOT_DOCUMENTED")
+        self.write_assertion(
+            accuracy_review_disposition="NOT_DOCUMENTED",
+            observed_token_accuracy="unspecified",
+        )
         report = self.check()
         self.assertEqual(report["final_rehearsal_status"], "REHEARSAL_INCOMPLETE")
         self.assertFalse(report["accuracy_semantics_documented"])
+
+    def test_missing_reviewer_id_does_not_clear_semantic_blockers(self):
+        self.write_assertion(reviewer_id=None)
+        report = self.check()
+        self.assertEqual(report["final_rehearsal_status"], "REHEARSAL_INCOMPLETE")
+        self.assertIn("REVIEWED_SEMANTIC_ASSERTION_INVALID", self.blocker_codes(report))
+
+    def test_missing_reviewer_authority_does_not_clear_semantic_blockers(self):
+        self.write_assertion(review_authority=None)
+        report = self.check()
+        self.assertEqual(report["final_rehearsal_status"], "REHEARSAL_INCOMPLETE")
+        self.assertIn("REVIEWED_SEMANTIC_ASSERTION_INVALID", self.blocker_codes(report))
+
+    def test_missing_reviewer_basis_does_not_clear_semantic_blockers(self):
+        self.write_assertion(review_basis=None)
+        report = self.check()
+        self.assertEqual(report["final_rehearsal_status"], "REHEARSAL_INCOMPLETE")
+        self.assertIn("REVIEWED_SEMANTIC_ASSERTION_INVALID", self.blocker_codes(report))
+
+    def test_empty_reviewer_provenance_is_rejected(self):
+        for field in ("reviewer_id", "review_authority", "review_basis"):
+            with self.subTest(field=field):
+                self.write_assertion(**{field: "   "})
+                self.assertIn("REVIEWED_SEMANTIC_ASSERTION_INVALID", self.blocker_codes(self.check()))
+
+    def test_accuracy_observation_mismatch_does_not_clear(self):
+        self.write_assertion(observed_token_accuracy="10 seconds")
+        report = self.check()
+        self.assertEqual(report["final_rehearsal_status"], "REHEARSAL_INCOMPLETE")
+        self.assertIn("REVIEWED_SEMANTIC_ASSERTION_ACCURACY_MISMATCH", self.blocker_codes(report))
+
+    def test_one_second_assertion_cannot_validate_ten_second_token(self):
+        self.backend.token = replace(self.backend.token, accuracy="10 seconds")
+        report = self.check()
+        self.assertIn("REVIEWED_SEMANTIC_ASSERTION_ACCURACY_MISMATCH", self.blocker_codes(report))
+
+    def test_conservative_bound_rejects_specified_observed_accuracy(self):
+        self.write_assertion(
+            accuracy_review_disposition="DOCUMENTED_CONSERVATIVE_BOUND",
+            observed_token_accuracy="1 second",
+            conservative_accuracy_bound_seconds=1,
+        )
+        self.assertIn("REVIEWED_SEMANTIC_ASSERTION_INVALID", self.blocker_codes(self.check()))
+
+    def test_accepted_accuracy_rejects_unspecified_observation(self):
+        self.backend.token = replace(self.backend.token, accuracy="unspecified")
+        self.write_assertion(observed_token_accuracy="unspecified")
+        self.assertIn("REVIEWED_SEMANTIC_ASSERTION_INVALID", self.blocker_codes(self.check()))
+
+    def test_accepted_accuracy_rejects_conservative_bound(self):
+        self.write_assertion(conservative_accuracy_bound_seconds=1)
+        self.assertIn("REVIEWED_SEMANTIC_ASSERTION_INVALID", self.blocker_codes(self.check()))
+
+    def test_matching_unspecified_accuracy_and_bound_can_verify(self):
+        self.backend.token = replace(self.backend.token, accuracy="unspecified")
+        self.write_assertion(
+            accuracy_review_disposition="DOCUMENTED_CONSERVATIVE_BOUND",
+            observed_token_accuracy="unspecified",
+            conservative_accuracy_bound_seconds=1,
+        )
+        self.assertEqual(self.check()["final_rehearsal_status"], "REHEARSAL_VERIFIED")
 
     def test_malformed_rfc3161_response_fails(self):
         self.backend.parse_error = "bad ASN.1"

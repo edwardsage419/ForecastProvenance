@@ -3,9 +3,9 @@
   "$id": "https://forecastprovenance.org/schemas/rfc3161_reviewed_semantic_assertion.schema.json",
   "title": "Reviewed RFC 3161 Qualification Semantic Assertion",
   "type": "object",
-  "required": ["schema_version", "classification", "prospective_eligible", "provider_id", "provider_policy_sha256", "token_policy_oid", "policy_review_disposition", "accuracy_review_disposition", "evidence_locator", "reviewed_at", "object_type", "object_id", "payload_sha256", "content_sha256"],
+  "required": ["schema_version", "classification", "prospective_eligible", "provider_id", "provider_policy_sha256", "token_policy_oid", "policy_review_disposition", "accuracy_review_disposition", "observed_token_accuracy", "reviewer_id", "review_authority", "review_basis", "evidence_locator", "reviewed_at", "object_type", "object_id", "payload_sha256", "content_sha256"],
   "properties": {
-    "schema_version": {"const": "1.0"},
+    "schema_version": {"const": "1.1"},
     "classification": {"const": "REVIEWED_RFC3161_QUALIFICATION_SEMANTICS"},
     "prospective_eligible": {"const": false},
     "provider_id": {"type": "string", "minLength": 1},
@@ -13,7 +13,11 @@
     "token_policy_oid": {"type": "string", "minLength": 1},
     "policy_review_disposition": {"enum": ["DOCUMENTED_APPLICABLE", "NOT_DOCUMENTED", "NOT_APPLICABLE", "REJECTED"]},
     "accuracy_review_disposition": {"enum": ["DOCUMENTED_CONSERVATIVE_BOUND", "TOKEN_ACCURACY_ACCEPTED", "NOT_DOCUMENTED", "REJECTED"]},
+    "observed_token_accuracy": {"type": "string", "pattern": ".*\\S.*"},
     "conservative_accuracy_bound_seconds": {"type": "integer", "minimum": 0},
+    "reviewer_id": {"type": "string", "pattern": ".*\\S.*"},
+    "review_authority": {"type": "string", "pattern": ".*\\S.*"},
+    "review_basis": {"type": "string", "pattern": ".*\\S.*"},
     "evidence_locator": {"type": "string", "minLength": 1},
     "reviewed_at": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"},
     "object_type": {"const": "RFC3161ReviewedSemanticAssertion"},
@@ -22,8 +26,9 @@
     "content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
   },
   "allOf": [
-    {"if": {"properties": {"accuracy_review_disposition": {"const": "DOCUMENTED_CONSERVATIVE_BOUND"}}, "required": ["accuracy_review_disposition"]}, "then": {"required": ["conservative_accuracy_bound_seconds"]}},
-    {"if": {"properties": {"accuracy_review_disposition": {"enum": ["TOKEN_ACCURACY_ACCEPTED", "NOT_DOCUMENTED", "REJECTED"]}}, "required": ["accuracy_review_disposition"]}, "then": {"not": {"required": ["conservative_accuracy_bound_seconds"]}}}
+    {"if": {"properties": {"accuracy_review_disposition": {"const": "DOCUMENTED_CONSERVATIVE_BOUND"}}, "required": ["accuracy_review_disposition"]}, "then": {"required": ["conservative_accuracy_bound_seconds"], "properties": {"observed_token_accuracy": {"pattern": "^\\s*[Uu][Nn][Ss][Pp][Ee][Cc][Ii][Ff][Ii][Ee][Dd]\\s*$"}}}},
+    {"if": {"properties": {"accuracy_review_disposition": {"const": "TOKEN_ACCURACY_ACCEPTED"}}, "required": ["accuracy_review_disposition"]}, "then": {"not": {"anyOf": [{"required": ["conservative_accuracy_bound_seconds"]}, {"properties": {"observed_token_accuracy": {"pattern": "^\\s*[Uu][Nn][Ss][Pp][Ee][Cc][Ii][Ff][Ii][Ee][Dd]\\s*$"}}, "required": ["observed_token_accuracy"]}]}}},
+    {"if": {"properties": {"accuracy_review_disposition": {"enum": ["NOT_DOCUMENTED", "REJECTED"]}}, "required": ["accuracy_review_disposition"]}, "then": {"not": {"required": ["conservative_accuracy_bound_seconds"]}}}
   ],
   "additionalProperties": false
 }
