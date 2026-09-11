@@ -1,46 +1,64 @@
 # Prospective Time Semantics
 
-Version: 0.2 candidate
-Status: FTC_001 REMEDIATION CANDIDATE
+Version: 0.3 candidate
+Status: FTC_001 FREEZE CANDIDATE
 
-## External proof rule
+## External time principle
 
-Local `claimed_issued_at`, Git metadata, filesystem time, signatures without an independent time source, and locally claimed anchor submission time are operational metadata only.
+Local wall clock fields, Git metadata, filesystem time, signatures without an independent time source, and operator claimed submission time are operational metadata only.
 
-For a forecast to qualify as externally verified prospective evidence, the validator must establish an accepted external existence bound for the exact anchored issuance cycle manifest.
+Scientific prospective eligibility uses externally verified existence bounds produced by an accepted AnchorScheme verifier.
 
-## Deadline inequality
+## Plan precommitment inequality
 
-Each planned forecast slot binds an `external_proof_deadline` derived from the accepted target and Genesis protocol.
+Each IssuanceCyclePlan binds `plan_commitment_deadline` and a fixed `execution_window_open`.
 
-Version 1 eligibility uses:
+Eligibility requires:
 
 ```text
-verified_external_existence_bound <= external_proof_deadline
+verified_plan_existence_bound <= plan_commitment_deadline <= execution_window_open
 ```
 
-The exact construction of `verified_external_existence_bound` is anchor scheme specific and must be frozen before Genesis.
+The protocol does not rely on locally asserted attempt start times to prove that planning preceded execution.
 
-If the bound is later than the deadline, the slot is `LATE_OR_INELIGIBLE`.
+## Forecast existence inequality
 
-If the bound cannot be established, the slot is `INELIGIBLE_TRUST_UNKNOWN` or remains pending when the accepted anchor scheme explicitly supports a pending state.
+Each planned slot binds an `external_proof_deadline` derived from the accepted target and Genesis protocol.
 
-## Anchor latency
+Eligibility requires:
 
-Operational submission latency may be measured for reliability, but a locally claimed submission timestamp cannot determine scientific prospective eligibility.
+```text
+verified_forecast_existence_bound <= external_proof_deadline
+```
 
-Genesis can impose operational service targets separately.
+The exact construction of each verified external bound is AnchorScheme specific and is a Genesis blocking parameter.
+
+## Deadline immutability
+
+Both deadlines are fixed inside the externally committed cycle plan before the execution window opens.
+
+Changing either deadline creates a new cycle plan and requires a new plan precommitment proof.
+
+## Pending and late states
+
+A proof may remain operationally pending when the accepted anchor scheme permits later proof completion.
+
+Pending evidence does not establish final prospective verification.
+
+A verified existence bound later than its frozen deadline yields `LATE_OR_INELIGIBLE`.
+
+An unverifiable required bound yields `INELIGIBLE_TRUST_UNKNOWN` once the applicable pending policy is exhausted.
 
 ## Target relationship
 
-The target contract or Genesis bound target profile must define how `external_proof_deadline` relates to target closure, outcome observability, and information cutoff.
+TargetDefinition supplies or binds a deterministic rule for the slot external proof deadline. Genesis must ensure target horizons and closure semantics are compatible with the conservative precision of the selected anchor.
 
-The deadline must be fixed before forecast output inspection.
+## Anchor latency
 
-A target is Genesis eligible only when the selected anchor's conservative external time precision is adequate for this deadline.
+Operational submission latency may be monitored for reliability. It cannot decide scientific eligibility unless it is itself based on independently verifiable external evidence admitted by the active AnchorScheme.
 
-## OpenTimestamps candidate
+## OpenTimestamps boundary
 
-For OTS_BTC_BATCH_V1, Genesis acceptance testing must define and independently test the conservative Bitcoin attestation time bound used by the verifier. The project must not claim second level precision.
+FTC_001 freezes the abstract requirement that an AnchorScheme return a conservative verified existence bound for exact content.
 
-Pending proof does not establish final prospective verification.
+Genesis must freeze the exact OTS_BTC_BATCH_V1 proof parser, accepted attestation types, conservative Bitcoin time bound construction, confirmation policy, verifier version, and malformed proof behavior before any genuine prospective forecast is permitted.
