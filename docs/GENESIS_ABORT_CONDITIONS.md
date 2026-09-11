@@ -1,6 +1,6 @@
 # Genesis Abort Conditions
 
-Version: 0.2 candidate
+Version: 0.3 candidate
 Status: GEN_001 REVIEW CANDIDATE
 
 Genesis readiness, acceptance, and early operation fail closed.
@@ -13,28 +13,33 @@ GEN_001 cannot exit while any selected required item in `GENESIS_READINESS_EVIDE
 
 Specific readiness abort conditions include:
 
-1. Fewer than two independent wall-clock provider groups qualify under the selected Genesis profile.
-2. No qualifying RFC 3161 provider exists.
-3. A selected time provider lacks a defensible conservative upper time bound.
-4. The owner bootstrap public key is missing, malformed, or cannot be tied to an owner-controlled private key kept outside project systems.
-5. Strong OpenTimestamps verification cannot be completed against owner-controlled Bitcoin Core.
-6. Any initial target lacks a retained official first-release source fixture and successful semantic adapter report.
-7. Candidate object dependency closure fails.
-8. Effective candidate materialization is nondeterministic.
-9. Exact Genesis validator implementation cannot be content bound.
-10. Final readiness adversarial review contains an unresolved blocking finding.
+1. The selected zero cost provider pool cannot freeze three independently controlled Roughtime ProviderProfiles.
+2. Fewer than two provider groups can independently satisfy the selected deadline receipt quorum.
+3. A selected time provider lacks a defensible conservative upper time bound based on `midpoint + radius`.
+4. A selected Roughtime provider profile cannot freeze its exact root key, protocol version, endpoint, operator identity, usage basis, and verifier semantics.
+5. A provider key changes and no new ProviderProfile and accepted manifest change has occurred.
+6. The owner bootstrap public key is missing, malformed, or cannot be tied to an owner controlled private key kept outside project systems.
+7. Strong OpenTimestamps verification cannot be completed against owner controlled Bitcoin Core.
+8. Any initial target lacks a retained official first release source fixture and successful semantic adapter report.
+9. Candidate object dependency closure fails.
+10. Candidate patch retirement or replacement predecessor hash validation fails.
+11. Effective candidate materialization is nondeterministic.
+12. Exact Genesis validator implementation cannot be content bound.
+13. Final readiness adversarial review contains an unresolved blocking finding.
+14. A required minimum mechanism introduces a recurring paid service dependency contrary to the accepted zero cost policy.
 
 ## Candidate manifest construction abort conditions
 
 Construction stops if:
 
 1. Any manifest dependency is referenced by semantic ID without the expected full content hash.
-2. Candidate object lineage contains an unverified replacement predecessor.
-3. A ProviderProfile is built from a design snapshot without successful live rehearsal evidence.
-4. BootstrapGovernanceRoot is derived from or authorized solely by the candidate manifest it will accept.
-5. Manifest references rehearsal artifacts as native prospective evidence.
-6. Final validator contract does not match the source or executable artifact used for acceptance validation.
-7. Any required target, method, source, schedule, retry, omission, correction, retention, human-review, evaluation, time-evidence, or acceptance policy is absent.
+2. Candidate object lineage contains an unverified retirement or replacement predecessor.
+3. A ProviderProfile is built from a public documentation snapshot without successful live non forecast rehearsal evidence.
+4. The final manifest does not bind all three Roughtime ProviderProfiles in the frozen pool.
+5. BootstrapGovernanceRoot is derived from or authorized solely by the candidate manifest it will accept.
+6. Manifest references rehearsal artifacts as native prospective evidence.
+7. Final validator contract does not match the source or executable artifact used for acceptance validation.
+8. Any required target, method, source, schedule, retry, omission, correction, retention, human review, evaluation, time evidence, or acceptance policy is absent.
 
 ## Manifest acceptance abort conditions
 
@@ -44,13 +49,15 @@ ManifestAcceptance is rejected if:
 2. Signature subject does not bind the exact candidate TrustedManifest full hash.
 3. Candidate manifest changes after signing.
 4. Required validation reports are missing or contain blocking failures.
-5. Manifest or ManifestAcceptance external time evidence fails quorum.
+5. Manifest or ManifestAcceptance external time evidence fails the frozen two of three Roughtime quorum.
 6. Acceptance evidence is incomplete, late, or bound to a different subject hash.
-7. Private key material appears in repository, CI, logs, issue comments, rehearsal packages, or ChatGPT-managed artifacts.
+7. Any qualifying receipt comes from a provider outside the frozen three profile pool.
+8. Any qualifying receipt uses a root key or protocol version that differs from its frozen ProviderProfile.
+9. Private key material appears in repository, CI, logs, issue comments, rehearsal packages, connected tools, or ChatGPT managed artifacts.
 
-Any suspected private-key exposure invalidates that bootstrap key for Genesis use and requires a new key before another acceptance attempt.
+Any suspected private key exposure invalidates that bootstrap key for Genesis use and requires a new key before another acceptance attempt.
 
-## Cycle-plan abort conditions after separate Genesis acceptance
+## Cycle plan abort conditions after separate Genesis acceptance
 
 These rules are defined for future use and do not authorize cycles during GEN_001.
 
@@ -58,13 +65,31 @@ A target release instance does not execute when:
 
 1. Official schedule artifact cannot be retained and content addressed before plan construction.
 2. Deterministic schedule derivation cannot uniquely identify the release instance and outcome information barrier.
-3. Cycle-plan external precommitment quorum is missing or late.
+3. Cycle plan external precommitment quorum is missing or late.
 4. Plan proof subject hash differs from the exact sealed plan.
-5. Required source or baseline first-release evidence is unavailable by information cutoff.
+5. Required source or baseline first release evidence is unavailable by information cutoff.
 6. Official schedule advances in a way that triggers the precommitted omission policy before execution.
 7. A required operational dependency fails and the retry policy is exhausted.
 
 The release instance remains visible in operational completeness accounting even when no forecast is issued.
+
+## Deadline receipt abort conditions after separate Genesis acceptance
+
+A deadline evidence event fails closed when:
+
+1. Fewer than two of the three frozen Roughtime provider groups independently qualify.
+2. A provider is outside the frozen pool.
+3. The subject bound nonce derivation does not match the sealed subject.
+4. Delegation validation fails.
+5. Response signature validation fails.
+6. The nonce is not proven to be included in the signed response.
+7. The response midpoint is outside the valid delegation interval.
+8. `midpoint + radius` is later than the frozen deadline.
+9. Required raw request, response, client random value, or verification record is unavailable.
+10. A provider outage leaves only one valid receipt.
+11. An operator attempts to substitute another provider after observing a failure.
+
+The threshold remains two. An outage never lowers it.
 
 ## Issuance abort conditions after separate Genesis acceptance
 
@@ -90,17 +115,27 @@ A record cannot enter the initial confirmatory prospective cohort when:
 
 A late durability completion may remain historical operational evidence. It cannot be promoted retrospectively into the initial confirmatory cohort.
 
+## RFC 3161 auxiliary evidence
+
+RFC 3161 evidence is optional auxiliary evidence under the selected zero cost minimum profile.
+
+Failure to obtain an RFC 3161 receipt does not lower or alter the required Roughtime threshold.
+
+A historical RFC 3161 rehearsal status cannot be promoted into Genesis eligibility without a separate versioned governance decision that changes the active quorum policy.
+
+RFC 3161 checker engineering remains closed absent a new concrete correctness or security defect.
+
 ## Resolution abort conditions
 
 Outcome resolution becomes `REVIEW_REQUIRED` or `UNRESOLVED` when:
 
-1. Official first-release artifact cannot be content addressed.
-2. Semantic adapter does not produce exactly one target-compatible record.
+1. Official first release artifact cannot be content addressed.
+2. Semantic adapter does not produce exactly one target compatible record.
 3. Artifact represents a later revision or wrong estimate stage.
 4. Official sources conflict under the frozen ResolutionRule.
 5. Display precision or unit cannot be established from accepted evidence.
 
-Human review cannot override a hash mismatch, future-information violation, missing time quorum, incomplete cycle accounting, output-selection violation, or an unaccepted target or method.
+Human review cannot override a hash mismatch, future information violation, missing time quorum, incomplete cycle accounting, output selection violation, or an unaccepted target or method.
 
 ## Evaluation abort conditions
 
@@ -108,7 +143,7 @@ Evaluation stops or marks the affected record nonscorable under precommitted pol
 
 1. Resolution is unresolved under the frozen rule.
 2. Cohort construction omits an issued, failed, omitted, or unresolved record that policy requires to remain visible.
-3. Baseline uses revised database data instead of the retained preceding first-release artifact.
+3. Baseline uses revised database data instead of the retained preceding first release artifact.
 4. Metric implementation differs from the accepted EvaluationPolicy.
 5. A correction or withdrawal attempts to erase original cohort membership.
 
@@ -116,7 +151,9 @@ Evaluation stops or marks the affected record nonscorable under precommitted pol
 
 No Genesis readiness or operation may silently introduce a recurring paid dependency.
 
-If a selected provider, hosting service, data source, or verifier becomes paid or requires an unacceptable recurring commitment, the dependency is ineligible until a separate governance decision evaluates alternatives, expected cost, reproducibility, and exit path.
+If a selected provider, hosting service, data source, or verifier becomes paid or requires an unacceptable recurring commitment, the dependency is ineligible for new use until a separate governance decision evaluates alternatives, expected cost, reproducibility, and exit path.
+
+Historical evidence produced before the cost change remains retained and is evaluated under the policy that applied when it was created.
 
 ## Abort record
 

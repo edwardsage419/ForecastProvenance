@@ -1,24 +1,28 @@
 # GEN_001 Owner Action Packet
 
 Date: 2026-09-11
-Status: OWNER ACTION REQUIRED
+Status: OWNER ACTION REQUIRED, PROVIDER NETWORK REQUESTS PAUSED
 
-This is the concise execution packet for the remaining owner-controlled GEN_001 evidence.
+This is the concise execution packet for remaining owner controlled GEN_001 evidence.
 
-If an older runbook command conflicts with this packet or with a script's fail-closed checks, this packet and the current script behavior control.
+If an older runbook command conflicts with this packet, this packet controls.
 
-All outputs are non-forecast readiness evidence. None create Forecast Ledger Genesis.
+All outputs are non forecast readiness evidence. None create Forecast Ledger Genesis.
 
 ## Safety rules
 
 1. Work from `design/gen-001` or a later reviewed descendant.
 2. Never use a real or unreleased forecast as a rehearsal subject.
-3. Never upload, commit, paste, or send the bootstrap private key.
+3. Never upload, commit, paste, read through connected tools, or send the bootstrap private key.
 4. Keep `~/fpp-genesis-private/` outside the repository and outside every package you share.
 5. Preserve failed attempts as well as successful attempts.
-6. Do not weaken provider quorum when a provider fails.
+6. Never weaken deadline receipt quorum because a provider fails.
+7. Do not send any Roughtime or RFC 3161 provider request unless a separate task explicitly authorizes the exact request.
+8. Do not enter a paid commercial timestamp contract for the current zero cost minimum profile without a separate governance decision.
 
 ## A. Prepare one synthetic subject
+
+This local step is allowed:
 
 ```bash
 mkdir -p ~/fpp-genesis-rehearsal
@@ -26,9 +30,13 @@ printf '%s\n' 'FORECAST_PROVENANCE_GEN001_REHEARSAL_ONLY' > ~/fpp-genesis-rehear
 sha256sum ~/fpp-genesis-rehearsal/subject.txt
 ```
 
-Use this exact subject for all wall-clock and OpenTimestamps rehearsals.
+Use this exact subject only after a future task separately authorizes an external provider rehearsal.
 
-## B. Generate the bootstrap key locally
+## B. Bootstrap key
+
+The key generation procedure remains defined, but private key handling is a strict owner only action.
+
+Command:
 
 ```bash
 bash scripts/genesis/generate_bootstrap_key.sh ~/fpp-genesis-private
@@ -40,47 +48,52 @@ Keep private:
 ~/fpp-genesis-private/bootstrap_ed25519_private.pem
 ```
 
-Safe to provide later after inspection:
+Only these artifacts may later be provided after inspection:
 
 ```text
 ~/fpp-genesis-private/bootstrap_ed25519_public.pem
 ~/fpp-genesis-private/bootstrap_ed25519_public.pem.sha256
 ```
 
-## C. Run RFC 3161 rehearsals
+This packet does not require generating the key immediately.
 
-Primary candidate 1:
+## C. Time provider work
 
-```bash
-bash scripts/genesis/rfc3161_rehearsal.sh \
-  ~/fpp-genesis-rehearsal/subject.txt \
-  https://freetsa.org/tsr \
-  ~/fpp-genesis-rehearsal/freetsa
+The current minimum Genesis candidate no longer requires commercial RFC 3161 qualification.
+
+The active candidate quorum is:
+
+```text
+policy:deadline-receipt-quorum:v2
+three frozen independent Roughtime provider groups
+two independently valid receipts required for each deadline event
 ```
 
-Primary candidate 2:
+Current read only candidates:
 
-```bash
-bash scripts/genesis/rfc3161_rehearsal.sh \
-  ~/fpp-genesis-rehearsal/subject.txt \
-  http://timestamp.digicert.com \
-  ~/fpp-genesis-rehearsal/digicert
+```text
+roughtime.se
+time.txryan.com
+Cloudflare-Roughtime-2
 ```
 
-Recommended backup candidate:
+All remain:
 
-```bash
-bash scripts/genesis/rfc3161_rehearsal.sh \
-  ~/fpp-genesis-rehearsal/subject.txt \
-  http://timestamp.sectigo.com \
-  ~/fpp-genesis-rehearsal/sectigo
-```
+`NOT READY FOR NON_FORECAST_REHEARSAL`
 
-A successful response remains unqualified until final review verifies subject imprint, nonce, signer and chain, policy OID, conservative time bound, revocation evidence, and tool behavior.
+Do not query any of them yet.
 
-## D. Run OpenTimestamps rehearsal
+Before any request, repository review must freeze the exact entry profile for each candidate and a separate task must authorize the exact synthetic request.
 
-Stamp:
+The old RFC 3161 rehearsal commands in earlier runbooks are historical only. Do not execute them for current Genesis minimum qualification.
+
+RFC 3161 checker version 1.3 and retained RFC 3161 rehearsal evidence remain available as auxiliary historical evidence.
+
+## D. OpenTimestamps rehearsal
+
+OpenTimestamps remains part of the selected durability design.
+
+A future owner action may stamp the synthetic subject:
 
 ```bash
 bash scripts/genesis/ots_rehearsal.sh \
@@ -89,7 +102,7 @@ bash scripts/genesis/ots_rehearsal.sh \
   ~/fpp-genesis-rehearsal/ots
 ```
 
-After Bitcoin confirmation is available, upgrade:
+After Bitcoin confirmation is available:
 
 ```bash
 bash scripts/genesis/ots_rehearsal.sh \
@@ -98,26 +111,15 @@ bash scripts/genesis/ots_rehearsal.sh \
   ~/fpp-genesis-rehearsal/ots
 ```
 
-Strong verification requires explicit owner-controlled Bitcoin Core RPC.
+Strong verification requires explicit owner controlled Bitcoin Core RPC.
 
-Set `OTS_BITCOIN_NODE` locally. The script does not persist the value because it may contain credentials.
+A pruned Bitcoin Core node is acceptable if it satisfies the frozen verifier contract.
 
-```bash
-export OTS_BITCOIN_NODE='http://USER:PASS@127.0.0.1:8332/'
-
-bash scripts/genesis/ots_rehearsal.sh \
-  verify \
-  ~/fpp-genesis-rehearsal/subject.txt \
-  ~/fpp-genesis-rehearsal/ots
-
-unset OTS_BITCOIN_NODE
-```
-
-Prefer a credential-entry method that does not leave the RPC secret in shell history.
-
-If `OTS_BITCOIN_NODE` is absent, current script behavior must fail closed.
+Set credentials locally and do not persist or share them.
 
 ## E. Retrieve the three official retrospective source fixtures
+
+These are already public historical artifacts and remain non prospective.
 
 ```bash
 mkdir -p ~/fpp-genesis-source-fixtures
@@ -135,7 +137,7 @@ PYTHONPATH=src python3 scripts/genesis/fetch_retrospective_source_fixture.py \
   ~/fpp-genesis-source-fixtures
 ```
 
-Then validate the raw bytes through the fail-closed adapters:
+Then validate the retained bytes:
 
 ```bash
 PYTHONPATH=src python3 scripts/genesis/validate_retrospective_source_fixture.py \
@@ -157,51 +159,40 @@ Every resulting report must remain `prospective_eligible=false`.
 
 ```bash
 PYTHONPATH=src python3 scripts/genesis/materialize_candidate.py \
-  --output ~/fpp-genesis-rehearsal/effective_candidate_inventory_v0_3.json
+  --output ~/fpp-genesis-rehearsal/effective_candidate_inventory_v0_4.json
 ```
 
-This validates v0.2 base plus v0.3 patch and emits the deterministic 22-object inventory.
+This validates the v0.2 base plus the v0.3 and v0.4 patch chain and emits the deterministic 22 object inventory.
 
 ## G. Final repository test and validator binding
 
-Do this only after all intended repository changes are committed and the working tree is clean.
+Do this only after all intended repository changes and external readiness inputs are complete, committed, and reviewed.
 
 ```bash
 bash scripts/genesis/run_final_readiness_tests.sh \
   ~/fpp-genesis-rehearsal/final-tests
 ```
 
-If tests pass:
+Only after a successful clean final run may the exact ValidatorContract be built.
 
-```bash
-COMMIT="$(git rev-parse HEAD)"
+## H. What may be provided back for project review
 
-PYTHONPATH=src python3 scripts/genesis/build_validator_binding.py \
-  --git-commit "$COMMIT" \
-  --test-report ~/fpp-genesis-rehearsal/final-tests/final_readiness_test_report.txt \
-  --output ~/fpp-genesis-rehearsal/validator_contract.json
-```
-
-Do not build the final ValidatorContract after a failed test run or from a dirty working tree.
-
-## H. What to provide back for project review
-
-Do not provide the private key.
+Do not provide the private key or Bitcoin RPC credentials.
 
 The review package may contain:
 
-1. bootstrap public key and SHA256;
-2. FreeTSA, DigiCert, and optional Sectigo rehearsal directories;
-3. OpenTimestamps rehearsal directory;
-4. three retrospective official fixture directories with adapter reports;
-5. effective candidate inventory;
-6. final readiness test report and sidecar SHA256;
+1. Bootstrap public key and SHA256.
+2. Separately authorized Roughtime rehearsal directories when they later exist.
+3. OpenTimestamps rehearsal directory.
+4. Three retrospective official fixture directories with adapter reports.
+5. Effective candidate inventory.
+6. Final readiness test report and sidecar SHA256.
 7. ValidatorContract candidate.
 
 Before transfer, inspect the package for secrets.
 
 ## Completion boundary
 
-Returning this evidence does not create Genesis.
+Returning readiness evidence does not create Genesis.
 
-The project must still qualify ProviderProfiles, freeze the OTS verifier profile and BootstrapGovernanceRoot, build the final candidate TrustedManifest, complete final adversarial review, sign ManifestAcceptance, externally evidence it, and pass a separate explicit Genesis acceptance decision.
+The project must still freeze three qualifying Roughtime ProviderProfiles, freeze the OTS verifier profile and BootstrapGovernanceRoot, build the final candidate TrustedManifest, complete final adversarial review, sign ManifestAcceptance, externally evidence it, and pass a separate explicit Genesis acceptance decision.

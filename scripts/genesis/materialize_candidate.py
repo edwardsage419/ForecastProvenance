@@ -12,7 +12,7 @@ from forecast_trust_core.canonical import canonical_json, sha256_hex, verify_sea
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_BASE = ROOT / "genesis" / "candidate" / "objects" / "candidate_object_set_v0_2.json"
-DEFAULT_PATCH = ROOT / "genesis" / "candidate" / "objects" / "candidate_patch_v0_3.json"
+DEFAULT_PATCH = ROOT / "genesis" / "candidate" / "objects" / "candidate_patch_v0_4.json"
 
 
 def full_refs(value: Any):
@@ -27,14 +27,40 @@ def full_refs(value: Any):
             yield from full_refs(member)
 
 
+def _load_patch_chain(base_path: Path, patch_path: Path) -> list[tuple[Path, dict[str, Any]]]:
+    expected_base = base_path.name
+    seen: set[Path] = set()
+
+    def load_one(path: Path) -> list[tuple[Path, dict[str, Any]]]:
+        resolved = path.resolve()
+        if resolved in seen:
+            raise ValueError("candidate patch predecessor cycle or duplicate")
+        seen.add(resolved)
+
+        patch = json.loads(path.read_text(encoding="utf-8"))
+        if patch.get("base_object_set") != expected_base:
+            raise ValueError(f"patch base_object_set does not match selected base file: {path.name}")
+        if patch.get("prospective_eligible") is not False:
+            raise ValueError(f"candidate patch must remain non-prospective: {path.name}")
+
+        chain: list[tuple[Path, dict[str, Any]]] = []
+        predecessor = patch.get("predecessor_patch")
+        if predecessor is not None:
+            if not isinstance(predecessor, str) or not predecessor:
+                raise ValueError("predecessor_patch must be a non-empty filename")
+            predecessor_path = Path(predecessor)
+            if predecessor_path.name != predecessor or predecessor_path.is_absolute():
+                raise ValueError("predecessor_patch must be a sibling filename")
+            chain.extend(load_one(path.parent / predecessor_path))
+        chain.append((path, patch))
+        return chain
+
+    return load_one(patch_path)
+
+
 def load_effective_candidate(base_path: Path, patch_path: Path) -> dict[str, Any]:
     base = json.loads(base_path.read_text(encoding="utf-8"))
-    patch = json.loads(patch_path.read_text(encoding="utf-8"))
-
-    if patch.get("base_object_set") != base_path.name:
-        raise ValueError("patch base_object_set does not match selected base file")
-    if patch.get("prospective_eligible") is not False:
-        raise ValueError("candidate patch must remain non-prospective")
+    patch_chain = _load_patch_chain(base_path, patch_path)
 
     objects = base.get("objects")
     if not isinstance(objects, list):
@@ -49,31 +75,47 @@ def load_effective_candidate(base_path: Path, patch_path: Path) -> dict[str, Any
             raise ValueError(f"invalid sealed base object: {object_id}")
         index[object_id] = obj
 
-    for replacement in patch.get("replace_objects", []):
-        object_id = replacement["object_id"]
-        current = index.get(object_id)
-        if current is None:
-            raise ValueError(f"replacement target missing: {object_id}")
-        if current.get("content_sha256") != replacement.get("replaces_content_sha256"):
-            raise ValueError(f"replacement predecessor hash mismatch: {object_id}")
-        new_object = replacement["replacement"]
-        if new_object.get("object_id") != object_id:
-            raise ValueError(f"replacement object id mismatch: {object_id}")
-        if not verify_sealed_object(new_object):
-            raise ValueError(f"invalid sealed replacement: {object_id}")
-        index[object_id] = new_object
+    for current_patch_path, patch in patch_chain:
+        for retirement in patch.get("retire_objects", []):
+            if not isinstance(retirement, dict):
+                raise ValueError(f"retire_objects entry must be an object: {current_patch_path.name}")
+            object_id = retirement.get("object_id")
+            expected_hash = retirement.get("retires_content_sha256")
+            current = index.get(object_id)
+            if current is None:
+                raise ValueError(f"retirement target missing: {object_id}")
+            if current.get("content_sha256") != expected_hash:
+                raise ValueError(f"retirement predecessor hash mismatch: {object_id}")
+            del index[object_id]
 
-    for obj in patch.get("add_objects", []):
-        object_id = obj.get("object_id")
-        if not isinstance(object_id, str) or object_id in index:
-            raise ValueError(f"candidate add collides or lacks id: {object_id}")
-        if not verify_sealed_object(obj):
-            raise ValueError(f"invalid sealed added object: {object_id}")
-        index[object_id] = obj
+        for replacement in patch.get("replace_objects", []):
+            object_id = replacement["object_id"]
+            current = index.get(object_id)
+            if current is None:
+                raise ValueError(f"replacement target missing: {object_id}")
+            if current.get("content_sha256") != replacement.get("replaces_content_sha256"):
+                raise ValueError(f"replacement predecessor hash mismatch: {object_id}")
+            new_object = replacement["replacement"]
+            if new_object.get("object_id") != object_id:
+                raise ValueError(f"replacement object id mismatch: {object_id}")
+            if not verify_sealed_object(new_object):
+                raise ValueError(f"invalid sealed replacement: {object_id}")
+            index[object_id] = new_object
 
-    expected_count = patch.get("effective_object_count")
-    if expected_count != len(index):
-        raise ValueError(f"effective object count mismatch: expected {expected_count}, got {len(index)}")
+        for obj in patch.get("add_objects", []):
+            object_id = obj.get("object_id")
+            if not isinstance(object_id, str) or object_id in index:
+                raise ValueError(f"candidate add collides or lacks id: {object_id}")
+            if not verify_sealed_object(obj):
+                raise ValueError(f"invalid sealed added object: {object_id}")
+            index[object_id] = obj
+
+        expected_count = patch.get("effective_object_count")
+        if expected_count != len(index):
+            raise ValueError(
+                f"effective object count mismatch after {current_patch_path.name}: "
+                f"expected {expected_count}, got {len(index)}"
+            )
 
     for obj in index.values():
         for ref in full_refs(obj):
@@ -83,12 +125,14 @@ def load_effective_candidate(base_path: Path, patch_path: Path) -> dict[str, Any
             if target.get("content_sha256") != ref["content_sha256"]:
                 raise ValueError(f"dependency hash mismatch: {ref['object_id']}")
 
+    final_patch_path, final_patch = patch_chain[-1]
     ordered = sorted(index.values(), key=lambda obj: obj["object_id"])
     inventory_core = {
         "schema_version": "1.0",
-        "candidate_version": patch["candidate_version"],
+        "candidate_version": final_patch["candidate_version"],
         "base_file": base_path.name,
-        "patch_file": patch_path.name,
+        "patch_file": final_patch_path.name,
+        "patch_chain": [path.name for path, _ in patch_chain],
         "prospective_eligible": False,
         "object_count": len(ordered),
         "objects": [
@@ -106,7 +150,9 @@ def load_effective_candidate(base_path: Path, patch_path: Path) -> dict[str, Any
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Materialize the effective non-prospective Genesis candidate inventory.")
+    parser = argparse.ArgumentParser(
+        description="Materialize the effective non-prospective Genesis candidate inventory."
+    )
     parser.add_argument("--base", type=Path, default=DEFAULT_BASE)
     parser.add_argument("--patch", type=Path, default=DEFAULT_PATCH)
     parser.add_argument("--output", type=Path)
