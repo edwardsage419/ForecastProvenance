@@ -1,11 +1,11 @@
 # Minimal Repository Structure
 
-Status: DESIGN ONLY
+Status: TRUST_CORE_BUILD AUTHORIZED
 
-## Stage A Pre Genesis design repository
+## Current design baseline
 
 ```text
-forecast_provenance/
+ForecastProvenance/
     README.md
     PROJECT_VISION.md
     SCIENTIFIC_INVARIANTS.md
@@ -15,34 +15,51 @@ forecast_provenance/
     DECISIONS.md
     NEXT_ACCEPTED_TASK.md
     docs/
-        POINT_IN_TIME_RULES.md
         FORECAST_TRUST_CORE.md
         TRUST_CORE_CONTRACTS.md
         CANONICALIZATION_AND_IDENTIFIERS.md
         TRUSTED_MANIFEST.md
-        ADVERSARIAL_REVIEW_MATRIX.md
+        POINT_IN_TIME_RULES.md
+        SUPPORTING_NORMATIVE_CONTRACTS.md
+        POLICY_CONTRACTS.md
+        ISSUANCE_AND_RETRY_POLICY.md
+        EXECUTION_SELECTION_CONTROL.md
+        PROSPECTIVE_TIME_SEMANTICS.md
         PROSPECTIVE_TIME_ANCHOR.md
+        MODEL_EVIDENCE_OBSERVABILITY.md
+        RESOLUTION_EVIDENCE_SEMANTICS.md
+        GENESIS_BOOTSTRAP_GOVERNANCE.md
         GENESIS_PROTOCOL.md
+        ADVERSARIAL_REVIEW_MATRIX.md
+        INVARIANT_COVERAGE.md
+        FTC_001_ADVERSARIAL_DESIGN_REVIEW.md
+        FTC_001_REMEDIATION_STATUS.md
+        FTC_001_SECOND_ADVERSARIAL_REVIEW.md
+        SECOND_REVIEW_REPAIR_PLAN.md
+        FTC_001_THIRD_ADVERSARIAL_REVIEW.md
+        FTC_001_FREEZE_REVIEW.md
 ```
 
-No data directory, forecast ledger, outcomes directory, frontend, API, live model module, database, or GKG module exists at this stage.
+## FTC_002 minimal implementation structure
 
-## Stage B Trust Core build
-
-Add only when Stage A documents are accepted:
+FTC_001 design acceptance authorizes creation of only:
 
 ```text
+    src/
     schemas/
+    tests/
     fixtures/
         synthetic/
-    tests/
-    src/
 ```
 
-Synthetic fixtures must carry an unmistakable non prospective classification.
+The implementation should remain file based, deterministic, dependency light, and suitable for local execution and bounded free CI.
 
-## Stage C After Genesis acceptance
+Synthetic fixtures must carry `origin_class = SYNTHETIC` and cannot assert prospective eligibility.
 
-Only after the Genesis gate passes, add the authoritative prospective record locations defined by the accepted Genesis Protocol.
+## Still prohibited before Genesis
 
-The repository layout should not imply prospective history before genuine prospective history exists.
+Do not create authoritative prospective forecast, outcome, evaluation, or failure corpus trees yet.
+
+Do not add a production database, hosted API, frontend, live model service, GKG module, or Psychohistory data migration.
+
+The authoritative prospective record structure will be created only after the separate Genesis gate passes.
