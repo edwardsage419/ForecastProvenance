@@ -36,19 +36,21 @@ Runtime dependencies: 0
 
 ## GEN_001 design state
 
-Genesis Protocol readiness candidate: VERSION 0.2
+Genesis readiness PR: #6, DRAFT REVIEW OPEN
 
 External time evidence architecture: FPP_TIME_EVIDENCE_V1 REVIEW CANDIDATE
 
-Deadline receipt policy: two independent provider groups, at least one RFC 3161
+Deadline receipt quorum: two independent provider groups, at least one RFC 3161
 
 Bitcoin durability layer: OTS_BTC_BUNDLE_V1 REVIEW CANDIDATE
 
-Bootstrap authority model: owner-controlled Ed25519, exact public key PENDING
+Bootstrap authority model: owner-controlled Ed25519, exact public key PENDING OWNER ACTION
 
 Genesis manifest and ManifestAcceptance procedure: REVIEW CANDIDATE
 
-Issuance schedule policy: REVIEW CANDIDATE
+Issuance schedule model: ONE CYCLE PER TARGET RELEASE INSTANCE
+
+Initial admitted method candidate: method:last-observed-value:v1 only
 
 Initial target candidate set: 3 continuous official macroeconomic targets
 
@@ -58,7 +60,9 @@ Candidate targets:
 2. U.S. official U-3 unemployment rate, seasonally adjusted, first release.
 3. U.S. real GDP quarter-over-quarter annualized growth, Advance Estimate.
 
-Official source contracts: REVIEW CANDIDATE
+Official BLS and BEA source contracts: REVIEW CANDIDATE
+
+Semantic target parser: IMPLEMENTED AND SYNTHETICALLY TESTED
 
 Transparent baseline: last-observed first-release value, REVIEW CANDIDATE
 
@@ -66,17 +70,45 @@ Evaluation policy: continuous scalar point forecast, absolute error and squared 
 
 Genesis abort conditions: REVIEW CANDIDATE
 
-GEN_001 adversarial readiness review: COMPLETE PASS 1, EXTERNAL BLOCKERS REMAIN
+External readiness runbook and non-forecast rehearsal scripts: PREPARED
+
+GEN_001 adversarial readiness review: PASS 1 COMPLETE, EXTERNAL BLOCKERS REMAIN
+
+## Candidate object state
+
+Original object set: SUPERSEDED REVIEW ARTIFACT
+
+Version 0.2 base object set: SEALED BASE
+
+Version 0.3 patch: CURRENT EFFECTIVE PATCH
+
+Effective candidate object count: 22
+
+Effective candidate composition: v0.2 base plus v0.3 patch
+
+Full dependency closure tests: PRESENT
+
+All candidate objects: NON-PROSPECTIVE
+
+Candidate Genesis TrustedManifest: NOT CREATED
+
+ManifestAcceptance: NOT CREATED
 
 ## Remaining Genesis readiness blockers
 
+### Owner-controlled external evidence
+
 1. Live non-forecast wall-clock provider rehearsals from a networked owner-controlled environment.
-2. Exact accepted RFC 3161 provider profiles with signer chain, policy, accuracy, nonce, and revocation capture evidence.
-3. Owner-generated Ed25519 bootstrap public key.
-4. Non-forecast OpenTimestamps stamp, upgrade, and strong verification with owner-controlled Bitcoin Core.
-5. Target-specific official archive and parser fixtures for CPI, U-3, and GDP Advance Estimate.
-6. Exact sealed TargetDefinition, ResolutionRule, policy, source, baseline, and evaluation objects for the candidate Genesis manifest.
-7. Final readiness adversarial review with no blocking findings.
+2. Exact qualifying RFC 3161 provider profiles with signer chain, policy OID, accuracy, nonce behavior, and revocation capture evidence.
+3. Owner-generated Ed25519 bootstrap public key. Private key must remain outside the repository, GitHub, CI, and ChatGPT-managed artifacts.
+4. Non-forecast OpenTimestamps stamp, proof upgrade, and strong verification with an owner-controlled Bitcoin Core node.
+
+### Repository and source closure
+
+5. Real official BLS and BEA archive bytes and adapter fixtures proving the semantic parser against retained first-release artifacts.
+6. Exact Genesis validator implementation binding at the final candidate commit.
+7. Construction and validation of the final candidate Genesis TrustedManifest after all required external profiles and evidence are fixed.
+8. Final Genesis readiness adversarial review with no blocking finding.
 
 ## Genesis state
 
@@ -84,7 +116,7 @@ Genesis Protocol: NOT ACCEPTED
 
 BootstrapGovernanceRoot final instance: NOT CREATED
 
-Candidate Genesis manifest: NOT CREATED
+Candidate Genesis TrustedManifest: NOT CREATED
 
 ManifestAcceptance: NOT CREATED
 
@@ -96,6 +128,6 @@ Prospective forecasting: PROHIBITED
 
 Forecast Trust Core is complete through synthetic implementation.
 
-GEN_001 has a viable readiness architecture and candidate target set. The remaining gates require external evidence or target-source implementation proof.
+GEN_001 has closed the general architecture, target-selection, schedule, baseline, evaluation, operational-policy, semantic-parser, and candidate-object design work. The remaining gates require real external evidence, real official source fixtures, final implementation binding, and a final adversarial review.
 
 No Forecast Ledger, genuine prospective issuance, production model execution, native outcome history, or real Genesis acceptance is authorized.
