@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import os
 import re
 import subprocess
 import tempfile
@@ -21,6 +22,14 @@ FINAL_STATUSES = {
 CHECKER_VERSION = "1.3"
 REVIEWED_ASSERTION_CLASSIFICATION = "REVIEWED_RFC3161_QUALIFICATION_SEMANTICS"
 REVOCATION_VERIFICATION_SCOPE = "TSA_SIGNER_ONLY"
+REQUIRED_EVIDENCE_NAMES = ("subject", "request", "response", "tool_versions")
+QUALIFICATION_EVIDENCE_NAMES = ("trust_anchor", "independent_tsa_certificate")
+OPTIONAL_EVIDENCE_NAMES = (
+    "untrusted_chain",
+    "crl",
+    "provider_policy",
+    "reviewed_semantic_assertion",
+)
 HEX_64 = re.compile(r"^[0-9a-f]{64}$")
 PEM_CERTIFICATE = re.compile(
     rb"-----BEGIN CERTIFICATE-----\s+.*?-----END CERTIFICATE-----\s*",
@@ -175,6 +184,104 @@ def _blocker(code: str, detail: str) -> dict[str, str]:
 
 def _result(ok: bool, detail: str) -> dict[str, object]:
     return {"verified": ok, "detail": detail}
+
+
+def _redact_snapshot_path(value: str, snapshot_root: Path) -> str:
+    redacted = value
+    for variant in {str(snapshot_root), snapshot_root.as_posix()}:
+        redacted = redacted.replace(variant, "<evidence_snapshot>")
+    return redacted
+
+
+class _SnapshotBackend:
+    def __init__(self, backend: VerificationBackend, snapshot_root: Path) -> None:
+        self._backend = backend
+        self._snapshot_root = snapshot_root
+
+    def __getattr__(self, name: str) -> Any:
+        attribute = getattr(self._backend, name)
+        if not callable(attribute):
+            return attribute
+
+        def invoke(*args: Any, **kwargs: Any) -> Any:
+            try:
+                result = attribute(*args, **kwargs)
+            except (RehearsalEvidenceError, OSError, subprocess.SubprocessError) as exc:
+                raise RehearsalEvidenceError(
+                    _redact_snapshot_path(str(exc), self._snapshot_root)
+                ) from exc
+            if (
+                isinstance(result, tuple)
+                and len(result) == 2
+                and isinstance(result[0], bool)
+                and isinstance(result[1], str)
+            ):
+                return result[0], _redact_snapshot_path(result[1], self._snapshot_root)
+            return result
+
+        return invoke
+
+
+def _snapshot_source_paths(
+    evidence_dir: Path,
+    files: Mapping[str, Any],
+) -> dict[Path, Path]:
+    resolved_root = evidence_dir.resolve()
+    resolved_paths: dict[Path, Path] = {}
+    for name in (*REQUIRED_EVIDENCE_NAMES, *QUALIFICATION_EVIDENCE_NAMES):
+        try:
+            source = _resolve_evidence_path(
+                evidence_dir, files.get(name), f"evidence_files.{name}"
+            )
+        except RehearsalEvidenceError:
+            continue
+        resolved_paths[source] = source.relative_to(resolved_root)
+    for name in OPTIONAL_EVIDENCE_NAMES:
+        if name not in files:
+            continue
+        source = _resolve_evidence_path(
+            evidence_dir, files[name], f"evidence_files.{name}"
+        )
+        resolved_paths[source] = source.relative_to(resolved_root)
+    return resolved_paths
+
+
+def check_rehearsal(
+    evidence_dir: Path,
+    profile: Mapping[str, Any],
+    *,
+    backend: VerificationBackend,
+) -> dict[str, Any]:
+    files = _required_profile(profile, "evidence_files", dict)
+    if "crl_source" in profile:
+        crl_source = profile["crl_source"]
+        if not isinstance(crl_source, str) or not crl_source.strip():
+            raise RehearsalEvidenceError(
+                "profile field crl_source must be a non-empty string"
+            )
+    source_paths = _snapshot_source_paths(evidence_dir, files)
+
+    with tempfile.TemporaryDirectory(prefix="rfc3161-evidence-") as tmpdir:
+        snapshot_root = Path(tmpdir)
+        if os.name != "nt":
+            snapshot_root.chmod(0o700)
+        for source, relative_path in source_paths.items():
+            if not source.is_file():
+                continue
+            snapshot_path = snapshot_root / relative_path
+            snapshot_path.parent.mkdir(parents=True, exist_ok=True)
+            try:
+                snapshot_path.write_bytes(source.read_bytes())
+            except OSError as exc:
+                raise RehearsalEvidenceError(
+                    "unable to create the private evidence snapshot"
+                ) from exc
+            snapshot_path.chmod(0o400)
+        return _check_snapshotted_rehearsal(
+            snapshot_root,
+            profile,
+            backend=_SnapshotBackend(backend, snapshot_root),
+        )
 
 
 def _review_semantic_assertion(
@@ -332,7 +439,7 @@ def _review_semantic_assertion(
     return summary, policy_ok, accuracy_ok, incomplete, failed
 
 
-def check_rehearsal(
+def _check_snapshotted_rehearsal(
     evidence_dir: Path,
     profile: Mapping[str, Any],
     *,
@@ -352,14 +459,17 @@ def check_rehearsal(
     policy_source = profile.get("provider_policy_evidence_source", "UNAVAILABLE")
     if not isinstance(policy_source, str):
         raise RehearsalEvidenceError("provider_policy_evidence_source must be a string")
+    crl_source = profile.get("crl_source", "UNSPECIFIED")
+    if not isinstance(crl_source, str) or not crl_source.strip():
+        raise RehearsalEvidenceError(
+            "profile field crl_source must be a non-empty string"
+        )
 
-    required_names = ("subject", "request", "response", "tool_versions")
-    qualification_names = ("trust_anchor", "independent_tsa_certificate")
     paths: dict[str, Path] = {}
     incomplete: list[dict[str, str]] = []
     failed: list[dict[str, str]] = []
     core_evidence_missing = False
-    for name in required_names:
+    for name in REQUIRED_EVIDENCE_NAMES:
         try:
             path = _resolve_evidence_path(evidence_dir, files.get(name), f"evidence_files.{name}")
         except RehearsalEvidenceError as exc:
@@ -371,7 +481,7 @@ def check_rehearsal(
             incomplete.append(_blocker("MISSING_RAW_EVIDENCE", f"missing {name}: {files.get(name)}"))
             core_evidence_missing = True
 
-    for name in qualification_names:
+    for name in QUALIFICATION_EVIDENCE_NAMES:
         try:
             path = _resolve_evidence_path(evidence_dir, files.get(name), f"evidence_files.{name}")
         except RehearsalEvidenceError as exc:
@@ -382,7 +492,7 @@ def check_rehearsal(
             incomplete.append(_blocker("MISSING_QUALIFICATION_EVIDENCE", f"missing {name}: {files.get(name)}"))
 
     optional_paths: dict[str, Path] = {}
-    for name in ("untrusted_chain", "crl", "provider_policy", "reviewed_semantic_assertion"):
+    for name in OPTIONAL_EVIDENCE_NAMES:
         if name in files:
             path = _resolve_evidence_path(evidence_dir, files[name], f"evidence_files.{name}")
             optional_paths[name] = path
@@ -599,7 +709,7 @@ def check_rehearsal(
             crl_report = {
                 "available": True,
                 "verification_scope": REVOCATION_VERIFICATION_SCOPE,
-                "source": profile.get("crl_source", "UNSPECIFIED"),
+                "source": crl_source,
                 "sha256": _sha256(optional_paths["crl"]),
                 "issuer": crl_observation.issuer,
                 "signer_issuer_subject": tsa.issuer if tsa else "UNAVAILABLE",

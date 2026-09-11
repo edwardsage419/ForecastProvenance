@@ -212,6 +212,61 @@ class RFC3161RehearsalTests(unittest.TestCase):
         self.assertNotIn("PRODUCTION_QUALIFIED", repr(report))
         self.assertTrue(verify_sealed_object(report))
 
+    def test_response_mutated_after_snapshot_is_not_consumed(self):
+        original_response = self.root / "response.tsr"
+        original_bytes = original_response.read_bytes()
+
+        class MutatingBackend(FakeBackend):
+            def __init__(self, subject_sha256):
+                super().__init__(subject_sha256)
+                self.consumed_response = None
+
+            def parse_request(self, request):
+                original_response.write_bytes(b"mutated response")
+                return super().parse_request(request)
+
+            def parse_response(self, response):
+                self.consumed_response = response.read_bytes()
+                return super().parse_response(response)
+
+        self.backend = MutatingBackend(self.subject_sha256)
+        report = self.check()
+        expected_sha256 = hashlib.sha256(original_bytes).hexdigest()
+
+        self.assertEqual(self.backend.consumed_response, original_bytes)
+        self.assertEqual(report["raw_evidence_sha256"]["response"], expected_sha256)
+        self.assertEqual(report["response_sha256"], expected_sha256)
+
+    def test_provider_policy_mutated_after_snapshot_preserves_semantic_binding(self):
+        original_policy = self.root / "provider-cps.pdf"
+        original_bytes = original_policy.read_bytes()
+
+        class MutatingBackend(FakeBackend):
+            def parse_response(self, response):
+                original_policy.write_bytes(b"mutated provider policy")
+                return super().parse_response(response)
+
+        self.backend = MutatingBackend(self.subject_sha256)
+        report = self.check()
+
+        self.assertEqual(report["final_rehearsal_status"], "REHEARSAL_VERIFIED")
+        self.assertEqual(
+            report["raw_evidence_sha256"]["provider_policy"],
+            hashlib.sha256(original_bytes).hexdigest(),
+        )
+        self.assertTrue(report["semantic_assertion_evidence"]["verified"])
+
+    def test_valid_crl_source_string_is_preserved(self):
+        report = self.check()
+        self.assertEqual(report["crl_evidence"]["source"], self.profile["crl_source"])
+
+    def test_malformed_crl_source_fails_closed(self):
+        for value in ("", "   ", [], {}):
+            with self.subTest(value=value):
+                self.profile["crl_source"] = value
+                with self.assertRaises(RehearsalEvidenceError):
+                    self.check()
+
     def test_message_imprint_mismatch_fails(self):
         self.backend.token = replace(self.backend.token, message_imprint="0" * 64)
         report = self.check()
