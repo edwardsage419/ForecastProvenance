@@ -1,11 +1,11 @@
 # Next Accepted Task
 
 Task ID: GEN_001
-State: GO 1.27 OFFLINE QUALIFICATION EXECUTION REQUIRED; NETWORK REQUEST NOT AUTHORIZED
+State: POST-VENDORING GO 1.27 OFFLINE QUALIFICATION REQUIRED; NETWORK REQUEST NOT AUTHORIZED
 
 ## Objective
 
-Execute the now-frozen Roughtime verifier qualification harness in a zero-cash environment with an exact Go 1.27.x toolchain, without creating Forecast Ledger history or sending provider requests.
+Execute the published vendored Roughtime verifier qualification path against the current formal branch HEAD, then run the complete repository suite and final offline adversarial review.
 
 ## Frozen design retained
 
@@ -22,24 +22,32 @@ quorum = 2-of-3
 
 Cloudflare-Roughtime-2 remains historical only.
 
-## Offline tooling now frozen as candidate
+## Current offline state
 
-The repository contains the strict offline wrapper, deterministic Go 1.27 synthetic cryptographic fixtures, persistent per-root retry state, artifact-bound plan and authorization tooling, dependency-lock and fixture-report validators, verifier build-profile validation, and a two-stage qualification harness.
+Go 1.27.1 access is resolved.
 
-The current execution environment can run the Go 1.23 core path and Python control tests, but cannot acquire a Go 1.27 toolchain because outbound Go toolchain/module download is blocked. This is an execution-environment gate.
+The pinned upstream `protocol` compile inputs are vendored byte-for-byte from commit `56b346a16cd7e8317bb0d24f1ec15549cf93a4c9`. Their upstream Git blob SHA1 values are retained in `SOURCE_PROVENANCE.json`.
+
+The accepted qualification path is single-stage and offline. It does not use Go proxy, sumdb, an upstream module Zip, or an external Go module.
+
+The older module-Zip qualification implementation is superseded and is not the accepted execution path.
 
 ## Next accepted execution
 
-1. Install or otherwise provide an exact Go 1.27.x patch release in an owner-controlled or otherwise explicitly accepted zero-cash environment.
-2. Run `scripts/genesis/qualify_roughtime_verifier.py freeze-dependencies` against `scripts/genesis/roughtime_strict_verifier/`. This stage may use standard Go module infrastructure and must retain both the dependency-lock JSON and exact pinned upstream Go module Zip.
-3. Transfer or retain those artifacts unchanged for the final stage.
-4. Run `scripts/genesis/qualify_roughtime_verifier.py qualify-offline`. This stage freezes `GOTOOLCHAIN=local`, `CGO_ENABLED=0`, `GOFLAGS=-mod=readonly`, `GOPROXY=off`, and `GOSUMDB=off`.
-5. Require `go mod verify` to pass and require the retained upstream module Zip to be byte-identical to the cached h1-checked Zip used by Go.
-6. Require the exact GOROOT tree hash, wrapper source-tree hash, dependency lock, fixture report, frozen build command, produced binary hash, and final verifier build profile to cross-bind.
-7. Require every Go 1.27 fixture to pass, including typed hash-first, typed node-first, untyped draft 12, wrong root, mutated response, wrong nonce, and packet/profile rejection.
-8. Run the complete repository test suite.
-9. Perform final offline adversarial review.
-10. Recheck provider endpoint, root, operator, and standards-transition evidence immediately before any later network authorization.
+1. Obtain a full checkout at the current formal `design/gen-001` HEAD.
+2. Use exact Go 1.27.x with `GOTOOLCHAIN=local`.
+3. Run `scripts/genesis/qualify_roughtime_verifier.py` with new output paths for dependency lock, fixture report, and build profile.
+4. Bind the toolchain distribution source, inner distribution SHA256, carrier artifact SHA256, and actual GOROOT tree hash.
+5. Require `go list -m all` to contain only `forecastprovenance/roughtime_strict_verifier`.
+6. Require all vendored source Git blob SHA1 and SHA256 checks to pass.
+7. Require all 15 Go tests to pass, including the Go 1.27 cryptographic fixture matrix.
+8. Require the frozen binary build to pass and retain its new post-vendoring SHA256.
+9. Require dependency lock 1.1, fixture report 1.1, and build profile 1.2 to cross-bind.
+10. Run the complete repository test suite.
+11. Perform final offline adversarial review.
+12. Recheck provider endpoint, root, operator, and standards-transition evidence immediately before any later network authorization.
+
+The pre-vendoring binary SHA256 is historical evidence and must not be reused in the post-vendoring build profile.
 
 No provider packet is authorized by this task.
 

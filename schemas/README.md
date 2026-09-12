@@ -1,12 +1,12 @@
 # Schema scope
 
-These JSON Schema files are interoperability descriptions for the synthetic implementation. The Python validators remain the executable source for frozen semantic rules.
+These JSON Schema files are interoperability descriptions for the synthetic implementation. Python validators remain the executable source for frozen semantic rules.
 
 No schema in this directory authorizes prospective issuance. The concrete Genesis AnchorScheme and BootstrapGovernanceRoot remain uninstantiated.
 
 `rfc3161_qualification_rehearsal_report.schema.json` describes the sealed output of the non-forecast RFC 3161 qualification rehearsal checker. Its closed status vocabulary is `REHEARSAL_VERIFIED`, `REHEARSAL_INCOMPLETE`, and `REHEARSAL_FAILED`; production qualification is intentionally not representable.
 
-`rfc3161_reviewed_semantic_assertion.schema.json` describes the separately reviewed, sealed assertion that binds policy and accuracy conclusions to the exact retained provider-policy SHA256 and observed token policy OID. Provider profile booleans cannot substitute for this assertion. Version 1.1 also requires reviewer provenance and binds the exact normalized observed token accuracy; the provenance fields do not claim cryptographic reviewer authentication.
+`rfc3161_reviewed_semantic_assertion.schema.json` describes the separately reviewed sealed assertion binding policy and accuracy conclusions to retained provider-policy evidence.
 
 The Roughtime pre-rehearsal schemas describe the offline plan, separate network authorization, qualifying receipt, final rehearsal report, persistent retry state, verifier dependency lock, offline fixture report, and verifier build profile:
 
@@ -19,6 +19,20 @@ The Roughtime pre-rehearsal schemas describe the offline plan, separate network 
 7. `roughtime_verifier_fixture_report.schema.json`
 8. `roughtime_verifier_build_profile.schema.json`
 
-These Roughtime schemas are descriptive interoperability constraints only. Cross-field trust decisions are enforced by executable semantic validation, and cryptographic qualification still requires raw-evidence replay through the separately pinned low-level verifier and exact retained verifier build profile.
+These schemas are descriptive interoperability constraints. Cross-field trust decisions remain executable semantic validation, and cryptographic qualification requires replay through the separately pinned low-level verifier and exact retained build profile.
 
-Verifier build profile version 1.1 adds direct Go toolchain-tree binding. The verifier qualification artifacts use frozen executable hash rules. The dependency lock binds the exact `go.mod`, `go.sum`, pinned upstream module and `go.mod` h1 checksums, and sorted resolved module set with module replacements prohibited. The fixture report binds the actual Go 1.27 toolchain tree, wrapper source tree, offline `go mod verify`, and required test matrix. The build profile cross-binds those artifacts, the retained sum-verified upstream module Zip, the frozen build command, and the produced binary.
+Current verifier provenance schemas use the vendored offline model:
+
+```text
+dependency lock = 1.1
+fixture report = 1.1
+build profile = 1.2
+```
+
+Dependency lock 1.1 binds the exact pinned upstream repository, tag, commit, tag object, verified tag-signature state, the 12 vendored `protocol` compile inputs, each upstream Git blob SHA1, each local SHA256, and the canonical upstream source-tree hash.
+
+Fixture report 1.1 binds `network_used=false`, `vendored_source_verified=true`, `external_modules_used=false`, exact Go 1.27 environment, actual GOROOT tree hash, wrapper source-tree hash, upstream source-tree hash, and the required PASS matrix.
+
+Build profile 1.2 cross-binds the dependency lock, fixture report, Go toolchain distribution and carrier hashes, actual GOROOT tree, wrapper source tree, upstream source tree, frozen build command, produced binary, and profile self hash.
+
+The older Go proxy/module-Zip qualification model is superseded and is not the accepted execution path.

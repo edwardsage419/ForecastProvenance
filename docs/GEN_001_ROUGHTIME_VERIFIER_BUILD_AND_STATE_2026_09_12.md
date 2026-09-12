@@ -1,11 +1,11 @@
 # GEN_001 Roughtime strict verifier and control state freeze
 
 Date: 2026-09-12
-Status: OFFLINE TOOLING AND QUALIFICATION HARNESS CANDIDATE READY; GO 1.27 EXECUTION OPEN
+Status: VENDORED OFFLINE QUALIFICATION CANDIDATE PUBLISHED; POST-VENDORING GO 1.27 EXECUTION OPEN
 
 ## Safety boundary
 
-This work creates offline tooling and a dependency-acquisition harness only. It does not authorize a Roughtime provider packet, an RFC 3161 POST, prospective forecasting, Forecast Ledger creation, Forecast Ledger Genesis, or Genesis.
+This work is offline tooling only. It does not authorize a Roughtime provider packet, an RFC 3161 POST, prospective forecasting, Forecast Ledger creation, Forecast Ledger Genesis, or Genesis.
 
 ```text
 classification = NON_FORECAST_REHEARSAL
@@ -29,74 +29,100 @@ commit = 56b346a16cd7e8317bb0d24f1ec15549cf93a4c9
 upstream Go requirement = 1.27.0
 ```
 
-The strict project wrapper is under `scripts/genesis/roughtime_strict_verifier/`. Its project CLI exposes only `build-request` and `verify-response`. It contains no DNS, UDP, TCP, HTTP, provider-query, or socket execution path.
+The strict project wrapper is under `scripts/genesis/roughtime_strict_verifier/`. Its CLI exposes only `build-request` and `verify-response`. It contains no DNS, UDP, TCP, HTTP, provider-query, or socket execution path.
 
-The Go 1.27 adapter uses only the pinned low-level `protocol` package. Request construction uses one offered version, `0x8000000c`, a caller-supplied 32-byte nonce, SRV derived from the frozen root, the frozen TYPE profile, and standard 1024-byte message-body framing. The expected framed request is 1036 bytes. Legacy 1024-byte total packets fail closed.
+The wrapper now vendors only the pinned upstream `protocol` package compile inputs used by the verifier. The 12 vendored Go source files are copied byte-for-byte from the pinned commit and bound by upstream Git blob SHA1 plus local SHA256. The upstream BSD license is retained.
 
-Verification binds the retained request bytes, exact nonce, exact frozen root, SRV, TYPE profile, signatures, delegation, signed version information, timestamp, radius, and Merkle proof through the pinned low-level verifier. Typed shared-wire providers accept either authenticated draft 14/15 node-first or draft 16 through 19 hash-first Merkle convention. The shared wire version does not identify an exact draft.
+The accepted execution path no longer depends on Go proxy, sumdb, an upstream module Zip, or any external Go module. The previous module-Zip qualification model is superseded. `src/forecast_trust_core/_roughtime_qualification.py` remains only as legacy implementation material; the accepted qualification CLI uses `_roughtime_qualification_vendored.py`.
 
-## Go toolchain split
+## Go toolchain
 
-Go 1.23 core-only tests exercise project CLI and fail-closed input guards without compiling the cryptographic adapter. The real adapter and synthetic cryptographic fixtures are guarded by `//go:build go1.27`.
+Go 1.27.1 toolchain access was resolved through the connected GitHub `actions/go-versions` release artifact.
 
-A Go 1.23 core test result is never verifier qualification.
+Observed provenance for the toolchain used in the successful pre-vendoring execution:
 
-Final cryptographic execution requires an exact Go 1.27.x patch release. Qualification binds both the reported version and a deterministic SHA256 manifest of the actual `GOROOT` tree used for tests and build. Regular-file contents and symlink targets are included. Directories and timestamps are excluded. Unsupported special filesystem entries fail closed.
+```text
+go_version = go1.27.1
+goos = linux
+goarch = amd64
+carrier artifact SHA256 =
+e0eb1b4d80fd2c2aeb67889ed0e9e518eb7d6a214aca6abe5347e20cfd8cb2b9
+inner go-1.27.1-linux-x64.tar.gz SHA256 =
+6f00fbc5b337fbf00581b7ced382fecdc4fa9493aef971277652a25f7aa14c6e
+observed GOROOT tree SHA256 =
+eba4c6c6f86a5d2555025a9a2d3e5bb4cb1c147831f731e323c2a49ad21cd560
+```
 
-The frozen build command is:
+These values are retained execution evidence. The post-vendoring run must recompute and bind the actual GOROOT tree used for that run.
+
+The frozen build command remains:
 
 ```text
 go build -trimpath -buildvcs=false -ldflags=-buildid= -o fpp-roughtime-strict .
 ```
 
-## Two-stage qualification harness
+## Vendored qualification harness
 
-`scripts/genesis/qualify_roughtime_verifier.py` separates dependency acquisition from final qualification.
+`scripts/genesis/qualify_roughtime_verifier.py` is now a single-stage offline qualification command.
 
-Stage 1, `freeze-dependencies`, may access normal Go module infrastructure. It runs under:
-
-```text
-GOTOOLCHAIN=local
-CGO_ENABLED=0
-GOFLAGS=
-GOPROXY=https://proxy.golang.org,direct
-GOSUMDB=sum.golang.org
-```
-
-It downloads the resolved modules, freezes the exact `go.mod` and `go.sum` hashes, freezes the sorted resolved module set with module replacements prohibited, records the pinned upstream module and `go.mod` h1 checksums, and retains the exact Go module Zip returned for `github.com/tannerryan/roughtime@v1.27.0`. The Zip is accepted only when `go mod download -json` reports the same h1 checksums as the dependency lock.
-
-Stage 2, `qualify-offline`, forces:
+It forces:
 
 ```text
 GOTOOLCHAIN=local
 CGO_ENABLED=0
+GOENV=off
+GOWORK=off
+GO111MODULE=on
 GOFLAGS=-mod=readonly
 GOPROXY=off
 GOSUMDB=off
+GOPRIVATE=
+GONOPROXY=
+GONOSUMDB=
+GOINSECURE=
 ```
 
-It runs `go mod verify`, recomputes the dependency lock from local material, confirms the retained upstream Zip is byte-identical to the cached module Zip actually used by Go, hashes the actual GOROOT tree and wrapper source tree, runs the complete required Go fixture matrix, builds the frozen binary, and emits the fixture report and build profile. Any missing cache content therefore fails instead of silently contacting a network service.
+The command requires `go list -m all` to contain only:
 
-No provider endpoint is contacted by either stage.
+```text
+forecastprovenance/roughtime_strict_verifier
+```
+
+Any external Go module fails closed.
+
+Qualification then verifies the checked-in source provenance manifest, recomputes every vendored source Git blob SHA1 and SHA256, computes the upstream source-tree hash and wrapper source-tree hash, computes the actual GOROOT tree hash, runs the full Go test matrix, builds the frozen binary, repeats source and toolchain integrity checks, and emits the dependency lock, fixture report, and verifier build profile.
+
+No provider endpoint is contacted by this command.
 
 ## Frozen hash rules
 
-The dependency lock contains exactly:
+Dependency lock schema version 1.1 binds:
 
 ```text
 schema_version
 object_type
-go_mod_sha256
-go_sum_sha256
-upstream_module_sum
-upstream_go_mod_sum
-modules
+upstream_repository
+upstream_tag
+upstream_commit
+upstream_tag_object_sha
+upstream_tag_signature_verified
+source_scope
+files
+upstream_source_tree_sha256
 lock_sha256
 ```
 
-`modules` is the unique sorted result of the frozen `go list -m` format, with the project module represented as `MAIN`. `lock_sha256` is SHA256 of canonical JSON for all preceding fields.
+Each file entry contains:
 
-The wrapper source-tree hash uses an explicit allowlist of source inputs:
+```text
+path
+git_blob_sha1
+sha256
+```
+
+`upstream_source_tree_sha256` is SHA256 of canonical JSON over the sorted file entries.
+
+The wrapper source-tree hash uses the explicit allowlist:
 
 ```text
 adapter_go127.go
@@ -108,13 +134,29 @@ go.mod
 main.go
 ```
 
-For each file it hashes raw bytes, constructs a path-sorted canonical JSON manifest, then hashes that manifest. Generated binaries, `go.sum`, caches, and unrelated directory contents cannot silently enter the wrapper source identity. `go.sum` is separately bound by the dependency lock.
+Generated binaries and unrelated files do not enter the wrapper source identity.
 
-The fixture report records `network_used=false`, `module_verify_passed=true`, exact Go version, GOOS, GOARCH, GOROOT tree hash, `CGO_ENABLED=false`, the exact test command, wrapper source-tree hash, required test PASS results, and its self hash.
+Fixture report schema version 1.1 binds:
+
+```text
+network_used = false
+vendored_source_verified = true
+external_modules_used = false
+exact Go version
+GOOS
+GOARCH
+GOROOT tree hash
+CGO_ENABLED = false
+exact test command
+wrapper source-tree hash
+upstream source-tree hash
+required PASS matrix
+report self hash
+```
 
 ## Verifier build profile
 
-`roughtime_verifier_build_profile.schema.json` version 1.1 and executable validation bind exactly:
+Build profile schema version 1.2 binds:
 
 ```text
 schema_version
@@ -127,10 +169,13 @@ go_version
 goos
 goarch
 go_toolchain_tree_sha256
+go_toolchain_distribution_source
+go_toolchain_distribution_sha256
+go_toolchain_carrier_sha256
 cgo_enabled
 dependency_lock_sha256
 wrapper_source_tree_sha256
-upstream_source_archive_sha256
+upstream_source_tree_sha256
 verifier_source_bundle_sha256
 build_command
 binary_sha256
@@ -138,9 +183,7 @@ fixture_report_sha256
 profile_sha256
 ```
 
-`upstream_source_archive_sha256` is the raw SHA256 of the exact h1-checked Go module Zip retained by Stage 1 and matched to the local module cache in Stage 2.
-
-`verifier_source_bundle_sha256` is SHA256 of the raw 32-byte `upstream_source_archive_sha256` digest followed by the raw 32-byte `wrapper_source_tree_sha256` digest.
+`verifier_source_bundle_sha256` is SHA256 of the raw 32-byte upstream source-tree digest followed by the raw 32-byte wrapper source-tree digest.
 
 Every retained receipt in a checked rehearsal package must use:
 
@@ -149,55 +192,48 @@ verifier_source_sha256 = verifier_source_bundle_sha256
 verifier_binary_sha256 = binary_sha256
 ```
 
-No real build profile is claimed by this change because the exact Go 1.27 execution remains open in an environment able to acquire that toolchain.
-
-## Persistent retry state
-
-`RoughtimeRetryState` is operational control state:
+The pre-vendoring binary SHA256:
 
 ```text
-classification = CONTROL_STATE_NON_TIME_EVIDENCE
-prospective_eligible = false
+1adbcf4076371742c86d10df14bfdabc55ab610b9d8da44d02dc6350e77cdee7
 ```
 
-State is keyed by SHA256 of the frozen root public key. Hostname changes therefore cannot bypass backoff for an unchanged trust root.
+is historical execution evidence only. It must not populate the post-vendoring build profile because the source identity changed when the imports and module structure changed.
 
-The frozen backoff schedule starts at one second, multiplies by 1.5, rounds upward to an integer millisecond, and saturates at 86400 seconds. A network failure cannot be recorded while the root is still in active backoff. A properly signed verified response resets the root state even when project policy later classifies the response as `VERIFIED_NONQUALIFYING_RESPONSE`.
+## Executed checks
 
-The local clock controls request rate only. It is never trusted deadline evidence. Mutable retry state is written atomically. Evidence snapshots use immutable content-addressed filenames and bind the exact pre-run and post-run states.
-
-## Control artifact binding
-
-The plan tool requires the actual verifier build profile JSON and retry-state JSON. Both are parsed with duplicate-key rejection, semantically validated, and hashed by the program before their hashes enter the plan.
-
-The authorization tool reads and validates the same artifacts again and requires exact equality with the plan bindings.
-
-The final offline checker requires plan, authorization, report, verifier build profile, retry state before, and retry state after. It performs the rehearsal semantic validation and additionally validates all control-artifact hashes and receipt source/binary hashes.
-
-JSON Schema remains descriptive interoperability validation. It does not replace executable semantic validation or cryptographic replay.
-
-## Offline checks executed for this candidate
+Before vendoring, Go 1.27.1 executed the complete strict-wrapper matrix successfully:
 
 ```text
-Python control tests = 18 PASS
-Python qualification-harness tests = 15 PASS
-Python combined focused tests = 33 PASS
-Go 1.23 core-only strict-wrapper tests = 8 PASS
-Roughtime control/qualification JSON Schemas = 4 VALID
+Go 1.27 strict-wrapper tests = 15 PASS
+including Go 1.27 cryptographic fixtures = PASS
+offline binary build = PASS
+```
+
+The fixture matrix includes typed hash-first, typed node-first, untyped draft 12, wrong root, mutated response, wrong nonce, and packet/profile rejection with deterministic synthetic keys.
+
+For the vendored qualification model itself, isolated local validation completed:
+
+```text
+vendored qualification focused Python tests = 11 PASS
+three revised qualification JSON Schemas = VALID
 Python compile = PASS
-offline static network guard for strict wrapper = PASS
 ```
 
-Go 1.27 cryptographic fixture source is checked in at `scripts/genesis/roughtime_strict_verifier/adapter_go127_test.go`, but those fixtures are NOT RUN in this environment. The matrix covers both frozen typed provider IDs, typed hash-first, typed node-first, untyped draft 12, wrong root, mutated response, wrong nonce, and packet/profile rejection using deterministic synthetic keys only.
+A complete post-vendoring Go 1.27 qualification run has not yet been recorded against a full checkout of the current formal HEAD. The complete repository test suite is also still open. No CI PASS claim is made.
 
-No provider packet and no RFC 3161 POST were sent by these checks. No GitHub-hosted workflow was triggered by the published tooling commits.
+## Persistent retry state and control binding
+
+Retry state remains `CONTROL_STATE_NON_TIME_EVIDENCE`, keyed by SHA256 of the frozen provider root public key. Local time is rate-limiting state only and is never trusted deadline evidence.
+
+Plan, authorization, report, build profile, retry state before, and retry state after remain strictly content-bound. Receipt source and binary hashes must match the retained build profile exactly.
 
 ## Remaining gate before any network rehearsal
 
-1. Acquire an exact Go 1.27.x toolchain in a zero-cash owner-controlled or otherwise explicitly accepted environment.
-2. Run `freeze-dependencies` to retain the h1-checked upstream module Zip and dependency lock.
-3. Run `qualify-offline` with Go module networking disabled.
-4. Require all Go 1.27 fixtures, `go mod verify`, source/archive/cache matching, frozen build, fixture report, and build-profile validation to pass.
+1. Obtain a full checkout at the current formal `design/gen-001` HEAD.
+2. Use an exact Go 1.27.x toolchain and record its distribution and GOROOT tree hashes.
+3. Run the single-stage vendored offline qualification command.
+4. Require the main-module-only check, vendored Git blob verification, all 15 Go tests, deterministic binary build, dependency lock, fixture report, and build profile cross-binding to pass.
 5. Run the complete repository test suite.
 6. Perform final offline adversarial review.
 7. Recheck provider endpoints, roots, operator evidence, and standards-transition status immediately before any later network authorization.
