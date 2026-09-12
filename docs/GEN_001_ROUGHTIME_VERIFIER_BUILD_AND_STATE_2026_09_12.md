@@ -131,7 +131,7 @@ Python compile = PASS
 offline static network guard = PASS
 ```
 
-Go 1.27 cryptographic fixtures are NOT RUN. No provider packet and no RFC 3161 POST were sent by these checks.
+Go 1.27 cryptographic fixture source is checked in at `scripts/genesis/roughtime_strict_verifier/adapter_go127_test.go`, but those fixtures are NOT RUN in this environment. The matrix covers both frozen typed provider IDs, typed hash-first, typed node-first, untyped draft 12, wrong root, mutated response, wrong nonce, and packet/profile rejection using deterministic synthetic keys only. No provider packet and no RFC 3161 POST were sent by these checks.
 
 ## Remaining gate before any network rehearsal
 
