@@ -117,7 +117,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Qualify the vendored offline Roughtime strict verifier. No provider packets are sent.")
     parser.add_argument("--wrapper-dir", type=Path, required=True)
     parser.add_argument("--dependency-lock", type=Path, required=True)
-    parser.add_arument("--fixture-report", type=Path, required=True)
+    parser.add_argument("--fixture-report", type=Path, required=True)
     parser.add_argument("--build-profile", type=Path, required=True)
     parser.add_argument("--toolchain-distribution-source", required=True)
     parser.add_argument("--toolchain-distribution-sha256", required=True)
