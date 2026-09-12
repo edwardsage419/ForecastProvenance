@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/tannerryan/roughtime/protocol"
+	"forecastprovenance/roughtime_strict_verifier/pinned/roughtime/protocol"
 )
 
 func deterministicKey(fill byte) ed25519.PrivateKey {

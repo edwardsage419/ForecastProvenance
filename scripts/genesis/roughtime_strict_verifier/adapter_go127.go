@@ -8,7 +8,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/tannerryan/roughtime/protocol"
+	"forecastprovenance/roughtime_strict_verifier/pinned/roughtime/protocol"
 )
 
 func frozenRoot(provider frozenProvider) ([]byte, error) {
