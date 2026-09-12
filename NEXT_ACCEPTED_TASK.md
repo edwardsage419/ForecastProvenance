@@ -1,11 +1,11 @@
 # Next Accepted Task
 
 Task ID: GEN_001
-State: GO 1.27 OFFLINE CRYPTOGRAPHIC VERIFIER GATE REQUIRED; NETWORK REQUEST NOT AUTHORIZED
+State: GO 1.27 OFFLINE QUALIFICATION EXECUTION REQUIRED; NETWORK REQUEST NOT AUTHORIZED
 
 ## Objective
 
-Close the remaining offline Roughtime verifier build and fixture gate without creating Forecast Ledger history, sending provider requests, or introducing a paid dependency.
+Execute the now-frozen Roughtime verifier qualification harness in a zero-cash environment with an exact Go 1.27.x toolchain, without creating Forecast Ledger history or sending provider requests.
 
 ## Frozen design retained
 
@@ -24,19 +24,19 @@ Cloudflare-Roughtime-2 remains historical only.
 
 ## Offline tooling now frozen as candidate
 
-The repository contains a project-controlled strict wrapper candidate with only `build-request` and `verify-response`, persistent per-root retry state, exact build-profile schema and semantic validation, actual artifact binding in plan and authorization tooling, duplicate-key-rejecting control JSON parsing, and full six-artifact final checker binding.
+The repository contains the strict offline wrapper, deterministic Go 1.27 synthetic cryptographic fixtures, persistent per-root retry state, artifact-bound plan and authorization tooling, dependency-lock and fixture-report validators, verifier build-profile validation, and a two-stage qualification harness.
 
-The Go 1.23 test path validates project core guards only. It does not establish cryptographic qualification.
+The current execution environment can run the Go 1.23 core path and Python control tests, but cannot acquire a Go 1.27 toolchain because outbound Go toolchain/module download is blocked. This is an execution-environment gate.
 
-## Next accepted work
+## Next accepted execution
 
-1. Acquire the exact pinned `github.com/tannerryan/roughtime` source for tag `v1.27.0`, commit `56b346a16cd7e8317bb0d24f1ec15549cf93a4c9`, and retain its source archive bytes.
-2. Acquire an exact Go 1.27.x patch release in a zero-cash owner-controlled or otherwise explicitly accepted environment.
-3. Freeze dependency lock bytes and compute `dependency_lock_sha256`.
-4. Compute `upstream_source_archive_sha256` and the project wrapper source tree hash.
-5. Run the Go 1.27 offline fixture matrix covering typed hash-first, typed node-first, untyped draft 12, wrong root, mutated response, wrong nonce, and wrong packet/profile rejection.
-6. Build with `go build -trimpath -buildvcs=false -ldflags=-buildid= -o fpp-roughtime-strict .` under `CGO_ENABLED=0` and hash the produced binary.
-7. Produce and validate the complete content-addressed verifier build profile.
+1. Install or otherwise provide an exact Go 1.27.x patch release in an owner-controlled or otherwise explicitly accepted zero-cash environment.
+2. Run `scripts/genesis/qualify_roughtime_verifier.py freeze-dependencies` against `scripts/genesis/roughtime_strict_verifier/`. This stage may use standard Go module infrastructure and must retain both the dependency-lock JSON and exact pinned upstream Go module Zip.
+3. Transfer or retain those artifacts unchanged for the final stage.
+4. Run `scripts/genesis/qualify_roughtime_verifier.py qualify-offline`. This stage freezes `GOTOOLCHAIN=local`, `CGO_ENABLED=0`, `GOFLAGS=-mod=readonly`, `GOPROXY=off`, and `GOSUMDB=off`.
+5. Require `go mod verify` to pass and require the retained upstream module Zip to be byte-identical to the cached h1-checked Zip used by Go.
+6. Require the exact GOROOT tree hash, wrapper source-tree hash, dependency lock, fixture report, frozen build command, produced binary hash, and final verifier build profile to cross-bind.
+7. Require every Go 1.27 fixture to pass, including typed hash-first, typed node-first, untyped draft 12, wrong root, mutated response, wrong nonce, and packet/profile rejection.
 8. Run the complete repository test suite.
 9. Perform final offline adversarial review.
 10. Recheck provider endpoint, root, operator, and standards-transition evidence immediately before any later network authorization.
@@ -45,7 +45,7 @@ No provider packet is authorized by this task.
 
 ## Later network boundary
 
-A first network rehearsal still requires a separate exact authorization binding the synthetic subject bytes and SHA256, frozen deadline, three-provider pool, plan SHA256, authorization SHA256, pinned verifier commit, verifier build profile, retry-state snapshot, exact wire/TYPE/SRV/packet profiles, attempt limits, timeout/backoff, evidence directory, `classification = NON_FORECAST_REHEARSAL`, and `prospective_eligible = false`.
+A first network rehearsal still requires a separate exact authorization binding the synthetic subject bytes and SHA256, frozen deadline, three-provider pool, plan SHA256, authorization SHA256, pinned verifier commit, validated verifier build profile, retry-state snapshot, exact wire/TYPE/SRV/packet profiles, attempt limits, timeout/backoff, evidence directory, `classification = NON_FORECAST_REHEARSAL`, and `prospective_eligible = false`.
 
 The offline plan remains `network_authorized=false`.
 

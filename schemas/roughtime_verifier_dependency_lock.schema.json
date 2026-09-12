@@ -1,0 +1,74 @@
+{
+  "$defs": {
+    "digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "h1": {
+      "pattern": "^h1:[A-Za-z0-9+/]{43}=$",
+      "type": "string"
+    }
+  },
+  "$id": "https://forecastprovenance.org/schemas/roughtime_verifier_dependency_lock.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "go_mod_sha256": {
+      "$ref": "#/$defs/digest"
+    },
+    "go_sum_sha256": {
+      "$ref": "#/$defs/digest"
+    },
+    "lock_sha256": {
+      "$ref": "#/$defs/digest"
+    },
+    "modules": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "minLength": 1,
+            "pattern": "^\\S+$",
+            "type": "string"
+          },
+          "version": {
+            "minLength": 1,
+            "pattern": "^\\S+$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "version"
+        ],
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "object_type": {
+      "const": "RoughtimeVerifierDependencyLock"
+    },
+    "schema_version": {
+      "const": "1.0"
+    },
+    "upstream_go_mod_sum": {
+      "$ref": "#/$defs/h1"
+    },
+    "upstream_module_sum": {
+      "$ref": "#/$defs/h1"
+    }
+  },
+  "required": [
+    "schema_version",
+    "object_type",
+    "go_mod_sha256",
+    "go_sum_sha256",
+    "upstream_module_sum",
+    "upstream_go_mod_sum",
+    "modules",
+    "lock_sha256"
+  ],
+  "title": "Roughtime Verifier Dependency Lock",
+  "type": "object"
+}

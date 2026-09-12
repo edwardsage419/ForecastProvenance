@@ -30,7 +30,7 @@ def profile() -> dict:
     upstream = "11" * 32
     wrapper = "22" * 32
     core = {
-        "schema_version": "1.0",
+        "schema_version": "1.1",
         "upstream_repository": VERIFIER_REPOSITORY,
         "upstream_tag": VERIFIER_TAG,
         "upstream_commit": VERIFIER_COMMIT,
@@ -39,6 +39,7 @@ def profile() -> dict:
         "go_version": "go1.27.1",
         "goos": "linux",
         "goarch": "amd64",
+        "go_toolchain_tree_sha256": "77" * 32,
         "cgo_enabled": False,
         "dependency_lock_sha256": "33" * 32,
         "wrapper_source_tree_sha256": wrapper,

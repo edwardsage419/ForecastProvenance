@@ -1,31 +1,76 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://forecastprovenance.org/schemas/roughtime_verifier_build_profile.schema.json",
-  "title": "Roughtime Verifier Build Profile",
-  "type": "object",
-  "additionalProperties": false,
   "$defs": {
-    "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+    "digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    }
   },
+  "$id": "https://forecastprovenance.org/schemas/roughtime_verifier_build_profile.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
   "properties": {
-    "schema_version": {"const": "1.0"},
-    "upstream_repository": {"const": "github.com/tannerryan/roughtime"},
-    "upstream_tag": {"const": "v1.27.0"},
-    "upstream_commit": {"const": "56b346a16cd7e8317bb0d24f1ec15549cf93a4c9"},
-    "upstream_tag_object_sha": {"const": "e1ae332e5920429b11ec4f10a7dda399ebeb6df8"},
-    "upstream_tag_signature_verified": {"const": true},
-    "go_version": {"type": "string", "pattern": "^go1\\.27\\.[0-9]+$"},
-    "goos": {"type": "string", "minLength": 1, "pattern": "^[^\\s]+$"},
-    "goarch": {"type": "string", "minLength": 1, "pattern": "^[^\\s]+$"},
-    "cgo_enabled": {"const": false},
-    "dependency_lock_sha256": {"$ref": "#/$defs/digest"},
-    "wrapper_source_tree_sha256": {"$ref": "#/$defs/digest"},
-    "upstream_source_archive_sha256": {"$ref": "#/$defs/digest"},
-    "verifier_source_bundle_sha256": {"$ref": "#/$defs/digest"},
-    "build_command": {"const": "go build -trimpath -buildvcs=false -ldflags=-buildid= -o fpp-roughtime-strict ."},
-    "binary_sha256": {"$ref": "#/$defs/digest"},
-    "fixture_report_sha256": {"$ref": "#/$defs/digest"},
-    "profile_sha256": {"$ref": "#/$defs/digest"}
+    "binary_sha256": {
+      "$ref": "#/$defs/digest"
+    },
+    "build_command": {
+      "const": "go build -trimpath -buildvcs=false -ldflags=-buildid= -o fpp-roughtime-strict ."
+    },
+    "cgo_enabled": {
+      "const": false
+    },
+    "dependency_lock_sha256": {
+      "$ref": "#/$defs/digest"
+    },
+    "fixture_report_sha256": {
+      "$ref": "#/$defs/digest"
+    },
+    "go_toolchain_tree_sha256": {
+      "$ref": "#/$defs/digest"
+    },
+    "go_version": {
+      "pattern": "^go1\\.27\\.[0-9]+$",
+      "type": "string"
+    },
+    "goarch": {
+      "minLength": 1,
+      "pattern": "^[^\\s]+$",
+      "type": "string"
+    },
+    "goos": {
+      "minLength": 1,
+      "pattern": "^[^\\s]+$",
+      "type": "string"
+    },
+    "profile_sha256": {
+      "$ref": "#/$defs/digest"
+    },
+    "schema_version": {
+      "const": "1.1"
+    },
+    "upstream_commit": {
+      "const": "56b346a16cd7e8317bb0d24f1ec15549cf93a4c9"
+    },
+    "upstream_repository": {
+      "const": "github.com/tannerryan/roughtime"
+    },
+    "upstream_source_archive_sha256": {
+      "$ref": "#/$defs/digest"
+    },
+    "upstream_tag": {
+      "const": "v1.27.0"
+    },
+    "upstream_tag_object_sha": {
+      "const": "e1ae332e5920429b11ec4f10a7dda399ebeb6df8"
+    },
+    "upstream_tag_signature_verified": {
+      "const": true
+    },
+    "verifier_source_bundle_sha256": {
+      "$ref": "#/$defs/digest"
+    },
+    "wrapper_source_tree_sha256": {
+      "$ref": "#/$defs/digest"
+    }
   },
   "required": [
     "schema_version",
@@ -37,6 +82,7 @@
     "go_version",
     "goos",
     "goarch",
+    "go_toolchain_tree_sha256",
     "cgo_enabled",
     "dependency_lock_sha256",
     "wrapper_source_tree_sha256",
@@ -46,5 +92,7 @@
     "binary_sha256",
     "fixture_report_sha256",
     "profile_sha256"
-  ]
+  ],
+  "title": "Roughtime Verifier Build Profile",
+  "type": "object"
 }
