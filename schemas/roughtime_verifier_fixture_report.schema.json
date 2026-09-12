@@ -1,95 +1,41 @@
 {
-  "$defs": {
-    "digest": {
-      "pattern": "^[0-9a-f]{64}$",
-      "type": "string"
-    }
-  },
+  "$defs": {"digest": {"pattern": "^[0-9a-f]{64}$", "type": "string"}},
   "$id": "https://forecastprovenance.org/schemas/roughtime_verifier_fixture_report.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "properties": {
-    "cgo_enabled": {
-      "const": false
-    },
-    "command": {
-      "const": "go test -count=1 -json ./..."
-    },
-    "go_toolchain_tree_sha256": {
-      "$ref": "#/$defs/digest"
-    },
-    "go_version": {
-      "pattern": "^go1\\.27\\.[0-9]+$",
-      "type": "string"
-    },
-    "goarch": {
-      "minLength": 1,
-      "pattern": "^\\S+$",
-      "type": "string"
-    },
-    "goos": {
-      "minLength": 1,
-      "pattern": "^\\S+$",
-      "type": "string"
-    },
-    "module_verify_passed": {
-      "const": true
-    },
-    "network_used": {
-      "const": false
-    },
-    "object_type": {
-      "const": "RoughtimeVerifierFixtureReport"
-    },
-    "overall": {
-      "const": "PASS"
-    },
-    "report_sha256": {
-      "$ref": "#/$defs/digest"
-    },
-    "schema_version": {
-      "const": "1.0"
-    },
+    "schema_version": {"const": "1.1"},
+    "object_type": {"const": "RoughtimeVerifierFixtureReport"},
+    "network_used": {"const": false},
+    "vendored_source_verified": {"const": true},
+    "external_modules_used": {"const": false},
+    "go_version": {"type": "string", "pattern": "^go1\\.27\\.[0-9]+$"},
+    "goos": {"type": "string", "minLength": 1, "pattern": "^\\S+$"},
+    "goarch": {"type": "string", "minLength": 1, "pattern": "^\\S+$"},
+    "go_toolchain_tree_sha256": {"$ref": "#/$defs/digest"},
+    "cgo_enabled": {"const": false},
+    "command": {"const": "go test -count=1 -json ./..."},
+    "wrapper_source_tree_sha256": {"$ref": "#/$defs/digest"},
+    "upstream_source_tree_sha256": {"$ref": "#/$defs/digest"},
     "tests": {
+      "type": "array", "minItems": 1,
       "items": {
-        "additionalProperties": false,
+        "type": "object", "additionalProperties": false,
         "properties": {
-          "name": {
-            "pattern": "^Test",
-            "type": "string"
-          },
-          "result": {
-            "const": "PASS"
-          }
+          "name": {"type": "string", "pattern": "^Test"},
+          "result": {"const": "PASS"}
         },
-        "required": [
-          "name",
-          "result"
-        ],
-        "type": "object"
-      },
-      "minItems": 1,
-      "type": "array"
+        "required": ["name", "result"]
+      }
     },
-    "wrapper_source_tree_sha256": {
-      "$ref": "#/$defs/digest"
-    }
+    "overall": {"const": "PASS"},
+    "report_sha256": {"$ref": "#/$defs/digest"}
   },
   "required": [
-    "schema_version",
-    "object_type",
-    "network_used",
-    "module_verify_passed",
-    "go_version",
-    "goos",
-    "goarch",
-    "go_toolchain_tree_sha256",
-    "cgo_enabled",
-    "command",
-    "wrapper_source_tree_sha256",
-    "tests",
-    "overall",
-    "report_sha256"
+    "schema_version", "object_type", "network_used", "vendored_source_verified",
+    "external_modules_used", "go_version", "goos", "goarch", "go_toolchain_tree_sha256",
+    "cgo_enabled", "command", "wrapper_source_tree_sha256", "upstream_source_tree_sha256",
+    "tests", "overall", "report_sha256"
   ],
   "title": "Roughtime Verifier Offline Fixture Report",
   "type": "object"

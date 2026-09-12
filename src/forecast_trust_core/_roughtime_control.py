@@ -15,7 +15,7 @@ from ._roughtime_profile import PROVIDERS, VERIFIER_COMMIT, VERIFIER_REPOSITORY,
 VERIFIER_TAG_OBJECT_SHA = "e1ae332e5920429b11ec4f10a7dda399ebeb6df8"
 BUILD_COMMAND = "go build -trimpath -buildvcs=false -ldflags=-buildid= -o fpp-roughtime-strict ."
 RETRY_STATE_SCHEMA_VERSION = "1.0"
-BUILD_PROFILE_SCHEMA_VERSION = "1.1"
+BUILD_PROFILE_SCHEMA_VERSION = "1.2"
 RETRY_STATE_OBJECT_TYPE = "RoughtimeRetryState"
 RETRY_STATE_CLASSIFICATION = "CONTROL_STATE_NON_TIME_EVIDENCE"
 HEX64_RE = re.compile(r"^[0-9a-f]{64}$")
@@ -32,10 +32,13 @@ _BUILD_PROFILE_KEYS = frozenset({
     "goos",
     "goarch",
     "go_toolchain_tree_sha256",
+    "go_toolchain_distribution_source",
+    "go_toolchain_distribution_sha256",
+    "go_toolchain_carrier_sha256",
     "cgo_enabled",
     "dependency_lock_sha256",
     "wrapper_source_tree_sha256",
-    "upstream_source_archive_sha256",
+    "upstream_source_tree_sha256",
     "verifier_source_bundle_sha256",
     "build_command",
     "binary_sha256",
@@ -256,8 +259,8 @@ def write_retry_snapshot(snapshot_dir: Path, state: Mapping[str, Any]) -> Path:
     return target
 
 
-def compute_source_bundle_sha256(upstream_source_archive_sha256: str, wrapper_source_tree_sha256: str) -> str:
-    upstream = bytes.fromhex(_require_hex64(upstream_source_archive_sha256, "upstream_source_archive_sha256"))
+def compute_source_bundle_sha256(upstream_source_tree_sha256: str, wrapper_source_tree_sha256: str) -> str:
+    upstream = bytes.fromhex(_require_hex64(upstream_source_tree_sha256, "upstream_source_tree_sha256"))
     wrapper = bytes.fromhex(_require_hex64(wrapper_source_tree_sha256, "wrapper_source_tree_sha256"))
     return hashlib.sha256(upstream + wrapper).hexdigest()
 
@@ -285,11 +288,16 @@ def validate_verifier_build_profile(profile: Mapping[str, Any]) -> str:
     for field in ("goos", "goarch"):
         if not isinstance(profile[field], str) or not profile[field] or any(ch.isspace() for ch in profile[field]):
             raise ValueError(f"{field} must be a nonempty token")
+    source = profile["go_toolchain_distribution_source"]
+    if not isinstance(source, str) or not source.strip() or "\n" in source or "\r" in source:
+        raise ValueError("go_toolchain_distribution_source must be a nonempty single-line string")
     for field in (
         "go_toolchain_tree_sha256",
+        "go_toolchain_distribution_sha256",
+        "go_toolchain_carrier_sha256",
         "dependency_lock_sha256",
         "wrapper_source_tree_sha256",
-        "upstream_source_archive_sha256",
+        "upstream_source_tree_sha256",
         "verifier_source_bundle_sha256",
         "binary_sha256",
         "fixture_report_sha256",
@@ -297,7 +305,7 @@ def validate_verifier_build_profile(profile: Mapping[str, Any]) -> str:
     ):
         _require_hex64(profile[field], field)
     expected_bundle = compute_source_bundle_sha256(
-        profile["upstream_source_archive_sha256"], profile["wrapper_source_tree_sha256"]
+        profile["upstream_source_tree_sha256"], profile["wrapper_source_tree_sha256"]
     )
     if profile["verifier_source_bundle_sha256"] != expected_bundle:
         raise ValueError("verifier_source_bundle_sha256 mismatch")
