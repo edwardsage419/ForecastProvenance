@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://forecastprovenance.org/schemas/roughtime_retry_state.schema.json",
+  "title": "Roughtime Retry State",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "object_type": {"const": "RoughtimeRetryState"},
+    "classification": {"const": "CONTROL_STATE_NON_TIME_EVIDENCE"},
+    "prospective_eligible": {"const": false},
+    "root_states": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "root_public_key_sha256": {"$ref": "#/$defs/digest"},
+          "consecutive_failures": {"type": "integer", "minimum": 0},
+          "last_failure_unix_ms": {"type": "integer", "minimum": 0},
+          "next_eligible_unix_ms": {"type": "integer", "minimum": 0}
+        },
+        "required": [
+          "root_public_key_sha256",
+          "consecutive_failures",
+          "last_failure_unix_ms",
+          "next_eligible_unix_ms"
+        ]
+      }
+    },
+    "state_sha256": {"$ref": "#/$defs/digest"}
+  },
+  "required": [
+    "schema_version",
+    "object_type",
+    "classification",
+    "prospective_eligible",
+    "root_states",
+    "state_sha256"
+  ]
+}

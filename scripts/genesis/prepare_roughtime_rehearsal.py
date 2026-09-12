@@ -9,6 +9,11 @@ import sys
 from pathlib import Path
 
 from forecast_trust_core.canonical import canonical_json
+from forecast_trust_core._roughtime_control import (
+    load_strict_json_file,
+    validate_retry_state,
+    validate_verifier_build_profile,
+)
 from forecast_trust_core.roughtime_rehearsal import (
     MAX_ATTEMPTS_PER_PROVIDER,
     PACKET_PROFILE,
@@ -80,15 +85,19 @@ def main() -> int:
     parser.add_argument("--subject-sha256", required=True)
     parser.add_argument("--subject-label", required=True)
     parser.add_argument("--frozen-deadline-utc", required=True)
-    parser.add_argument("--verifier-build-profile-sha256", required=True)
-    parser.add_argument("--retry-state-snapshot-sha256", required=True)
+    parser.add_argument("--verifier-build-profile", type=Path, required=True)
+    parser.add_argument("--retry-state", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     if args.output.exists():
         print(f"refusing to overwrite existing output: {args.output}", file=sys.stderr)
         return 2
     try:
-        plan = build_plan(args.subject_sha256, args.subject_label, args.frozen_deadline_utc, args.verifier_build_profile_sha256, args.retry_state_snapshot_sha256)
+        profile = load_strict_json_file(args.verifier_build_profile)
+        retry_state = load_strict_json_file(args.retry_state)
+        profile_hash = validate_verifier_build_profile(profile)
+        retry_hash = validate_retry_state(retry_state)
+        plan = build_plan(args.subject_sha256, args.subject_label, args.frozen_deadline_utc, profile_hash, retry_hash)
     except Exception as exc:
         print(f"Roughtime rehearsal plan preparation failed: {exc}", file=sys.stderr)
         return 2
