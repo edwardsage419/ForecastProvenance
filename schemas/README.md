@@ -89,6 +89,6 @@ src/forecast_trust_core/_ed25519_qualification.py
 scripts/genesis/qualify_ed25519_verifier.py
 ```
 
-The final profile requires an exact Go 1.27.x toolchain, a closed source tree containing exactly `go.mod`, `main.go`, and `main_test.go`, no external modules, `CGO_ENABLED=0`, the frozen required test PASS set, two byte-for-byte reproducible builds with separate Go build caches, the toolchain and distribution hashes, the verifier binary SHA256, and the build-profile self hash.
+The final profile requires an exact Go 1.27.x toolchain, the exact repository commit SHA, Git blob SHA1 plus SHA256 for each of the three closed source files, no external modules, `CGO_ENABLED=0`, the frozen required test PASS set, two byte-for-byte reproducible builds with separate Go build caches, the toolchain and distribution hashes, the verifier binary SHA256, and the build-profile self hash. Qualification rejects working-tree source bytes that differ from repository HEAD.
 
 The schema and harness do not provide signing functionality and accept no private key. Publication of the harness does not mean the Ed25519 backend is final qualified.

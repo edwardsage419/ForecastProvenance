@@ -8,7 +8,7 @@ Current formal branch and state snapshot basis:
 
 ```text
 branch = design/gen-001
-snapshot_basis_commit = 61f1c1cbdea5d2e2ec846bba7caf59ab0c467a61
+snapshot_basis_commit = cd970120283d2d5efa32f47f95e38d68ce796292
 ```
 
 The commit containing `CURRENT_STATE.md` must be identified from Git metadata; this document does not embed its own commit SHA.
@@ -201,7 +201,7 @@ goarch = amd64
 development_binary_sha256 = 592089f9f216e22d3e6eec63c836922fc628a91aebfc55d4829ec70fb70c99e9
 ```
 
-This development hash is not a frozen production verifier identity. A dedicated content-addressed qualification harness is now published in `scripts/genesis/qualify_ed25519_verifier.py` with build-profile schema `schemas/ed25519_verifier_build_profile.schema.json`. The harness requires exact Go 1.27.x, a closed three-file verifier source tree, a single-module graph, the frozen required PASS set, two byte-for-byte reproducible builds with distinct caches, and a content-addressed binary/build profile. Current development validation confirmed that Go 1.23.2 fails closed and writes no qualification profile. Final qualification under the accepted Go 1.27.x toolchain has not been executed.
+This development hash is not a frozen production verifier identity. A dedicated content-addressed qualification harness is now published in `scripts/genesis/qualify_ed25519_verifier.py` with build-profile schema `schemas/ed25519_verifier_build_profile.schema.json`. The harness requires exact Go 1.27.x, a closed three-file verifier source tree, a single-module graph, the frozen required PASS set, two byte-for-byte reproducible builds with distinct caches, and a content-addressed binary/build profile. Current development validation confirmed that Go 1.23.2 fails closed and writes no qualification profile. The qualification harness also binds the exact repository HEAD SHA and each verifier source file Git blob SHA1, rejecting source bytes that do not match the committed tree. Final qualification under the accepted Go 1.27.x toolchain has not been executed.
 
 ## Regression state
 
