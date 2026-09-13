@@ -170,7 +170,7 @@ The required offline matrix is:
 3. untyped draft-12 node-first, multi-leaf;
 4. negative wrong-order rejection where the profile does not permit alternate-order acceptance.
 
-The current single-leaf positive fixtures have PATH length zero and therefore do not independently distinguish child ordering. The retained time.txryan.com live response supplies non-empty hash-first evidence only. No additional live request is required to close this fixture gap.
+The current deterministic offline fixture matrix satisfies this engineering coverage requirement: each of the three positive ordering fixtures uses a two-leaf tree and demonstrates a PATH of exactly one hash / 32 bytes, and the negative wrong-order fixture requires rejection as a Merkle root mismatch under the frozen node-first-only profile. This closes the fixture-engineering gap only. It does not freeze these production qualification criteria, qualify any provider, create a production ProviderProfile, or authorize any live request.
 
 ## TimeNL pilot policy gate
 
