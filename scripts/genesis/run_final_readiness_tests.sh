@@ -24,6 +24,13 @@ if [[ ! "$COMMIT" =~ ^[0-9a-f]{40}$ ]]; then
   exit 2
 fi
 
+if ! PYTHONPATH=src python3 -m pytest --version >/dev/null 2>&1; then
+  echo "pytest is required for the complete repository regression; install the pinned test extra" >&2
+  exit 2
+fi
+
+PYTEST_VERSION="$(PYTHONPATH=src python3 -m pytest --version 2>&1 | head -n 1)"
+
 mkdir -p "$OUTDIR"
 REPORT="$OUTDIR/final_readiness_test_report.txt"
 
@@ -34,6 +41,7 @@ REPORT="$OUTDIR/final_readiness_test_report.txt"
   echo "captured_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
   echo "python_version=$(python3 --version 2>&1)"
   echo "runtime_dependencies=NONE"
+  echo "test_runner=$PYTEST_VERSION"
   echo
   echo "== compileall =="
 } > "$REPORT"
@@ -42,11 +50,11 @@ PYTHONPATH=src python3 -m compileall -q src scripts tests 2>&1 | tee -a "$REPORT
 
 {
   echo
-  echo "== unittest =="
+  echo "== pytest =="
 } >> "$REPORT"
 
 set +e
-PYTHONPATH=src python3 -m unittest discover -s tests -v 2>&1 | tee -a "$REPORT"
+PYTHONPATH=src python3 -m pytest -q 2>&1 | tee -a "$REPORT"
 TEST_STATUS=${PIPESTATUS[0]}
 set -e
 
