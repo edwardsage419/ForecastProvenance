@@ -44,7 +44,7 @@ valid
 
 ## Pinned binary boundary
 
-The Python adapter requires the expected verifier binary SHA256 from outside the signed decision. It rejects a symlink or non-file path, recomputes the binary SHA256 before invocation, and recomputes it after invocation.
+The Python adapter requires the expected verifier binary SHA256 from outside the signed decision. It rejects a final-component symlink or non-file path, resolves the accepted executable to a canonical absolute path before invocation so PATH lookup cannot substitute a different binary, recomputes the binary SHA256 before invocation, and recomputes it after invocation.
 
 The qualification decision still receives its expected authority ID and exact public key from outside the decision object. This backend does not permit a QualificationDecision to select either its trust root or verifier binary identity.
 
