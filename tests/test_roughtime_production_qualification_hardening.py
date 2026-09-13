@@ -2,12 +2,16 @@ from __future__ import annotations
 
 import hashlib
 import json
+from pathlib import Path
 
 import pytest
 
 import forecast_trust_core._roughtime_production_qualification_hardening as hardening
+from forecast_trust_core.canonical import canonical_json
 
 
+CRITERIA_ID = "FPP_ROUGHTIME_PRODUCTION_QUALIFICATION_V1"
+CRITERIA_SHA256 = "88cc910fdb7e573f3a84d860ad0cdc5fffc287db18678956c7e50dc52a07639e"
 BUILD_PROFILE_SHA256 = "1" * 64
 BINARY_BYTES = b"verifier-binary"
 BINARY_SHA256 = hashlib.sha256(BINARY_BYTES).hexdigest()
@@ -45,8 +49,12 @@ def _artifact_bytes(*, include_criterion: bool = True, include_binary: bool = Tr
     return artifacts
 
 
-def _manifest(provider_id: str = "roughtime.se", *, include_evidence: bool = True, include_binary: bool = True):
-    artifacts = _artifact_bytes(include_criterion=include_evidence, include_binary=include_binary)
+def _manifest(provider_id: str = "roughtime.se", *, include_evidence: bool = True, include_binary: bool = True, exact_build_profile: bool = True):
+    artifacts = _artifact_bytes(
+        include_criterion=include_evidence,
+        include_binary=include_binary,
+        exact_build_profile=exact_build_profile,
+    )
     entries = []
     for path, data in sorted(artifacts.items()):
         entries.append(
@@ -62,11 +70,39 @@ def _manifest(provider_id: str = "roughtime.se", *, include_evidence: bool = Tru
     return {
         "schema_version": "1.0",
         "object_type": "RoughtimeQualificationEvidenceManifest",
-        "criteria_id": "FPP_ROUGHTIME_PRODUCTION_QUALIFICATION_V1",
-        "criteria_sha256": "c" * 64,
+        "criteria_id": CRITERIA_ID,
+        "criteria_sha256": CRITERIA_SHA256,
         "provider_id": provider_id,
         "entries": entries,
     }
+
+
+def _write_package(
+    root: Path,
+    manifest: dict,
+    *,
+    include_evidence: bool = True,
+    include_binary: bool = True,
+    exact_build_profile: bool = True,
+    canonical_manifest: bool = True,
+    extra_file: bool = False,
+) -> Path:
+    artifacts = _artifact_bytes(
+        include_criterion=include_evidence,
+        include_binary=include_binary,
+        exact_build_profile=exact_build_profile,
+    )
+    for relative, data in artifacts.items():
+        path = root / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(data)
+    manifest_bytes = canonical_json(manifest)
+    if not canonical_manifest:
+        manifest_bytes = (json.dumps(manifest, indent=2, sort_keys=True) + "\n").encode("utf-8")
+    (root / "manifest.json").write_bytes(manifest_bytes)
+    if extra_file:
+        (root / "unexpected.txt").write_bytes(b"unexpected")
+    return root
 
 
 def _profile(provider_id: str = "roughtime.se"):
@@ -80,9 +116,10 @@ def _metadata():
     return {
         "object_id": "metadata:1",
         "content_sha256": "d" * 64,
+        "reviewed_at": "2026-09-13T10:00:00Z",
         "source_captures": [
             {
-                "retrieved_at": "2026-09-13T10:00:00Z",
+                "retrieved_at": "2026-09-13T09:59:00Z",
             }
         ],
     }
@@ -112,12 +149,7 @@ def _review():
     }
 
 
-def _patch_validators(monkeypatch):
-    monkeypatch.setattr(
-        hardening,
-        "validate_qualification_evidence_manifest",
-        lambda _manifest, *, artifact_bytes=None: "e" * 64,
-    )
+def _patch_review_validators(monkeypatch):
     monkeypatch.setattr(
         hardening,
         "validate_qualification_review",
@@ -130,8 +162,9 @@ def _patch_validators(monkeypatch):
     )
 
 
-def test_bound_review_requires_actual_artifact_bytes():
-    with pytest.raises(ValueError, match="actual evidence artifact bytes"):
+def test_bound_review_requires_package_root(tmp_path: Path, monkeypatch):
+    _patch_review_validators(monkeypatch)
+    with pytest.raises(ValueError, match="package root"):
         hardening.validate_bound_qualification_review(
             _review(),
             profile=_profile(),
@@ -141,53 +174,55 @@ def test_bound_review_requires_actual_artifact_bytes():
         )
 
 
-def test_bound_review_passes_actual_artifact_bytes_to_manifest_validator(monkeypatch):
-    observed = {}
-
-    def validate_manifest(_manifest, *, artifact_bytes=None):
-        observed["artifact_bytes"] = artifact_bytes
-        return "e" * 64
-
-    monkeypatch.setattr(hardening, "validate_qualification_evidence_manifest", validate_manifest)
-    monkeypatch.setattr(hardening, "validate_qualification_review", lambda *_args, **_kwargs: "review-ok")
-    monkeypatch.setattr(hardening, "validate_verifier_build_profile", lambda profile: profile["profile_sha256"])
-    artifacts = _artifact_bytes()
-
-    assert hardening.validate_bound_qualification_review(
-        _review(),
-        profile=_profile(),
-        metadata_review=_metadata(),
-        evidence_manifest=_manifest(),
-        evidence_artifact_bytes=artifacts,
-        verifier_build_profile=_build_profile(),
-    ) == "review-ok"
-    assert observed["artifact_bytes"] is artifacts
+def test_bound_review_requires_canonical_manifest_file(tmp_path: Path, monkeypatch):
+    _patch_review_validators(monkeypatch)
+    manifest = _manifest()
+    root = _write_package(tmp_path, manifest, canonical_manifest=False)
+    with pytest.raises(ValueError, match="exact FPP_JCS_1 canonical manifest"):
+        hardening.validate_bound_qualification_review(
+            _review(),
+            profile=_profile(),
+            metadata_review=_metadata(),
+            evidence_manifest=manifest,
+            evidence_package_root=root,
+            verifier_build_profile=_build_profile(),
+        )
 
 
-def test_bound_review_requires_criterion_evidence_in_manifest(monkeypatch):
-    _patch_validators(monkeypatch)
-    assert hardening.validate_bound_qualification_review(
-        _review(),
-        profile=_profile(),
-        metadata_review=_metadata(),
-        evidence_manifest=_manifest(),
-        evidence_artifact_bytes=_artifact_bytes(),
-        verifier_build_profile=_build_profile(),
-    ) == "review-ok"
+def test_bound_review_rejects_unexpected_package_file(tmp_path: Path, monkeypatch):
+    _patch_review_validators(monkeypatch)
+    manifest = _manifest()
+    root = _write_package(tmp_path, manifest, extra_file=True)
+    with pytest.raises(ValueError, match="unexpected"):
+        hardening.validate_bound_qualification_review(
+            _review(),
+            profile=_profile(),
+            metadata_review=_metadata(),
+            evidence_manifest=manifest,
+            evidence_package_root=root,
+            verifier_build_profile=_build_profile(),
+        )
 
+
+def test_bound_review_requires_criterion_evidence_in_manifest(tmp_path: Path, monkeypatch):
+    _patch_review_validators(monkeypatch)
+    manifest = _manifest(include_evidence=False)
+    root = _write_package(tmp_path, manifest, include_evidence=False)
     with pytest.raises(ValueError, match="outside complete manifest"):
         hardening.validate_bound_qualification_review(
             _review(),
             profile=_profile(),
             metadata_review=_metadata(),
-            evidence_manifest=_manifest(include_evidence=False),
-            evidence_artifact_bytes=_artifact_bytes(include_criterion=False),
+            evidence_manifest=manifest,
+            evidence_package_root=root,
             verifier_build_profile=_build_profile(),
         )
 
 
-def test_bound_review_requires_distinct_execution_and_review_events(monkeypatch):
-    _patch_validators(monkeypatch)
+def test_bound_review_requires_distinct_execution_and_review_events(tmp_path: Path, monkeypatch):
+    _patch_review_validators(monkeypatch)
+    manifest = _manifest()
+    root = _write_package(tmp_path, manifest)
     review = _review()
     review["reviewer_id"] = review["executor_id"]
     with pytest.raises(ValueError, match="distinct event identities"):
@@ -195,55 +230,63 @@ def test_bound_review_requires_distinct_execution_and_review_events(monkeypatch)
             review,
             profile=_profile(),
             metadata_review=_metadata(),
-            evidence_manifest=_manifest(),
-            evidence_artifact_bytes=_artifact_bytes(),
+            evidence_manifest=manifest,
+            evidence_package_root=root,
             verifier_build_profile=_build_profile(),
         )
 
 
-def test_bound_review_rejects_metadata_capture_after_review(monkeypatch):
-    _patch_validators(monkeypatch)
+def test_bound_review_rejects_capture_after_metadata_review(tmp_path: Path, monkeypatch):
+    _patch_review_validators(monkeypatch)
+    manifest = _manifest()
+    root = _write_package(tmp_path, manifest)
     metadata = _metadata()
-    metadata["source_captures"][0]["retrieved_at"] = "2026-09-13T10:06:00Z"
-    with pytest.raises(ValueError, match="after qualification review"):
+    metadata["source_captures"][0]["retrieved_at"] = "2026-09-13T10:01:00Z"
+    with pytest.raises(ValueError, match="after metadata review"):
         hardening.validate_bound_qualification_review(
             _review(),
             profile=_profile(),
             metadata_review=metadata,
-            evidence_manifest=_manifest(),
-            evidence_artifact_bytes=_artifact_bytes(),
+            evidence_manifest=manifest,
+            evidence_package_root=root,
             verifier_build_profile=_build_profile(),
         )
 
 
-def test_bound_review_requires_critical_raw_hashes_in_manifest(monkeypatch):
-    _patch_validators(monkeypatch)
+def test_bound_review_requires_critical_raw_hashes_in_manifest(tmp_path: Path, monkeypatch):
+    _patch_review_validators(monkeypatch)
+    manifest = _manifest(include_binary=False)
+    root = _write_package(tmp_path, manifest, include_binary=False)
     with pytest.raises(ValueError, match="verifier_binary_sha256 is not retained"):
         hardening.validate_bound_qualification_review(
             _review(),
             profile=_profile(),
             metadata_review=_metadata(),
-            evidence_manifest=_manifest(include_binary=False),
-            evidence_artifact_bytes=_artifact_bytes(include_binary=False),
+            evidence_manifest=manifest,
+            evidence_package_root=root,
             verifier_build_profile=_build_profile(),
         )
 
 
-def test_bound_review_requires_exact_retained_build_profile(monkeypatch):
-    _patch_validators(monkeypatch)
+def test_bound_review_requires_exact_retained_build_profile(tmp_path: Path, monkeypatch):
+    _patch_review_validators(monkeypatch)
+    manifest = _manifest(exact_build_profile=False)
+    root = _write_package(tmp_path, manifest, exact_build_profile=False)
     with pytest.raises(ValueError, match="exact JSON object is not retained"):
         hardening.validate_bound_qualification_review(
             _review(),
             profile=_profile(),
             metadata_review=_metadata(),
-            evidence_manifest=_manifest(),
-            evidence_artifact_bytes=_artifact_bytes(exact_build_profile=False),
+            evidence_manifest=manifest,
+            evidence_package_root=root,
             verifier_build_profile=_build_profile(),
         )
 
 
-def test_bound_review_cross_binds_build_profile_and_binary(monkeypatch):
-    _patch_validators(monkeypatch)
+def test_bound_review_cross_binds_build_profile_and_binary(tmp_path: Path, monkeypatch):
+    _patch_review_validators(monkeypatch)
+    manifest = _manifest()
+    root = _write_package(tmp_path, manifest)
     build_profile = _build_profile()
     build_profile["binary_sha256"] = "9" * 64
     with pytest.raises(ValueError, match="verifier binary identity mismatch"):
@@ -251,37 +294,47 @@ def test_bound_review_cross_binds_build_profile_and_binary(monkeypatch):
             _review(),
             profile=_profile(),
             metadata_review=_metadata(),
-            evidence_manifest=_manifest(),
-            evidence_artifact_bytes=_artifact_bytes(),
+            evidence_manifest=manifest,
+            evidence_package_root=root,
             verifier_build_profile=build_profile,
         )
 
 
-def test_authoritative_state_requires_artifact_bytes_once_review_exists():
-    with pytest.raises(ValueError, match="actual evidence artifact bytes"):
+def test_authoritative_state_rejects_as_of_before_review(tmp_path: Path, monkeypatch):
+    _patch_review_validators(monkeypatch)
+    manifest = _manifest()
+    root = _write_package(tmp_path, manifest)
+    with pytest.raises(ValueError, match="predates qualification review"):
         hardening.derive_authoritative_qualification_state(
             provider_id="roughtime.se",
-            as_of_utc="2026-09-14T00:00:00Z",
+            as_of_utc="2026-09-13T10:04:59Z",
             rehearsal_verified=True,
             profile=_profile(),
-            evidence_manifest=_manifest(),
+            evidence_manifest=manifest,
+            evidence_package_root=root,
             verifier_build_profile=_build_profile(),
             review=_review(),
             metadata_reviews=[_metadata()],
         )
 
 
-def test_authoritative_state_requires_build_profile_once_review_exists():
-    with pytest.raises(ValueError, match="verified Roughtime build profile"):
+def test_authoritative_state_rejects_backdated_metadata_capture(tmp_path: Path, monkeypatch):
+    _patch_review_validators(monkeypatch)
+    manifest = _manifest()
+    root = _write_package(tmp_path, manifest)
+    metadata = _metadata()
+    metadata["source_captures"][0]["retrieved_at"] = "2026-09-13T10:01:00Z"
+    with pytest.raises(ValueError, match="after metadata review"):
         hardening.derive_authoritative_qualification_state(
             provider_id="roughtime.se",
-            as_of_utc="2026-09-14T00:00:00Z",
+            as_of_utc="2026-09-13T10:06:00Z",
             rehearsal_verified=True,
             profile=_profile(),
-            evidence_manifest=_manifest(),
-            evidence_artifact_bytes=_artifact_bytes(),
+            evidence_manifest=manifest,
+            evidence_package_root=root,
+            verifier_build_profile=_build_profile(),
             review=_review(),
-            metadata_reviews=[_metadata()],
+            metadata_reviews=[metadata],
         )
 
 
@@ -301,12 +354,10 @@ def test_state_report_requires_exact_recomputation(monkeypatch):
         "derive_authoritative_qualification_state",
         lambda **_kwargs: dict(expected),
     )
-
     assert hardening.validate_qualification_state_by_recomputation(
         expected,
         rehearsal_verified=True,
     ) == "f" * 64
-
     forged = dict(expected)
     forged["state"] = "QUALIFICATION_EXPIRED"
     with pytest.raises(ValueError, match="not the exact deterministic result"):
