@@ -8,7 +8,7 @@ Current formal branch and state snapshot basis:
 
 ```text
 branch = design/gen-001
-snapshot_basis_commit = 394fae9a08d10f72b12716c84cb4f6752fd389e3
+snapshot_basis_commit = 61f1c1cbdea5d2e2ec846bba7caf59ab0c467a61
 ```
 
 The commit containing `CURRENT_STATE.md` must be identified from Git metadata; this document does not embed its own commit SHA.
@@ -136,6 +136,7 @@ PRODUCTION_QUALIFICATION_SCHEMA_META_VALIDATION = PASS_7_OF_7
 PRODUCTION_QUALIFICATION_ADVERSARIAL_HARDENING = CURRENT_KNOWN_FINDINGS_CLOSED
 PRODUCTION_QUALIFICATION_REPOSITORY_REGRESSION = PENDING
 PRODUCTION_QUALIFICATION_SIGNATURE_BACKEND = PUBLISHED_CANDIDATE_NOT_FINAL_QUALIFIED
+PRODUCTION_QUALIFICATION_SIGNATURE_BACKEND_QUALIFICATION_HARNESS = PUBLISHED_CANDIDATE
 PRODUCTION_QUALIFICATION_EXECUTION = NOT_READY
 production-qualified provider count = 0
 PRODUCTION_QUALIFIED = NO
@@ -200,7 +201,7 @@ goarch = amd64
 development_binary_sha256 = 592089f9f216e22d3e6eec63c836922fc628a91aebfc55d4829ec70fb70c99e9
 ```
 
-This development hash is not a frozen production verifier identity. Final qualification still requires a content-addressed build under the accepted Go 1.27.x toolchain.
+This development hash is not a frozen production verifier identity. A dedicated content-addressed qualification harness is now published in `scripts/genesis/qualify_ed25519_verifier.py` with build-profile schema `schemas/ed25519_verifier_build_profile.schema.json`. The harness requires exact Go 1.27.x, a closed three-file verifier source tree, a single-module graph, the frozen required PASS set, two byte-for-byte reproducible builds with distinct caches, and a content-addressed binary/build profile. Current development validation confirmed that Go 1.23.2 fails closed and writes no qualification profile. Final qualification under the accepted Go 1.27.x toolchain has not been executed.
 
 ## Regression state
 

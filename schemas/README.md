@@ -76,3 +76,19 @@ Result:
 The checked Git blob SHA1 values are retained in `docs/GEN_001_ROUGHTIME_PRODUCTION_QUALIFICATION_ADVERSARIAL_REVIEW_2026_09_13.md`.
 
 This schema check establishes meta-validity only. The exact current repository-wide pytest regression remains a separate required gate.
+
+
+## Ed25519 qualification build profile
+
+`ed25519_verifier_build_profile.schema.json` describes the content-addressed build qualification record for the verification-only Ed25519 backend used by `RoughtimeQualificationDecision` validation.
+
+Executable qualification semantics live in:
+
+```text
+src/forecast_trust_core/_ed25519_qualification.py
+scripts/genesis/qualify_ed25519_verifier.py
+```
+
+The final profile requires an exact Go 1.27.x toolchain, a closed source tree containing exactly `go.mod`, `main.go`, and `main_test.go`, no external modules, `CGO_ENABLED=0`, the frozen required test PASS set, two byte-for-byte reproducible builds with separate Go build caches, the toolchain and distribution hashes, the verifier binary SHA256, and the build-profile self hash.
+
+The schema and harness do not provide signing functionality and accept no private key. Publication of the harness does not mean the Ed25519 backend is final qualified.
