@@ -110,7 +110,7 @@ Failures are retained when they materially inform provider eligibility, operatio
 
 Repository design and candidate object work is substantially closed through GR030 for the zero recurring cash cost candidate.
 
-The Roughtime non-forecast rehearsal and its retained-evidence review are complete. GR005 through GR007 now remain open on production-criteria policy decisions and freeze, effective multi-leaf Merkle fixtures, production qualification, and separately sealed ProviderProfiles. No provider is production qualified.
+The Roughtime non-forecast rehearsal, its retained-evidence review, and the required effective multi-leaf Merkle fixture engineering are complete. GR005 through GR007 now remain open on production-criteria policy decisions and freeze, production qualification, and separately sealed ProviderProfiles. No provider is production qualified.
 
 The other external critical path continues through GR008, GR009, and GR011, plus real official archive fixtures GR017 through GR019.
 
