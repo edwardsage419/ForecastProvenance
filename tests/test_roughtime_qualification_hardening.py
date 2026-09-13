@@ -36,14 +36,17 @@ def test_tree_allowlist_rejects_symlinked_protocol_dir(tmp_path: Path):
     protocol = wrapper / "pinned" / "roughtime" / "protocol"
     external = tmp_path / "external"
     protocol.rename(external)
-    protocol.symlink_to(external, target_is_directory=True)
+    try:
+        protocol.symlink_to(external, target_is_directory=True)
+    except OSError:
+        pytest.skip("symlink creation is unavailable in this execution environment")
     with pytest.raises(ValueError, match="symlink"):
         h.validate_frozen_wrapper_tree(wrapper)
 
 
 def test_generated_binary_is_only_allowed_when_explicit(tmp_path: Path):
     wrapper = make_wrapper(tmp_path)
-    binary = wrapper / "fpp-roughtime-strict"
+    binary = h.verifier_binary_path(wrapper)
     binary.write_bytes(b"x")
     with pytest.raises(ValueError):
         h.validate_frozen_wrapper_tree(wrapper)
@@ -75,6 +78,7 @@ def _write_fake_go(path: Path, body: str) -> None:
     path.chmod(0o755)
 
 
+@pytest.mark.skipif(os.name == "nt", reason="POSIX shell fixture is not executable on Windows")
 def test_resolve_go_requires_path_binary_to_match_goroot(tmp_path: Path):
     goroot = tmp_path / "goroot"
     bindir = goroot / "bin"
@@ -94,6 +98,7 @@ def test_resolve_go_requires_path_binary_to_match_goroot(tmp_path: Path):
         h.resolve_pinned_go_binary(wrapper, {"PATH": str(shimdir)})
 
 
+@pytest.mark.skipif(os.name == "nt", reason="POSIX shell fixture is not executable on Windows")
 def test_reproducible_build_detects_nondeterminism(tmp_path: Path):
     wrapper = make_wrapper(tmp_path)
     goroot = tmp_path / "goroot2"
@@ -108,9 +113,10 @@ def test_reproducible_build_detects_nondeterminism(tmp_path: Path):
     env = h.hardened_go_env({"PATH": str(bindir) + os.pathsep + os.environ.get("PATH", ""), "HOME": str(tmp_path)}, scratch_dir=tmp_path / "scratch")
     with pytest.raises(ValueError, match="not byte-for-byte reproducible"):
         h.run_reproducible_build(go, wrapper, env, scratch_dir=tmp_path / "scratch-build")
-    assert not (wrapper / "fpp-roughtime-strict").exists()
+    assert not h.verifier_binary_path(wrapper).exists()
 
 
+@pytest.mark.skipif(os.name == "nt", reason="POSIX shell fixture is not executable on Windows")
 def test_reproducible_build_retains_verified_binary(tmp_path: Path):
     wrapper = make_wrapper(tmp_path)
     goroot = tmp_path / "goroot3"
@@ -128,7 +134,7 @@ def test_reproducible_build_retains_verified_binary(tmp_path: Path):
     digest = h.run_reproducible_build(
         go, wrapper, env, scratch_dir=tmp_path / "scratch-build-stable"
     )
-    binary = wrapper / "fpp-roughtime-strict"
+    binary = h.verifier_binary_path(wrapper)
     assert binary.read_bytes() == b"stable"
     assert len(digest) == 64
 
@@ -136,7 +142,10 @@ def test_reproducible_build_retains_verified_binary(tmp_path: Path):
 def test_exclusive_json_write_rejects_dangling_symlink(tmp_path: Path):
     output = tmp_path / "profile.json"
     target = tmp_path / "missing-target.json"
-    output.symlink_to(target)
+    try:
+        output.symlink_to(target)
+    except OSError:
+        pytest.skip("symlink creation is unavailable in this execution environment")
     with pytest.raises(ValueError, match="refusing to overwrite"):
         h.write_new_json_exclusive(output, {"x": 1})
     assert not target.exists()

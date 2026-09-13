@@ -1,3 +1,4 @@
+import hashlib
 import json
 import os
 import subprocess
@@ -6,6 +7,9 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from forecast_trust_core.canonical import canonical_json
+from forecast_trust_core._roughtime_control import BUILD_COMMAND, VERIFIER_TAG_OBJECT_SHA, compute_source_bundle_sha256, make_initial_retry_state
+from forecast_trust_core._roughtime_profile import VERIFIER_COMMIT, VERIFIER_REPOSITORY, VERIFIER_TAG
 from forecast_trust_core.roughtime_rehearsal import PROVIDER_ORDER, validate_authorization_record, validate_plan
 
 
@@ -20,10 +24,47 @@ def env():
     return value
 
 
+def write_control_artifacts(directory: Path) -> tuple[Path, Path]:
+    """Create syntactically valid, non-production control inputs for CLI tests."""
+    profile_path = directory / "verifier-build-profile.json"
+    retry_path = directory / "retry-state.json"
+    upstream = "11" * 32
+    wrapper = "22" * 32
+    profile = {
+        "schema_version": "1.2",
+        "upstream_repository": VERIFIER_REPOSITORY,
+        "upstream_tag": VERIFIER_TAG,
+        "upstream_commit": VERIFIER_COMMIT,
+        "upstream_tag_object_sha": VERIFIER_TAG_OBJECT_SHA,
+        "upstream_tag_signature_verified": True,
+        "go_version": "go1.27.1",
+        "goos": "linux",
+        "goarch": "amd64",
+        "go_toolchain_tree_sha256": "77" * 32,
+        "go_toolchain_distribution_source": "test-only",
+        "go_toolchain_distribution_sha256": "88" * 32,
+        "go_toolchain_carrier_sha256": "99" * 32,
+        "cgo_enabled": False,
+        "dependency_lock_sha256": "33" * 32,
+        "wrapper_source_tree_sha256": wrapper,
+        "upstream_source_tree_sha256": upstream,
+        "verifier_source_bundle_sha256": compute_source_bundle_sha256(upstream, wrapper),
+        "build_command": BUILD_COMMAND,
+        "binary_sha256": "44" * 32,
+        "fixture_report_sha256": "55" * 32,
+    }
+    profile["profile_sha256"] = hashlib.sha256(canonical_json(profile)).hexdigest()
+    profile_path.write_text(json.dumps(profile), encoding="utf-8")
+    retry_path.write_text(json.dumps(make_initial_retry_state()), encoding="utf-8")
+    return profile_path, retry_path
+
+
 class RoughtimeRehearsalPlanTests(unittest.TestCase):
     def test_offline_plan_freezes_deadline_and_has_no_network_authority(self):
         with tempfile.TemporaryDirectory() as tmpdir:
+            tmp = Path(tmpdir)
             output = Path(tmpdir) / "plan.json"
+            profile_path, retry_path = write_control_artifacts(tmp)
             result = subprocess.run(
                 [
                     sys.executable,
@@ -34,10 +75,8 @@ class RoughtimeRehearsalPlanTests(unittest.TestCase):
                     "SYNTHETIC_TEST_ONLY",
                     "--frozen-deadline-utc",
                     "2026-09-12T00:00:00Z",
-                    "--verifier-build-profile-sha256",
-                    "c" * 64,
-                    "--retry-state-snapshot-sha256",
-                    "d" * 64,
+                    "--verifier-build-profile", str(profile_path),
+                    "--retry-state", str(retry_path),
                     "--output",
                     str(output),
                 ],
@@ -69,14 +108,15 @@ class RoughtimeRehearsalPlanTests(unittest.TestCase):
             tmp = Path(tmpdir)
             plan_path = tmp / "plan.json"
             auth_path = tmp / "auth.json"
+            profile_path, retry_path = write_control_artifacts(tmp)
             make_plan = subprocess.run(
                 [
                     sys.executable, str(PLAN_SCRIPT),
                     "--subject-sha256", "38" * 32,
                     "--subject-label", "SYNTHETIC_TEST_ONLY",
                     "--frozen-deadline-utc", "2026-09-12T00:00:00Z",
-                    "--verifier-build-profile-sha256", "c" * 64,
-                    "--retry-state-snapshot-sha256", "d" * 64,
+                    "--verifier-build-profile", str(profile_path),
+                    "--retry-state", str(retry_path),
                     "--output", str(plan_path),
                 ],
                 cwd=ROOT, env=env(), capture_output=True, text=True, check=False,
@@ -86,6 +126,8 @@ class RoughtimeRehearsalPlanTests(unittest.TestCase):
                 [
                     sys.executable, str(AUTH_SCRIPT),
                     "--plan", str(plan_path),
+                    "--verifier-build-profile", str(profile_path),
+                    "--retry-state", str(retry_path),
                     "--authorized-by", "test:operator",
                     "--authorized-at-utc", "2026-09-11T23:00:00Z",
                     "--output", str(auth_path),
@@ -97,6 +139,8 @@ class RoughtimeRehearsalPlanTests(unittest.TestCase):
                 [
                     sys.executable, str(AUTH_SCRIPT),
                     "--plan", str(plan_path),
+                    "--verifier-build-profile", str(profile_path),
+                    "--retry-state", str(retry_path),
                     "--authorized-by", "test:operator",
                     "--authorized-at-utc", "2026-09-11T23:00:00Z",
                     "--explicit-operator-authorization",

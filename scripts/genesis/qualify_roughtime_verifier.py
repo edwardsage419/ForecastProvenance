@@ -13,6 +13,7 @@ from forecast_trust_core._roughtime_qualification_hardening import (
     resolve_pinned_go_binary,
     run_reproducible_build,
     validate_frozen_wrapper_tree,
+    verifier_binary_path,
     verify_main_module_only_with_binary,
     write_new_json_exclusive,
 )
@@ -49,7 +50,7 @@ def exact_go_env(
 
 def qualify_offline(args: argparse.Namespace) -> None:
     wrapper = args.wrapper_dir.resolve(strict=True)
-    binary = wrapper / "fpp-roughtime-strict"
+    binary = verifier_binary_path(wrapper)
     for path in (args.dependency_lock, args.fixture_report, args.build_profile, binary):
         if os.path.lexists(path):
             raise ValueError(f"refusing to overwrite existing output: {path}")

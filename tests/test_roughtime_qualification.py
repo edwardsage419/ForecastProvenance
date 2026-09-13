@@ -19,7 +19,7 @@ def go_test_json(*, omit: str | None = None, fail: str | None = None) -> bytes:
         if name == omit:
             continue
         lines.append(json.dumps({"Action": "fail" if name == fail else "pass", "Package": "fixture", "Test": name}))
-    lines.append(json.dumps({"Action": "fail" if fail else "pass", "Package": "fixture"}))
+    lines.append(json.dumps({"Action": "fail" if fail else "pass", "Package": "fixture", "Elapsed": 0.1}))
     return ("\n".join(lines) + "\n").encode()
 
 
@@ -91,7 +91,10 @@ def test_toolchain_tree_hash_binds_symlink_target(tmp_path: Path):
     (root / "VERSION").write_text("go1.27.1\n", encoding="utf-8")
     (root / "bin").mkdir()
     (root / "bin" / "go").write_bytes(b"go")
-    (root / "link").symlink_to("bin/go")
+    try:
+        (root / "link").symlink_to("bin/go")
+    except OSError:
+        pytest.skip("symlink creation is unavailable in this execution environment")
     first = q.compute_directory_tree_sha256(root)
     (root / "link").unlink()
     (root / "link").symlink_to("VERSION")
@@ -129,6 +132,29 @@ def test_fixture_report_rejects_missing_or_failed_required_test(tmp_path: Path):
         q.make_fixture_report(go_test_json(omit=sorted(q.REQUIRED_FIXTURE_TESTS)[0]), **kwargs)
     with pytest.raises(ValueError):
         q.make_fixture_report(go_test_json(fail=sorted(q.REQUIRED_FIXTURE_TESTS)[0]), **kwargs)
+
+
+def test_fixture_report_rejects_any_failed_package_even_if_later_package_passes(tmp_path: Path):
+    wrapper = make_wrapper(tmp_path)
+    lock = q.make_dependency_lock(wrapper)
+    lines = [
+        json.dumps({"Action": "pass", "Package": "fixture", "Test": name})
+        for name in sorted(q.REQUIRED_FIXTURE_TESTS)
+    ]
+    lines.extend((
+        json.dumps({"Action": "fail", "Package": "fixture/failed-package"}),
+        json.dumps({"Action": "pass", "Package": "fixture/passing-package"}),
+    ))
+    with pytest.raises(ValueError, match="package did not finish with PASS"):
+        q.make_fixture_report(
+            ("\n".join(lines) + "\n").encode(),
+            go_version="go1.27.1",
+            goos="linux",
+            goarch="amd64",
+            go_toolchain_tree_sha256="77" * 32,
+            wrapper_source_tree_sha256=q.compute_wrapper_source_tree_sha256(wrapper),
+            upstream_source_tree_sha256=lock["upstream_source_tree_sha256"],
+        )
 
 
 def test_build_profile_cross_binds_source_and_toolchain(tmp_path: Path):

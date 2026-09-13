@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import os
 import re
 import stat
@@ -243,19 +244,38 @@ def parse_go_test_json(data: bytes) -> tuple[list[dict[str, str]], bool]:
     failed: set[str] = set()
     skipped: set[str] = set()
     package_pass = False
+    package_fail = False
     for line_number, raw in enumerate(data.splitlines(), 1):
         if not raw.strip():
             continue
-        event = parse_json_strict(raw)
+        def pairs_hook(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+            event: dict[str, Any] = {}
+            for key, value in pairs:
+                if key in event:
+                    raise ValueError(f"go test JSON line {line_number} has duplicate key: {key}")
+                event[key] = value
+            return event
+
+        try:
+            event = json.loads(
+                raw.decode("utf-8"), object_pairs_hook=pairs_hook,
+                parse_constant=lambda value: (_ for _ in ()).throw(ValueError(f"non-standard JSON constant: {value}")),
+            )
+        except (UnicodeDecodeError, json.JSONDecodeError, ValueError) as exc:
+            raise ValueError(f"invalid go test JSON line {line_number}") from exc
         if not isinstance(event, dict):
             raise ValueError(f"go test JSON line {line_number} is not an object")
         action = event.get("Action")
         test = event.get("Test")
+        if action is not None and not isinstance(action, str):
+            raise ValueError(f"go test JSON line {line_number} Action is not a string")
+        if test is not None and not isinstance(test, str):
+            raise ValueError(f"go test JSON line {line_number} Test is not a string")
         if test is None:
             if action == "pass":
                 package_pass = True
             elif action == "fail":
-                package_pass = False
+                package_fail = True
             continue
         if not isinstance(test, str) or not test.startswith("Test"):
             continue
@@ -271,7 +291,7 @@ def parse_go_test_json(data: bytes) -> tuple[list[dict[str, str]], bool]:
     missing = sorted(REQUIRED_FIXTURE_TESTS - passed)
     if missing:
         raise ValueError(f"required fixture tests missing PASS events: {missing}")
-    return [{"name": name, "result": "PASS"} for name in sorted(passed)], package_pass
+    return [{"name": name, "result": "PASS"} for name in sorted(passed)], package_pass and not package_fail
 
 def make_fixture_report(
     go_test_json: bytes, *, go_version: str, goos: str, goarch: str,

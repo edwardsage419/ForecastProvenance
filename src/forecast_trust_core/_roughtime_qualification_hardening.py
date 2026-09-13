@@ -26,7 +26,11 @@ _EXPECTED_FILES = frozenset(
     | {"pinned/roughtime/LICENSE", "pinned/roughtime/SOURCE_PROVENANCE.json"}
     | {f"pinned/roughtime/protocol/{name}" for name in PINNED_PROTOCOL_FILES}
 )
-_GENERATED_BINARY = "fpp-roughtime-strict"
+_GENERATED_BINARY = "fpp-roughtime-strict.exe" if os.name == "nt" else "fpp-roughtime-strict"
+
+
+def verifier_binary_path(wrapper_dir: Path) -> Path:
+    return wrapper_dir / _GENERATED_BINARY
 
 
 def _sha256_file(path: Path) -> str:
@@ -106,7 +110,8 @@ def resolve_pinned_go_binary(wrapper_dir: Path, env: Mapping[str, str]) -> tuple
     if not goroot_text:
         raise ValueError("go env GOROOT returned an empty path")
     goroot = Path(goroot_text).resolve(strict=True)
-    expected = (goroot / "bin" / "go").resolve(strict=True)
+    expected_name = "go.exe" if os.name == "nt" else "go"
+    expected = (goroot / "bin" / expected_name).resolve(strict=True)
     try:
         same = candidate.samefile(expected)
     except OSError as exc:
@@ -142,6 +147,8 @@ def hardened_go_env(base_env: Mapping[str, str], *, scratch_dir: Path) -> dict[s
         "GOCACHE": str(scratch / "gocache"),
         "GOMODCACHE": str(scratch / "gomodcache"),
         "TMPDIR": str(scratch / "tmp"),
+        "TEMP": str(scratch / "tmp"),
+        "TMP": str(scratch / "tmp"),
     })
     Path(env["GOCACHE"]).mkdir(parents=True, exist_ok=True)
     Path(env["GOMODCACHE"]).mkdir(parents=True, exist_ok=True)
@@ -159,7 +166,7 @@ def verify_main_module_only_with_binary(go_binary: Path, wrapper_dir: Path, env:
 def run_reproducible_build(
     go_binary: Path, wrapper_dir: Path, env: Mapping[str, str], *, scratch_dir: Path
 ) -> str:
-    binary = wrapper_dir / _GENERATED_BINARY
+    binary = verifier_binary_path(wrapper_dir)
     if os.path.lexists(binary):
         raise ValueError(f"refusing to overwrite existing output: {binary}")
 

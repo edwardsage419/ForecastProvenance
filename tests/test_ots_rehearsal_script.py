@@ -9,6 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "scripts" / "genesis" / "ots_rehearsal.sh"
 
 
+@unittest.skipIf(os.name == "nt", "POSIX shell fixture requires a POSIX execution environment")
 class OTSRehearsalScriptTests(unittest.TestCase):
     def _write_fake_ots(self, bindir: Path) -> None:
         fake = bindir / "ots"
@@ -68,7 +69,7 @@ esac
             self._seed_retained_material(outdir, b"subject", original)
 
             env = dict(os.environ)
-            env["PATH"] = f"{bindir}:{env['PATH']}"
+            env["PATH"] = f"{bindir}{os.pathsep}{env['PATH']}"
             env["FAKE_OTS_MODE"] = "fail"
             failed = subprocess.run(
                 ["bash", str(SCRIPT), "upgrade", str(source), str(outdir)],

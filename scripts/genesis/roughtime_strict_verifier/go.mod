@@ -1,3 +1,3 @@
 module forecastprovenance/roughtime_strict_verifier
 
-go 1.23.0
+go 1.27.0
