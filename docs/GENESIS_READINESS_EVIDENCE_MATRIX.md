@@ -31,7 +31,10 @@ A readiness item closes only when the required evidence exists, is content addre
 | Non-forecast rehearsal execution | COMPLETED_3_OF_3_QUALIFYING | The exact authorization was consumed and cannot be reused |
 | Rehearsal evidence review | PASS | Retained evidence supports later independent qualification review |
 | Production qualification criteria | FROZEN_V1 | `FPP_ROUGHTIME_PRODUCTION_QUALIFICATION_V1` is frozen by exact SHA256 `88cc910fdb7e573f3a84d860ad0cdc5fffc287db18678956c7e50dc52a07639e`; this does not qualify a provider |
-| Production qualification execution | NOT_READY_SCHEMA_AND_VALIDATOR_GATE | Production ProviderProfile, qualification decision/state, complete evidence manifest, independent review schemas, validators, and required owner authority inputs are not yet ready |
+| Production qualification object model | PUBLISHED_HARDENED_CANDIDATE | Seven production schemas, semantic validators, authoritative package closure, signed-decision projection, requalification events, and deterministic state derivation exist |
+| Production schema meta-validation | PASS_7_OF_7 | Exact committed schema bytes passed Draft 2020-12 `check_schema`; this does not replace repository regression or semantic validation |
+| Ed25519 decision verification backend | PUBLISHED_CANDIDATE_NOT_FINAL_QUALIFIED | Verification-only Go standard-library backend exists; final content-addressed Go 1.27.x build qualification remains required |
+| Production qualification execution | NOT_READY_REGRESSION_FINAL_BUILD_AUTHORITY_GATE | Exact current-HEAD full regression, final signature-backend build qualification, external owner public-key identity, and provider-specific qualification evidence remain open |
 | Genesis readiness | NOT_READY | Roughtime production qualification and other GR items remain open |
 
 ## Evidence matrix
@@ -42,7 +45,7 @@ A readiness item closes only when the required evidence exists, is content addre
 | GR002 | Trust Core synthetic adversarial execution | CLOSED_REPOSITORY | ADV001 through ADV096 executable synthetic results |
 | GR003 | Dual external time architecture | CLOSED_DESIGN | FPP_TIME_EVIDENCE_V1 design separating wall clock deadline evidence from Bitcoin durability |
 | GR004 | Deadline receipt quorum rule | CLOSED_REPOSITORY | `policy:deadline-receipt-quorum:v3` requiring two of three frozen independent Roughtime provider groups, zero recurring cash cost, provider outage never lowering quorum, and exact protocol/control bindings |
-| GR005 | Roughtime provider profile: roughtime.se | PRODUCTION_QUALIFICATION_REQUIRED | Frozen criteria, reviewed retained evidence, two-event repeatability under the exact profile, current permission basis, positive root/issuance independence evidence, complete manifest, independent review, explicit owner-authorized QualificationDecision, and sealed ProviderProfile |
+| GR005 | Roughtime provider profile: roughtime.se | PRODUCTION_QUALIFICATION_REQUIRED | Frozen criteria, reviewed retained evidence, two-event repeatability under the exact profile, current permission basis, positive root/issuance independence evidence, complete scanned evidence package, independent review, explicit owner-authorized QualificationDecision, and sealed ProviderProfile |
 | GR006 | Roughtime provider profile: time.txryan.com | PRODUCTION_QUALIFICATION_REQUIRED | Same retained evidence standard as GR005, including independent issuance/root-control classification and correlated-software risk review |
 | GR007 | Roughtime provider profile: TimeNL-Roughtime | PRODUCTION_QUALIFICATION_REQUIRED | Same retained evidence standard as GR005 plus the frozen pilot conditions: explicit automated production-use permission, at least 90 days continuity evidence, current pilot/transition review, and no specific operator production prohibition |
 | GR008 | OpenTimestamps non forecast rehearsal | OWNER_ACTION_REQUIRED | Stamp file, upgraded proof bytes, subject hash, command and verifier versions |
@@ -104,13 +107,19 @@ Rehearsal outputs are permanently labeled non prospective.
 
 Successful rehearsal evidence may satisfy individual frozen qualification criteria after independent review. It never becomes a native forecast record and never changes historical classification.
 
+Production qualification evidence must be validated through the authoritative package-root hardening path. A caller-selected in-memory artifact list is not sufficient proof of complete retained package closure.
+
 Failures are retained when they materially inform provider eligibility, operational reliability, or abort rules.
 
 ## Current boundary
 
 Repository design and candidate object work is substantially closed through GR030 for the zero recurring cash cost candidate.
 
-The Roughtime production qualification governance criteria are now frozen as `FPP_ROUGHTIME_PRODUCTION_QUALIFICATION_V1`. The non-forecast rehearsal, its retained-evidence review, and the required effective multi-leaf Merkle fixture engineering are complete. GR005 through GR007 remain open on schema and validator readiness, owner authority input where required, frozen-criteria evidence review, repeatability evidence, production qualification decisions, and separately sealed ProviderProfiles. No provider is production qualified.
+The Roughtime production qualification governance criteria are frozen as `FPP_ROUGHTIME_PRODUCTION_QUALIFICATION_V1`. The production qualification object model, seven schemas, signature projection, evidence-package hardening, and verification-only Ed25519 backend candidate now exist. Exact committed schema bytes passed Draft 2020-12 meta-validation.
+
+The repository-wide regression for the current exact branch HEAD remains pending. The signature backend also requires final content-addressed build qualification under the accepted Go 1.27.x toolchain. GR011 owner public-key input remains required before an owner-authorized QualificationDecision can exist.
+
+GR005 through GR007 remain open on actual frozen-criteria evidence review, repeatability, production-use permission, positive independence evidence, current metadata, production qualification decisions, and separately sealed ProviderProfiles. No provider is production qualified.
 
 The other external critical path continues through GR008, GR009, and GR011, plus real official archive fixtures GR017 through GR019.
 

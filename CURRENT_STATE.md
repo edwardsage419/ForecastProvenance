@@ -8,7 +8,7 @@ Current formal branch and state snapshot basis:
 
 ```text
 branch = design/gen-001
-snapshot_basis_commit = 17f3207b3995ecb061dbde788545a426d6cdba6c
+snapshot_basis_commit = 394fae9a08d10f72b12716c84cb4f6752fd389e3
 ```
 
 The commit containing `CURRENT_STATE.md` must be identified from Git metadata; this document does not embed its own commit SHA.
@@ -68,9 +68,7 @@ Current pool:
 2. `time.txryan.com`
 3. `TimeNL-Roughtime`
 
-Cloudflare-Roughtime-2 is removed from the current pool after a concrete unresolved IETF interoperability issue was identified. It remains historical review evidence only.
-
-The repository-owned execution orchestrator is published and its offline control, failure-path, schema, and regression checks passed before the retained rehearsal.
+Cloudflare-Roughtime-2 remains removed from the current pool after an unresolved IETF interoperability issue was identified. It remains historical review evidence only.
 
 One separately authorized `NON_FORECAST_REHEARSAL` has completed against the frozen pool. All three providers returned a qualifying first-attempt response. The retained report status and independent review state are:
 
@@ -90,30 +88,22 @@ No new provider request is authorized. Repository development-time `network_auth
 
 ## Protocol freeze
 
-Current nonce profile:
+Current nonce profile is `FPP_ROUGHTIME_NONCE_V2`.
 
-`FPP_ROUGHTIME_NONCE_V2`
-
-It produces an exact 32-byte SHA-256 nonce from the raw 32-byte subject SHA256 and fresh 32-byte provider-specific client randomness.
-
-Current request profile:
+Current request profile remains:
 
 ```text
 STANDARD_1024_BODY
 UDP_ONLY
-all three providers evaluated; each is attempted only when persistent retry state permits
 2 receipts required
 protocol fallback prohibited
 packet fallback prohibited
 transport fallback prohibited
 maximum 2 attempts per provider
 persistent exponential retry state per root
-properly signed but project-nonqualifying response stops retry and resets protocol backoff
 ```
 
-Draft labels and verifiable wire profiles are recorded separately because drafts 12 through 19 share the testing wire version `0x8000000c`.
-
-The current pinned verifier candidate is:
+The current pinned strict Roughtime verifier lineage remains:
 
 ```text
 github.com/tannerryan/roughtime
@@ -121,42 +111,17 @@ tag v1.27.0
 commit 56b346a16cd7e8317bb0d24f1ec15549cf93a4c9
 ```
 
-The vendored strict low-level wrapper was qualified offline under Go 1.27.x and the executed rehearsal bound its exact content-addressed verifier build profile and pre-attempt retry-state snapshot. Future events must independently repeat the required freshness checks and bind their own exact plan, authorization, build profile, and retry-state snapshot.
-
-The Merkle fixture engineering gap is closed. Effective deterministic offline multi-leaf coverage exists for typed hash-first, typed node-first, untyped draft-12 node-first, and negative wrong-order rejection. Each positive ordering fixture uses a two-leaf tree and demonstrates a PATH of exactly 1 hash / 32 bytes. This fixture completion did not itself qualify a provider.
-
-## Evidence validation
-
-Roughtime JSON Schemas are descriptive interoperability constraints.
-
-Cross-field acceptance is controlled by executable semantic validation. Existing rehearsal validation recomputes:
-
-```text
-plan and authorization content hashes
-nonce derivation
-raw request and response hashes
-midpoint + radius upper bound
-retry request-byte identity
-provider qualification count
-final quorum status
-sealed report and receipt hashes
-```
-
-Schema-valid but semantically inconsistent evidence fails closed. Semantic validation is not a substitute for cryptographic replay: every qualifying raw request/response/nonce/profile tuple must also replay successfully through the pinned low-level verifier, and each qualifying receipt must bind a verification transcript hash.
+The vendored strict low-level wrapper was qualified offline under Go 1.27.x before the retained rehearsal. The Merkle fixture engineering gap remains closed with deterministic multi-leaf coverage for typed hash-first, typed node-first, untyped draft-12 node-first, and negative wrong-order rejection.
 
 ## OpenTimestamps
 
 OTS remains the Bitcoin durability layer.
 
-The rehearsal script uses append-only event directories for stamp, upgrade and verify steps so tool versions, output, proof hashes and failed attempts are not overwritten.
-
 Strong verification still requires owner-controlled Bitcoin Core. RPC credentials remain local and are never retained.
 
 ## RFC 3161
 
-Checker version 1.3 / report schema 1.2 remain closed absent a concrete new correctness or security defect.
-
-Retained historical reports remain unchanged.
+Checker version 1.3 and report schema 1.2 remain closed absent a concrete new correctness or security defect.
 
 Commercial Sectigo and Signicat qualification work remains paused for the zero-cost Genesis minimum profile.
 
@@ -167,6 +132,8 @@ PRODUCTION_QUALIFICATION_CRITERIA = FROZEN_V1
 criteria_id = FPP_ROUGHTIME_PRODUCTION_QUALIFICATION_V1
 criteria_sha256 = 88cc910fdb7e573f3a84d860ad0cdc5fffc287db18678956c7e50dc52a07639e
 PRODUCTION_QUALIFICATION_OBJECT_MODEL = PUBLISHED_HARDENED_CANDIDATE
+PRODUCTION_QUALIFICATION_SCHEMA_META_VALIDATION = PASS_7_OF_7
+PRODUCTION_QUALIFICATION_ADVERSARIAL_HARDENING = CURRENT_KNOWN_FINDINGS_CLOSED
 PRODUCTION_QUALIFICATION_REPOSITORY_REGRESSION = PENDING
 PRODUCTION_QUALIFICATION_SIGNATURE_BACKEND = PUBLISHED_CANDIDATE_NOT_FINAL_QUALIFIED
 PRODUCTION_QUALIFICATION_EXECUTION = NOT_READY
@@ -174,63 +141,105 @@ production-qualified provider count = 0
 PRODUCTION_QUALIFIED = NO
 ```
 
-The governance freeze is recorded in `docs/GEN_001_ROUGHTIME_PRODUCTION_QUALIFICATION_GOVERNANCE_FREEZE_V1.md`. It resolves pilot admissibility, SLA policy, production-use permission evidence, 30-day live freshness, two-event repeatability separated by at least seven days, 90-day metadata review, positive root/issuance independence evidence, the two-vote common-dependency threshold, and manifest sealing plus qualification authority.
+The governance criteria are frozen by `docs/GEN_001_ROUGHTIME_PRODUCTION_QUALIFICATION_GOVERNANCE_FREEZE_V1.md`.
 
-The production qualification object model is published in commit `7819fce93964b3755364fa96a38adc91084e73ae`. It adds schemas and semantic validation for production ProviderProfile candidates, complete evidence manifests, operator metadata reviews, independent qualification reviews, owner-authorized QualificationDecision records, append-only requalification events, and deterministic qualification state reports.
+The production qualification object model covers production ProviderProfile candidates, complete evidence manifests, operator metadata reviews, independent qualification reviews, owner-authorized QualificationDecision records, append-only requalification events, and deterministic qualification state reports.
 
-The hardening review in commit `c6e375eb60ba4cec70a8de061c6f71c44ccc5fac` closes four pre-regression cross-binding defects:
+The authoritative hardening path now requires a real qualification evidence package root. It scans the physical package itself, requires an actual manifest file whose bytes are exact `FPP_JCS_1` canonical manifest bytes, and then validates exact file-set closure, file sizes and SHA256 values. A caller-selected in-memory artifact list is insufficient proof of package completeness.
 
-1. criterion evidence hashes must be retained by the complete evidence manifest;
-2. qualification execution and independent review must use distinct recorded event identities;
-3. metadata source captures cannot postdate the qualification review that relies on them;
-4. a qualification state report is authoritative only after exact deterministic recomputation from immutable inputs.
-
-The lower-level state-report structural validator is not a qualification authority.
-
-The QualificationDecision signature projection is `FPP_ROUGHTIME_QUALIFICATION_DECISION_V1`. Validation receives the expected authority ID and exact Ed25519 public key from outside the decision object. Repository code contains no signing path and does not receive the private key.
-
-The pinned Ed25519 verification backend candidate is published in commit `17f3207b3995ecb061dbde788545a426d6cdba6c`. It uses only Go standard-library `crypto/ed25519.Verify`, exposes verification only, and has no signing or private-key input path. Its Python adapter pins the executable by SHA256. A subsequent adversarial review identified a relative-path/PATH substitution risk in the adapter; the repair resolves the executable to a canonical absolute path before invocation and retains pre- and post-execution binary hash checks.
-
-Development-only isolated verification for the signature backend completed with RFC 8032 public verification vectors, mutated message/public-key/signature rejection, strict JSON/Base64 parser failures, binary-hash substitution rejection, Go vet PASS, and same-environment reproducible development builds. The observed development binary SHA256 was `592089f9f216e22d3e6eec63c836922fc628a91aebfc55d4829ec70fb70c99e9` under Go `go1.23.2` on `linux/amd64`. This development hash is not a frozen production verifier identity and does not replace the required Go 1.27.x final build qualification.
-
-Development-only isolated tests completed for the new object-model logic:
+Review cross-binding now requires:
 
 ```text
-object-model focused tests = 10 PASS, 1 DESELECTED
-hardening focused tests = 4 PASS
-Ed25519 adapter repository-focused tests = 4 PASS before canonical-path hardening
-canonical-path hardening focused test = 1 PASS
-full repository regression at current HEAD = NOT RUN
+all criterion evidence hashes retained by the complete package
+execution_report_sha256 retained as raw file SHA256
+verifier_binary_sha256 retained as raw binary SHA256
+review_basis_sha256 retained as raw file SHA256
+validated verifier build profile internal profile_sha256 bound to ProviderProfile and review
+verifier build profile binary_sha256 bound to the retained verifier binary
+exact verifier build profile JSON object retained inside the package
+executor and reviewer event identities distinct
 ```
 
-The deselected object-model test is the repository criteria-byte hash check, which requires the actual repository tree. These isolated results are not accepted as the frozen `SCHEMA_VALIDATOR_REGRESSION` evidence.
+Temporal hardening requires every metadata source capture to exist no later than its metadata review time. The authoritative state path also rejects `as_of_utc` earlier than the independent qualification review.
 
-The final readiness harness was corrected in commit `3fad38c198eb57a43b895d478f0835855df76f46` so pytest collects both unittest-style and pytest-style tests. Pytest is now an exact pinned test-only optional dependency. Runtime dependencies remain empty.
+A state report has no independent authority. Production state is accepted only after exact recomputation through the authoritative hardening path.
 
-A current full repository regression could not be executed in the isolated environment because DNS resolution for `github.com` failed on the latest single read-only repository access attempt. No retry loop was used and no PASS claim is made.
+The current adversarial review is recorded in `docs/GEN_001_ROUGHTIME_PRODUCTION_QUALIFICATION_ADVERSARIAL_REVIEW_2026_09_13.md`.
 
-Qualification execution remains blocked by the exact committed-tree repository regression, repository JSON Schema validation, adversarial review of the hardened object model and signature backend, a final content-addressed Ed25519 verifier build profile under the accepted Go 1.27.x toolchain, and the required external authority public-key identity.
+## Production schema validation
+
+The exact committed bytes of all seven production qualification schemas completed Draft 2020-12 meta-validation with `jsonschema 4.26.0`:
+
+```text
+7 PASS
+0 FAIL
+```
+
+The checked Git blob identities are retained in the adversarial review document.
+
+This closes schema meta-validity only. It does not replace semantic validation or the exact current-HEAD full repository regression.
+
+## QualificationDecision and Ed25519 verification
+
+The QualificationDecision signature projection is `FPP_ROUGHTIME_QUALIFICATION_DECISION_V1`.
+
+Validation receives the expected authority ID and exact Ed25519 public key from outside the decision object. Repository code contains no signing path and receives no private key.
+
+The verification-only Ed25519 backend candidate uses Go standard-library `crypto/ed25519.Verify` and a Python adapter that pins the executable by SHA256.
+
+A path-substitution review found and repaired a relative executable path issue. The adapter now resolves the accepted executable to an absolute canonical path before invocation and checks its SHA256 both before and after execution.
+
+Development-only validation included RFC 8032 public verification vectors, mutation rejection, strict JSON/Base64 failure paths, binary hash substitution rejection, `go vet`, and same-environment reproducible builds.
+
+Observed development build:
+
+```text
+go_version = go1.23.2
+goos = linux
+goarch = amd64
+development_binary_sha256 = 592089f9f216e22d3e6eec63c836922fc628a91aebfc55d4829ec70fb70c99e9
+```
+
+This development hash is not a frozen production verifier identity. Final qualification still requires a content-addressed build under the accepted Go 1.27.x toolchain.
+
+## Regression state
+
+The final readiness harness uses pytest so unittest-style and pytest-style tests are both collected. Pytest is a pinned test-only dependency. Production runtime dependencies remain empty.
+
+Focused isolated tests were used to reproduce and close the adversarial findings above. These focused results are development evidence only.
+
+The exact current branch HEAD has not completed the full repository-wide regression in the isolated execution environment. The latest controlled direct repository access attempt failed because the environment could not resolve `github.com`. No retry loop was used and no PASS claim is made.
+
+`PRODUCTION_QUALIFICATION_REPOSITORY_REGRESSION` therefore remains `PENDING`.
+
+## Remaining Roughtime production blockers
+
+Before production qualification execution can become ready, the project still requires:
+
+1. complete repository regression and required compile checks on the exact committed branch tree;
+2. final content-addressed Ed25519 verification backend build qualification under the accepted Go 1.27.x toolchain;
+3. owner-generated bootstrap Ed25519 public key only, with the private key remaining outside repository and connected tooling;
+4. frozen-criteria evaluation of retained rehearsal evidence;
+5. new separately authorized live repeatability evidence when required by the frozen criteria;
+6. current production-use permission, continuity, independence, freshness, operational, and common-dependency evidence for all three providers;
+7. final separate independent reviews, ProviderProfiles, and owner-authorized QualificationDecisions for all three providers.
 
 No production ProviderProfile or QualificationDecision has been instantiated.
 
-Retained rehearsal evidence may later be evaluated against the frozen criteria. It remains `NON_FORECAST_REHEARSAL`, `prospective_eligible = false`, and cannot automatically qualify any provider.
+Retained rehearsal evidence remains `NON_FORECAST_REHEARSAL`, `prospective_eligible = false`, and cannot automatically qualify any provider.
 
 ## Other external blockers
 
-Still required:
+Still required outside the Roughtime implementation work:
 
-1. owner-generated bootstrap Ed25519 public key only;
-2. exact committed-tree regression and JSON Schema validation for the hardened production qualification object model;
-3. final content-addressed Ed25519 verification backend build qualification under the accepted Go 1.27.x toolchain plus adversarial review;
-4. independent frozen-criteria production qualification of all three current Roughtime providers and final sealed ProviderProfiles;
-5. OTS/Bitcoin strong rehearsal and final verifier profile;
-6. three retrospective official BLS/BEA fixture byte sets and adapter reports;
-7. final clean test report and ValidatorContract;
-8. final BootstrapGovernanceRoot, TrustedManifest, ManifestAcceptance, external evidence and adversarial review.
+1. OTS/Bitcoin strong rehearsal and final verifier profile;
+2. three retrospective official BLS/BEA fixture byte sets and adapter reports;
+3. final clean test report and ValidatorContract;
+4. final BootstrapGovernanceRoot, TrustedManifest, ManifestAcceptance, external evidence, and final adversarial review.
 
 ## Standards-transition gate
 
-Roughtime draft-19 is in the RFC publication process with intended Experimental status. Any change in final wire version, provider protocol profile, endpoint, key, TYPE behavior, transport requirement or verifier semantics before final freeze requires read-only re-review and a versioned profile change. No automatic migration is permitted.
+Roughtime draft-19 remains in the RFC publication process with intended Experimental status. Any change in final wire version, provider protocol profile, endpoint, key, TYPE behavior, transport requirement, or verifier semantics before final freeze requires read-only re-review and a versioned profile change. No automatic migration is permitted.
 
 ## Safety state
 
@@ -241,7 +250,8 @@ Forecast Ledger = NOT CREATED
 prospective forecast count = 0
 production-qualified provider count = 0
 PRODUCTION_QUALIFIED = NO
+production forecasting = PROHIBITED
 network_authorized = false
 ```
 
-No Roughtime request, RFC3161 request, prospective forecast, production ProviderProfile, QualificationDecision, Genesis acceptance or Forecast Ledger creation is authorized by this state.
+No Roughtime request, RFC 3161 request, prospective forecast, production ProviderProfile, QualificationDecision, Genesis acceptance, or Forecast Ledger creation is authorized by this state.
