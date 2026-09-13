@@ -71,3 +71,13 @@ def test_invalid_input_lengths_fail_before_process(ed25519_binary: Path) -> None
         verifier(b"x" * 32, b"", b"y" * 63)
     with pytest.raises(ValueError, match="size limit"):
         verifier(b"x" * 32, b"z" * (1024 * 1024 + 1), b"y" * 64)
+
+
+def test_relative_binary_path_is_canonicalized(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    binary = tmp_path / ("candidate.exe" if os.name == "nt" else "candidate")
+    binary.write_bytes(b"candidate bytes")
+    digest = hashlib.sha256(binary.read_bytes()).hexdigest()
+    monkeypatch.chdir(tmp_path)
+    verifier = PinnedEd25519Verifier(Path(binary.name), digest)
+    assert verifier.binary_path == binary.resolve()
+    assert verifier.binary_path.is_absolute()

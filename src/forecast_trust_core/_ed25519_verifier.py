@@ -63,7 +63,15 @@ class PinnedEd25519Verifier:
     timeout_seconds: int = 5
 
     def __post_init__(self) -> None:
-        path = Path(self.binary_path)
+        raw_path = Path(self.binary_path)
+        if raw_path.is_symlink():
+            raise ValueError("Ed25519 verifier binary must not be a symlink")
+        try:
+            path = raw_path.resolve(strict=True)
+        except OSError as exc:
+            raise ValueError("Ed25519 verifier binary path cannot be resolved") from exc
+        if not path.is_file():
+            raise ValueError("Ed25519 verifier binary must be a regular file")
         object.__setattr__(self, "binary_path", path)
         if not isinstance(self.binary_sha256, str) or HEX64_RE.fullmatch(self.binary_sha256) is None:
             raise ValueError("binary_sha256 must be 64 lowercase hex characters")
