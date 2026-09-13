@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://forecastprovenance.org/schemas/ed25519_verifier_build_profile.schema.json",
+  "title": "Ed25519 Verification Backend Build Profile",
+  "type": "object",
+  "required": [
+    "schema_version", "object_type", "source_files", "source_tree_sha256", "main_module",
+    "go_version", "goos", "goarch", "go_toolchain_tree_sha256",
+    "go_toolchain_distribution_source", "go_toolchain_distribution_sha256",
+    "go_toolchain_carrier_sha256", "cgo_enabled", "network_used", "external_modules_used",
+    "test_command", "required_tests", "fixture_tests", "build_command",
+    "reproducible_build", "binary_sha256", "profile_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "object_type": {"const": "Ed25519VerifierBuildProfile"},
+    "source_files": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "required": ["path", "sha256"],
+        "properties": {
+          "path": {"enum": ["go.mod", "main.go", "main_test.go"]},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "source_tree_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "main_module": {"const": "forecastprovenance/ed25519_verify"},
+    "go_version": {"type": "string", "pattern": "^go1\\.27\\.[0-9]+$"},
+    "goos": {"type": "string", "pattern": "^\\S+$"},
+    "goarch": {"type": "string", "pattern": "^\\S+$"},
+    "go_toolchain_tree_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "go_toolchain_distribution_source": {"type": "string", "minLength": 1, "pattern": "^[^\\r\\n]+$"},
+    "go_toolchain_distribution_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "go_toolchain_carrier_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "cgo_enabled": {"const": false},
+    "network_used": {"const": false},
+    "external_modules_used": {"const": false},
+    "test_command": {"const": "go test -count=1 -json ./..."},
+    "required_tests": {
+      "type": "array",
+      "minItems": 10,
+      "maxItems": 10,
+      "items": {"type": "string", "pattern": "^Test[A-Za-z0-9_]+$"}
+    },
+    "fixture_tests": {
+      "type": "array",
+      "minItems": 10,
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "required": ["name", "result"],
+        "properties": {
+          "name": {"type": "string", "pattern": "^Test[A-Za-z0-9_]+$"},
+          "result": {"const": "PASS"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "build_command": {"const": "go build -trimpath -buildvcs=false -ldflags=-buildid= -o fpp-ed25519-verify ."},
+    "reproducible_build": {"const": true},
+    "binary_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "profile_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "additionalProperties": false
+}
