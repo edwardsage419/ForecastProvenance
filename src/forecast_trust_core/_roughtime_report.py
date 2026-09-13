@@ -4,7 +4,8 @@ from typing import Any, Mapping
 
 from forecast_trust_core.canonical import verify_sealed_object
 from forecast_trust_core._roughtime_profile import (
-    FAILURE_CODES, MAX_ATTEMPTS_PER_PROVIDER, PROVIDER_ORDER, VERIFIED_NONQUALIFYING_CODES, VERIFIER_COMMIT, VERIFIER_REPOSITORY, VERIFIER_TAG,
+    FAILURE_CODES_V1_1, FAILURE_CODES_V1_2, MAX_ATTEMPTS_PER_PROVIDER, PROVIDER_ORDER,
+    VERIFIED_NONQUALIFYING_CODES, VERIFIER_COMMIT, VERIFIER_REPOSITORY, VERIFIER_TAG,
 )
 from forecast_trust_core._roughtime_support import (
     ATTEMPT_KEYS_OPTIONAL, ATTEMPT_KEYS_REQUIRED, REPORT_KEYS, _decode_base64, _lower_hex_32, _require_allowed_keys,
@@ -22,8 +23,10 @@ def validate_rehearsal_report(
     validate_plan(plan)
     validate_authorization_record(authorization, plan)
     _require_exact_keys(report, REPORT_KEYS, "report")
-    if report.get("schema_version") != "1.1":
+    schema_version = report.get("schema_version")
+    if schema_version not in {"1.1", "1.2"}:
         raise ValueError("unsupported report schema_version")
+    failure_codes = FAILURE_CODES_V1_1 if schema_version == "1.1" else FAILURE_CODES_V1_2
     if not verify_sealed_object(report):
         raise ValueError("rehearsal report seal invalid")
     if report.get("object_type") != "RoughtimeRehearsalReport":
@@ -121,7 +124,7 @@ def validate_rehearsal_report(
                 last_failure_code = failure_code
             elif outcome == "FAILED":
                 failure_code = attempt.get("failure_code")
-                if failure_code not in FAILURE_CODES or failure_code in VERIFIED_NONQUALIFYING_CODES or failure_code == "BACKOFF_ACTIVE":
+                if failure_code not in failure_codes or failure_code in VERIFIED_NONQUALIFYING_CODES or failure_code == "BACKOFF_ACTIVE":
                     raise ValueError("failed network attempt uses invalid failure code")
                 last_failure_code = failure_code
             else:
@@ -143,7 +146,7 @@ def validate_rehearsal_report(
         else:
             if terminal_verified_outcome == "QUALIFYING_VERIFIED_RESPONSE":
                 raise ValueError("qualifying verified response cannot be reported as non-qualifying")
-            if final_failure not in FAILURE_CODES or final_failure == "BACKOFF_ACTIVE":
+            if final_failure not in failure_codes or final_failure == "BACKOFF_ACTIVE":
                 raise ValueError("non-qualifying attempted provider requires final failure code")
             if final_failure != last_failure_code:
                 raise ValueError("final_failure_code must equal the last terminal attempt result")

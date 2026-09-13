@@ -7,12 +7,27 @@
     "utc": {
       "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
       "type": "string"
+    },
+    "preciseUtc": {
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\.[0-9]{1,9})?Z$",
+      "type": "string"
     }
   },
   "$id": "https://forecastprovenance.org/schemas/roughtime_receipt.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "allOf": [
+    {
+      "if": {"properties": {"schema_version": {"const": "1.2"}}, "required": ["schema_version"]},
+      "then": {"required": ["radius_nanoseconds"]},
+      "else": {
+        "not": {"required": ["radius_nanoseconds"]},
+        "properties": {
+          "midpoint_utc": {"$ref": "#/$defs/utc"},
+          "verified_receipt_upper_bound_utc": {"$ref": "#/$defs/utc"}
+        }
+      }
+    },
     {
       "if": {
         "properties": {
@@ -182,7 +197,7 @@
       "const": true
     },
     "midpoint_utc": {
-      "$ref": "#/$defs/utc"
+      "$ref": "#/$defs/preciseUtc"
     },
     "nonce_hex": {
       "$ref": "#/$defs/digest"
@@ -238,6 +253,11 @@
       "minimum": 1,
       "type": "integer"
     },
+    "radius_nanoseconds": {
+      "maximum": 9007199254740991,
+      "minimum": 1,
+      "type": "integer"
+    },
     "rehearsal_plan_sha256": {
       "$ref": "#/$defs/digest"
     },
@@ -269,7 +289,7 @@
       "type": "string"
     },
     "schema_version": {
-      "const": "1.1"
+      "enum": ["1.1", "1.2"]
     },
     "signature_verified": {
       "const": true
@@ -290,7 +310,7 @@
       "$ref": "#/$defs/digest"
     },
     "verified_receipt_upper_bound_utc": {
-      "$ref": "#/$defs/utc"
+      "$ref": "#/$defs/preciseUtc"
     },
     "verifier_binary_sha256": {
       "$ref": "#/$defs/digest"

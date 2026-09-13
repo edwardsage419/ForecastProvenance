@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import base64
 import hashlib
+import re
 from dataclasses import asdict
 from datetime import datetime, timedelta, timezone
 from typing import Any, Mapping, Sequence
@@ -33,7 +34,7 @@ AUTHORIZATION_KEYS = frozenset({
     "provider_order", "verifier_commit", "verifier_build_profile_sha256", "retry_state_snapshot_sha256", "authorized_by", "authorized_at_utc",
     "authorization_scope", "authorization_sha256",
 })
-RECEIPT_KEYS = frozenset({
+RECEIPT_KEYS_V1_1 = frozenset({
     "schema_version", "classification", "prospective_eligible", "rehearsal_plan_sha256",
     "authorization_record_sha256", "provider_id", "operator_identity", "host", "port",
     "transport", "operator_declared_protocol", "wire_version_hex", "offered_version_hex", "wire_profile",
@@ -48,6 +49,8 @@ RECEIPT_KEYS = frozenset({
     "upper_bound_at_or_before_deadline", "qualifies", "object_type", "object_id",
     "payload_sha256", "content_sha256",
 })
+RECEIPT_KEYS_V1_2 = RECEIPT_KEYS_V1_1 | {"radius_nanoseconds"}
+RECEIPT_KEYS = RECEIPT_KEYS_V1_1
 REPORT_KEYS = frozenset({
     "schema_version", "classification", "prospective_eligible", "network_authorized_by_report",
     "rehearsal_plan_sha256", "authorization_record_sha256", "subject_sha256",
@@ -121,6 +124,36 @@ def _parse_utc(value: str, field: str) -> datetime:
     if parsed.strftime("%Y-%m-%dT%H:%M:%SZ") != value:
         raise ValueError(f"{field} is not canonical UTC")
     return parsed
+
+
+_PRECISE_UTC_RE = re.compile(
+    r"^(?P<second>[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2})"
+    r"(?:\.(?P<fraction>[0-9]{1,9}))?Z$"
+)
+
+
+def _parse_precise_utc_ns(value: str, field: str) -> int:
+    if not isinstance(value, str):
+        raise ValueError(f"{field} must be an RFC3339 UTC timestamp")
+    match = _PRECISE_UTC_RE.fullmatch(value)
+    if match is None:
+        raise ValueError(f"{field} must use YYYY-MM-DDTHH:MM:SS[.fffffffff]Z")
+    try:
+        whole = datetime.strptime(match.group("second"), "%Y-%m-%dT%H:%M:%S").replace(tzinfo=timezone.utc)
+    except ValueError as exc:
+        raise ValueError(f"{field} is not a valid UTC timestamp") from exc
+    fraction = (match.group("fraction") or "").ljust(9, "0")
+    return int(whole.timestamp()) * 1_000_000_000 + int(fraction or "0")
+
+
+def _format_precise_utc_ns(value: int) -> str:
+    if type(value) is not int or value < 0:
+        raise ValueError("UTC nanoseconds must be a nonnegative integer")
+    seconds, nanos = divmod(value, 1_000_000_000)
+    whole = datetime.fromtimestamp(seconds, tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
+    if nanos == 0:
+        return whole + "Z"
+    return whole + "." + f"{nanos:09d}".rstrip("0") + "Z"
 
 
 def _content_hash_without(instance: Mapping[str, Any], field: str) -> str:

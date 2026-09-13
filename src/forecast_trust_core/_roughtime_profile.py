@@ -20,7 +20,7 @@ VERIFIER_REPOSITORY = "github.com/tannerryan/roughtime"
 VERIFIER_TAG = "v1.27.0"
 VERIFIER_COMMIT = "56b346a16cd7e8317bb0d24f1ec15549cf93a4c9"
 
-FAILURE_CODES = frozenset({
+FAILURE_CODES_V1_1 = frozenset({
     "BACKOFF_ACTIVE",
     "DNS_FAILURE",
     "TRANSPORT_TIMEOUT",
@@ -41,6 +41,12 @@ FAILURE_CODES = frozenset({
     "AUTHORIZATION_MISMATCH",
     "VERIFIER_ERROR",
 })
+FAILURE_CODES_V1_2 = FAILURE_CODES_V1_1 | frozenset({
+    "RESPONSE_SOURCE_MISMATCH",
+    "TYPE_MISMATCH",
+})
+# Backward-compatible public name for callers that need the current vocabulary.
+FAILURE_CODES = FAILURE_CODES_V1_2
 VERIFIED_NONQUALIFYING_CODES = frozenset({
     "RADIUS_INVALID",
     "UPPER_BOUND_AFTER_DEADLINE",

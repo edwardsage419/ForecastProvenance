@@ -7,7 +7,8 @@ from forecast_trust_core._roughtime_profile import (
     NONCE_PROFILE, PACKET_PROFILE, PROVIDER_BY_ID, TRANSPORT_PROFILE, VERIFIER_COMMIT, VERIFIER_REPOSITORY, VERIFIER_TAG,
 )
 from forecast_trust_core._roughtime_support import (
-    RECEIPT_KEYS, _decode_base64, _lower_hex_32, _parse_utc, _provider_public_fields,
+    RECEIPT_KEYS_V1_1, RECEIPT_KEYS_V1_2, _decode_base64, _format_precise_utc_ns,
+    _lower_hex_32, _parse_precise_utc_ns, _parse_utc, _provider_public_fields,
     _require_exact_keys, _sha256_hex, derive_nonce_v2_hex, upper_bound_utc,
 )
 from forecast_trust_core._roughtime_plan import validate_authorization_record, validate_plan
@@ -20,9 +21,10 @@ def validate_receipt(
 ) -> None:
     validate_plan(plan)
     validate_authorization_record(authorization, plan)
-    _require_exact_keys(receipt, RECEIPT_KEYS, "receipt")
-    if receipt.get("schema_version") != "1.1":
+    schema_version = receipt.get("schema_version")
+    if schema_version not in {"1.1", "1.2"}:
         raise ValueError("unsupported receipt schema_version")
+    _require_exact_keys(receipt, RECEIPT_KEYS_V1_2 if schema_version == "1.2" else RECEIPT_KEYS_V1_1, "receipt")
     if not verify_sealed_object(receipt):
         raise ValueError("receipt seal invalid")
     if receipt.get("object_type") != "RoughtimeReceipt":
@@ -67,12 +69,28 @@ def validate_receipt(
     if receipt.get("verifier_build_profile_sha256") != plan["verifier_build_profile_sha256"]:
         raise ValueError("receipt verifier build profile mismatch")
     _lower_hex_32(receipt.get("verification_transcript_sha256", ""), "verification_transcript_sha256")
-    midpoint = _parse_utc(receipt.get("midpoint_utc", ""), "midpoint_utc")
-    deadline = _parse_utc(plan["frozen_deadline_utc"], "frozen_deadline_utc")
     radius = receipt.get("radius_seconds")
-    computed_upper = upper_bound_utc(midpoint, radius)
-    if receipt.get("verified_receipt_upper_bound_utc") != computed_upper.strftime("%Y-%m-%dT%H:%M:%SZ"):
-        raise ValueError("receipt upper bound does not equal midpoint + radius")
+    deadline = _parse_utc(plan["frozen_deadline_utc"], "frozen_deadline_utc")
+    if schema_version == "1.2":
+        radius_ns = receipt.get("radius_nanoseconds")
+        if type(radius_ns) is not int or not (1 <= radius_ns <= 2**53 - 1):
+            raise ValueError("radius_nanoseconds must be an integer from 1 through 2^53-1")
+        expected_radius_seconds = (radius_ns + 999_999_999) // 1_000_000_000
+        if radius != expected_radius_seconds:
+            raise ValueError("radius_seconds must be the ceiling of radius_nanoseconds")
+        midpoint_ns = _parse_precise_utc_ns(receipt.get("midpoint_utc", ""), "midpoint_utc")
+        computed_upper_ns = midpoint_ns + radius_ns
+        computed_upper_text = _format_precise_utc_ns(computed_upper_ns)
+        if receipt.get("verified_receipt_upper_bound_utc") != computed_upper_text:
+            raise ValueError("receipt upper bound does not equal midpoint + radius")
+        deadline_ns = _parse_precise_utc_ns(plan["frozen_deadline_utc"], "frozen_deadline_utc")
+        upper_after_deadline = computed_upper_ns > deadline_ns
+    else:
+        midpoint = _parse_utc(receipt.get("midpoint_utc", ""), "midpoint_utc")
+        computed_upper = upper_bound_utc(midpoint, radius)
+        if receipt.get("verified_receipt_upper_bound_utc") != computed_upper.strftime("%Y-%m-%dT%H:%M:%SZ"):
+            raise ValueError("receipt upper bound does not equal midpoint + radius")
+        upper_after_deadline = computed_upper > deadline
     if receipt.get("frozen_deadline_utc") != plan["frozen_deadline_utc"]:
         raise ValueError("receipt frozen deadline mismatch")
     required_true = (
@@ -88,7 +106,7 @@ def validate_receipt(
     )
     if any(receipt.get(field) is not True for field in required_true):
         raise ValueError("qualifying receipt contains a failed verification predicate")
-    if computed_upper > deadline:
+    if upper_after_deadline:
         raise ValueError("receipt upper bound is after frozen deadline")
 
 

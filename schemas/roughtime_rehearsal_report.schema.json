@@ -4,6 +4,54 @@
       "pattern": "^[0-9a-f]{64}$",
       "type": "string"
     },
+    "failureCodeV11": {
+      "enum": [
+        "AUTHORIZATION_MISMATCH",
+        "BACKOFF_ACTIVE",
+        "DELEGATION_INVALID",
+        "DNS_FAILURE",
+        "MALFORMED_RESPONSE",
+        "MERKLE_PROOF_INVALID",
+        "MIDPOINT_OUTSIDE_DELEGATION",
+        "NONCE_MISMATCH",
+        "PLAN_MISMATCH",
+        "RADIUS_INVALID",
+        "RAW_EVIDENCE_INCOMPLETE",
+        "RETRY_STATE_INVALID",
+        "ROOT_KEY_MISMATCH",
+        "SIGNATURE_INVALID",
+        "TRANSPORT_ERROR",
+        "TRANSPORT_TIMEOUT",
+        "UPPER_BOUND_AFTER_DEADLINE",
+        "VERIFIER_ERROR",
+        "WIRE_VERSION_MISMATCH"
+      ]
+    },
+    "failureCodeV12": {
+      "enum": [
+        "AUTHORIZATION_MISMATCH",
+        "BACKOFF_ACTIVE",
+        "DELEGATION_INVALID",
+        "DNS_FAILURE",
+        "MALFORMED_RESPONSE",
+        "MERKLE_PROOF_INVALID",
+        "MIDPOINT_OUTSIDE_DELEGATION",
+        "NONCE_MISMATCH",
+        "PLAN_MISMATCH",
+        "RADIUS_INVALID",
+        "RAW_EVIDENCE_INCOMPLETE",
+        "RESPONSE_SOURCE_MISMATCH",
+        "RETRY_STATE_INVALID",
+        "ROOT_KEY_MISMATCH",
+        "SIGNATURE_INVALID",
+        "TRANSPORT_ERROR",
+        "TRANSPORT_TIMEOUT",
+        "TYPE_MISMATCH",
+        "UPPER_BOUND_AFTER_DEADLINE",
+        "VERIFIER_ERROR",
+        "WIRE_VERSION_MISMATCH"
+      ]
+    },
     "utc": {
       "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
       "type": "string"
@@ -12,6 +60,32 @@
   "$id": "https://forecastprovenance.org/schemas/roughtime_rehearsal_report.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {"schema_version": {"const": "1.1"}},
+        "required": ["schema_version"]
+      },
+      "then": {
+        "properties": {
+          "provider_results": {
+            "items": {
+              "properties": {
+                "attempts": {
+                  "items": {
+                    "properties": {
+                      "failure_code": {"$ref": "#/$defs/failureCodeV11"}
+                    }
+                  }
+                },
+                "final_failure_code": {"$ref": "#/$defs/failureCodeV11"}
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
   "properties": {
     "authorization_record_sha256": {
       "$ref": "#/$defs/digest"
@@ -132,27 +206,7 @@
                   "type": "string"
                 },
                 "failure_code": {
-                  "enum": [
-                    "AUTHORIZATION_MISMATCH",
-                    "BACKOFF_ACTIVE",
-                    "DELEGATION_INVALID",
-                    "DNS_FAILURE",
-                    "MALFORMED_RESPONSE",
-                    "MERKLE_PROOF_INVALID",
-                    "MIDPOINT_OUTSIDE_DELEGATION",
-                    "NONCE_MISMATCH",
-                    "PLAN_MISMATCH",
-                    "RADIUS_INVALID",
-                    "RAW_EVIDENCE_INCOMPLETE",
-                    "RETRY_STATE_INVALID",
-                    "ROOT_KEY_MISMATCH",
-                    "SIGNATURE_INVALID",
-                    "TRANSPORT_ERROR",
-                    "TRANSPORT_TIMEOUT",
-                    "UPPER_BOUND_AFTER_DEADLINE",
-                    "VERIFIER_ERROR",
-                    "WIRE_VERSION_MISMATCH"
-                  ]
+                  "$ref": "#/$defs/failureCodeV12"
                 },
                 "outcome": {
                   "enum": [
@@ -189,27 +243,7 @@
             "type": "array"
           },
           "final_failure_code": {
-            "enum": [
-              "AUTHORIZATION_MISMATCH",
-              "BACKOFF_ACTIVE",
-              "DELEGATION_INVALID",
-              "DNS_FAILURE",
-              "MALFORMED_RESPONSE",
-              "MERKLE_PROOF_INVALID",
-              "MIDPOINT_OUTSIDE_DELEGATION",
-              "NONCE_MISMATCH",
-              "PLAN_MISMATCH",
-              "RADIUS_INVALID",
-              "RAW_EVIDENCE_INCOMPLETE",
-              "RETRY_STATE_INVALID",
-              "ROOT_KEY_MISMATCH",
-              "SIGNATURE_INVALID",
-              "TRANSPORT_ERROR",
-              "TRANSPORT_TIMEOUT",
-              "UPPER_BOUND_AFTER_DEADLINE",
-              "VERIFIER_ERROR",
-              "WIRE_VERSION_MISMATCH"
-            ]
+            "$ref": "#/$defs/failureCodeV12"
           },
           "provider_id": {
             "enum": [
@@ -254,7 +288,7 @@
       "$ref": "#/$defs/digest"
     },
     "schema_version": {
-      "const": "1.1"
+      "enum": ["1.1", "1.2"]
     },
     "subject_sha256": {
       "$ref": "#/$defs/digest"
