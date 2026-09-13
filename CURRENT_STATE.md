@@ -8,7 +8,7 @@ Current formal branch and state snapshot basis:
 
 ```text
 branch = design/gen-001
-snapshot_basis_commit = d72608944cf89df113e7a8abae101159a591ceb7
+snapshot_basis_commit = 3fad38c198eb57a43b895d478f0835855df76f46
 ```
 
 The commit containing `CURRENT_STATE.md` must be identified from Git metadata; this document does not embed its own commit SHA.
@@ -129,7 +129,7 @@ The Merkle fixture engineering gap is closed. Effective deterministic offline mu
 
 Roughtime JSON Schemas are descriptive interoperability constraints.
 
-Cross-field acceptance is controlled by the executable semantic validator, which recomputes:
+Cross-field acceptance is controlled by executable semantic validation. Existing rehearsal validation recomputes:
 
 ```text
 plan and authorization content hashes
@@ -166,6 +166,9 @@ Commercial Sectigo and Signicat qualification work remains paused for the zero-c
 PRODUCTION_QUALIFICATION_CRITERIA = FROZEN_V1
 criteria_id = FPP_ROUGHTIME_PRODUCTION_QUALIFICATION_V1
 criteria_sha256 = 88cc910fdb7e573f3a84d860ad0cdc5fffc287db18678956c7e50dc52a07639e
+PRODUCTION_QUALIFICATION_OBJECT_MODEL = PUBLISHED_HARDENED_CANDIDATE
+PRODUCTION_QUALIFICATION_REPOSITORY_REGRESSION = PENDING
+PRODUCTION_QUALIFICATION_SIGNATURE_BACKEND = NOT_READY
 PRODUCTION_QUALIFICATION_EXECUTION = NOT_READY
 production-qualified provider count = 0
 PRODUCTION_QUALIFIED = NO
@@ -173,9 +176,36 @@ PRODUCTION_QUALIFIED = NO
 
 The governance freeze is recorded in `docs/GEN_001_ROUGHTIME_PRODUCTION_QUALIFICATION_GOVERNANCE_FREEZE_V1.md`. It resolves pilot admissibility, SLA policy, production-use permission evidence, 30-day live freshness, two-event repeatability separated by at least seven days, 90-day metadata review, positive root/issuance independence evidence, the two-vote common-dependency threshold, and manifest sealing plus qualification authority.
 
-The complete evidence manifest uses `FPP_JCS_1` and omits non-applicable optional fields instead of using JSON null. The manifest excludes itself and is sealed by an external SHA256 bound by the final QualificationDecision.
+The production qualification object model is published in commit `7819fce93964b3755364fa96a38adc91084e73ae`. It adds schemas and semantic validation for production ProviderProfile candidates, complete evidence manifests, operator metadata reviews, independent qualification reviews, owner-authorized QualificationDecision records, append-only requalification events, and deterministic qualification state reports.
 
-Qualification execution remains blocked until separately reviewed schemas and validators exist for production ProviderProfile, qualification decision/state, complete evidence manifest, and independent qualification review records. The required owner public-key identity must also exist before an owner-authorized QualificationDecision can be issued.
+The hardening review in commit `c6e375eb60ba4cec70a8de061c6f71c44ccc5fac` closes four pre-regression cross-binding defects:
+
+1. criterion evidence hashes must be retained by the complete evidence manifest;
+2. qualification execution and independent review must use distinct recorded event identities;
+3. metadata source captures cannot postdate the qualification review that relies on them;
+4. a qualification state report is authoritative only after exact deterministic recomputation from immutable inputs.
+
+The lower-level state-report structural validator is not a qualification authority.
+
+The QualificationDecision signature projection is `FPP_ROUGHTIME_QUALIFICATION_DECISION_V1`. Validation receives the expected authority ID and exact Ed25519 public key from outside the decision object. Repository code contains no signing path and does not receive the private key.
+
+Development-only isolated tests completed for the new object-model logic:
+
+```text
+object-model focused tests = 10 PASS, 1 DESELECTED
+hardening focused tests = 4 PASS
+full repository regression at current HEAD = NOT RUN
+```
+
+The deselected object-model test is the repository criteria-byte hash check, which requires the actual repository tree. These isolated results are not accepted as the frozen `SCHEMA_VALIDATOR_REGRESSION` evidence.
+
+The final readiness harness was corrected in commit `3fad38c198eb57a43b895d478f0835855df76f46` so pytest collects both unittest-style and pytest-style tests. Pytest is now an exact pinned test-only optional dependency. Runtime dependencies remain empty.
+
+A current full repository regression could not be executed in the isolated environment because DNS resolution for `github.com` failed on the single read-only repository access attempt. No retry loop was used and no PASS claim is made.
+
+Qualification execution remains blocked by the exact committed-tree repository regression, repository JSON Schema validation, adversarial review of the hardened object model, a separately reviewed concrete Ed25519 verification backend, and the required external authority public-key identity.
+
+No production ProviderProfile or QualificationDecision has been instantiated.
 
 Retained rehearsal evidence may later be evaluated against the frozen criteria. It remains `NON_FORECAST_REHEARSAL`, `prospective_eligible = false`, and cannot automatically qualify any provider.
 
@@ -184,12 +214,13 @@ Retained rehearsal evidence may later be evaluated against the frozen criteria. 
 Still required:
 
 1. owner-generated bootstrap Ed25519 public key only;
-2. production ProviderProfile, qualification decision/state, complete evidence manifest, and independent review schemas plus validators;
-3. independent frozen-criteria production qualification of the three current Roughtime providers and final sealed ProviderProfiles;
-4. OTS/Bitcoin strong rehearsal and final verifier profile;
-5. three retrospective official BLS/BEA fixture byte sets and adapter reports;
-6. final clean test report and ValidatorContract;
-7. final BootstrapGovernanceRoot, TrustedManifest, ManifestAcceptance, external evidence and adversarial review.
+2. exact committed-tree regression and JSON Schema validation for the hardened production qualification object model;
+3. concrete reviewed Ed25519 verification backend and negative/positive offline fixtures;
+4. independent frozen-criteria production qualification of all three current Roughtime providers and final sealed ProviderProfiles;
+5. OTS/Bitcoin strong rehearsal and final verifier profile;
+6. three retrospective official BLS/BEA fixture byte sets and adapter reports;
+7. final clean test report and ValidatorContract;
+8. final BootstrapGovernanceRoot, TrustedManifest, ManifestAcceptance, external evidence and adversarial review.
 
 ## Standards-transition gate
 
