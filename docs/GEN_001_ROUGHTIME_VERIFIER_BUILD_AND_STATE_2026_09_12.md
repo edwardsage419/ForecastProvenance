@@ -205,12 +205,27 @@ is historical execution evidence only. It must not populate the post-vendoring b
 The retained post-vendoring qualification executed the strict-wrapper matrix successfully under Go 1.27.x:
 
 ```text
-Go 1.27 strict-wrapper tests = 15 PASS
+Go 1.27 strict-wrapper tests = 16 PASS
 including Go 1.27 cryptographic fixtures = PASS
 offline binary build = PASS
 ```
 
-The fixture matrix includes named positive tests for typed hash-first, typed node-first, and untyped draft 12, plus wrong-root, mutated-response, wrong-nonce, and packet/profile rejection tests with deterministic synthetic keys. The positive fixtures currently use a single-leaf Merkle tree. They exercise the relevant request and response verification paths, but their zero-length PATH does not independently distinguish Merkle child ordering. Effective multi-leaf typed node-first and untyped draft-12 node-first fixtures remain required before production qualification criteria can be treated as satisfied.
+The fixture matrix includes named positive tests for typed hash-first, typed node-first, and untyped draft 12, plus wrong-order, wrong-root, mutated-response, wrong-nonce, and packet/profile rejection tests with deterministic synthetic keys. The three ordering fixtures now use deterministic two-leaf Merkle trees and explicitly require a one-hash, 32-byte PATH. The wrong-order fixture starts with the selected request at leaf 1 of a valid TimeNL node-first tree, changes only INDX from 1 to 0, proves that the resulting response authenticates under hash-first ordering and not node-first ordering, and requires rejection specifically as a Merkle root mismatch under the frozen TimeNL node-first-only profile.
+
+The fresh 2026-09-13 offline qualification used the official Go 1.27.1 Windows amd64 distribution and produced:
+
+```text
+Go version = go1.27.1
+Go OS/architecture = windows/amd64
+Go distribution SHA256 = a3911b5e0e1b1053f25ed0675f4c1c6aad1e2bfcf253df2b9be4caabd2edd95d
+verifier binary SHA256 = c10686d935adedca81c26f22576e03aad6490683af3c69095dd4f09d2df8822b
+verifier build profile SHA256 = 8200fd4dd5d9a53f406f94d39db4a078a6df75af67b7c3c7a90efe868374d5ea
+fixture report SHA256 = 2dd4d00891b3c3ba0a41e28bb4134a62239dba8d6e39192817f05c3b1f90ab56
+wrapper source-tree SHA256 = 231e4425fd64ce46401636c007390689b5851cd8a56d1257d127338531adb8f0
+network_used = false
+```
+
+The complete repository regression run passed with 257 tests, 8 environment-dependent skips, and 188 subtests. All eight Roughtime Draft 2020-12 schemas and the three newly generated qualification artifacts validated, and Python compile checks passed.
 
 For the vendored qualification model itself, isolated local validation completed:
 
@@ -231,10 +246,8 @@ Plan, authorization, report, build profile, retry state before, and retry state 
 ## Remaining production qualification preparation
 
 1. Resolve and freeze the versioned production qualification criteria.
-2. Add effective multi-leaf typed hash-first, typed node-first, and untyped draft-12 node-first fixtures, plus a negative wrong-order test.
-3. Add separately reviewed production qualification and evidence-manifest schemas.
-4. Re-run the offline qualification, repository suite, and adversarial review.
-5. Recheck provider endpoints, roots, operator evidence, and standards-transition status immediately before any later production ProviderProfile freeze.
-6. Conduct a separate independent production qualification review. Rehearsal success must not create a production qualification decision.
+2. Add separately reviewed production qualification and evidence-manifest schemas.
+3. Recheck provider endpoints, roots, operator evidence, and standards-transition status immediately before any later production ProviderProfile freeze.
+4. Conduct a separate independent production qualification review. Rehearsal success must not create a production qualification decision.
 
 GitHub-hosted Actions are not required for this gate and are not authorized by this document.
