@@ -55,7 +55,7 @@ def test_required_go_test_pass_set_is_exact() -> None:
 
 def test_build_profile_binds_source_tests_toolchain_and_binary(tmp_path: Path) -> None:
     root = _source_dir(tmp_path)
-    binary = root / "fpp-ed25519-verify"
+    binary = root / "fpp-ed25519-verify.exe"
     binary.write_bytes(b"binary")
     profile = make_build_profile(
         source_dir=root,
@@ -78,7 +78,7 @@ def test_build_profile_binds_source_tests_toolchain_and_binary(tmp_path: Path) -
 
 def test_profile_rejects_non_go127_and_tampering(tmp_path: Path) -> None:
     root = _source_dir(tmp_path)
-    binary = root / "fpp-ed25519-verify"
+    binary = root / "fpp-ed25519-verify.exe"
     binary.write_bytes(b"binary")
     with pytest.raises(ValueError, match="go1.27.x"):
         make_build_profile(

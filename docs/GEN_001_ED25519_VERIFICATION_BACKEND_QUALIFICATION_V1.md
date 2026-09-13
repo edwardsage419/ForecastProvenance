@@ -64,7 +64,7 @@ RFC 8032 public verification vectors are sufficient for this backend because no 
 The frozen build command is:
 
 ```text
-go build -trimpath -buildvcs=false -ldflags=-buildid= -o fpp-ed25519-verify .
+go build -trimpath -buildvcs=false -ldflags=-buildid= -o fpp-ed25519-verify.exe .
 ```
 
 Two builds are performed with distinct Go build caches. The two binaries must be byte-for-byte identical. The final build profile records the resulting binary SHA256 and `reproducible_build=true`.

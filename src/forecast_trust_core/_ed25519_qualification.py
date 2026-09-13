@@ -30,7 +30,7 @@ REQUIRED_TESTS = (
     "TestUnknownFieldRejected",
 )
 TEST_COMMAND = "go test -count=1 -json ./..."
-BUILD_COMMAND = "go build -trimpath -buildvcs=false -ldflags=-buildid= -o fpp-ed25519-verify ."
+BUILD_COMMAND = "go build -trimpath -buildvcs=false -ldflags=-buildid= -o fpp-ed25519-verify.exe ."
 GO127_RE = re.compile(r"^go1\.27\.[0-9]+$")
 HEX64_RE = re.compile(r"^[0-9a-f]{64}$")
 PROFILE_KEYS = frozenset({
@@ -85,7 +85,7 @@ def source_manifest(source_dir: Path) -> list[dict[str, str]]:
 def validate_source_tree(source_dir: Path, *, allow_binary: bool = False) -> list[dict[str, str]]:
     root = source_dir.resolve(strict=True)
     expected = set(SOURCE_FILES)
-    binary_name = "fpp-ed25519-verify.exe" if os.name == "nt" else "fpp-ed25519-verify"
+    binary_name = "fpp-ed25519-verify.exe"
     if allow_binary:
         expected.add(binary_name)
     seen: set[str] = set()
@@ -400,7 +400,7 @@ def verify_main_module_only(go_binary: Path, source_dir: Path, env: Mapping[str,
 
 
 def run_reproducible_build(go_binary: Path, source_dir: Path, env: Mapping[str, str], *, scratch_dir: Path) -> Path:
-    binary_name = "fpp-ed25519-verify.exe" if os.name == "nt" else "fpp-ed25519-verify"
+    binary_name = "fpp-ed25519-verify.exe"
     binary = source_dir / binary_name
     if os.path.lexists(binary):
         raise ValueError(f"refusing to overwrite existing Ed25519 verifier binary: {binary}")

@@ -61,7 +61,7 @@
         "additionalProperties": false
       }
     },
-    "build_command": {"const": "go build -trimpath -buildvcs=false -ldflags=-buildid= -o fpp-ed25519-verify ."},
+    "build_command": {"const": "go build -trimpath -buildvcs=false -ldflags=-buildid= -o fpp-ed25519-verify.exe ."},
     "reproducible_build": {"const": true},
     "binary_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "profile_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
