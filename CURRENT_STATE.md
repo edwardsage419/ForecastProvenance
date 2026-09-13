@@ -8,7 +8,7 @@ Current formal branch and state snapshot basis:
 
 ```text
 branch = design/gen-001
-snapshot_basis_commit = 3fad38c198eb57a43b895d478f0835855df76f46
+snapshot_basis_commit = 17f3207b3995ecb061dbde788545a426d6cdba6c
 ```
 
 The commit containing `CURRENT_STATE.md` must be identified from Git metadata; this document does not embed its own commit SHA.
@@ -168,7 +168,7 @@ criteria_id = FPP_ROUGHTIME_PRODUCTION_QUALIFICATION_V1
 criteria_sha256 = 88cc910fdb7e573f3a84d860ad0cdc5fffc287db18678956c7e50dc52a07639e
 PRODUCTION_QUALIFICATION_OBJECT_MODEL = PUBLISHED_HARDENED_CANDIDATE
 PRODUCTION_QUALIFICATION_REPOSITORY_REGRESSION = PENDING
-PRODUCTION_QUALIFICATION_SIGNATURE_BACKEND = NOT_READY
+PRODUCTION_QUALIFICATION_SIGNATURE_BACKEND = PUBLISHED_CANDIDATE_NOT_FINAL_QUALIFIED
 PRODUCTION_QUALIFICATION_EXECUTION = NOT_READY
 production-qualified provider count = 0
 PRODUCTION_QUALIFIED = NO
@@ -189,11 +189,17 @@ The lower-level state-report structural validator is not a qualification authori
 
 The QualificationDecision signature projection is `FPP_ROUGHTIME_QUALIFICATION_DECISION_V1`. Validation receives the expected authority ID and exact Ed25519 public key from outside the decision object. Repository code contains no signing path and does not receive the private key.
 
+The pinned Ed25519 verification backend candidate is published in commit `17f3207b3995ecb061dbde788545a426d6cdba6c`. It uses only Go standard-library `crypto/ed25519.Verify`, exposes verification only, and has no signing or private-key input path. Its Python adapter pins the executable by SHA256. A subsequent adversarial review identified a relative-path/PATH substitution risk in the adapter; the repair resolves the executable to a canonical absolute path before invocation and retains pre- and post-execution binary hash checks.
+
+Development-only isolated verification for the signature backend completed with RFC 8032 public verification vectors, mutated message/public-key/signature rejection, strict JSON/Base64 parser failures, binary-hash substitution rejection, Go vet PASS, and same-environment reproducible development builds. The observed development binary SHA256 was `592089f9f216e22d3e6eec63c836922fc628a91aebfc55d4829ec70fb70c99e9` under Go `go1.23.2` on `linux/amd64`. This development hash is not a frozen production verifier identity and does not replace the required Go 1.27.x final build qualification.
+
 Development-only isolated tests completed for the new object-model logic:
 
 ```text
 object-model focused tests = 10 PASS, 1 DESELECTED
 hardening focused tests = 4 PASS
+Ed25519 adapter repository-focused tests = 4 PASS before canonical-path hardening
+canonical-path hardening focused test = 1 PASS
 full repository regression at current HEAD = NOT RUN
 ```
 
@@ -201,9 +207,9 @@ The deselected object-model test is the repository criteria-byte hash check, whi
 
 The final readiness harness was corrected in commit `3fad38c198eb57a43b895d478f0835855df76f46` so pytest collects both unittest-style and pytest-style tests. Pytest is now an exact pinned test-only optional dependency. Runtime dependencies remain empty.
 
-A current full repository regression could not be executed in the isolated environment because DNS resolution for `github.com` failed on the single read-only repository access attempt. No retry loop was used and no PASS claim is made.
+A current full repository regression could not be executed in the isolated environment because DNS resolution for `github.com` failed on the latest single read-only repository access attempt. No retry loop was used and no PASS claim is made.
 
-Qualification execution remains blocked by the exact committed-tree repository regression, repository JSON Schema validation, adversarial review of the hardened object model, a separately reviewed concrete Ed25519 verification backend, and the required external authority public-key identity.
+Qualification execution remains blocked by the exact committed-tree repository regression, repository JSON Schema validation, adversarial review of the hardened object model and signature backend, a final content-addressed Ed25519 verifier build profile under the accepted Go 1.27.x toolchain, and the required external authority public-key identity.
 
 No production ProviderProfile or QualificationDecision has been instantiated.
 
@@ -215,7 +221,7 @@ Still required:
 
 1. owner-generated bootstrap Ed25519 public key only;
 2. exact committed-tree regression and JSON Schema validation for the hardened production qualification object model;
-3. concrete reviewed Ed25519 verification backend and negative/positive offline fixtures;
+3. final content-addressed Ed25519 verification backend build qualification under the accepted Go 1.27.x toolchain plus adversarial review;
 4. independent frozen-criteria production qualification of all three current Roughtime providers and final sealed ProviderProfiles;
 5. OTS/Bitcoin strong rehearsal and final verifier profile;
 6. three retrospective official BLS/BEA fixture byte sets and adapter reports;
