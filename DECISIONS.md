@@ -240,3 +240,20 @@ D025 remains in force. `docs/GENESIS_READINESS_EVIDENCE_MATRIX.md` remains the a
 A successful `NON_FORECAST_REHEARSAL`, including a three-of-three qualifying result, is evidence for a later independent qualification review. It is not a production qualification decision, does not create a production ProviderProfile, and cannot change the production-qualified provider count.
 
 Roughtime production qualification criteria must be independently frozen by a later governance decision before qualification execution. Historical candidate objects, RFC 3161 evidence, Roughtime plans, authorizations, requests, responses, reports, and classifications retain their original semantics and are not rewritten by this decision.
+
+## D027 Roughtime production qualification governance freeze v1
+
+Status: ACCEPTED FOR GEN_001 CRITERIA FREEZE
+Date: 2026-09-13
+
+Criteria ID: `FPP_ROUGHTIME_PRODUCTION_QUALIFICATION_V1`
+
+Criteria SHA256: `88cc910fdb7e573f3a84d860ad0cdc5fffc287db18678956c7e50dc52a07639e`
+
+The exact criteria in `docs/GEN_001_ROUGHTIME_PRODUCTION_QUALIFICATION_CRITERIA_V1.md` are frozen by `docs/GEN_001_ROUGHTIME_PRODUCTION_QUALIFICATION_GOVERNANCE_FREEZE_V1.md`.
+
+The freeze resolves the nine previously open governance policies. Pilot or experimental services are conditionally admissible with at most one such provider in the three-member pool. Contractual SLA is not required. Affirmative low-volume automated production-use permission is required. Initial qualification requires a qualifying live event no more than 30 days old and two qualifying live events separated by at least seven days. Provider metadata review is required every 90 days. Root-secret and issuance-control independence require positive evidence, with unknown treated as blocking. Common dependency becomes blocking at a two-vote compromise or provider-side two-vote suppression threshold. Complete evidence manifests use `FPP_JCS_1`, exclude themselves, and are sealed by an externally bound SHA256. Final QualificationDecision authority is the owner-controlled Ed25519 bootstrap authority after the exact decision schema and signature projection are frozen.
+
+The freeze also corrects the draft manifest rule that permitted JSON null for non-applicable fields. Under `FPP_JCS_1`, non-applicable `provider_id` and `attempt_number` fields are omitted.
+
+This decision does not execute production qualification, create a ProviderProfile, create a QualificationDecision, authorize any live provider request, start Genesis, or change the production-qualified provider count. Production qualification execution remains `NOT_READY` pending schema, validator, independent review, and required owner authority readiness.
