@@ -134,7 +134,7 @@ criteria_sha256 = 88cc910fdb7e573f3a84d860ad0cdc5fffc287db18678956c7e50dc52a0763
 PRODUCTION_QUALIFICATION_OBJECT_MODEL = PUBLISHED_HARDENED_CANDIDATE
 PRODUCTION_QUALIFICATION_SCHEMA_META_VALIDATION = PASS_7_OF_7
 PRODUCTION_QUALIFICATION_ADVERSARIAL_HARDENING = CURRENT_KNOWN_FINDINGS_CLOSED
-PRODUCTION_QUALIFICATION_REPOSITORY_REGRESSION = PENDING
+PRODUCTION_QUALIFICATION_REPOSITORY_REGRESSION = PASS
 PRODUCTION_QUALIFICATION_SIGNATURE_BACKEND = PUBLISHED_CANDIDATE_NOT_FINAL_QUALIFIED
 PRODUCTION_QUALIFICATION_SIGNATURE_BACKEND_QUALIFICATION_HARNESS = PUBLISHED_CANDIDATE
 PRODUCTION_QUALIFICATION_EXECUTION = NOT_READY
@@ -205,13 +205,13 @@ This development hash is not a frozen production verifier identity. A dedicated 
 
 ## Regression state
 
-The final readiness harness uses pytest so unittest-style and pytest-style tests are both collected. Pytest is a pinned test-only dependency. Production runtime dependencies remain empty.
+The final readiness harness uses pytest so unittest-style and pytest-style tests are both collected. Pytest and jsonschema are pinned test-only dependencies. Production runtime dependencies remain empty.
 
 Focused isolated tests were used to reproduce and close the adversarial findings above. These focused results are development evidence only.
 
-The exact current branch HEAD has not completed the full repository-wide regression in the isolated execution environment. The latest controlled direct repository access attempt failed because the environment could not resolve `github.com`. No retry loop was used and no PASS claim is made.
+The exact committed branch tree completed the full Windows repository regression in an isolated verification clone on 2026-09-13. Python 3.12.14 with pytest 9.0.2 completed compileall and the full test suite with 286 passed, 12 skipped, and 188 subtests passed. The schema validation tests passed. No provider request or production qualification execution occurred.
 
-`PRODUCTION_QUALIFICATION_REPOSITORY_REGRESSION` therefore remains `PENDING`.
+`PRODUCTION_QUALIFICATION_REPOSITORY_REGRESSION` is therefore `PASS`. The Ed25519 verification backend remains not final-qualified because the required Windows amd64 Go 1.27.x toolchain and its distribution/carrier provenance were unavailable; `PRODUCTION_QUALIFICATION_EXECUTION` remains `NOT_READY`.
 
 ## Remaining Roughtime production blockers
 
