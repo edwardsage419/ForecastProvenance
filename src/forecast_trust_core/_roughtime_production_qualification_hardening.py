@@ -14,8 +14,14 @@ def _manifest_binding(
     manifest: Mapping[str, Any],
     *,
     provider_id: str,
+    artifact_bytes: Mapping[str, bytes] | None,
 ) -> tuple[str, frozenset[str]]:
-    manifest_sha256 = validate_qualification_evidence_manifest(manifest)
+    if artifact_bytes is None:
+        raise ValueError("actual evidence artifact bytes are required for manifest closure")
+    manifest_sha256 = validate_qualification_evidence_manifest(
+        manifest,
+        artifact_bytes=artifact_bytes,
+    )
     if manifest["provider_id"] != provider_id:
         raise ValueError("evidence manifest provider mismatch")
     artifact_sha256s = frozenset(entry["sha256"] for entry in manifest["entries"])
@@ -28,10 +34,12 @@ def validate_bound_qualification_review(
     profile: Mapping[str, Any],
     metadata_review: Mapping[str, Any],
     evidence_manifest: Mapping[str, Any],
+    evidence_artifact_bytes: Mapping[str, bytes] | None = None,
 ) -> str:
     manifest_sha256, artifact_sha256s = _manifest_binding(
         evidence_manifest,
         provider_id=str(profile["provider_id"]),
+        artifact_bytes=evidence_artifact_bytes,
     )
 
     if review["executor_id"] == review["reviewer_id"]:
@@ -66,6 +74,7 @@ def validate_bound_qualification_decision(
     review: Mapping[str, Any],
     metadata_review: Mapping[str, Any],
     evidence_manifest: Mapping[str, Any],
+    evidence_artifact_bytes: Mapping[str, bytes] | None = None,
     expected_authority_id: str,
     expected_authority_public_key: bytes,
     signature_verifier,
@@ -73,12 +82,14 @@ def validate_bound_qualification_decision(
     manifest_sha256, _ = _manifest_binding(
         evidence_manifest,
         provider_id=str(profile["provider_id"]),
+        artifact_bytes=evidence_artifact_bytes,
     )
     validate_bound_qualification_review(
         review,
         profile=profile,
         metadata_review=metadata_review,
         evidence_manifest=evidence_manifest,
+        evidence_artifact_bytes=evidence_artifact_bytes,
     )
     return validate_qualification_decision(
         decision,
@@ -99,6 +110,7 @@ def derive_authoritative_qualification_state(
     rehearsal_verified: bool,
     profile: Mapping[str, Any] | None = None,
     evidence_manifest: Mapping[str, Any] | None = None,
+    evidence_artifact_bytes: Mapping[str, bytes] | None = None,
     review: Mapping[str, Any] | None = None,
     decision: Mapping[str, Any] | None = None,
     metadata_reviews: Sequence[Mapping[str, Any]] = (),
@@ -118,10 +130,15 @@ def derive_authoritative_qualification_state(
         raise ValueError(
             "profile and evidence_manifest are required once qualification review exists"
         )
+    if evidence_artifact_bytes is None:
+        raise ValueError(
+            "actual evidence artifact bytes are required once qualification review exists"
+        )
 
     manifest_sha256, _ = _manifest_binding(
         evidence_manifest,
         provider_id=provider_id,
+        artifact_bytes=evidence_artifact_bytes,
     )
 
     if review is not None:
@@ -142,6 +159,7 @@ def derive_authoritative_qualification_state(
             profile=profile,
             metadata_review=bound_metadata,
             evidence_manifest=evidence_manifest,
+            evidence_artifact_bytes=evidence_artifact_bytes,
         )
 
     if decision is not None:
@@ -173,6 +191,7 @@ def derive_authoritative_qualification_state(
             review=review,
             metadata_review=decision_metadata,
             evidence_manifest=evidence_manifest,
+            evidence_artifact_bytes=evidence_artifact_bytes,
             expected_authority_id=expected_authority_id,
             expected_authority_public_key=expected_authority_public_key,
             signature_verifier=signature_verifier,
@@ -200,6 +219,7 @@ def validate_qualification_state_by_recomputation(
     rehearsal_verified: bool,
     profile: Mapping[str, Any] | None = None,
     evidence_manifest: Mapping[str, Any] | None = None,
+    evidence_artifact_bytes: Mapping[str, bytes] | None = None,
     review: Mapping[str, Any] | None = None,
     decision: Mapping[str, Any] | None = None,
     metadata_reviews: Sequence[Mapping[str, Any]] = (),
@@ -214,6 +234,7 @@ def validate_qualification_state_by_recomputation(
         rehearsal_verified=rehearsal_verified,
         profile=profile,
         evidence_manifest=evidence_manifest,
+        evidence_artifact_bytes=evidence_artifact_bytes,
         review=review,
         decision=decision,
         metadata_reviews=metadata_reviews,

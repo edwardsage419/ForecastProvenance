@@ -38,6 +38,13 @@ def _manifest(provider_id: str = "roughtime.se", *, include_evidence: bool = Tru
     }
 
 
+def _artifact_bytes(*, include_evidence: bool = True):
+    artifacts = {"reports/aggregate.json": b"agg"}
+    if include_evidence:
+        artifacts["evidence/criterion.bin"] = b"x"
+    return artifacts
+
+
 def _profile(provider_id: str = "roughtime.se"):
     return {"provider_id": provider_id}
 
@@ -74,11 +81,50 @@ def _review():
     }
 
 
+def test_bound_review_requires_actual_artifact_bytes():
+    with pytest.raises(ValueError, match="actual evidence artifact bytes"):
+        hardening.validate_bound_qualification_review(
+            _review(),
+            profile=_profile(),
+            metadata_review=_metadata(),
+            evidence_manifest=_manifest(),
+        )
+
+
+def test_bound_review_passes_actual_artifact_bytes_to_manifest_validator(monkeypatch):
+    observed = {}
+
+    def validate_manifest(_manifest, *, artifact_bytes=None):
+        observed["artifact_bytes"] = artifact_bytes
+        return "e" * 64
+
+    monkeypatch.setattr(
+        hardening,
+        "validate_qualification_evidence_manifest",
+        validate_manifest,
+    )
+    monkeypatch.setattr(
+        hardening,
+        "validate_qualification_review",
+        lambda *_args, **_kwargs: "review-ok",
+    )
+    artifacts = _artifact_bytes()
+
+    assert hardening.validate_bound_qualification_review(
+        _review(),
+        profile=_profile(),
+        metadata_review=_metadata(),
+        evidence_manifest=_manifest(),
+        evidence_artifact_bytes=artifacts,
+    ) == "review-ok"
+    assert observed["artifact_bytes"] is artifacts
+
+
 def test_bound_review_requires_criterion_evidence_in_manifest(monkeypatch):
     monkeypatch.setattr(
         hardening,
         "validate_qualification_evidence_manifest",
-        lambda _manifest: "e" * 64,
+        lambda _manifest, *, artifact_bytes=None: "e" * 64,
     )
     monkeypatch.setattr(
         hardening,
@@ -91,6 +137,7 @@ def test_bound_review_requires_criterion_evidence_in_manifest(monkeypatch):
         profile=_profile(),
         metadata_review=_metadata(),
         evidence_manifest=_manifest(),
+        evidence_artifact_bytes=_artifact_bytes(),
     ) == "review-ok"
 
     with pytest.raises(ValueError, match="outside complete manifest"):
@@ -99,6 +146,7 @@ def test_bound_review_requires_criterion_evidence_in_manifest(monkeypatch):
             profile=_profile(),
             metadata_review=_metadata(),
             evidence_manifest=_manifest(include_evidence=False),
+            evidence_artifact_bytes=_artifact_bytes(include_evidence=False),
         )
 
 
@@ -106,7 +154,7 @@ def test_bound_review_requires_distinct_execution_and_review_events(monkeypatch)
     monkeypatch.setattr(
         hardening,
         "validate_qualification_evidence_manifest",
-        lambda _manifest: "e" * 64,
+        lambda _manifest, *, artifact_bytes=None: "e" * 64,
     )
     review = _review()
     review["reviewer_id"] = review["executor_id"]
@@ -117,6 +165,7 @@ def test_bound_review_requires_distinct_execution_and_review_events(monkeypatch)
             profile=_profile(),
             metadata_review=_metadata(),
             evidence_manifest=_manifest(),
+            evidence_artifact_bytes=_artifact_bytes(),
         )
 
 
@@ -124,7 +173,7 @@ def test_bound_review_rejects_metadata_capture_after_review(monkeypatch):
     monkeypatch.setattr(
         hardening,
         "validate_qualification_evidence_manifest",
-        lambda _manifest: "e" * 64,
+        lambda _manifest, *, artifact_bytes=None: "e" * 64,
     )
     metadata = _metadata()
     metadata["source_captures"][0]["retrieved_at"] = "2026-09-13T10:06:00Z"
@@ -135,6 +184,20 @@ def test_bound_review_rejects_metadata_capture_after_review(monkeypatch):
             profile=_profile(),
             metadata_review=metadata,
             evidence_manifest=_manifest(),
+            evidence_artifact_bytes=_artifact_bytes(),
+        )
+
+
+def test_authoritative_state_requires_artifact_bytes_once_review_exists():
+    with pytest.raises(ValueError, match="actual evidence artifact bytes"):
+        hardening.derive_authoritative_qualification_state(
+            provider_id="roughtime.se",
+            as_of_utc="2026-09-14T00:00:00Z",
+            rehearsal_verified=True,
+            profile=_profile(),
+            evidence_manifest=_manifest(),
+            review=_review(),
+            metadata_reviews=[_metadata()],
         )
 
 
