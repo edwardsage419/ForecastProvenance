@@ -8,7 +8,7 @@ Current formal branch and HEAD:
 
 ```text
 branch = design/gen-001
-HEAD = 1b6d7758b30f3bd7e40c3c66570408df305ab0f2
+HEAD = 8d7c49362a0f29e98ea45af0d01917411effa611
 ```
 
 ## Native scientific state
@@ -121,7 +121,7 @@ commit 56b346a16cd7e8317bb0d24f1ec15549cf93a4c9
 
 The vendored strict low-level wrapper was qualified offline under Go 1.27.x and the executed rehearsal bound its exact content-addressed verifier build profile and pre-attempt retry-state snapshot. Future events must independently repeat the required freshness checks and bind their own exact plan, authorization, build profile, and retry-state snapshot.
 
-The current named Merkle-order fixtures use a single-leaf tree and therefore exercise protocol paths without independently distinguishing child ordering. Effective non-empty ordering coverage currently exists only for the live `time.txryan.com` hash-first response. Multi-leaf typed hash-first, typed node-first, untyped draft-12 node-first, and negative wrong-order fixtures remain required before production qualification criteria can be treated as satisfied.
+The Merkle fixture engineering gap is closed. Effective deterministic offline multi-leaf coverage now exists for typed hash-first, typed node-first, untyped draft-12 node-first, and negative wrong-order rejection. Each of the three positive ordering fixtures uses a two-leaf tree and demonstrates a PATH of exactly 1 hash / 32 bytes. This fixture completion does not freeze production qualification criteria or qualify any provider.
 
 ## Evidence validation
 
@@ -174,7 +174,7 @@ D026 reconciles the governance hierarchy while preserving the readiness matrix a
 Still required:
 
 1. owner-generated bootstrap Ed25519 public key only;
-2. frozen Roughtime production qualification criteria and effective multi-leaf Merkle-order fixtures;
+2. frozen Roughtime production qualification criteria;
 3. independent production qualification of the three current Roughtime providers and final sealed ProviderProfiles;
 4. OTS/Bitcoin strong rehearsal and final verifier profile;
 5. three retrospective official BLS/BEA fixture byte sets and adapter reports;
