@@ -33,8 +33,10 @@ A readiness item closes only when the required evidence exists, is content addre
 | Production qualification criteria | FROZEN_V1 | `FPP_ROUGHTIME_PRODUCTION_QUALIFICATION_V1` is frozen by exact SHA256 `88cc910fdb7e573f3a84d860ad0cdc5fffc287db18678956c7e50dc52a07639e`; this does not qualify a provider |
 | Production qualification object model | PUBLISHED_HARDENED_CANDIDATE | Seven production schemas, semantic validators, authoritative package closure, signed-decision projection, requalification events, and deterministic state derivation exist |
 | Production schema meta-validation | PASS_7_OF_7 | Exact committed schema bytes passed Draft 2020-12 `check_schema`; this does not replace repository regression or semantic validation |
-| Ed25519 decision verification backend | PUBLISHED_CANDIDATE_NOT_FINAL_QUALIFIED | Verification-only Go standard-library backend exists; final content-addressed Go 1.27.x build qualification remains required |
-| Production qualification execution | NOT_READY_REGRESSION_FINAL_BUILD_AUTHORITY_GATE | Exact current-HEAD full regression, final signature-backend build qualification, external owner public-key identity, and provider-specific qualification evidence remain open |
+| Repository regression | PASS | Exact committed branch tree completed compileall, 290 passed, 8 skipped, and 188 subtests passed with zero failures |
+| Ed25519 decision verification backend | FINAL_QUALIFIED | Content-addressed Windows amd64 Go 1.27.1 verification-only backend qualification is retained; no signing path or private key was used |
+| Retained rehearsal frozen-criteria assessment | COMPLETE | The offline assessment identifies retained contributions and unresolved evidence gaps; it is not a qualification decision |
+| Production qualification execution | NOT_READY_PROVIDER_EVIDENCE_AUTHORITY_GATE | Current provider evidence, live repeatability, external owner public-key identity, independent reviews, decisions, and profiles remain open |
 | Genesis readiness | NOT_READY | Roughtime production qualification and other GR items remain open |
 
 ## Evidence matrix
@@ -117,9 +119,9 @@ Repository design and candidate object work is substantially closed through GR03
 
 The Roughtime production qualification governance criteria are frozen as `FPP_ROUGHTIME_PRODUCTION_QUALIFICATION_V1`. The production qualification object model, seven schemas, signature projection, evidence-package hardening, and verification-only Ed25519 backend candidate now exist. Exact committed schema bytes passed Draft 2020-12 meta-validation.
 
-The repository-wide regression for the current exact branch HEAD remains pending. The signature backend also requires final content-addressed build qualification under the accepted Go 1.27.x toolchain. GR011 owner public-key input remains required before an owner-authorized QualificationDecision can exist.
+The repository-wide regression for the exact committed branch tree is complete, and the verification-only Ed25519 backend is final-qualified under the retained content-addressed Windows amd64 Go 1.27.1 evidence. GR011 owner public-key input remains required before an owner-authorized QualificationDecision can exist.
 
-GR005 through GR007 remain open on actual frozen-criteria evidence review, repeatability, production-use permission, positive independence evidence, current metadata, production qualification decisions, and separately sealed ProviderProfiles. No provider is production qualified.
+The retained `NON_FORECAST_REHEARSAL` frozen-criteria offline assessment is complete. GR005 through GR007 remain open on exact raw-package review, repeatability including a provably post-freeze event, production-use permission, positive independence evidence, current metadata, production qualification decisions, and separately sealed ProviderProfiles. Production qualification was not executed, and no provider is production qualified.
 
 The other external critical path continues through GR008, GR009, and GR011, plus real official archive fixtures GR017 through GR019.
 

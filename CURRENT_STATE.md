@@ -137,6 +137,7 @@ PRODUCTION_QUALIFICATION_ADVERSARIAL_HARDENING = CURRENT_KNOWN_FINDINGS_CLOSED
 PRODUCTION_QUALIFICATION_REPOSITORY_REGRESSION = PASS
 PRODUCTION_QUALIFICATION_SIGNATURE_BACKEND = FINAL_QUALIFIED
 PRODUCTION_QUALIFICATION_SIGNATURE_BACKEND_QUALIFICATION_HARNESS = PUBLISHED_CANDIDATE
+RETAINED_REHEARSAL_FROZEN_CRITERIA_ASSESSMENT = COMPLETE
 PRODUCTION_QUALIFICATION_EXECUTION = NOT_READY
 production-qualified provider count = 0
 PRODUCTION_QUALIFIED = NO
@@ -209,21 +210,21 @@ The final readiness harness uses pytest so unittest-style and pytest-style tests
 
 Focused isolated tests were used to reproduce and close the adversarial findings above. These focused results are development evidence only.
 
-The exact committed branch tree completed the full Windows repository regression in an isolated verification clone on 2026-09-13. Python 3.12.14 with pytest 9.0.2 completed compileall and the full test suite with 286 passed, 12 skipped, and 188 subtests passed. The schema validation tests passed. No provider request or production qualification execution occurred.
+The exact committed branch tree completed the full Windows repository regression in an isolated verification clone on 2026-09-13. Python 3.12.14 with pytest 9.0.2 completed compileall and the full test suite with 290 passed, 8 skipped, and 188 subtests passed. The schema validation tests passed. No provider request or production qualification execution occurred.
 
-`PRODUCTION_QUALIFICATION_REPOSITORY_REGRESSION` is therefore `PASS`. The Ed25519 verification backend remains not final-qualified because the required Windows amd64 Go 1.27.x toolchain and its distribution/carrier provenance were unavailable; `PRODUCTION_QUALIFICATION_EXECUTION` remains `NOT_READY`.
+`PRODUCTION_QUALIFICATION_REPOSITORY_REGRESSION` is therefore `PASS`. The Ed25519 verification backend is `FINAL_QUALIFIED` under the retained Windows amd64 Go 1.27.1 evidence described above. `PRODUCTION_QUALIFICATION_EXECUTION` remains `NOT_READY` because provider evidence and owner-authority gates remain open.
+
+The retained `NON_FORECAST_REHEARSAL` frozen-criteria assessment is complete in `docs/GEN_001_ROUGHTIME_RETAINED_REHEARSAL_FROZEN_CRITERIA_ASSESSMENT_2026_09_13.md`. It found useful partial cryptographic evidence and complete offline engineering evidence, but no tracked raw Roughtime rehearsal package, exact rehearsal timestamp, or exact freeze timestamp sufficient to establish an eligible first repeatability event. Production qualification was not executed.
 
 ## Remaining Roughtime production blockers
 
 Before production qualification execution can become ready, the project still requires:
 
-1. complete repository regression and required compile checks on the exact committed branch tree;
-2. final content-addressed Ed25519 verification backend build qualification under the accepted Go 1.27.x toolchain;
-3. owner-generated bootstrap Ed25519 public key only, with the private key remaining outside repository and connected tooling;
-4. frozen-criteria evaluation of retained rehearsal evidence;
-5. new separately authorized live repeatability evidence when required by the frozen criteria;
-6. current production-use permission, continuity, independence, freshness, operational, and common-dependency evidence for all three providers;
-7. final separate independent reviews, ProviderProfiles, and owner-authorized QualificationDecisions for all three providers.
+1. owner-generated bootstrap Ed25519 public key only, with the private key remaining outside repository and connected tooling;
+2. exact independent review of any retained raw rehearsal package if it can be located outside the tracked tree;
+3. new separately authorized live repeatability evidence, including a provably post-freeze event, under the frozen criteria;
+4. current production-use permission, continuity, independence, freshness, operational, and common-dependency evidence for all three providers;
+5. final separate independent reviews, ProviderProfiles, and owner-authorized QualificationDecisions for all three providers.
 
 No production ProviderProfile or QualificationDecision has been instantiated.
 
