@@ -135,7 +135,7 @@ PRODUCTION_QUALIFICATION_OBJECT_MODEL = PUBLISHED_HARDENED_CANDIDATE
 PRODUCTION_QUALIFICATION_SCHEMA_META_VALIDATION = PASS_7_OF_7
 PRODUCTION_QUALIFICATION_ADVERSARIAL_HARDENING = CURRENT_KNOWN_FINDINGS_CLOSED
 PRODUCTION_QUALIFICATION_REPOSITORY_REGRESSION = PASS
-PRODUCTION_QUALIFICATION_SIGNATURE_BACKEND = PUBLISHED_CANDIDATE_NOT_FINAL_QUALIFIED
+PRODUCTION_QUALIFICATION_SIGNATURE_BACKEND = FINAL_QUALIFIED
 PRODUCTION_QUALIFICATION_SIGNATURE_BACKEND_QUALIFICATION_HARNESS = PUBLISHED_CANDIDATE
 PRODUCTION_QUALIFICATION_EXECUTION = NOT_READY
 production-qualified provider count = 0
@@ -201,7 +201,7 @@ goarch = amd64
 development_binary_sha256 = 592089f9f216e22d3e6eec63c836922fc628a91aebfc55d4829ec70fb70c99e9
 ```
 
-This development hash is not a frozen production verifier identity. A dedicated content-addressed qualification harness is now published in `scripts/genesis/qualify_ed25519_verifier.py` with build-profile schema `schemas/ed25519_verifier_build_profile.schema.json`. The harness requires exact Go 1.27.x, a closed three-file verifier source tree, a single-module graph, the frozen required PASS set, two byte-for-byte reproducible builds with distinct caches, and a content-addressed binary/build profile. Current development validation confirmed that Go 1.23.2 fails closed and writes no qualification profile. The qualification harness also binds the exact repository HEAD SHA and each verifier source file Git blob SHA1, rejecting source bytes that do not match the committed tree. Final qualification under the accepted Go 1.27.x toolchain has not been executed.
+This development hash is not the frozen production verifier identity. The dedicated content-addressed qualification harness in `scripts/genesis/qualify_ed25519_verifier.py` completed final offline qualification on Windows amd64 with Go 1.27.1. The qualified repository commit is `9ff58689992cf48b18a9f52e89f9e395271ade2c`; the official ZIP distribution/carrier SHA256 is `a3911b5e0e1b1053f25ed0675f4c1c6aad1e2bfcf253df2b9be4caabd2edd95d`; the extracted GOROOT tree SHA256 is `b42ecca624e9a4041ca88c7d574f1c2c435b5388e379e94f71e8d1d0eab8bcbb`; the canonical verifier source-tree SHA256 is `7e688acfa237a2da6891387e90c897b97c381dd89b6d11cffa8cbcea27406b5d`; the reproducible verifier binary SHA256 is `53d3d98e14dca206c64fb770417b701c74d295e34066ab35d8421bcf98b0053a`; and the build profile self-hash is `f2b7f746c44a8c38011484113b15227a2e92e647b5b14928c8c852e17aec24d5`. All ten required Go tests passed, two distinct-cache builds were byte-for-byte identical, and independent schema, semantic, source, Git blob, artifact, GOROOT-tree, binary, and profile checks passed. The qualification recorded `network_used=false` and `external_modules_used=false`. Twenty adversarial fail-closed checks passed without modifying the formal evidence.
 
 ## Regression state
 

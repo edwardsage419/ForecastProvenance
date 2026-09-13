@@ -1,7 +1,7 @@
 # GEN_001 Ed25519 Verification Backend Qualification V1
 
 Date: 2026-09-13
-Status: QUALIFICATION PROCEDURE CANDIDATE
+Status: FINAL QUALIFIED
 Scope: offline public-key signature verification backend only
 
 ## Safety boundary
@@ -75,12 +75,38 @@ The build profile schema is `ed25519_verifier_build_profile.schema.json` version
 
 A development binary hash does not become the final verifier identity. Final acceptance requires a build profile produced under the accepted Go 1.27.x toolchain and retained with the qualification evidence.
 
-## Current boundary
+## Final qualification record
 
-Publishing this procedure does not change any provider qualification state. Until the exact current repository regression and final Go 1.27.x build qualification both pass:
+Final offline qualification completed on 2026-09-13 with the following frozen evidence:
 
 ```text
-PRODUCTION_QUALIFICATION_SIGNATURE_BACKEND = PUBLISHED_CANDIDATE_NOT_FINAL_QUALIFIED
+repository_commit_sha = 9ff58689992cf48b18a9f52e89f9e395271ade2c
+go_toolchain_distribution_source = https://go.dev/dl/go1.27.1.windows-amd64.zip
+go_toolchain_distribution_sha256 = a3911b5e0e1b1053f25ed0675f4c1c6aad1e2bfcf253df2b9be4caabd2edd95d
+go_toolchain_carrier_sha256 = a3911b5e0e1b1053f25ed0675f4c1c6aad1e2bfcf253df2b9be4caabd2edd95d
+go_version = go1.27.1
+goos = windows
+goarch = amd64
+go_toolchain_tree_sha256 = b42ecca624e9a4041ca88c7d574f1c2c435b5388e379e94f71e8d1d0eab8bcbb
+source_tree_sha256 = 7e688acfa237a2da6891387e90c897b97c381dd89b6d11cffa8cbcea27406b5d
+binary_sha256 = 53d3d98e14dca206c64fb770417b701c74d295e34066ab35d8421bcf98b0053a
+profile_sha256 = f2b7f746c44a8c38011484113b15227a2e92e647b5b14928c8c852e17aec24d5
+cgo_enabled = false
+network_used = false
+external_modules_used = false
+required_tests = PASS_10_OF_10
+reproducible_build = PASS
+adversarial_checks = PASS_20_OF_20
+```
+
+The official Go reproducible-build report recorded PASS for `go1.27.1.windows-amd64.zip`. The qualification trust record remains bound to the locally downloaded ZIP bytes and their SHA256, not to the webpage. Independent recomputation matched all source-file Git blob SHA1 values and SHA256 values, the canonical source tree, extracted GOROOT tree, retained binary, and build-profile self-hash. JSON Schema and semantic validation both passed. The post-qualification repository regression completed with compileall PASS, 290 pytest tests passed, 8 skipped, and 188 subtests passed.
+
+## Current boundary
+
+Final qualification changes only the public verification signature-backend state. It does not qualify a provider or authorize production qualification execution:
+
+```text
+PRODUCTION_QUALIFICATION_SIGNATURE_BACKEND = FINAL_QUALIFIED
 PRODUCTION_QUALIFICATION_EXECUTION = NOT_READY
 production-qualified provider count = 0
 PRODUCTION_QUALIFIED = NO
