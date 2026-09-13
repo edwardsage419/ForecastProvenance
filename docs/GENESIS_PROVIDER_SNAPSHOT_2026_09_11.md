@@ -3,6 +3,8 @@
 Snapshot date: 2026-09-11
 Status: REVIEW INPUT ONLY
 
+Control note (2026-09-13): this is a historical pre-v3 provider-planning snapshot. D026, the current `GENESIS_TIME_EVIDENCE.md`, and the authoritative `GENESIS_READINESS_EVIDENCE_MATRIX.md` supersede its RFC 3161-primary and optional-Roughtime selection conclusions. The provider evidence below remains historical review input and grants no current network or qualification authority.
+
 This file records current official provider information used to plan non-forecast Genesis rehearsals.
 
 It is not a frozen ProviderProfile and does not make any provider quorum eligible.

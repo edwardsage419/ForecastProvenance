@@ -2,7 +2,9 @@
 
 Date: 2026-09-11
 Review target: Genesis readiness candidate on design/gen-001
-Disposition: BLOCKING READINESS ITEMS REMAIN
+Disposition: HISTORICAL PRE-V3 REVIEW; BLOCKING READINESS ITEMS REMAIN WHERE NOT LATER SUPERSEDED
+
+D026 and the current authoritative readiness matrix supersede this review's D015/RFC 3161-primary quorum and optional-Roughtime conclusions. The historical findings and evidence are retained; they are not current provider-selection or network-execution authority.
 
 ## Review objective
 

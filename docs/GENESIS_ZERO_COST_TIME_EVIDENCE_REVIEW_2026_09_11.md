@@ -1,7 +1,9 @@
 # Genesis Zero Cost Time Evidence Review
 
 Date: 2026-09-11
-Status: CURRENT READ ONLY ARCHITECTURE REVIEW
+Status: HISTORICAL V2 READ-ONLY ARCHITECTURE REVIEW
+
+D026 and candidate v0.5 supersede this document's v2 quorum and provider-pool selection. Its historical reasoning and evidence remain retained and are not rewritten.
 
 ## Decision
 

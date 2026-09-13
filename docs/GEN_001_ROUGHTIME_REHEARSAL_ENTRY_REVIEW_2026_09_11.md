@@ -1,7 +1,9 @@
 # GEN_001 Roughtime Rehearsal Entry Review
 
 Date: 2026-09-11
-Status: READ ONLY ENTRY REVIEW CLOSED
+Status: HISTORICAL V2/CLOUDFLARE ENTRY REVIEW CLOSED
+
+The later provider-pool revision replaces Cloudflare-Roughtime-2 with TimeNL-Roughtime, and D026 identifies quorum v3 as the current candidate. This document remains historical entry evidence and is not current network or qualification authority.
 
 ## Decision
 

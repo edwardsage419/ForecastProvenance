@@ -221,3 +221,22 @@ Date: 2026-09-11
 `docs/GENESIS_READINESS_EVIDENCE_MATRIX.md` is the authoritative closure checklist for GEN_001.
 
 A readiness item closes only through the retained evidence specified by that matrix. Rehearsal success without retained verifiable artifacts, narrative confidence, or operator assertion does not close a blocker.
+
+## D026 Roughtime quorum v3 and production qualification governance
+
+Status: GEN_001 REVIEW CONTROL
+Date: 2026-09-13
+
+The current effective GEN_001 candidate lineage is `candidate_object_set_v0_2.json` plus `candidate_patch_v0_3.json`, `candidate_patch_v0_4.json`, and `candidate_patch_v0_5.json`. The v0.5 patch retires `policy:deadline-receipt-quorum:v2` by exact predecessor content hash and adds `policy:deadline-receipt-quorum:v3`.
+
+This decision supersedes D015 only where D015 names `DEADLINE_RECEIPT_QUORUM_V1` or requires an RFC 3161 receipt. It preserves D015's requirements that at least two operationally independent provider groups supply qualifying signed receipts, that provider failure never lowers the threshold, and that a provider without a defensible conservative upper time bound cannot count.
+
+Under the current v3 candidate, the frozen provider pool is `roughtime.se`, `time.txryan.com`, and `TimeNL-Roughtime`; the event threshold is two of three qualifying Roughtime provider groups. RFC 3161 evidence is optional auxiliary evidence and does not reduce or replace that threshold.
+
+This decision also supersedes only the effective-lineage sentence in D024. D024's append-only history, exact predecessor binding, sealed-object, and non-prospective rules remain unchanged.
+
+D025 remains in force. `docs/GENESIS_READINESS_EVIDENCE_MATRIX.md` remains the authoritative GEN_001 closure checklist and must track the current effective lineage, current quorum policy, retained rehearsal evidence, production qualification gates, and final freeze state.
+
+A successful `NON_FORECAST_REHEARSAL`, including a three-of-three qualifying result, is evidence for a later independent qualification review. It is not a production qualification decision, does not create a production ProviderProfile, and cannot change the production-qualified provider count.
+
+Roughtime production qualification criteria must be independently frozen by a later governance decision before qualification execution. Historical candidate objects, RFC 3161 evidence, Roughtime plans, authorizations, requests, responses, reports, and classifications retain their original semantics and are not rewritten by this decision.

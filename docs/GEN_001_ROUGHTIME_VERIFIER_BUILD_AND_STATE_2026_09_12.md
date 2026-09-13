@@ -1,7 +1,7 @@
 # GEN_001 Roughtime strict verifier and control state freeze
 
 Date: 2026-09-12
-Status: VENDORED OFFLINE QUALIFICATION CANDIDATE PUBLISHED; POST-VENDORING GO 1.27 EXECUTION OPEN
+Status: VENDORED OFFLINE QUALIFICATION AND NON-FORECAST REHEARSAL VERIFIED; PRODUCTION QUALIFICATION OPEN
 
 ## Safety boundary
 
@@ -202,7 +202,7 @@ is historical execution evidence only. It must not populate the post-vendoring b
 
 ## Executed checks
 
-Before vendoring, Go 1.27.1 executed the complete strict-wrapper matrix successfully:
+The retained post-vendoring qualification executed the strict-wrapper matrix successfully under Go 1.27.x:
 
 ```text
 Go 1.27 strict-wrapper tests = 15 PASS
@@ -210,7 +210,7 @@ including Go 1.27 cryptographic fixtures = PASS
 offline binary build = PASS
 ```
 
-The fixture matrix includes typed hash-first, typed node-first, untyped draft 12, wrong root, mutated response, wrong nonce, and packet/profile rejection with deterministic synthetic keys.
+The fixture matrix includes named positive tests for typed hash-first, typed node-first, and untyped draft 12, plus wrong-root, mutated-response, wrong-nonce, and packet/profile rejection tests with deterministic synthetic keys. The positive fixtures currently use a single-leaf Merkle tree. They exercise the relevant request and response verification paths, but their zero-length PATH does not independently distinguish Merkle child ordering. Effective multi-leaf typed node-first and untyped draft-12 node-first fixtures remain required before production qualification criteria can be treated as satisfied.
 
 For the vendored qualification model itself, isolated local validation completed:
 
@@ -220,7 +220,7 @@ three revised qualification JSON Schemas = VALID
 Python compile = PASS
 ```
 
-A complete post-vendoring Go 1.27 qualification run has not yet been recorded against a full checkout of the current formal HEAD. The complete repository test suite is also still open. No CI PASS claim is made.
+A complete post-vendoring Go 1.27 qualification, repository regression run, separately authorized non-forecast rehearsal, and independent retained-evidence review have now completed. The rehearsal returned three qualifying provider results. This closes the rehearsal tooling and evidence-review stage only; it does not qualify any provider for production and makes no CI PASS claim.
 
 ## Persistent retry state and control binding
 
@@ -228,15 +228,13 @@ Retry state remains `CONTROL_STATE_NON_TIME_EVIDENCE`, keyed by SHA256 of the fr
 
 Plan, authorization, report, build profile, retry state before, and retry state after remain strictly content-bound. Receipt source and binary hashes must match the retained build profile exactly.
 
-## Remaining gate before any network rehearsal
+## Remaining production qualification preparation
 
-1. Obtain a full checkout at the current formal `design/gen-001` HEAD.
-2. Use an exact Go 1.27.x toolchain and record its distribution and GOROOT tree hashes.
-3. Run the single-stage vendored offline qualification command.
-4. Require the main-module-only check, vendored Git blob verification, all 15 Go tests, deterministic binary build, dependency lock, fixture report, and build profile cross-binding to pass.
-5. Run the complete repository test suite.
-6. Perform final offline adversarial review.
-7. Recheck provider endpoints, roots, operator evidence, and standards-transition status immediately before any later network authorization.
-8. Obtain a separate exact `NON_FORECAST_REHEARSAL` network authorization before sending any provider packet.
+1. Resolve and freeze the versioned production qualification criteria.
+2. Add effective multi-leaf typed hash-first, typed node-first, and untyped draft-12 node-first fixtures, plus a negative wrong-order test.
+3. Add separately reviewed production qualification and evidence-manifest schemas.
+4. Re-run the offline qualification, repository suite, and adversarial review.
+5. Recheck provider endpoints, roots, operator evidence, and standards-transition status immediately before any later production ProviderProfile freeze.
+6. Conduct a separate independent production qualification review. Rehearsal success must not create a production qualification decision.
 
 GitHub-hosted Actions are not required for this gate and are not authorized by this document.

@@ -1,11 +1,13 @@
 # Genesis Provider Qualification Status
 
 Date: 2026-09-11
-Status: CURRENT READ-ONLY QUALIFICATION ASSESSMENT
+Status: CURRENT RFC 3161 READ-ONLY ASSESSMENT / NON-CONTROLLING FOR THE V3 ROUGHTIME QUORUM
 
 ## Purpose
 
 This document records the current GEN_001 provider-qualification state after the retained RFC 3161 rehearsals and the subsequent read-only production-prerequisite assessments.
+
+D026 and `docs/GENESIS_READINESS_EVIDENCE_MATRIX.md` control the current Genesis deadline-receipt design. The RFC 3161 providers assessed here are auxiliary candidates under that design; this document does not select, qualify, or replace any member of the frozen version 3 Roughtime pool.
 
 It is not a ProviderProfile, does not grant quorum eligibility, does not authorize an RFC 3161 request, and does not authorize Genesis or prospective forecasting.
 
@@ -156,7 +158,7 @@ No alternate deadline semantics are introduced by provider assessment.
 
 ## Provider-group independence rule
 
-`DEADLINE_RECEIPT_QUORUM_V1` requires receipts from distinct provider groups.
+The current `DEADLINE_RECEIPT_QUORUM_V3` candidate requires qualifying Roughtime receipts from distinct provider groups within its exactly three-profile frozen pool.
 
 A provider group represents one operational trust authority. Multiple endpoints, TSUs or certificates controlled by the same operational authority remain one provider group.
 
@@ -169,7 +171,7 @@ Provider-group independence does not require ordinary infrastructure suppliers t
 3. Seek direct written Signicat confirmation sufficient to evaluate `REHEARSAL_AUTHORIZATION` before any request is sent.
 4. Independently review any provider reply before changing readiness state.
 5. If a provider later becomes ready for rehearsal, authorize the exact request in a separate task and retain it permanently as `NON_FORECAST_REHEARSAL`.
-6. Qualify a second independent provider group before Genesis quorum can close.
+6. Complete separate production qualification for all three frozen version 3 Roughtime provider groups before the current Genesis quorum can close; RFC 3161 qualification remains auxiliary.
 7. Create and freeze production ProviderProfiles only in a separately authorized final-freeze task after all required qualification evidence is closed.
 
 ## Terminal state

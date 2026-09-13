@@ -2,7 +2,9 @@
 
 Date: 2026-09-11
 Review target: zero recurring cash cost deadline evidence candidate
-Disposition: DESIGN VIABLE, EXTERNAL REHEARSAL EVIDENCE REQUIRED
+Disposition: HISTORICAL V2 REVIEW; LATER REHEARSAL EVIDENCE RETAINED SEPARATELY
+
+D026 and candidate v0.5 supersede this review's v2 policy references. Its design findings remain historical evidence; current rehearsal and production-qualification status is controlled by the authoritative readiness matrix and current state documents.
 
 ## Scope
 

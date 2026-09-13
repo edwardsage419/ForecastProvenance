@@ -1,13 +1,15 @@
 # Genesis External Readiness Runbook
 
-Version: 0.3
-Status: OWNER ACTION REQUIRED
+Version: 0.3 historical
+Status: HISTORICAL PRE-V3 RUNBOOK; DO NOT EXECUTE PROVIDER OR OTS NETWORK STEPS
 
 This runbook performs only non-forecast Genesis readiness rehearsals.
 
 None of the outputs are native prospective evidence and none create Forecast Ledger Genesis.
 
 The authoritative closure checklist is `docs/GENESIS_READINESS_EVIDENCE_MATRIX.md`.
+
+D026, the current `GENESIS_TIME_EVIDENCE.md`, and `GENESIS_OWNER_ACTION_PACKET.md` supersede this runbook's time-provider selection and execution instructions. The RFC 3161-primary and optional-Roughtime commands below are retained as historical text only. They are not current accepted tasks and authorize no network operation.
 
 ## Safety boundary
 

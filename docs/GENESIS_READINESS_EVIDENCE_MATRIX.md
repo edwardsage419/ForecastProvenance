@@ -1,6 +1,6 @@
 # GEN_001 Readiness Evidence Matrix
 
-Date: 2026-09-11
+Date: 2026-09-13
 Status: ACTIVE REVIEW CONTROL
 
 ## Purpose
@@ -21,6 +21,19 @@ A readiness item closes only when the required evidence exists, is content addre
 
 `FINAL_FREEZE_REQUIRED`: all dependencies must be fixed before the exact final object can be sealed.
 
+`PRODUCTION_QUALIFICATION_REQUIRED`: reviewed rehearsal evidence exists, but the provider has not passed independently frozen production qualification criteria and no production ProviderProfile has been sealed.
+
+## Current Roughtime stage boundary
+
+| Stage | Current state | Consequence |
+| --- | --- | --- |
+| Execution orchestrator | PUBLISHED_AND_OFFLINE_VERIFIED | The repository-owned persist-before-send and verification path exists; this does not authorize a new request |
+| Non-forecast rehearsal execution | COMPLETED_3_OF_3_QUALIFYING | The exact authorization was consumed and cannot be reused |
+| Rehearsal evidence review | PASS | Retained evidence supports later independent qualification review |
+| Production qualification criteria | BLOCKED_PENDING_POLICY_DECISIONS_AND_FREEZE | The dated criteria document remains a draft and cannot qualify a provider |
+| Production qualification execution | NOT_READY | No production qualification decision or ProviderProfile may be created |
+| Genesis readiness | NOT_READY | Roughtime production qualification and other GR items remain open |
+
 ## Evidence matrix
 
 | ID | Readiness item | Current status | Required closing evidence |
@@ -28,10 +41,10 @@ A readiness item closes only when the required evidence exists, is content addre
 | GR001 | Trust Core normative contract | CLOSED_REPOSITORY | FTC_001 frozen v0.4 and merged implementation |
 | GR002 | Trust Core synthetic adversarial execution | CLOSED_REPOSITORY | ADV001 through ADV096 executable synthetic results |
 | GR003 | Dual external time architecture | CLOSED_DESIGN | FPP_TIME_EVIDENCE_V1 design separating wall clock deadline evidence from Bitcoin durability |
-| GR004 | Deadline receipt quorum rule | CLOSED_REPOSITORY | `policy:deadline-receipt-quorum:v2` requiring two of three frozen independent Roughtime provider groups, zero recurring cash cost, provider outage never lowering quorum |
-| GR005 | Roughtime provider profile A | EXTERNAL_EVIDENCE_REQUIRED | Exact operator, endpoint, protocol version, root key, usage basis, nonce bound synthetic rehearsal, raw request and response, midpoint and radius, verifier result, hashes |
-| GR006 | Roughtime provider profile B | EXTERNAL_EVIDENCE_REQUIRED | Same retained evidence standard as GR005 and independent provider group classification |
-| GR007 | Roughtime provider profile C | EXTERNAL_EVIDENCE_REQUIRED | Same retained evidence standard as GR005, independent provider group classification, and frozen membership in the three provider pool |
+| GR004 | Deadline receipt quorum rule | CLOSED_REPOSITORY | `policy:deadline-receipt-quorum:v3` requiring two of three frozen independent Roughtime provider groups, zero recurring cash cost, provider outage never lowering quorum, and exact protocol/control bindings |
+| GR005 | Roughtime provider profile: roughtime.se | PRODUCTION_QUALIFICATION_REQUIRED | Reviewed qualifying rehearsal evidence plus frozen production criteria, effective non-empty Merkle-order fixture coverage, usage basis, independence review, complete evidence manifest, explicit qualification decision, and sealed ProviderProfile |
+| GR006 | Roughtime provider profile: time.txryan.com | PRODUCTION_QUALIFICATION_REQUIRED | Same retained evidence standard as GR005, including independent issuance/root-control classification and correlated-software risk review |
+| GR007 | Roughtime provider profile: TimeNL-Roughtime | PRODUCTION_QUALIFICATION_REQUIRED | Same retained evidence standard as GR005, plus the unresolved pilot/experimental production-admissibility policy gate and untyped multi-leaf node-first fixture |
 | GR008 | OpenTimestamps non forecast rehearsal | OWNER_ACTION_REQUIRED | Stamp file, upgraded proof bytes, subject hash, command and verifier versions |
 | GR009 | Strong Bitcoin verification | OWNER_ACTION_REQUIRED | Verification against owner controlled Bitcoin Core, retained block and proof report sufficient for independent replay |
 | GR010 | Bootstrap governance contract | CLOSED_DESIGN | GenesisGovernanceEnvelope and ManifestAcceptance procedure |
@@ -54,14 +67,14 @@ A readiness item closes only when the required evidence exists, is content addre
 | GR027 | Retention policy | CLOSED_REPOSITORY | Sealed indefinite content addressed retention and second owner controlled copy requirement |
 | GR028 | Human review policy | CLOSED_REPOSITORY | Sealed authority and hard override prohibitions |
 | GR029 | Genesis acceptance policy | CLOSED_REPOSITORY | Sealed acceptance dependencies and first execution after final acceptance rule |
-| GR030 | Candidate object dependency closure | CLOSED_REPOSITORY | Effective v0.4 lineage: v0.2 base plus v0.3 and v0.4 patches, 22 objects, exact retirement predecessor hash, full refs close exactly |
+| GR030 | Candidate object dependency closure | CLOSED_REPOSITORY | Effective v0.5 lineage: v0.2 base plus v0.3, v0.4, and v0.5 patches, 22 objects, exact retirement predecessor hashes, full refs close exactly |
 | GR031 | Exact Genesis validator implementation binding | FINAL_FREEZE_REQUIRED | Final accepted source tree or artifact hash, validator contract identity, test report, runtime requirements |
 | GR032 | Final BootstrapGovernanceRoot | FINAL_FREEZE_REQUIRED | GR011 public key plus frozen acceptance rule and canonical sealed object |
-| GR033 | Final Roughtime provider profiles | FINAL_FREEZE_REQUIRED | Successful GR005, GR006, and GR007 evidence converted into three sealed ProviderProfile objects matching the frozen quorum pool |
+| GR033 | Final Roughtime provider profiles | FINAL_FREEZE_REQUIRED | GR005, GR006, and GR007 closed under independently frozen production criteria, followed by three separately sealed ProviderProfile objects matching the frozen quorum pool |
 | GR034 | Final OTS Bitcoin verifier profile | FINAL_FREEZE_REQUIRED | Successful GR008 and GR009 evidence plus frozen verifier semantics |
 | GR035 | Candidate Genesis TrustedManifest | FINAL_FREEZE_REQUIRED | Exact full hash refs to all accepted targets, methods, policies, sources, three Roughtime provider profiles, bootstrap and validator contracts |
 | GR036 | ManifestAcceptance signature | FINAL_FREEZE_REQUIRED | Owner Ed25519 signature over exact candidate manifest under accepted rule |
-| GR037 | Manifest and acceptance external time evidence | FINAL_FREEZE_REQUIRED | FPP_TIME_EVIDENCE_V1 evidence satisfying `policy:deadline-receipt-quorum:v2` |
+| GR037 | Manifest and acceptance external time evidence | FINAL_FREEZE_REQUIRED | FPP_TIME_EVIDENCE_V1 evidence satisfying `policy:deadline-receipt-quorum:v3` |
 | GR038 | Final readiness adversarial review | FINAL_FREEZE_REQUIRED | No unresolved blocking finding across governance, time, source, schedule, manifest, cost, and retention paths |
 | GR039 | Genesis acceptance decision | OUTSIDE GEN_001 | Separate explicit decision after GEN_001 closes. This is the only step that can authorize Forecast Ledger Genesis |
 
@@ -73,7 +86,7 @@ Existing RFC 3161 rehearsal evidence remains permanently retained under its hist
 
 RFC 3161 checker engineering remains closed at version 1.3 and report schema 1.2 absent a new concrete correctness or security defect.
 
-No commercial RFC 3161 entitlement is required to close GR004 through GR007 under the selected version 2 profile.
+No commercial RFC 3161 entitlement is required to close GR004 through GR007 under the selected version 3 profile.
 
 ## Fail closed rule
 
@@ -97,7 +110,9 @@ Failures are retained when they materially inform provider eligibility, operatio
 
 Repository design and candidate object work is substantially closed through GR030 for the zero recurring cash cost candidate.
 
-The remaining critical path begins with provider rehearsal entry review and later separately authorized external evidence at GR005, GR006, GR007, GR008, GR009, and GR011, plus real official archive fixtures GR017 through GR019.
+The Roughtime non-forecast rehearsal and its retained-evidence review are complete. GR005 through GR007 now remain open on production-criteria policy decisions and freeze, effective multi-leaf Merkle fixtures, production qualification, and separately sealed ProviderProfiles. No provider is production qualified.
+
+The other external critical path continues through GR008, GR009, and GR011, plus real official archive fixtures GR017 through GR019.
 
 Final object freezing then proceeds through GR031 to GR038.
 

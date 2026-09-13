@@ -140,9 +140,13 @@ The existing pool revision explicitly requires reviewed profile versioning befor
 
 The retained synthetic cryptographic fixture
 `TestGo127UntypedDraft12Fixture` exercises the selected untyped draft-12
-request and authenticated response semantics. It is not represented as a live
-TimeNL response. No new fixture or qualification-bound source is required
-because the provider profile and verifier acceptance set did not change.
+request and authenticated response path. It is not represented as a live
+TimeNL response. The fixture uses a single-leaf Merkle tree, so PATH length is
+zero and the fixture does not independently demonstrate node-first child
+ordering. A multi-leaf untyped draft-12 node-first fixture is required before
+the Merkle-ordering production qualification criterion can be satisfied. This
+is an offline coverage requirement and does not require a new live request or
+change the retained provider profile.
 
 ## Retention versus removal
 

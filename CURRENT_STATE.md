@@ -1,8 +1,15 @@
 # Current State
 
-Date: 2026-09-12
+Date: 2026-09-13
 Project: Forecast Provenance Project
 State: GENESIS_READINESS_DESIGN
+
+Current formal branch and HEAD:
+
+```text
+branch = design/gen-001
+HEAD = 1b6d7758b30f3bd7e40c3c66570408df305ab0f2
+```
 
 ## Native scientific state
 
@@ -51,7 +58,7 @@ v0.2 base
 
 Effective object count remains 22.
 
-## Pre-rehearsal Roughtime pool
+## Roughtime pool and completed non-forecast rehearsal
 
 Current pool:
 
@@ -61,9 +68,23 @@ Current pool:
 
 Cloudflare-Roughtime-2 is removed from the current pool after a concrete unresolved IETF interoperability issue was identified. It remains historical review evidence only.
 
-Public entry evidence is sufficient to continue tooling qualification for all three current candidates.
+The repository-owned execution orchestrator is published and its offline control, failure-path, schema, and regression checks passed before the retained rehearsal.
 
-No provider request is authorized.
+One separately authorized `NON_FORECAST_REHEARSAL` has completed against the frozen pool. All three providers returned a qualifying first-attempt response. The retained report status and independent review state are:
+
+```text
+REHEARSAL_VERIFIED = YES
+REHEARSAL_EVIDENCE_REVIEW = PASS
+qualifying provider results = 3 of 3
+classification = NON_FORECAST_REHEARSAL
+prospective_eligible = false
+```
+
+The executed plan hash is `d307402fafa351aded623f701ab7736fd2658756a0e10d04de61a92e38888d8d`. Its exact authorization hash, `293979744f5d3494f7b270a1f100020b916971f802f52eab09390470a15a8347`, was consumed and cannot be reused.
+
+The older plan `99ae0b4ce62d106f9ca0cc049f3766a3a39dd28c3d788d134d7f8923c6e278cd` remains `NOT EXECUTED / SUPERSEDED FOR FUTURE NETWORK EXECUTION`; no authorization was created for it.
+
+No new provider request is authorized. Repository development-time `network_authorized` remains false.
 
 ## Protocol freeze
 
@@ -98,7 +119,9 @@ tag v1.27.0
 commit 56b346a16cd7e8317bb0d24f1ec15549cf93a4c9
 ```
 
-A strict low-level wrapper build and offline fixture run under Go 1.27.x is still required before any network authorization. Every future rehearsal plan must bind an exact content-addressed verifier build profile and an exact pre-attempt retry-state snapshot.
+The vendored strict low-level wrapper was qualified offline under Go 1.27.x and the executed rehearsal bound its exact content-addressed verifier build profile and pre-attempt retry-state snapshot. Future events must independently repeat the required freshness checks and bind their own exact plan, authorization, build profile, and retry-state snapshot.
+
+The current named Merkle-order fixtures use a single-leaf tree and therefore exercise protocol paths without independently distinguishing child ordering. Effective non-empty ordering coverage currently exists only for the live `time.txryan.com` hash-first response. Multi-leaf typed hash-first, typed node-first, untyped draft-12 node-first, and negative wrong-order fixtures remain required before production qualification criteria can be treated as satisfied.
 
 ## Evidence validation
 
@@ -135,13 +158,24 @@ Retained historical reports remain unchanged.
 
 Commercial Sectigo and Signicat qualification work remains paused for the zero-cost Genesis minimum profile.
 
+## Roughtime production qualification
+
+```text
+PRODUCTION_QUALIFICATION_CRITERIA = BLOCKED
+PRODUCTION_QUALIFICATION_EXECUTION = NOT_READY
+production-qualified provider count = 0
+PRODUCTION_QUALIFIED = NO
+```
+
+D026 reconciles the governance hierarchy while preserving the readiness matrix as the authoritative closing control. The dated production qualification criteria document is a draft only. It does not qualify a provider, create or freeze a ProviderProfile, authorize a network request, or declare Genesis ready.
+
 ## Other external blockers
 
 Still required:
 
 1. owner-generated bootstrap Ed25519 public key only;
-2. pinned Roughtime verifier/toolchain build and strict offline fixtures;
-3. separately authorized non-forecast Roughtime rehearsals and final ProviderProfiles;
+2. frozen Roughtime production qualification criteria and effective multi-leaf Merkle-order fixtures;
+3. independent production qualification of the three current Roughtime providers and final sealed ProviderProfiles;
 4. OTS/Bitcoin strong rehearsal and final verifier profile;
 5. three retrospective official BLS/BEA fixture byte sets and adapter reports;
 6. final clean test report and ValidatorContract;
@@ -160,6 +194,7 @@ Forecast Ledger = NOT CREATED
 prospective forecast count = 0
 production-qualified provider count = 0
 PRODUCTION_QUALIFIED = NO
+network_authorized = false
 ```
 
 No Roughtime request, RFC3161 request, prospective forecast, production ProviderProfile, Genesis acceptance or Forecast Ledger creation is authorized by this state.

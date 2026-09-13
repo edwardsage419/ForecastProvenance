@@ -1,7 +1,7 @@
 # GEN_001 Owner Action Packet
 
-Date: 2026-09-11
-Status: OWNER ACTION REQUIRED, PROVIDER NETWORK REQUESTS PAUSED
+Date: 2026-09-13
+Status: OWNER ACTION REQUIRED, ALL NEW TIME NETWORK OPERATIONS PAUSED
 
 This is the concise execution packet for remaining owner controlled GEN_001 evidence.
 
@@ -64,7 +64,7 @@ The current minimum Genesis candidate no longer requires commercial RFC 3161 qua
 The active candidate quorum is:
 
 ```text
-policy:deadline-receipt-quorum:v2
+policy:deadline-receipt-quorum:v3
 three frozen independent Roughtime provider groups
 two independently valid receipts required for each deadline event
 ```
@@ -74,16 +74,12 @@ Current read only candidates:
 ```text
 roughtime.se
 time.txryan.com
-Cloudflare-Roughtime-2
+TimeNL-Roughtime
 ```
 
-All remain:
+One separately authorized non-forecast rehearsal has completed with three qualifying results and a passing retained-evidence review. The exact authorization was consumed and cannot be reused.
 
-`NOT READY FOR NON_FORECAST_REHEARSAL`
-
-Do not query any of them yet.
-
-Before any request, repository review must freeze the exact entry profile for each candidate and a separate task must authorize the exact synthetic request.
+Production qualification criteria remain a draft, production qualification execution is not ready, and no provider is production qualified. Do not query any provider or create another authorization under this packet.
 
 The old RFC 3161 rehearsal commands in earlier runbooks are historical only. Do not execute them for current Genesis minimum qualification.
 
@@ -159,10 +155,10 @@ Every resulting report must remain `prospective_eligible=false`.
 
 ```bash
 PYTHONPATH=src python3 scripts/genesis/materialize_candidate.py \
-  --output ~/fpp-genesis-rehearsal/effective_candidate_inventory_v0_4.json
+  --output ~/fpp-genesis-rehearsal/effective_candidate_inventory_v0_5.json
 ```
 
-This validates the v0.2 base plus the v0.3 and v0.4 patch chain and emits the deterministic 22 object inventory.
+This validates the v0.2 base plus the v0.3, v0.4, and v0.5 patch chain and emits the deterministic 22 object inventory.
 
 ## G. Final repository test and validator binding
 

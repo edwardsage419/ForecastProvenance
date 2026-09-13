@@ -1,11 +1,11 @@
 # Next Accepted Task
 
 Task ID: GEN_001
-State: POST-VENDORING GO 1.27 OFFLINE QUALIFICATION REQUIRED; NETWORK REQUEST NOT AUTHORIZED
+State: ROUGHTIME PRODUCTION QUALIFICATION GOVERNANCE PREPARATION; NETWORK REQUEST NOT AUTHORIZED
 
 ## Objective
 
-Execute the published vendored Roughtime verifier qualification path against the current formal branch HEAD, then run the complete repository suite and final offline adversarial review.
+Resolve and freeze the remaining Roughtime production qualification policy choices, implement effective multi-leaf Merkle fixtures and production qualification schemas, and complete an offline regression review. This task is preparation for a later independent qualification review; it is not production qualification execution.
 
 ## Frozen design retained
 
@@ -22,38 +22,37 @@ quorum = 2-of-3
 
 Cloudflare-Roughtime-2 remains historical only.
 
-## Current offline state
+## Current state
 
-Go 1.27.1 access is resolved.
+The vendored Go 1.27 verifier qualification, execution orchestrator, separately authorized non-forecast rehearsal, and independent evidence review are complete. The retained rehearsal produced three qualifying provider results and remains permanently `NON_FORECAST_REHEARSAL` with `prospective_eligible=false`.
 
-The pinned upstream `protocol` compile inputs are vendored byte-for-byte from commit `56b346a16cd7e8317bb0d24f1ec15549cf93a4c9`. Their upstream Git blob SHA1 values are retained in `SOURCE_PROVENANCE.json`.
+```text
+REHEARSAL_VERIFIED = YES
+REHEARSAL_EVIDENCE_REVIEW = PASS
+PRODUCTION_QUALIFICATION_CRITERIA = BLOCKED
+PRODUCTION_QUALIFICATION_EXECUTION = NOT_READY
+```
 
-The accepted qualification path is single-stage and offline. It does not use Go proxy, sumdb, an upstream module Zip, or an external Go module.
+D026 reconciles the current v3 quorum with the historical D015 and D024 text while preserving D025's readiness-matrix authority. The dated production qualification criteria document remains `DRAFT / NOT YET FROZEN / NOT A QUALIFICATION DECISION`.
 
-The older module-Zip qualification implementation is superseded and is not the accepted execution path.
+The named positive Merkle fixtures still use single-leaf trees. They exercise request and response verification but do not independently distinguish child ordering because PATH length is zero.
 
 ## Next accepted execution
 
-1. Obtain a full checkout at the current formal `design/gen-001` HEAD.
-2. Use exact Go 1.27.x with `GOTOOLCHAIN=local`.
-3. Run `scripts/genesis/qualify_roughtime_verifier.py` with new output paths for dependency lock, fixture report, and build profile.
-4. Bind the toolchain distribution source, inner distribution SHA256, carrier artifact SHA256, and actual GOROOT tree hash.
-5. Require `go list -m all` to contain only `forecastprovenance/roughtime_strict_verifier`.
-6. Require all vendored source Git blob SHA1 and SHA256 checks to pass.
-7. Require all 15 Go tests to pass, including the Go 1.27 cryptographic fixture matrix.
-8. Require the frozen binary build to pass and retain its new post-vendoring SHA256.
-9. Require dependency lock 1.1, fixture report 1.1, and build profile 1.2 to cross-bind.
-10. Run the complete repository test suite.
-11. Perform final offline adversarial review.
-12. Recheck provider endpoint, root, operator, and standards-transition evidence immediately before any later network authorization.
-
-The pre-vendoring binary SHA256 is historical evidence and must not be reused in the post-vendoring build profile.
+1. Review the reconciled governance documents and the dated qualification criteria draft.
+2. Resolve the explicitly marked policy decisions, including TimeNL pilot admissibility and freshness/repeatability parameters.
+3. Freeze the accepted criteria through a separate versioned governance decision; do not infer acceptance from this draft.
+4. Add multi-leaf offline fixtures for typed hash-first, typed node-first, and untyped draft-12 node-first Merkle behavior, plus a negative wrong-order test.
+5. Add separately reviewed schemas for production ProviderProfile, qualification decision/state, and the complete evidence manifest.
+6. Validate existing retained rehearsal evidence against the frozen criteria without changing its historical classification.
+7. Run the vendored verifier qualification, focused Roughtime tests, schema tests, complete repository suite, compile check, and offline adversarial review.
+8. Report readiness for a later independent production qualification review. Do not execute that qualification in this task.
 
 No provider packet is authorized by this task.
 
 ## Later network boundary
 
-A first network rehearsal still requires a separate exact authorization binding the synthetic subject bytes and SHA256, frozen deadline, three-provider pool, plan SHA256, authorization SHA256, pinned verifier commit, validated verifier build profile, retry-state snapshot, exact wire/TYPE/SRV/packet profiles, attempt limits, timeout/backoff, evidence directory, `classification = NON_FORECAST_REHEARSAL`, and `prospective_eligible = false`.
+No additional live event is authorized or currently necessary. The identified Merkle and governance gaps are offline gaps. If frozen criteria later require a repeatability event, it must receive a new separate exact authorization and remain non-prospective unless a future accepted governance state explicitly provides otherwise.
 
 The offline plan remains `network_authorized=false`.
 
@@ -68,4 +67,5 @@ production-qualified provider count = 0
 PRODUCTION_QUALIFIED = NO
 Roughtime provider requests sent by this work = 0
 RFC3161 requests sent by this work = 0
+network_authorized = false
 ```
