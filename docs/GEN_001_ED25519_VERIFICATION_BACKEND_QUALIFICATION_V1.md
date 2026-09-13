@@ -20,11 +20,11 @@ main_test.go
 
 Symlinks, directories, extra files, and special files are rejected. During the build phase the only additional allowed file is the generated verifier binary.
 
-The build profile records the SHA256 of each source file and a canonical source-tree SHA256 over the ordered source manifest.
+The build profile records the exact repository commit SHA, each source file Git blob SHA1 and SHA256, and a canonical source-tree SHA256 over the ordered source manifest. Qualification rejects any source file whose current bytes do not match the blob recorded at repository HEAD.
 
 ## Toolchain boundary
 
-Final qualification requires an exact Go 1.27.x patch release. The selected `go` executable must resolve to the same file as `GOROOT/bin/go`. The qualification record binds:
+Final qualification requires an exact Go 1.27.x patch release. The selected `go` executable must resolve to the same file as `GOROOT/bin/go`. The qualification record also binds:
 
 ```text
 go_version

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -17,6 +18,7 @@ from forecast_trust_core._ed25519_qualification import (
     parse_go_test_json,
     source_manifest,
     validate_build_profile,
+    validate_repository_binding,
 )
 
 
@@ -59,6 +61,7 @@ def test_build_profile_binds_source_tests_toolchain_and_binary(tmp_path: Path) -
     binary.write_bytes(b"binary")
     profile = make_build_profile(
         source_dir=root,
+        repository_commit_sha="a" * 40,
         binary=binary,
         go_test_json=_go_test_json(),
         go_version="go1.27.1",
@@ -83,6 +86,7 @@ def test_profile_rejects_non_go127_and_tampering(tmp_path: Path) -> None:
     with pytest.raises(ValueError, match="go1.27.x"):
         make_build_profile(
             source_dir=root,
+            repository_commit_sha="a" * 40,
             binary=binary,
             go_test_json=_go_test_json(),
             go_version="go1.23.2",
@@ -93,3 +97,22 @@ def test_profile_rejects_non_go127_and_tampering(tmp_path: Path) -> None:
             go_toolchain_distribution_sha256="2" * 64,
             go_toolchain_carrier_sha256="3" * 64,
         )
+
+def test_repository_binding_requires_exact_committed_source(tmp_path: Path) -> None:
+    root = tmp_path / "repo"
+    source = root / "scripts" / "genesis" / "ed25519_verify"
+    source.mkdir(parents=True)
+    for name in SOURCE_FILES:
+        (source / name).write_text(f"{name}\n", encoding="utf-8")
+    subprocess.run(["git", "init", "-q", str(root)], check=True)
+    subprocess.run(["git", "-C", str(root), "config", "user.email", "test@example.invalid"], check=True)
+    subprocess.run(["git", "-C", str(root), "config", "user.name", "Test"], check=True)
+    subprocess.run(["git", "-C", str(root), "add", "."], check=True)
+    subprocess.run(["git", "-C", str(root), "commit", "-qm", "fixture"], check=True)
+    commit = subprocess.check_output(
+        ["git", "-C", str(root), "rev-parse", "HEAD"], text=True
+    ).strip()
+    assert validate_repository_binding(source) == commit
+    (source / "main.go").write_text("changed\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="do not match repository HEAD"):
+        validate_repository_binding(source)

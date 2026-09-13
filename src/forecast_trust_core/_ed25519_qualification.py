@@ -33,20 +33,25 @@ TEST_COMMAND = "go test -count=1 -json ./..."
 BUILD_COMMAND = "go build -trimpath -buildvcs=false -ldflags=-buildid= -o fpp-ed25519-verify.exe ."
 GO127_RE = re.compile(r"^go1\.27\.[0-9]+$")
 HEX64_RE = re.compile(r"^[0-9a-f]{64}$")
+HEX40_RE = re.compile(r"^[0-9a-f]{40}$")
 PROFILE_KEYS = frozenset({
-    "schema_version", "object_type", "source_files", "source_tree_sha256",
+    "schema_version", "object_type", "repository_commit_sha", "source_files", "source_tree_sha256",
     "main_module", "go_version", "goos", "goarch", "go_toolchain_tree_sha256",
     "go_toolchain_distribution_source", "go_toolchain_distribution_sha256",
     "go_toolchain_carrier_sha256", "cgo_enabled", "network_used",
     "external_modules_used", "test_command", "required_tests", "fixture_tests",
     "build_command", "reproducible_build", "binary_sha256", "profile_sha256",
 })
-SOURCE_FILE_KEYS = frozenset({"path", "sha256"})
+SOURCE_FILE_KEYS = frozenset({"path", "git_blob_sha1", "sha256"})
 TEST_RESULT_KEYS = frozenset({"name", "result"})
 
 
 def _sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
+
+
+def _git_blob_sha1(data: bytes) -> str:
+    return hashlib.sha1(f"blob {len(data)}\\0".encode("ascii") + data).hexdigest()
 
 
 def _hex64(value: Any, name: str) -> str:
@@ -78,7 +83,8 @@ def source_manifest(source_dir: Path) -> list[dict[str, str]]:
         path = root / name
         if not path.is_file() or path.is_symlink():
             raise ValueError(f"Ed25519 verifier source missing regular file: {name}")
-        entries.append({"path": name, "sha256": _sha256(path.read_bytes())})
+        data = path.read_bytes()
+        entries.append({"path": name, "git_blob_sha1": _git_blob_sha1(data), "sha256": _sha256(data)})
     return entries
 
 
@@ -110,6 +116,8 @@ def compute_source_tree_sha256(entries: list[dict[str, str]]) -> str:
         if not isinstance(item, Mapping):
             raise ValueError(f"source_files[{index}] must be an object")
         _exact_keys(item, SOURCE_FILE_KEYS, f"source_files[{index}]")
+        if not isinstance(item["git_blob_sha1"], str) or HEX40_RE.fullmatch(item["git_blob_sha1"]) is None:
+            raise ValueError(f"source_files[{index}].git_blob_sha1 invalid")
         _hex64(item["sha256"], f"source_files[{index}].sha256")
     return _sha256(canonical_json(entries))
 
@@ -194,9 +202,51 @@ def compute_directory_tree_sha256(root: Path) -> str:
     return _sha256(canonical_json(manifest))
 
 
+def validate_repository_binding(source_dir: Path) -> str:
+    root = source_dir.resolve(strict=True)
+    git_text = shutil.which("git")
+    if not git_text:
+        raise ValueError("git executable was not found on PATH")
+    git = Path(git_text).resolve(strict=True)
+    repo_root = Path(
+        run_checked(
+            [str(git), "-C", str(root), "rev-parse", "--show-toplevel"],
+            cwd=root,
+            env=os.environ,
+        ).decode().strip()
+    ).resolve(strict=True)
+    commit_sha = run_checked(
+        [str(git), "-C", str(repo_root), "rev-parse", "HEAD"],
+        cwd=repo_root,
+        env=os.environ,
+    ).decode().strip()
+    if HEX40_RE.fullmatch(commit_sha) is None:
+        raise ValueError("repository HEAD must be a 40-character SHA1 commit")
+    manifest = source_manifest(root)
+    by_name = {item["path"]: item for item in manifest}
+    for name in SOURCE_FILES:
+        path = (root / name).resolve(strict=True)
+        try:
+            rel = path.relative_to(repo_root).as_posix()
+        except ValueError as exc:
+            raise ValueError("Ed25519 verifier source is outside repository root") from exc
+        line = run_checked(
+            [str(git), "-C", str(repo_root), "ls-tree", commit_sha, "--", rel],
+            cwd=repo_root,
+            env=os.environ,
+        ).decode().strip()
+        parts = line.split(None, 3)
+        if len(parts) != 4 or parts[1] != "blob" or not parts[3].endswith(rel):
+            raise ValueError(f"source file is not a regular blob at repository HEAD: {rel}")
+        if parts[2] != by_name[name]["git_blob_sha1"]:
+            raise ValueError(f"source file bytes do not match repository HEAD: {rel}")
+    return commit_sha
+
+
 def make_build_profile(
     *,
     source_dir: Path,
+    repository_commit_sha: str,
     binary: Path,
     go_test_json: bytes,
     go_version: str,
@@ -208,6 +258,8 @@ def make_build_profile(
     go_toolchain_carrier_sha256: str,
 ) -> dict[str, Any]:
     entries = validate_source_tree(source_dir, allow_binary=True)
+    if not isinstance(repository_commit_sha, str) or HEX40_RE.fullmatch(repository_commit_sha) is None:
+        raise ValueError("repository_commit_sha must be 40 lowercase hex characters")
     if GO127_RE.fullmatch(go_version) is None:
         raise ValueError("Ed25519 verifier qualification requires exact go1.27.x")
     for value, name in ((goos, "goos"), (goarch, "goarch")):
@@ -232,6 +284,7 @@ def make_build_profile(
     core: dict[str, Any] = {
         "schema_version": SCHEMA_VERSION,
         "object_type": OBJECT_TYPE,
+        "repository_commit_sha": repository_commit_sha,
         "source_files": entries,
         "source_tree_sha256": compute_source_tree_sha256(entries),
         "main_module": MAIN_MODULE,
@@ -276,6 +329,8 @@ def validate_build_profile(profile: Mapping[str, Any]) -> str:
     for key, wanted in expected.items():
         if profile[key] != wanted:
             raise ValueError(f"Ed25519 verifier build profile {key} mismatch")
+    if not isinstance(profile["repository_commit_sha"], str) or HEX40_RE.fullmatch(profile["repository_commit_sha"]) is None:
+        raise ValueError("Ed25519 verifier repository_commit_sha invalid")
     if not isinstance(profile["go_version"], str) or GO127_RE.fullmatch(profile["go_version"]) is None:
         raise ValueError("Ed25519 verifier build profile go_version must be exact go1.27.x")
     for field in ("goos", "goarch"):

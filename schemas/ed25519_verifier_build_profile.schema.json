@@ -4,7 +4,7 @@
   "title": "Ed25519 Verification Backend Build Profile",
   "type": "object",
   "required": [
-    "schema_version", "object_type", "source_files", "source_tree_sha256", "main_module",
+    "schema_version", "object_type", "repository_commit_sha", "source_files", "source_tree_sha256", "main_module",
     "go_version", "goos", "goarch", "go_toolchain_tree_sha256",
     "go_toolchain_distribution_source", "go_toolchain_distribution_sha256",
     "go_toolchain_carrier_sha256", "cgo_enabled", "network_used", "external_modules_used",
@@ -14,15 +14,17 @@
   "properties": {
     "schema_version": {"const": "1.0"},
     "object_type": {"const": "Ed25519VerifierBuildProfile"},
+    "repository_commit_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
     "source_files": {
       "type": "array",
       "minItems": 3,
       "maxItems": 3,
       "items": {
         "type": "object",
-        "required": ["path", "sha256"],
+        "required": ["path", "git_blob_sha1", "sha256"],
         "properties": {
           "path": {"enum": ["go.mod", "main.go", "main_test.go"]},
+          "git_blob_sha1": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
           "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
         },
         "additionalProperties": false

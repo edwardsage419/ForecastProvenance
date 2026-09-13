@@ -15,6 +15,7 @@ from forecast_trust_core._ed25519_qualification import (
     resolve_pinned_go_binary,
     run_checked,
     run_reproducible_build,
+    validate_repository_binding,
     validate_source_tree,
     verify_main_module_only,
 )
@@ -52,6 +53,7 @@ def qualify_offline(args: argparse.Namespace) -> None:
         raise ValueError(f"refusing to overwrite existing output: {output}")
 
     validate_source_tree(source_dir)
+    repository_commit_sha = validate_repository_binding(source_dir)
 
     with tempfile.TemporaryDirectory(prefix="fpp-ed25519-qualification-") as scratch_text:
         scratch = Path(scratch_text)
@@ -67,6 +69,8 @@ def qualify_offline(args: argparse.Namespace) -> None:
             env=env,
         )
         validate_source_tree(source_dir)
+        if validate_repository_binding(source_dir) != repository_commit_sha:
+            raise ValueError("repository source binding changed during Ed25519 verifier qualification")
 
         binary = run_reproducible_build(
             go_binary,
@@ -79,6 +83,7 @@ def qualify_offline(args: argparse.Namespace) -> None:
 
         profile = make_build_profile(
             source_dir=source_dir,
+            repository_commit_sha=repository_commit_sha,
             binary=binary,
             go_test_json=test_json,
             go_version=go_version,
