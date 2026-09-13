@@ -103,7 +103,7 @@ def test_repository_binding_requires_exact_committed_source(tmp_path: Path) -> N
     source = root / "scripts" / "genesis" / "ed25519_verify"
     source.mkdir(parents=True)
     for name in SOURCE_FILES:
-        (source / name).write_text(f"{name}\n", encoding="utf-8")
+        (source / name).write_bytes(f"{name}\n".encode("utf-8"))
     subprocess.run(["git", "init", "-q", str(root)], check=True)
     subprocess.run(["git", "-C", str(root), "config", "user.email", "test@example.invalid"], check=True)
     subprocess.run(["git", "-C", str(root), "config", "user.name", "Test"], check=True)

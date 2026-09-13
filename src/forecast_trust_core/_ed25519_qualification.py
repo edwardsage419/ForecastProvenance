@@ -51,7 +51,7 @@ def _sha256(data: bytes) -> str:
 
 
 def _git_blob_sha1(data: bytes) -> str:
-    return hashlib.sha1(f"blob {len(data)}\\0".encode("ascii") + data).hexdigest()
+    return hashlib.sha1(f"blob {len(data)}\0".encode("ascii") + data).hexdigest()
 
 
 def _hex64(value: Any, name: str) -> str:
