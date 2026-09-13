@@ -8,7 +8,7 @@ Current formal branch and state snapshot basis:
 
 ```text
 branch = design/gen-001
-snapshot_basis_commit = 8d7c49362a0f29e98ea45af0d01917411effa611
+snapshot_basis_commit = d72608944cf89df113e7a8abae101159a591ceb7
 ```
 
 The commit containing `CURRENT_STATE.md` must be identified from Git metadata; this document does not embed its own commit SHA.
@@ -123,7 +123,7 @@ commit 56b346a16cd7e8317bb0d24f1ec15549cf93a4c9
 
 The vendored strict low-level wrapper was qualified offline under Go 1.27.x and the executed rehearsal bound its exact content-addressed verifier build profile and pre-attempt retry-state snapshot. Future events must independently repeat the required freshness checks and bind their own exact plan, authorization, build profile, and retry-state snapshot.
 
-The Merkle fixture engineering gap is closed. Effective deterministic offline multi-leaf coverage now exists for typed hash-first, typed node-first, untyped draft-12 node-first, and negative wrong-order rejection. Each of the three positive ordering fixtures uses a two-leaf tree and demonstrates a PATH of exactly 1 hash / 32 bytes. This fixture completion does not freeze production qualification criteria or qualify any provider.
+The Merkle fixture engineering gap is closed. Effective deterministic offline multi-leaf coverage exists for typed hash-first, typed node-first, untyped draft-12 node-first, and negative wrong-order rejection. Each positive ordering fixture uses a two-leaf tree and demonstrates a PATH of exactly 1 hash / 32 bytes. This fixture completion did not itself qualify a provider.
 
 ## Evidence validation
 
@@ -148,7 +148,7 @@ Schema-valid but semantically inconsistent evidence fails closed. Semantic valid
 
 OTS remains the Bitcoin durability layer.
 
-The rehearsal script now uses append-only event directories for stamp, upgrade and verify steps so tool versions, output, proof hashes and failed attempts are not overwritten.
+The rehearsal script uses append-only event directories for stamp, upgrade and verify steps so tool versions, output, proof hashes and failed attempts are not overwritten.
 
 Strong verification still requires owner-controlled Bitcoin Core. RPC credentials remain local and are never retained.
 
@@ -163,21 +163,29 @@ Commercial Sectigo and Signicat qualification work remains paused for the zero-c
 ## Roughtime production qualification
 
 ```text
-PRODUCTION_QUALIFICATION_CRITERIA = BLOCKED
+PRODUCTION_QUALIFICATION_CRITERIA = FROZEN_V1
+criteria_id = FPP_ROUGHTIME_PRODUCTION_QUALIFICATION_V1
+criteria_sha256 = 88cc910fdb7e573f3a84d860ad0cdc5fffc287db18678956c7e50dc52a07639e
 PRODUCTION_QUALIFICATION_EXECUTION = NOT_READY
 production-qualified provider count = 0
 PRODUCTION_QUALIFIED = NO
 ```
 
-D026 reconciles the governance hierarchy while preserving the readiness matrix as the authoritative closing control. The dated production qualification criteria document is a draft only. It does not qualify a provider, create or freeze a ProviderProfile, authorize a network request, or declare Genesis ready.
+The governance freeze is recorded in `docs/GEN_001_ROUGHTIME_PRODUCTION_QUALIFICATION_GOVERNANCE_FREEZE_V1.md`. It resolves pilot admissibility, SLA policy, production-use permission evidence, 30-day live freshness, two-event repeatability separated by at least seven days, 90-day metadata review, positive root/issuance independence evidence, the two-vote common-dependency threshold, and manifest sealing plus qualification authority.
+
+The complete evidence manifest uses `FPP_JCS_1` and omits non-applicable optional fields instead of using JSON null. The manifest excludes itself and is sealed by an external SHA256 bound by the final QualificationDecision.
+
+Qualification execution remains blocked until separately reviewed schemas and validators exist for production ProviderProfile, qualification decision/state, complete evidence manifest, and independent qualification review records. The required owner public-key identity must also exist before an owner-authorized QualificationDecision can be issued.
+
+Retained rehearsal evidence may later be evaluated against the frozen criteria. It remains `NON_FORECAST_REHEARSAL`, `prospective_eligible = false`, and cannot automatically qualify any provider.
 
 ## Other external blockers
 
 Still required:
 
 1. owner-generated bootstrap Ed25519 public key only;
-2. frozen Roughtime production qualification criteria;
-3. independent production qualification of the three current Roughtime providers and final sealed ProviderProfiles;
+2. production ProviderProfile, qualification decision/state, complete evidence manifest, and independent review schemas plus validators;
+3. independent frozen-criteria production qualification of the three current Roughtime providers and final sealed ProviderProfiles;
 4. OTS/Bitcoin strong rehearsal and final verifier profile;
 5. three retrospective official BLS/BEA fixture byte sets and adapter reports;
 6. final clean test report and ValidatorContract;
@@ -185,7 +193,7 @@ Still required:
 
 ## Standards-transition gate
 
-Roughtime draft-19 is in the RFC publication process. Any change in final wire version, provider protocol profile, endpoint, key, TYPE behavior, transport requirement or verifier semantics before final freeze requires read-only re-review and a versioned profile change. No automatic migration is permitted.
+Roughtime draft-19 is in the RFC publication process with intended Experimental status. Any change in final wire version, provider protocol profile, endpoint, key, TYPE behavior, transport requirement or verifier semantics before final freeze requires read-only re-review and a versioned profile change. No automatic migration is permitted.
 
 ## Safety state
 
@@ -199,4 +207,4 @@ PRODUCTION_QUALIFIED = NO
 network_authorized = false
 ```
 
-No Roughtime request, RFC3161 request, prospective forecast, production ProviderProfile, Genesis acceptance or Forecast Ledger creation is authorized by this state.
+No Roughtime request, RFC3161 request, prospective forecast, production ProviderProfile, QualificationDecision, Genesis acceptance or Forecast Ledger creation is authorized by this state.
