@@ -1,0 +1,1 @@
+{"Status":3,"TC":false,"RD":true,"RA":true,"AD":true,"CD":false,"Question":[{"name":"_roughtime._udp.time.txryan.com","type":33}],"Authority":[{"name":"txryan.com","type":6,"TTL":3600,"data":"ns.txryan.com. tanner.txryan.com. 1789180000 3600 900 1209600 3600"}]}

@@ -138,6 +138,7 @@ PRODUCTION_QUALIFICATION_REPOSITORY_REGRESSION = PASS
 PRODUCTION_QUALIFICATION_SIGNATURE_BACKEND = FINAL_QUALIFIED
 PRODUCTION_QUALIFICATION_SIGNATURE_BACKEND_QUALIFICATION_HARNESS = PUBLISHED_CANDIDATE
 RETAINED_REHEARSAL_FROZEN_CRITERIA_ASSESSMENT = COMPLETE
+PROVIDER_METADATA_GOVERNANCE_REVIEW = COMPLETE
 PRODUCTION_QUALIFICATION_EXECUTION = NOT_READY
 production-qualified provider count = 0
 PRODUCTION_QUALIFIED = NO
@@ -215,6 +216,8 @@ The exact committed branch tree completed the full Windows repository regression
 `PRODUCTION_QUALIFICATION_REPOSITORY_REGRESSION` is therefore `PASS`. The Ed25519 verification backend is `FINAL_QUALIFIED` under the retained Windows amd64 Go 1.27.1 evidence described above. `PRODUCTION_QUALIFICATION_EXECUTION` remains `NOT_READY` because provider evidence and owner-authority gates remain open.
 
 The retained `NON_FORECAST_REHEARSAL` frozen-criteria assessment is complete in `docs/GEN_001_ROUGHTIME_RETAINED_REHEARSAL_FROZEN_CRITERIA_ASSESSMENT_2026_09_13.md`. It found useful partial cryptographic evidence and complete offline engineering evidence, but no tracked raw Roughtime rehearsal package, exact rehearsal timestamp, or exact freeze timestamp sufficient to establish an eligible first repeatability event. Production qualification was not executed.
+
+The read-only public provider metadata and governance review is complete in `docs/GEN_001_ROUGHTIME_PROVIDER_METADATA_GOVERNANCE_REVIEW_2026_09_13.md`. Current endpoint, key, DNS, ASN, hosting, software, pilot, and standards metadata were retained with hashes. Permission and affirmative root/issuance independence remain open for all three providers; TimeNL root-control continuity remains partial; shared Tanner software remains a potential two-vote common-mode risk; and the roughtime.se operator declaration now names draft-19 rather than the candidate's draft-15. `LIVE_REPEATABILITY_AUTHORIZATION_RECOMMENDATION` is `NOT_READY_TO_REQUEST`.
 
 ## Remaining Roughtime production blockers
 

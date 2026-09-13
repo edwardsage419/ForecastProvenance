@@ -36,6 +36,7 @@ A readiness item closes only when the required evidence exists, is content addre
 | Repository regression | PASS | Exact committed branch tree completed compileall, 290 passed, 8 skipped, and 188 subtests passed with zero failures |
 | Ed25519 decision verification backend | FINAL_QUALIFIED | Content-addressed Windows amd64 Go 1.27.1 verification-only backend qualification is retained; no signing path or private key was used |
 | Retained rehearsal frozen-criteria assessment | COMPLETE | The offline assessment identifies retained contributions and unresolved evidence gaps; it is not a qualification decision |
+| Provider metadata/governance review | COMPLETE | Current public identity, DNS, routing, hosting, software, pilot, continuity, permission, independence, and standards evidence is retained; unresolved governance gaps remain |
 | Production qualification execution | NOT_READY_PROVIDER_EVIDENCE_AUTHORITY_GATE | Current provider evidence, live repeatability, external owner public-key identity, independent reviews, decisions, and profiles remain open |
 | Genesis readiness | NOT_READY | Roughtime production qualification and other GR items remain open |
 
@@ -122,6 +123,8 @@ The Roughtime production qualification governance criteria are frozen as `FPP_RO
 The repository-wide regression for the exact committed branch tree is complete, and the verification-only Ed25519 backend is final-qualified under the retained content-addressed Windows amd64 Go 1.27.1 evidence. GR011 owner public-key input remains required before an owner-authorized QualificationDecision can exist.
 
 The retained `NON_FORECAST_REHEARSAL` frozen-criteria offline assessment is complete. GR005 through GR007 remain open on exact raw-package review, repeatability including a provably post-freeze event, production-use permission, positive independence evidence, current metadata, production qualification decisions, and separately sealed ProviderProfiles. Production qualification was not executed, and no provider is production qualified.
+
+The public provider metadata/governance review is complete with hashed current captures. It found no provider-specific production prohibition, but did not close explicit automated-production permission or positive root/issuance independence for any provider. TimeNL identity continuity is documented for 196 days but its root-control-domain continuity remains unproven. The time.txryan.com and TimeNL software-family correlation remains a potential two-vote common-mode risk, and the current roughtime.se draft-19 declaration requires reconciliation with the draft-15 candidate field. A live repeatability authorization is not ready to request.
 
 The other external critical path continues through GR008, GR009, and GR011, plus real official archive fixtures GR017 through GR019.
 
