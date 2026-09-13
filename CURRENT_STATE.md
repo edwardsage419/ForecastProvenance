@@ -4,12 +4,14 @@ Date: 2026-09-13
 Project: Forecast Provenance Project
 State: GENESIS_READINESS_DESIGN
 
-Current formal branch and HEAD:
+Current formal branch and state snapshot basis:
 
 ```text
 branch = design/gen-001
-HEAD = 8d7c49362a0f29e98ea45af0d01917411effa611
+snapshot_basis_commit = 8d7c49362a0f29e98ea45af0d01917411effa611
 ```
+
+The commit containing `CURRENT_STATE.md` must be identified from Git metadata; this document does not embed its own commit SHA.
 
 ## Native scientific state
 
