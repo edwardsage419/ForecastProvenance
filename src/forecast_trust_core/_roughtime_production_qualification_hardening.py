@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Any, Mapping, Sequence
 
+from .canonical import parse_json_strict
+from ._roughtime_control import validate_verifier_build_profile
 from ._roughtime_production_qualification import (
     derive_qualification_state,
     validate_qualification_decision,
@@ -28,6 +30,73 @@ def _manifest_binding(
     return manifest_sha256, artifact_sha256s
 
 
+def _require_artifact_hash(
+    artifact_sha256s: frozenset[str],
+    digest: Any,
+    field: str,
+) -> str:
+    if not isinstance(digest, str) or digest not in artifact_sha256s:
+        raise ValueError(f"{field} is not retained by the complete evidence manifest")
+    return digest
+
+
+def _require_exact_json_artifact(
+    artifact_bytes: Mapping[str, bytes],
+    expected: Mapping[str, Any],
+    name: str,
+) -> None:
+    target = dict(expected)
+    for data in artifact_bytes.values():
+        try:
+            candidate = parse_json_strict(data)
+        except (TypeError, ValueError):
+            continue
+        if isinstance(candidate, dict) and candidate == target:
+            return
+    raise ValueError(f"{name} exact JSON object is not retained by the complete evidence manifest")
+
+
+def _validate_review_artifact_bindings(
+    review: Mapping[str, Any],
+    *,
+    profile: Mapping[str, Any],
+    verifier_build_profile: Mapping[str, Any] | None,
+    artifact_bytes: Mapping[str, bytes],
+    artifact_sha256s: frozenset[str],
+) -> None:
+    if verifier_build_profile is None:
+        raise ValueError("verified Roughtime build profile is required for qualification review")
+    build_profile_hash = validate_verifier_build_profile(verifier_build_profile)
+    if review["verifier_build_profile_sha256"] != build_profile_hash:
+        raise ValueError("qualification review verifier build profile identity mismatch")
+    if profile["verifier_build_profile_sha256"] != build_profile_hash:
+        raise ValueError("provider profile verifier build profile identity mismatch")
+    binary_sha256 = verifier_build_profile["binary_sha256"]
+    if review["verifier_binary_sha256"] != binary_sha256:
+        raise ValueError("qualification review verifier binary identity mismatch")
+
+    _require_artifact_hash(
+        artifact_sha256s,
+        review["execution_report_sha256"],
+        "execution_report_sha256",
+    )
+    _require_artifact_hash(
+        artifact_sha256s,
+        review["verifier_binary_sha256"],
+        "verifier_binary_sha256",
+    )
+    _require_artifact_hash(
+        artifact_sha256s,
+        review["review_basis_sha256"],
+        "review_basis_sha256",
+    )
+    _require_exact_json_artifact(
+        artifact_bytes,
+        verifier_build_profile,
+        "verifier build profile",
+    )
+
+
 def validate_bound_qualification_review(
     review: Mapping[str, Any],
     *,
@@ -35,11 +104,20 @@ def validate_bound_qualification_review(
     metadata_review: Mapping[str, Any],
     evidence_manifest: Mapping[str, Any],
     evidence_artifact_bytes: Mapping[str, bytes] | None = None,
+    verifier_build_profile: Mapping[str, Any] | None = None,
 ) -> str:
     manifest_sha256, artifact_sha256s = _manifest_binding(
         evidence_manifest,
         provider_id=str(profile["provider_id"]),
         artifact_bytes=evidence_artifact_bytes,
+    )
+    assert evidence_artifact_bytes is not None
+    _validate_review_artifact_bindings(
+        review,
+        profile=profile,
+        verifier_build_profile=verifier_build_profile,
+        artifact_bytes=evidence_artifact_bytes,
+        artifact_sha256s=artifact_sha256s,
     )
 
     if review["executor_id"] == review["reviewer_id"]:
@@ -75,6 +153,7 @@ def validate_bound_qualification_decision(
     metadata_review: Mapping[str, Any],
     evidence_manifest: Mapping[str, Any],
     evidence_artifact_bytes: Mapping[str, bytes] | None = None,
+    verifier_build_profile: Mapping[str, Any] | None = None,
     expected_authority_id: str,
     expected_authority_public_key: bytes,
     signature_verifier,
@@ -90,6 +169,7 @@ def validate_bound_qualification_decision(
         metadata_review=metadata_review,
         evidence_manifest=evidence_manifest,
         evidence_artifact_bytes=evidence_artifact_bytes,
+        verifier_build_profile=verifier_build_profile,
     )
     return validate_qualification_decision(
         decision,
@@ -111,6 +191,7 @@ def derive_authoritative_qualification_state(
     profile: Mapping[str, Any] | None = None,
     evidence_manifest: Mapping[str, Any] | None = None,
     evidence_artifact_bytes: Mapping[str, bytes] | None = None,
+    verifier_build_profile: Mapping[str, Any] | None = None,
     review: Mapping[str, Any] | None = None,
     decision: Mapping[str, Any] | None = None,
     metadata_reviews: Sequence[Mapping[str, Any]] = (),
@@ -133,6 +214,10 @@ def derive_authoritative_qualification_state(
     if evidence_artifact_bytes is None:
         raise ValueError(
             "actual evidence artifact bytes are required once qualification review exists"
+        )
+    if verifier_build_profile is None:
+        raise ValueError(
+            "verified Roughtime build profile is required once qualification review exists"
         )
 
     manifest_sha256, _ = _manifest_binding(
@@ -160,6 +245,7 @@ def derive_authoritative_qualification_state(
             metadata_review=bound_metadata,
             evidence_manifest=evidence_manifest,
             evidence_artifact_bytes=evidence_artifact_bytes,
+            verifier_build_profile=verifier_build_profile,
         )
 
     if decision is not None:
@@ -192,6 +278,7 @@ def derive_authoritative_qualification_state(
             metadata_review=decision_metadata,
             evidence_manifest=evidence_manifest,
             evidence_artifact_bytes=evidence_artifact_bytes,
+            verifier_build_profile=verifier_build_profile,
             expected_authority_id=expected_authority_id,
             expected_authority_public_key=expected_authority_public_key,
             signature_verifier=signature_verifier,
@@ -220,6 +307,7 @@ def validate_qualification_state_by_recomputation(
     profile: Mapping[str, Any] | None = None,
     evidence_manifest: Mapping[str, Any] | None = None,
     evidence_artifact_bytes: Mapping[str, bytes] | None = None,
+    verifier_build_profile: Mapping[str, Any] | None = None,
     review: Mapping[str, Any] | None = None,
     decision: Mapping[str, Any] | None = None,
     metadata_reviews: Sequence[Mapping[str, Any]] = (),
@@ -235,6 +323,7 @@ def validate_qualification_state_by_recomputation(
         profile=profile,
         evidence_manifest=evidence_manifest,
         evidence_artifact_bytes=evidence_artifact_bytes,
+        verifier_build_profile=verifier_build_profile,
         review=review,
         decision=decision,
         metadata_reviews=metadata_reviews,
