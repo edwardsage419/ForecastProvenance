@@ -58,9 +58,21 @@ def test_mutated_signature_returns_false(ed25519_binary: Path) -> None:
 
 
 def test_binary_hash_substitution_fails_closed(ed25519_binary: Path) -> None:
-    verifier = PinnedEd25519Verifier(ed25519_binary, "0" * 64)
     with pytest.raises(ValueError, match="SHA256 mismatch"):
-        verifier(b"x" * 32, b"", b"y" * 64)
+        PinnedEd25519Verifier(ed25519_binary, "0" * 64)
+
+
+def test_pinned_verifier_executes_verified_bytes_after_source_path_replacement(
+    ed25519_binary: Path,
+    tmp_path: Path,
+) -> None:
+    binary = tmp_path / ("ed25519-copy.exe" if os.name == "nt" else "ed25519-copy")
+    shutil.copy2(ed25519_binary, binary)
+    verifier = _verifier(binary)
+    binary.write_bytes(b"replaced-after-pin")
+    public_key = _hx("d75a980182b10ab7d54bfed3c964073a0ee172f3daa62325af021a68f707511a")
+    signature = _hx("e5564300c360ac729086e2cc806e828a84877f1eb8e5d974d873e065224901555fb8821590a33bacc61e39701cf9b46bd25bf5f0595bbe24655141438e7a100b")
+    assert verifier(public_key, b"", signature) is True
 
 
 def test_invalid_input_lengths_fail_before_process(ed25519_binary: Path) -> None:
