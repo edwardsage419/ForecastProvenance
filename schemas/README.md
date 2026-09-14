@@ -41,7 +41,7 @@ The older Go proxy/module-Zip qualification model is superseded and is not the a
 
 ## Roughtime production qualification schemas
 
-The production qualification object model adds seven Draft 2020-12 schemas:
+The production qualification supporting object model includes the following Draft 2020-12 schemas:
 
 1. `roughtime_production_provider_profile.schema.json`
 2. `roughtime_provider_metadata_review.schema.json`
@@ -50,23 +50,30 @@ The production qualification object model adds seven Draft 2020-12 schemas:
 5. `roughtime_qualification_decision.schema.json`
 6. `roughtime_requalification_event.schema.json`
 7. `roughtime_qualification_state_report.schema.json`
+8. `roughtime_provider_qualification_state_package.schema.json`
+9. `roughtime_qualification_verifier_contract_v1.schema.json`
 
-These schemas describe structure only. Production trust requires the executable semantic validation and hardening path in:
+These schemas describe structure only. Production trust requires executable semantic validation and the successor claim-authority hardening path in:
 
 ```text
 src/forecast_trust_core/_roughtime_production_qualification.py
 src/forecast_trust_core/_roughtime_production_qualification_hardening.py
+src/forecast_trust_core/architecture_compression_v1_hardening.py
+src/forecast_trust_core/claim_authority_v1.py
+src/forecast_trust_core/claim_authority_trust_root_v1.py
 ```
 
-The authoritative hardening path requires a real qualification package directory, exact canonical manifest bytes, complete scanned file closure, critical artifact cross-binding, validated verifier build-profile identity, external qualification authority injection, and deterministic state recomputation.
+The authoritative path requires a real qualification package directory, exact canonical manifest bytes, complete scanned file closure, critical artifact cross-binding, validated verifier build-profile identity, independently supplied accepted authority public-key bytes, hash-pinned Ed25519 signature verification, and deterministic state recomputation.
 
-A standalone schema-valid ProviderProfile, QualificationReview, QualificationDecision, or state report does not establish production qualification.
+`roughtime_qualification_verifier_contract_v1.schema.json` freezes the criteria identity, main ValidatorContract ref, QualificationDecision signature projection, accepted qualification-authority ID/public-key hash, and exact Ed25519 verifier build/binary hashes. The schema does not make those facts true by itself; the executable validator checks the exact sealed contract and reconstructs the pinned verifier.
+
+A standalone schema-valid ProviderProfile, QualificationReview, QualificationDecision, state report, state package, or qualification-verifier contract does not establish production qualification.
 
 ## Production schema meta-validation record
 
-On 2026-09-13, the exact committed bytes of all seven production qualification schemas were checked with `jsonschema 4.26.0` and `Draft202012Validator.check_schema`.
+On 2026-09-13, the then-current exact committed bytes of the seven original production qualification schemas were checked with `jsonschema 4.26.0` and `Draft202012Validator.check_schema`.
 
-Result:
+Result for that historical check:
 
 ```text
 7 PASS
@@ -75,8 +82,26 @@ Result:
 
 The checked Git blob SHA1 values are retained in `docs/GEN_001_ROUGHTIME_PRODUCTION_QUALIFICATION_ADVERSARIAL_REVIEW_2026_09_13.md`.
 
-This schema check establishes meta-validity only. The exact current repository-wide pytest regression remains a separate required gate.
+Schemas added during Architecture Compression P5, including the qualification state package and qualification verifier contract, require fresh schema meta-validation in P6. They are not covered by the historical seven-schema result.
 
+Schema meta-validity alone is never a production-qualification or claim-authority result.
+
+## Claim-authority supporting schemas
+
+Architecture Compression P5 also defines production-shaped supporting schemas for deterministic evidence reconstruction:
+
+```text
+external_time_evidence_bundle_v1.schema.json
+roughtime_production_receipt_evidence_v1.schema.json
+open_timestamps_proof_artifact_v1.schema.json
+strong_bitcoin_verifier_contract_v1.schema.json
+strong_bitcoin_verification_report_v1.schema.json
+durability_verification_record_v1.schema.json
+manifest_acceptance_v2.schema.json
+validation_report_v2.schema.json
+```
+
+These schemas freeze interoperable structure. Authoritative P2 claim states are produced only by exact evidence recomputation under the manifest-bound validator/verifier contracts.
 
 ## Ed25519 qualification build profile
 
