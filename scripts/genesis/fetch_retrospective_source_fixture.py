@@ -40,6 +40,18 @@ def select_fixture(manifest: dict, fixture_id: str) -> dict:
     return matches[0]
 
 
+class _SameHostRedirectHandler(urllib.request.HTTPRedirectHandler):
+    def __init__(self, expected_host: str) -> None:
+        super().__init__()
+        self.expected_host = expected_host.lower()
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        parsed = urlparse(newurl)
+        if parsed.scheme != "https" or (parsed.hostname or "").lower() != self.expected_host:
+            raise ValueError("redirect left admitted official HTTPS host")
+        return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+
 def fetch_fixture(fixture: dict, out_root: Path) -> Path:
     url = fixture["url"]
     expected_host = fixture["allowed_host"].lower()
@@ -53,7 +65,11 @@ def fetch_fixture(fixture: dict, out_root: Path) -> Path:
         method="GET",
     )
     context = ssl.create_default_context()
-    with urllib.request.urlopen(request, context=context, timeout=30) as response:
+    opener = urllib.request.build_opener(
+        urllib.request.HTTPSHandler(context=context),
+        _SameHostRedirectHandler(expected_host),
+    )
+    with opener.open(request, timeout=30) as response:
         status = getattr(response, "status", None)
         final_url = response.geturl()
         final_host = (urlparse(final_url).hostname or "").lower()
