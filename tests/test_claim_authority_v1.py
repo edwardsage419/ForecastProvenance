@@ -434,48 +434,38 @@ def test_final_acceptance_rejects_wrong_subject_before_claim_consumption():
 def test_final_acceptance_rejects_evidence_splicing_between_bundles():
     acceptance = sealed("ManifestAcceptance", "acceptance:splice:v2", value="x")
     validator = make_validator_contract()
-    b1 = sealed("ExternalTimeEvidenceBundle", "bundle:splice1:v1", validator_contract_ref=ref(validator))
-    b2 = sealed("ExternalTimeEvidenceBundle", "bundle:splice2:v1", validator_contract_ref=ref(validator))
+    b1 = sealed("ExternalTimeEvidenceBundle", "bundle:splice1:v1", origin_class="LIVE_OPERATIONAL", prospective_eligible=False, validator_contract_ref=ref(validator))
+    b2 = sealed("ExternalTimeEvidenceBundle", "bundle:splice2:v1", origin_class="LIVE_OPERATIONAL", prospective_eligible=False, validator_contract_ref=ref(validator))
+    r1 = sealed("RoughtimeProductionReceiptEvidence", "receipt:splice:v1", origin_class="LIVE_OPERATIONAL", prospective_eligible=False)
+    p2 = sealed("OpenTimestampsProofArtifact", "proof:splice:v1", origin_class="LIVE_OPERATIONAL", prospective_eligible=False)
     with pytest.raises(ValueError, match="same exact ExternalTimeEvidenceBundle"):
         authority.validate_final_genesis_acceptance_authoritatively(
             acceptance, final_evidence_subject_ref=ref(acceptance),
-            wall_clock_inputs={"bundle": b1}, bitcoin_inputs={"bundle": b2},
+            wall_clock_inputs={"bundle": b1, "receipt_evidence": [r1]},
+            bitcoin_inputs={"bundle": b2, "proof_artifact": p2},
         )
 
 
-def test_final_acceptance_maps_non_scientific_claims_not_applicable(monkeypatch):
+def test_genesis_final_claim_mapping_marks_non_scientific_claims_not_applicable():
     acceptance = sealed("ManifestAcceptance", "acceptance:na:v2", value="x")
-    bundle = sealed("ExternalTimeEvidenceBundle", "bundle:na:v1", value="b")
-    external = authority._claim(
-        "EXTERNAL_EXISTENCE_BOUND_VERIFIED", ref(acceptance), "VERIFIED",
-        reason_codes=("RECOMPUTED",), verified_upper_bound="2026-09-01T00:00:00Z",
+    pre_outcome, scientific = authority._genesis_non_scientific_claims(ref(acceptance))
+    assert pre_outcome["state"] == "NOT_APPLICABLE"
+    assert scientific["state"] == "NOT_APPLICABLE"
+
+
+def test_synthetic_evidence_cannot_enter_final_genesis_readiness():
+    acceptance = sealed("ManifestAcceptance", "acceptance:synthetic:v2", value="x")
+    bundle = sealed(
+        "ExternalTimeEvidenceBundle", "bundle:synthetic-final:v1",
+        origin_class="SYNTHETIC", prospective_eligible=False,
     )
-    deadline = authority._claim(
-        "DEADLINE_EXISTENCE_VERIFIED", ref(acceptance), "NOT_APPLICABLE",
-        reason_codes=("NO_FROZEN_DEADLINE",),
-    )
-    bitcoin_claim = authority._claim(
-        "BITCOIN_DURABILITY_VERIFIED", ref(acceptance), "VERIFIED", reason_codes=("RECOMPUTED",),
-    )
-    report = sealed("StrongBitcoinVerificationReport", "bitcoin-report:na:v1", verified=True)
-    monkeypatch.setattr(
-        authority, "recompute_external_existence_claim_authoritatively",
-        lambda *args, **kwargs: authority.WallClockRecomputation(external, deadline, ref(bundle)),
-    )
-    monkeypatch.setattr(
-        authority, "recompute_bitcoin_durability_claim_authoritatively",
-        lambda *args, **kwargs: authority.BitcoinRecomputation(
-            bitcoin_claim, ref(bundle), {"object_id":"proof:na:v1","content_sha256":"1"*64}, report
-        ),
-    )
-    validation, claims, _report = authority.validate_final_genesis_acceptance_authoritatively(
-        acceptance, final_evidence_subject_ref=ref(acceptance),
-        wall_clock_inputs={"bundle": bundle}, bitcoin_inputs={"bundle": bundle},
-    )
-    states = {item["claim_type"]: item["state"] for item in claims}
-    assert validation.valid
-    assert states["PRE_OUTCOME_DURABILITY_VERIFIED"] == "NOT_APPLICABLE"
-    assert states["CONFIRMATORY_PROSPECTIVE_ELIGIBLE"] == "NOT_APPLICABLE"
+    with pytest.raises(ValueError, match="LIVE_OPERATIONAL"):
+        authority.validate_final_genesis_acceptance_authoritatively(
+            acceptance,
+            final_evidence_subject_ref=ref(acceptance),
+            wall_clock_inputs={"bundle": bundle, "receipt_evidence": []},
+            bitcoin_inputs={"bundle": bundle},
+        )
 
 
 def test_late_durability_record_preserves_bitcoin_but_fails_pre_outcome(monkeypatch):
