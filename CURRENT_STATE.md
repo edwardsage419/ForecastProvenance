@@ -26,8 +26,8 @@ No live provider execution or qualification execution is authorized by the curre
 ```text
 P0  project-control transition and non-normative review record                 COMPLETE
 P1  reconcile Genesis anchoring requirements and single-anchor candidate       COMPLETE
-P2  separate temporal and durability claims from derived eligibility           NEXT
-P3  remove unused Genesis v1 dependencies and reduce review/evaluation surface PENDING
+P2  separate temporal and durability claims from derived eligibility           COMPLETE
+P3  remove unused Genesis v1 dependencies and reduce review/evaluation surface NEXT
 P4  establish provider-qualification complexity firewall                       PENDING
 P5  update candidate objects, schemas, validators, tests, readiness controls   PENDING
 P6  rerun complete offline regression and synthetic adversarial suite           PENDING
@@ -46,9 +46,7 @@ P0 changed project control state only and preserved all historical semantics.
 
 ## P1 Genesis anchoring reconciliation
 
-P1 is complete at the design-control level.
-
-The controlling P1 record is:
+P1 design control is recorded in:
 
 `docs/GEN_001_GENESIS_ANCHORING_RECONCILIATION_V1.md`
 
@@ -64,17 +62,64 @@ BootstrapGovernanceRoot
 → separate explicit Genesis authorization
 ```
 
-For the successor compressed profile, standalone external anchoring of the bootstrap root, a containing governance envelope, or the candidate manifest is `OPTIONAL_AUDIT_EVIDENCE`.
+Standalone bootstrap governance and candidate manifest anchoring are optional audit evidence in the successor compressed profile. The mandatory final external evidence subject is the exact signed `ManifestAcceptance`.
 
-The mandatory final external evidence subject is the exact signed `ManifestAcceptance`.
+The final evidence package is supplied separately to independent final validation and is not a required self reference inside the signed acceptance.
 
-The final evidence package is supplied separately to independent final validation. It is not a required self-reference inside the signed `ManifestAcceptance`.
+## P2 temporal claim separation
 
-This topology preserves the external trust-root boundary, exact manifest and validation-report binding, owner signature verification, immutable final commitment, independent final validation, and a separate Genesis authorization gate.
+P2 design control is recorded in:
 
-## P1 implementation boundary
+`docs/GEN_001_TEMPORAL_CLAIM_SEPARATION_V1.md`
 
-P1 did not modify historical candidate objects, schemas, validators, readiness matrix entries, or abort conditions.
+The successor validator must expose independently derived claims:
+
+```text
+EXTERNAL_EXISTENCE_BOUND_VERIFIED
+DEADLINE_EXISTENCE_VERIFIED
+BITCOIN_DURABILITY_VERIFIED
+PRE_OUTCOME_DURABILITY_VERIFIED
+CONFIRMATORY_PROSPECTIVE_ELIGIBLE
+```
+
+Claim states are:
+
+```text
+VERIFIED
+FAILED
+UNRESOLVED
+NOT_APPLICABLE
+```
+
+A stronger claim failure never rewrites a weaker verified fact. Missing evidence remains unresolved and fails closed for stronger cohort inclusion.
+
+Bitcoin block header time remains outside the precise civil time upper bound role.
+
+### Genesis governance mapping
+
+The exact signed `ManifestAcceptance` is the direct final Genesis evidence subject.
+
+Final validation requires separate verified existence and Bitcoin durability facts for that acceptance. The compressed Genesis governance profile has no scientific outcome barrier, so `PRE_OUTCOME_DURABILITY_VERIFIED` and `CONFIRMATORY_PROSPECTIVE_ELIGIBLE` are not applicable to `ManifestAcceptance`.
+
+### Forecast cycle mapping
+
+Genesis v1 uses these direct temporal subjects:
+
+```text
+IssuanceCyclePlan
+IssuanceCycleManifest
+DurabilityVerificationRecord
+```
+
+The exact `IssuanceCyclePlan` must satisfy deadline existence against `plan_commitment_deadline`.
+
+The exact `IssuanceCycleManifest` is the Genesis v1 forecast deadline subject and must satisfy deadline existence against the frozen `external_proof_deadline`. The manifest binds complete slot accounting and exact issued forecast full references, so Genesis v1 does not require a separate wall clock provider request for each individual `IssuedForecast` when the forecast is correctly bound into the verified manifest.
+
+The exact `DurabilityVerificationRecord` is independently wall clock evidenced against the frozen `outcome_information_barrier`. That result, together with independently verified Bitcoin durability, derives `PRE_OUTCOME_DURABILITY_VERIFIED`.
+
+## P1 and P2 implementation boundary
+
+P1 and P2 changed design control only. Historical candidate objects, schemas, validators, readiness matrix entries, abort conditions, and evaluation policy remain unchanged until consolidated P5 implementation.
 
 The current effective candidate lineage remains:
 
@@ -85,39 +130,28 @@ candidate_object_set_v0_2.json
 + candidate_patch_v0_5.json
 ```
 
-Its existing `policy:genesis-acceptance:v1` and the current `validate_manifest_acceptance` semantics are not the successor compressed profile.
-
-P5 must create a new versioned acceptance policy and align candidate objects, validation semantics, readiness controls, abort conditions, and tests. No historical object may be edited or reclassified.
-
 Current alignment state:
 
 ```text
 P1_ANCHORING_RECONCILIATION = COMPLETE
+P2_TEMPORAL_CLAIM_SEPARATION = COMPLETE
 CURRENT_V0_5_CANDIDATE_ALIGNED = NO
 CURRENT_VALIDATOR_ALIGNED = NO
 CURRENT_READINESS_MATRIX_ALIGNED = NO
+CURRENT_EVALUATION_REPORTING_ALIGNED = NO
 P5_VERSIONED_IMPLEMENTATION_REQUIRED = YES
 GENESIS_READY = NO
 ```
 
-## P2 temporal claim target
+`Result.LATE_OR_INELIGIBLE`, the current raw bound handling in `validate_external_deadline` and `validate_cycle_plan`, and the current single prospective eligibility reporting surface are historical implementation semantics. P5 must version their successor behavior rather than silently reinterpret them.
 
-P2 must separate the currently coupled time and durability conclusions into explicit independently verifiable claims.
+## P3 next gate
 
-At minimum P2 will review:
+P3 must identify Genesis v1 dependencies that are not used by the actual initial method and target profile, and reduce the human review and evaluation surface without weakening cohort integrity, mandatory cycle accounting, point in time evidence, temporal claims, or immutable historical records.
 
-```text
-DEADLINE_EXISTENCE_VERIFIED
-BITCOIN_DURABILITY_VERIFIED
-PRE_OUTCOME_DURABILITY_VERIFIED
-CONFIRMATORY_PROSPECTIVE_ELIGIBLE
-```
+The review must specifically test whether unused stochastic execution, public randomness, `FittedState`, broad human review capabilities, baseline comparison requirements, complex aggregation, and other unused Trust Core dependencies can be removed from the Genesis v1 instantiated profile while remaining available for successor manifests.
 
-A timely existence proof must remain a true historical fact even if durable anchoring completes too late for a stronger cohort claim.
-
-Bitcoin durability strengthens resistance to historical rewriting. Bitcoin block header time remains ineligible as a precise civil-time upper bound.
-
-Roughtime and any other wall-clock provider retain their key, operator, and governance trust assumptions. Those assumptions must remain explicit.
+Any normative removal or replacement remains deferred to P5 versioned implementation.
 
 ## Genesis v1 minimum direction
 
@@ -128,13 +162,13 @@ The intended minimum profile remains limited to capabilities used at Genesis:
 3. deterministic or fully auditable execution with a minimal initial method surface;
 4. point-in-time `SourceContract` inputs;
 5. complete attempt, retry, failure, and omission accounting;
-6. immutable forecast, correction, resolution, and evaluation-cohort records;
-7. deadline-existence evidence;
+6. immutable forecast, correction, resolution, and evaluation cohort records;
+7. deadline existence evidence;
 8. durable public anchoring;
 9. exact `ValidatorContract`;
 10. `BootstrapGovernanceRoot`, `TrustedManifest`, and `ManifestAcceptance`.
 
-Unused stochastic execution, public randomness, `FittedState`, closed-model strong-confirmatory support, custom transparency logging, complex identity systems, additional time protocols, and new recurring paid infrastructure remain deferred.
+Unused capabilities remain deferred until a real successor use case requires them.
 
 ## Retained production qualification state
 
