@@ -45,7 +45,7 @@ def test_deadline_claim_rejects_verified_existence_from_another_subject():
         frozen_deadline="2026-09-02T00:00:00Z",
     )
     assert result["state"] == "FAILED"
-    assert "EXTERNAL_EXISTENCE_SUBJECT_OR_TYPE_MISMATCH" in result["reason_codes"]
+    assert "EXTERNAL_EXISTENCE_SUBJECT_TYPE_OR_STATE_MISMATCH" in result["reason_codes"]
 
 
 def test_pre_outcome_claim_rejects_cross_subject_bitcoin_claim():
@@ -62,7 +62,7 @@ def test_pre_outcome_claim_rejects_cross_subject_bitcoin_claim():
         durability_record_bound_subject_ref=ref(subject_a),
     )
     assert result["state"] == "FAILED"
-    assert "BITCOIN_DURABILITY_SUBJECT_OR_TYPE_MISMATCH" in result["reason_codes"]
+    assert "BITCOIN_DURABILITY_SUBJECT_TYPE_OR_STATE_MISMATCH" in result["reason_codes"]
 
 
 def test_confirmatory_eligibility_rejects_required_claim_subject_substitution():
@@ -83,6 +83,24 @@ def test_confirmatory_eligibility_rejects_required_claim_subject_substitution():
     )
     assert result["state"] == "FAILED"
     assert "REQUIRED_CLAIM_SET_SUBSTITUTION" in result["reason_codes"]
+
+
+def test_confirmatory_eligibility_rejects_unknown_or_recursive_claim_type():
+    forecast = sealed("IssuedForecast", "forecast:a:v1", value="1")
+    supplied = [claim("CONFIRMATORY_PROSPECTIVE_ELIGIBLE", ref(forecast))]
+    requirements = [
+        {
+            "claim_type": "CONFIRMATORY_PROSPECTIVE_ELIGIBLE",
+            "subject_ref": ref(forecast),
+        }
+    ]
+    result = hardening.derive_confirmatory_eligibility_strict(
+        ref(forecast),
+        required_claims=supplied,
+        required_claim_requirements=requirements,
+    )
+    assert result["state"] == "FAILED"
+    assert "MALFORMED_OR_UNKNOWN_REQUIRED_CLAIM_BINDING" in result["reason_codes"]
 
 
 def _state_package_fixture(*, state="PRODUCTION_QUALIFIED", report_sha="1" * 64):
@@ -136,6 +154,8 @@ def test_state_package_cannot_self_assert_production_qualified(monkeypatch):
         hardening,
         "derive_authoritative_qualification_state",
         lambda **_kwargs: {
+            "provider_id": "roughtime.se",
+            "as_of_utc": "2026-09-10T00:00:00Z",
             "state": "REQUALIFICATION_REQUIRED",
             "report_sha256": "2" * 64,
         },
@@ -160,6 +180,8 @@ def test_state_package_accepts_only_exact_authoritative_state(monkeypatch):
         hardening,
         "derive_authoritative_qualification_state",
         lambda **_kwargs: {
+            "provider_id": "roughtime.se",
+            "as_of_utc": "2026-09-10T00:00:00Z",
             "state": "PRODUCTION_QUALIFIED",
             "report_sha256": "1" * 64,
         },
@@ -176,12 +198,40 @@ def test_state_package_accepts_only_exact_authoritative_state(monkeypatch):
     assert result.valid
 
 
+def test_state_package_rejects_authoritative_provider_or_as_of_substitution(monkeypatch):
+    profile, decision, verifier, evidence_manifest, package = _state_package_fixture()
+    monkeypatch.setattr(
+        hardening,
+        "derive_authoritative_qualification_state",
+        lambda **_kwargs: {
+            "provider_id": "time.txryan.com",
+            "as_of_utc": "2026-09-11T00:00:00Z",
+            "state": "PRODUCTION_QUALIFIED",
+            "report_sha256": "1" * 64,
+        },
+    )
+    with tempfile.TemporaryDirectory() as tmp:
+        result = _validate_package(
+            package,
+            profile,
+            decision,
+            verifier,
+            evidence_manifest,
+            Path(tmp),
+        )
+    reasons = {check.reason_code for check in result.checks if check.status == "FAIL"}
+    assert "AUTHORITATIVE_STATE_PROVIDER_MISMATCH" in reasons
+    assert "AUTHORITATIVE_STATE_AS_OF_MISMATCH" in reasons
+
+
 def test_state_store_malformed_json_fails_closed(monkeypatch):
     profile, decision, verifier, evidence_manifest, package = _state_package_fixture()
     monkeypatch.setattr(
         hardening,
         "derive_authoritative_qualification_state",
         lambda **_kwargs: {
+            "provider_id": "roughtime.se",
+            "as_of_utc": "2026-09-10T00:00:00Z",
             "state": "PRODUCTION_QUALIFIED",
             "report_sha256": "1" * 64,
         },
@@ -217,3 +267,19 @@ def test_state_store_noncanonical_timestamp_fails_closed():
                 provider_id="roughtime.se",
                 as_of_utc="2026-09-10T01:00:00Z",
             )
+
+
+def test_state_store_symlink_fails_closed(tmp_path: Path):
+    target = tmp_path / "target.json"
+    target.write_text("{}", encoding="utf-8")
+    link = tmp_path / "linked.json"
+    try:
+        link.symlink_to(target)
+    except (OSError, NotImplementedError):
+        pytest.skip("symlink creation unavailable")
+    with pytest.raises(ValueError, match="symlink"):
+        hardening.collect_qualification_state_objects_strict(
+            tmp_path,
+            provider_id="roughtime.se",
+            as_of_utc="2026-09-10T01:00:00Z",
+        )
