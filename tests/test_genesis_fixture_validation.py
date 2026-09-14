@@ -51,6 +51,8 @@ class GenesisRetrospectiveFixtureValidationTests(unittest.TestCase):
             "resolved_url": "https://www.bls.gov/news.release/archives/cpi_08122026.htm",
             "allowed_host": "www.bls.gov",
             "http_status": 200,
+            "retrieved_at": "2026-08-12T12:30:01Z",
+            "content_type": "text/html",
             "raw_filename": "artifact.html",
             "raw_byte_length": len(raw),
             "raw_sha256": "0" * 64 if tamper_hash else raw_sha,
@@ -89,6 +91,42 @@ class GenesisRetrospectiveFixtureValidationTests(unittest.TestCase):
     def test_raw_hash_tamper_fails_closed(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             fixture_dir = self._write_cpi_fixture(Path(tmpdir), tamper_hash=True)
+            with self.assertRaises(ValueError):
+                self.validator.validate_fixture(fixture_dir)
+
+    def test_missing_raw_filename_fails_closed(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            fixture_dir = self._write_cpi_fixture(
+                Path(tmpdir),
+                overrides={"raw_filename": None},
+            )
+            with self.assertRaises(ValueError):
+                self.validator.validate_fixture(fixture_dir)
+
+    def test_missing_raw_byte_length_fails_closed(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            fixture_dir = self._write_cpi_fixture(
+                Path(tmpdir),
+                overrides={"raw_byte_length": None},
+            )
+            with self.assertRaises(ValueError):
+                self.validator.validate_fixture(fixture_dir)
+
+    def test_malformed_retrieval_timestamp_fails_closed(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            fixture_dir = self._write_cpi_fixture(
+                Path(tmpdir),
+                overrides={"retrieved_at": "2026-08-12 12:30:01"},
+            )
+            with self.assertRaises(ValueError):
+                self.validator.validate_fixture(fixture_dir)
+
+    def test_missing_content_type_fails_closed(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            fixture_dir = self._write_cpi_fixture(
+                Path(tmpdir),
+                overrides={"content_type": ""},
+            )
             with self.assertRaises(ValueError):
                 self.validator.validate_fixture(fixture_dir)
 
