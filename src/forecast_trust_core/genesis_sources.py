@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from decimal import Decimal, InvalidOperation
 from html.parser import HTMLParser
 from typing import Any, Mapping, Sequence
@@ -300,6 +301,19 @@ def parse_real_gdp_advance(
     return parse_released_decimal(row.get("display_value"))
 
 
+def _parse_utc_second(value: Any, *, label: str) -> datetime:
+    if not isinstance(value, str) or not re.fullmatch(
+        r"[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z",
+        value,
+    ):
+        raise GenesisSourceParseError(f"{label} must use exact UTC YYYY-MM-DDTHH:MM:SSZ")
+    try:
+        parsed = datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ")
+    except ValueError as exc:
+        raise GenesisSourceParseError(f"{label} is not a valid UTC timestamp") from exc
+    return parsed.replace(tzinfo=timezone.utc)
+
+
 def select_baseline_first_release(
     records: Sequence[Mapping[str, Any]],
     *,
@@ -320,8 +334,8 @@ def select_baseline_first_release(
         )
     row = matches[0]
     available_at = row.get("available_at")
-    if not isinstance(available_at, str):
-        raise GenesisSourceParseError("baseline availability is unknown")
-    if available_at > information_cutoff:
+    available_at_utc = _parse_utc_second(available_at, label="baseline available_at")
+    cutoff_utc = _parse_utc_second(information_cutoff, label="information_cutoff")
+    if available_at_utc > cutoff_utc:
         raise GenesisSourceParseError("baseline first release was unavailable at cutoff")
     return row
