@@ -289,6 +289,32 @@ def test_report_control_binding_mismatches_fail_without_transport(target):
     assert transport.prepares == [] and transport.calls == []
 
 
+@pytest.mark.skipif(os.name == "nt", reason="synthetic executable fixture is POSIX")
+def test_qualified_verifier_executes_verified_bytes_after_source_path_replacement(tmp_path):
+    binary = tmp_path / "synthetic-roughtime-verifier"
+    binary.write_text(
+        "#!/usr/bin/env python3\n"
+        "import json,sys\n"
+        "out=sys.argv[sys.argv.index('--output')+1]\n"
+        "json.dump({'source':'original'},open(out,'w'),separators=(',',':'))\n",
+        encoding="utf-8",
+    )
+    binary.chmod(0o755)
+    build = profile()
+    build["binary_sha256"] = hashlib.sha256(binary.read_bytes()).hexdigest()
+    _rehash(build, "profile_sha256")
+    verifier = QualifiedVerifierBackend(binary, build)
+    binary.write_text(
+        "#!/usr/bin/env python3\n"
+        "import json,sys\n"
+        "out=sys.argv[sys.argv.index('--output')+1]\n"
+        "json.dump({'source':'replacement'},open(out,'w'),separators=(',',':'))\n",
+        encoding="utf-8",
+    )
+    binary.chmod(0o755)
+    assert verifier._run("probe", {"schema_version": "1.0"}) == {"source": "original"}
+
+
 def test_qualified_verifier_accepts_only_exact_success_output():
     provider = plan_and_auth()[0]["providers"][0]
     request, response = b"request", b"response"
