@@ -1,250 +1,152 @@
 # Current State
 
-Date: 2026-09-13
+Date: 2026-09-14
 Project: Forecast Provenance Project
-State: GENESIS_READINESS_DESIGN
+State: PRE_GENESIS_ARCHITECTURE_COMPRESSION
 
-Current formal branch and state snapshot basis:
+Current formal branch and transition basis:
 
 ```text
 branch = design/gen-001
-snapshot_basis_commit = cd970120283d2d5efa32f47f95e38d68ce796292
+transition_basis_commit = b8356f70844034fa7c448be30f39312ef95907cc
 ```
 
-The commit containing `CURRENT_STATE.md` must be identified from Git metadata; this document does not embed its own commit SHA.
+The commit containing this file must be identified from Git metadata. This document does not embed its own commit SHA.
 
-## Native scientific state
+## Current project direction
+
+The active pre-Genesis workstream is **Pre-Genesis Architecture Compression**.
+
+The immediate objective is to reduce Genesis v1 to the smallest credible trust core that can establish a genuine prospective history while preserving independent auditability of mandatory cycles, attempts, failures, omissions, information cutoffs, execution, resolution, and evaluation cohorts.
+
+The previous Roughtime production qualification workstream is paused as the active mainline. Existing qualification criteria, evidence, schemas, validators, reports, and historical rehearsal classifications remain retained evidence and are not reinterpreted or deleted.
+
+No further production qualification governance expansion or live provider execution is part of the current workstream unless a new correctness or security defect requires it or a later project-control decision explicitly reopens it.
+
+## Architecture Compression sequence
 
 ```text
-Native prospective forecasts = 0
-Native outcome resolutions = 0
-Native evaluation results = 0
-Native failure records = 0
-Accepted Genesis anchors = 0
-Forecast Ledger = NOT CREATED
-Forecast Ledger Genesis = NOT CREATED
+P0  project-control transition and non-normative review record                COMPLETE
+P1  reconcile Genesis anchoring requirements and single-anchor candidate      NEXT
+P2  separate temporal and durability claims from derived eligibility          PENDING
+P3  remove unused Genesis v1 dependencies and reduce review/evaluation surface PENDING
+P4  establish provider-qualification complexity firewall                      PENDING
+P5  update candidate objects, schemas, validators, tests, readiness controls  PENDING
+P6  rerun complete offline regression and synthetic adversarial suite          PENDING
+P7  reconsider need for Roughtime production qualification only after refreeze PENDING
+P8  separate final pre-Genesis high-level review                              PENDING
+P9  separate explicit Genesis authorization                                  PENDING
 ```
 
-## Trust Core
+## P0 control decision
 
-FTC_001 normative design: FROZEN, version 0.4.
+P0 records the workstream transition without changing Genesis candidate semantics.
 
-FTC_002 synthetic implementation: COMPLETE AND MERGED.
+The controlling non-normative review record is:
 
-ADV001 through ADV096 remain the synthetic adversarial baseline.
+`docs/GEN_001_PRE_GENESIS_ARCHITECTURE_COMPRESSION_REVIEW_2026_09_14.md`
 
-## GEN_001
+The transition establishes these control rules:
 
-PR #6 remains Draft and unmerged.
+1. Architecture Compression is the active repository mainline.
+2. Production qualification remains a supporting subsystem rather than the active Trust Core development track.
+3. The Trust Core may consume frozen `ProviderProfile`, `QualificationDecision`, criteria version, and evidence-package hash after those inputs satisfy their own subsystem rules.
+4. Existing production qualification evidence remains historically classified exactly as recorded.
+5. P1 through P5 must use explicit versioned changes where normative semantics change. No existing candidate is silently reinterpreted.
+6. P6 is an offline validation gate. Network provider requests remain unauthorized.
 
-Current repository-side design target:
+## Current Genesis v1 design direction
+
+The intended minimum Genesis v1 profile remains limited to capabilities actually used at Genesis:
+
+1. a small number of low-frequency targets whose official schedules can be reconstructed;
+2. deterministic issuance schedules and mandatory cycle universe;
+3. deterministic or fully auditable execution, with the initial method surface kept minimal;
+4. point-in-time `SourceContract` inputs;
+5. complete attempt, retry, failure, and omission accounting;
+6. immutable forecast, correction, resolution, and evaluation cohort records;
+7. external deadline-existence evidence;
+8. durable public anchoring;
+9. exact `ValidatorContract`;
+10. `BootstrapGovernanceRoot`, `TrustedManifest`, and `ManifestAcceptance`.
+
+Unused stochastic execution, public randomness, `FittedState`, closed-model strong-confirmatory support, custom transparency logging, complex identity systems, and additional time protocols remain deferred until a real use case requires them.
+
+## Genesis anchoring review target
+
+P1 must reconcile the current specification inconsistency between multi-stage anchoring requirements and the acceptance/readiness controls.
+
+The current design direction to review is:
 
 ```text
-zero recurring cash cost minimum profile
-FPP_TIME_EVIDENCE_V1
-policy:deadline-receipt-quorum:v3
-2 of 3 frozen independent Roughtime groups
-OpenTimestamps + Bitcoin durability
-owner Ed25519 bootstrap authority
-RFC3161 = OPTIONAL_AUXILIARY
+BootstrapGovernanceRoot
+→ TrustedManifest
+→ Validation Reports
+→ owner-signed ManifestAcceptance
+→ one final external time/durability evidence package
+→ independent final validation
+→ separate explicit Genesis authorization
 ```
 
-Current effective candidate lineage:
+This is a review target only. P0 does not change the current normative anchoring requirements.
+
+## Temporal claim separation target
+
+P2 will explicitly separate at least these claims:
 
 ```text
-v0.2 base
-+ v0.3 patch
-+ v0.4 patch
-+ v0.5 patch
+DEADLINE_EXISTENCE_VERIFIED
+BITCOIN_DURABILITY_VERIFIED
+PRE_OUTCOME_DURABILITY_VERIFIED
+CONFIRMATORY_PROSPECTIVE_ELIGIBLE
 ```
 
-Effective object count remains 22.
+P0 does not alter any current validator result or historical classification.
 
-## Roughtime pool and completed non-forecast rehearsal
+## Evaluation direction
 
-Current pool:
+Genesis v1 evaluation should prioritize cohort integrity. The minimum scoring surface may be limited to resolved outcome, forecast value, absolute error, and squared error while preserving expected, issued, failed, omitted, ineligible, unresolved, and withdrawn denominators.
 
-1. `roughtime.se`
-2. `time.txryan.com`
-3. `TimeNL-Roughtime`
+Any removal of existing candidate evaluation requirements requires a versioned P3 or P5 change and review.
 
-Cloudflare-Roughtime-2 remains removed from the current pool after an unresolved IETF interoperability issue was identified. It remains historical review evidence only.
+## Retained production qualification state
 
-One separately authorized `NON_FORECAST_REHEARSAL` has completed against the frozen pool. All three providers returned a qualifying first-attempt response. The retained report status and independent review state are:
-
-```text
-REHEARSAL_VERIFIED = YES
-REHEARSAL_EVIDENCE_REVIEW = PASS
-qualifying provider results = 3 of 3
-classification = NON_FORECAST_REHEARSAL
-prospective_eligible = false
-```
-
-The executed plan hash is `d307402fafa351aded623f701ab7736fd2658756a0e10d04de61a92e38888d8d`. Its exact authorization hash, `293979744f5d3494f7b270a1f100020b916971f802f52eab09390470a15a8347`, was consumed and cannot be reused.
-
-The older plan `99ae0b4ce62d106f9ca0cc049f3766a3a39dd28c3d788d134d7f8923c6e278cd` remains `NOT EXECUTED / SUPERSEDED FOR FUTURE NETWORK EXECUTION`; no authorization was created for it.
-
-No new provider request is authorized. Repository development-time `network_authorized` remains false.
-
-## Protocol freeze
-
-Current nonce profile is `FPP_ROUGHTIME_NONCE_V2`.
-
-Current request profile remains:
-
-```text
-STANDARD_1024_BODY
-UDP_ONLY
-2 receipts required
-protocol fallback prohibited
-packet fallback prohibited
-transport fallback prohibited
-maximum 2 attempts per provider
-persistent exponential retry state per root
-```
-
-The current pinned strict Roughtime verifier lineage remains:
-
-```text
-github.com/tannerryan/roughtime
-tag v1.27.0
-commit 56b346a16cd7e8317bb0d24f1ec15549cf93a4c9
-```
-
-The vendored strict low-level wrapper was qualified offline under Go 1.27.x before the retained rehearsal. The Merkle fixture engineering gap remains closed with deterministic multi-leaf coverage for typed hash-first, typed node-first, untyped draft-12 node-first, and negative wrong-order rejection.
-
-## OpenTimestamps
-
-OTS remains the Bitcoin durability layer.
-
-Strong verification still requires owner-controlled Bitcoin Core. RPC credentials remain local and are never retained.
-
-## RFC 3161
-
-Checker version 1.3 and report schema 1.2 remain closed absent a concrete new correctness or security defect.
-
-Commercial Sectigo and Signicat qualification work remains paused for the zero-cost Genesis minimum profile.
-
-## Roughtime production qualification
+The production qualification subsystem remains historically retained with its existing frozen criteria and evidence.
 
 ```text
 PRODUCTION_QUALIFICATION_CRITERIA = FROZEN_V1
 criteria_id = FPP_ROUGHTIME_PRODUCTION_QUALIFICATION_V1
 criteria_sha256 = 88cc910fdb7e573f3a84d860ad0cdc5fffc287db18678956c7e50dc52a07639e
-PRODUCTION_QUALIFICATION_OBJECT_MODEL = PUBLISHED_HARDENED_CANDIDATE
-PRODUCTION_QUALIFICATION_SCHEMA_META_VALIDATION = PASS_7_OF_7
-PRODUCTION_QUALIFICATION_ADVERSARIAL_HARDENING = CURRENT_KNOWN_FINDINGS_CLOSED
-PRODUCTION_QUALIFICATION_REPOSITORY_REGRESSION = PASS
-PRODUCTION_QUALIFICATION_SIGNATURE_BACKEND = FINAL_QUALIFIED
-PRODUCTION_QUALIFICATION_SIGNATURE_BACKEND_QUALIFICATION_HARNESS = PUBLISHED_CANDIDATE
-RETAINED_REHEARSAL_FROZEN_CRITERIA_ASSESSMENT = COMPLETE
-PROVIDER_METADATA_GOVERNANCE_REVIEW = COMPLETE
-PRODUCTION_QUALIFICATION_EXECUTION = NOT_READY
 production-qualified provider count = 0
 PRODUCTION_QUALIFIED = NO
+PRODUCTION_QUALIFICATION_EXECUTION = NOT_READY
+ACTIVE_MAINLINE = PAUSED
 ```
 
-The governance criteria are frozen by `docs/GEN_001_ROUGHTIME_PRODUCTION_QUALIFICATION_GOVERNANCE_FREEZE_V1.md`.
-
-The production qualification object model covers production ProviderProfile candidates, complete evidence manifests, operator metadata reviews, independent qualification reviews, owner-authorized QualificationDecision records, append-only requalification events, and deterministic qualification state reports.
-
-The authoritative hardening path now requires a real qualification evidence package root. It scans the physical package itself, requires an actual manifest file whose bytes are exact `FPP_JCS_1` canonical manifest bytes, and then validates exact file-set closure, file sizes and SHA256 values. A caller-selected in-memory artifact list is insufficient proof of package completeness.
-
-Review cross-binding now requires:
+The retained rehearsal remains:
 
 ```text
-all criterion evidence hashes retained by the complete package
-execution_report_sha256 retained as raw file SHA256
-verifier_binary_sha256 retained as raw binary SHA256
-review_basis_sha256 retained as raw file SHA256
-validated verifier build profile internal profile_sha256 bound to ProviderProfile and review
-verifier build profile binary_sha256 bound to the retained verifier binary
-exact verifier build profile JSON object retained inside the package
-executor and reviewer event identities distinct
+classification = NON_FORECAST_REHEARSAL
+prospective_eligible = false
 ```
 
-Temporal hardening requires every metadata source capture to exist no later than its metadata review time. The authoritative state path also rejects `as_of_utc` earlier than the independent qualification review.
+No rehearsal result is upgraded by this transition.
 
-A state report has no independent authority. Production state is accepted only after exact recomputation through the authoritative hardening path.
+## Repository and PR control
 
-The current adversarial review is recorded in `docs/GEN_001_ROUGHTIME_PRODUCTION_QUALIFICATION_ADVERSARIAL_REVIEW_2026_09_13.md`.
+PR #6 remains the active design PR and must remain Draft, open, and unmerged unless separately authorized.
 
-## Production schema validation
+The PR description should describe Architecture Compression as the active workstream while retaining the historical production-qualification evidence as supporting context.
 
-The exact committed bytes of all seven production qualification schemas completed Draft 2020-12 meta-validation with `jsonschema 4.26.0`:
+## Network boundary
 
 ```text
-7 PASS
-0 FAIL
+network_authorized = false
+Roughtime provider requests authorized by this state = 0
+RFC3161 requests authorized by this state = 0
 ```
 
-The checked Git blob identities are retained in the adversarial review document.
-
-This closes schema meta-validity only. It does not replace semantic validation or the exact current-HEAD full repository regression.
-
-## QualificationDecision and Ed25519 verification
-
-The QualificationDecision signature projection is `FPP_ROUGHTIME_QUALIFICATION_DECISION_V1`.
-
-Validation receives the expected authority ID and exact Ed25519 public key from outside the decision object. Repository code contains no signing path and receives no private key.
-
-The verification-only Ed25519 backend candidate uses Go standard-library `crypto/ed25519.Verify` and a Python adapter that pins the executable by SHA256.
-
-A path-substitution review found and repaired a relative executable path issue. The adapter now resolves the accepted executable to an absolute canonical path before invocation and checks its SHA256 both before and after execution.
-
-Development-only validation included RFC 8032 public verification vectors, mutation rejection, strict JSON/Base64 failure paths, binary hash substitution rejection, `go vet`, and same-environment reproducible builds.
-
-Observed development build:
-
-```text
-go_version = go1.23.2
-goos = linux
-goarch = amd64
-development_binary_sha256 = 592089f9f216e22d3e6eec63c836922fc628a91aebfc55d4829ec70fb70c99e9
-```
-
-This development hash is not the frozen production verifier identity. The dedicated content-addressed qualification harness in `scripts/genesis/qualify_ed25519_verifier.py` completed final offline qualification on Windows amd64 with Go 1.27.1. The qualified repository commit is `9ff58689992cf48b18a9f52e89f9e395271ade2c`; the official ZIP distribution/carrier SHA256 is `a3911b5e0e1b1053f25ed0675f4c1c6aad1e2bfcf253df2b9be4caabd2edd95d`; the extracted GOROOT tree SHA256 is `b42ecca624e9a4041ca88c7d574f1c2c435b5388e379e94f71e8d1d0eab8bcbb`; the canonical verifier source-tree SHA256 is `7e688acfa237a2da6891387e90c897b97c381dd89b6d11cffa8cbcea27406b5d`; the reproducible verifier binary SHA256 is `53d3d98e14dca206c64fb770417b701c74d295e34066ab35d8421bcf98b0053a`; and the build profile self-hash is `f2b7f746c44a8c38011484113b15227a2e92e647b5b14928c8c852e17aec24d5`. All ten required Go tests passed, two distinct-cache builds were byte-for-byte identical, and independent schema, semantic, source, Git blob, artifact, GOROOT-tree, binary, and profile checks passed. The qualification recorded `network_used=false` and `external_modules_used=false`. Twenty adversarial fail-closed checks passed without modifying the formal evidence.
-
-## Regression state
-
-The final readiness harness uses pytest so unittest-style and pytest-style tests are both collected. Pytest and jsonschema are pinned test-only dependencies. Production runtime dependencies remain empty.
-
-Focused isolated tests were used to reproduce and close the adversarial findings above. These focused results are development evidence only.
-
-The exact committed branch tree completed the full Windows repository regression in an isolated verification clone on 2026-09-13. Python 3.12.14 with pytest 9.0.2 completed compileall and the full test suite with 290 passed, 8 skipped, and 188 subtests passed. The schema validation tests passed. No provider request or production qualification execution occurred.
-
-`PRODUCTION_QUALIFICATION_REPOSITORY_REGRESSION` is therefore `PASS`. The Ed25519 verification backend is `FINAL_QUALIFIED` under the retained Windows amd64 Go 1.27.1 evidence described above. `PRODUCTION_QUALIFICATION_EXECUTION` remains `NOT_READY` because provider evidence and owner-authority gates remain open.
-
-The retained `NON_FORECAST_REHEARSAL` frozen-criteria assessment is complete in `docs/GEN_001_ROUGHTIME_RETAINED_REHEARSAL_FROZEN_CRITERIA_ASSESSMENT_2026_09_13.md`. It found useful partial cryptographic evidence and complete offline engineering evidence, but no tracked raw Roughtime rehearsal package, exact rehearsal timestamp, or exact freeze timestamp sufficient to establish an eligible first repeatability event. Production qualification was not executed.
-
-The read-only public provider metadata and governance review is complete in `docs/GEN_001_ROUGHTIME_PROVIDER_METADATA_GOVERNANCE_REVIEW_2026_09_13.md`. Current endpoint, key, DNS, ASN, hosting, software, pilot, and standards metadata were retained with hashes. Permission and affirmative root/issuance independence remain open for all three providers; TimeNL root-control continuity remains partial; shared Tanner software remains a potential two-vote common-mode risk; and the roughtime.se operator declaration now names draft-19 rather than the candidate's draft-15. `LIVE_REPEATABILITY_AUTHORIZATION_RECOMMENDATION` is `NOT_READY_TO_REQUEST`.
-
-## Remaining Roughtime production blockers
-
-Before production qualification execution can become ready, the project still requires:
-
-1. owner-generated bootstrap Ed25519 public key only, with the private key remaining outside repository and connected tooling;
-2. exact independent review of any retained raw rehearsal package if it can be located outside the tracked tree;
-3. new separately authorized live repeatability evidence, including a provably post-freeze event, under the frozen criteria;
-4. current production-use permission, continuity, independence, freshness, operational, and common-dependency evidence for all three providers;
-5. final separate independent reviews, ProviderProfiles, and owner-authorized QualificationDecisions for all three providers.
-
-No production ProviderProfile or QualificationDecision has been instantiated.
-
-Retained rehearsal evidence remains `NON_FORECAST_REHEARSAL`, `prospective_eligible = false`, and cannot automatically qualify any provider.
-
-## Other external blockers
-
-Still required outside the Roughtime implementation work:
-
-1. OTS/Bitcoin strong rehearsal and final verifier profile;
-2. three retrospective official BLS/BEA fixture byte sets and adapter reports;
-3. final clean test report and ValidatorContract;
-4. final BootstrapGovernanceRoot, TrustedManifest, ManifestAcceptance, external evidence, and final adversarial review.
-
-## Standards-transition gate
-
-Roughtime draft-19 remains in the RFC publication process with intended Experimental status. Any change in final wire version, provider protocol profile, endpoint, key, TYPE behavior, transport requirement, or verifier semantics before final freeze requires read-only re-review and a versioned profile change. No automatic migration is permitted.
+No new live provider request is authorized by Architecture Compression P0 through P6 unless the owner separately grants exact authorization.
 
 ## Safety state
 
@@ -259,4 +161,4 @@ production forecasting = PROHIBITED
 network_authorized = false
 ```
 
-No Roughtime request, RFC 3161 request, prospective forecast, production ProviderProfile, QualificationDecision, Genesis acceptance, or Forecast Ledger creation is authorized by this state.
+The Genesis Ed25519 private key remains outside the repository, GitHub, CI, ChatGPT, Codex, logs, prompts, fixtures, and third-party systems. Only the public key may become a project object when the appropriate later governance step is reached.
