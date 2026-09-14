@@ -33,6 +33,7 @@ from .canonical import (
     verify_sealed_object,
 )
 from .core import Validation, aggregate, validate_cycle_plan
+from ._verified_executable import PinnedExecutable
 
 
 HEX64 = frozenset("0123456789abcdef")
@@ -321,7 +322,7 @@ def _validate_bitcoin_verifier_contract(
     *,
     expected_contract_ref: Mapping[str, Any],
     executable: Path,
-) -> dict[str, str]:
+) -> tuple[dict[str, str], PinnedExecutable]:
     contract_ref = _exact_ref(contract, object_type="StrongBitcoinVerifierContract")
     _require_ref_equal(contract_ref, expected_contract_ref, "strong Bitcoin verifier contract")
     expected = {
@@ -339,16 +340,18 @@ def _validate_bitcoin_verifier_contract(
     timeout = contract.get("timeout_seconds")
     if type(timeout) is not int or not (1 <= timeout <= 300):
         raise ValueError("strong Bitcoin verifier timeout invalid")
-    raw = Path(executable).read_bytes()
-    if hashlib.sha256(raw).hexdigest() != contract.get("executable_sha256"):
-        raise ValueError("strong Bitcoin verifier executable hash mismatch")
-    return contract_ref
+    pinned = PinnedExecutable.load(
+        Path(executable),
+        contract.get("executable_sha256"),
+        label="strong Bitcoin verifier executable",
+    )
+    return contract_ref, pinned
 
 
 def _run_bitcoin_verifier(
     contract: Mapping[str, Any],
     *,
-    executable: Path,
+    executable: PinnedExecutable,
     bundle_bytes: bytes,
     proof_bytes: bytes,
 ) -> Mapping[str, Any]:
@@ -363,14 +366,15 @@ def _run_bitcoin_verifier(
         "proof_sha256": proof_sha,
         "proof_base64": base64.b64encode(proof_bytes).decode("ascii"),
     }
-    completed = subprocess.run(
-        [str(Path(executable).resolve())],
-        input=canonical_json(request),
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        check=False,
-        timeout=int(contract["timeout_seconds"]),
-    )
+    with executable.snapshot(prefix="fpp-bitcoin-verifier-") as snapshot:
+        completed = subprocess.run(
+            [str(snapshot)],
+            input=canonical_json(request),
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=False,
+            timeout=int(contract["timeout_seconds"]),
+        )
     if completed.returncode != 0:
         raise ValueError("strong Bitcoin verifier execution failed")
     try:
@@ -440,7 +444,7 @@ def recompute_bitcoin_durability_claim_authoritatively(
     proof_bytes = _decode_canonical_base64(proof_artifact.get("proof_base64"), "proof_base64")
     if hashlib.sha256(proof_bytes).hexdigest() != proof_artifact.get("proof_sha256"):
         raise ValueError("OTS proof artifact hash mismatch")
-    strong_contract_ref = _validate_bitcoin_verifier_contract(
+    strong_contract_ref, pinned_executable = _validate_bitcoin_verifier_contract(
         strong_verifier_contract,
         expected_contract_ref=expected_strong_verifier_contract_ref,
         executable=strong_verifier_executable,
@@ -448,7 +452,7 @@ def recompute_bitcoin_durability_claim_authoritatively(
     bundle_bytes = canonical_json(dict(bundle))
     output = _run_bitcoin_verifier(
         strong_verifier_contract,
-        executable=strong_verifier_executable,
+        executable=pinned_executable,
         bundle_bytes=bundle_bytes,
         proof_bytes=proof_bytes,
     )
