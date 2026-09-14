@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import Any, Callable, Mapping, Protocol
 
 from .canonical import canonical_json, parse_json_strict, seal_object
+from ._verified_executable import PinnedExecutable
 from ._roughtime_control import (
     record_failure,
     reset_root_state,
@@ -193,24 +194,26 @@ class RealUDPTransport:
 class QualifiedVerifierBackend:
     def __init__(self, binary: Path, build_profile: Mapping[str, Any]) -> None:
         validate_verifier_build_profile(build_profile)
-        raw = binary.read_bytes()
-        self.binary_sha256 = hashlib.sha256(raw).hexdigest()
-        if self.binary_sha256 != build_profile["binary_sha256"]:
-            raise ValueError("qualified verifier binary hash mismatch")
-        self._binary = binary
+        self.binary_sha256 = build_profile["binary_sha256"]
+        self._pinned_executable = PinnedExecutable.load(
+            Path(binary),
+            self.binary_sha256,
+            label="qualified Roughtime verifier binary",
+        )
 
     def _run(self, action: str, payload: Mapping[str, Any]) -> Mapping[str, Any]:
         with tempfile.TemporaryDirectory(prefix="fpp-roughtime-verifier-") as directory:
             input_path = Path(directory) / "input.json"
             output_path = Path(directory) / "output.json"
             input_path.write_bytes(canonical_json(dict(payload)) + b"\n")
-            completed = subprocess.run(
-                [str(self._binary), action, "--input", str(input_path), "--output", str(output_path)],
-                stdin=subprocess.DEVNULL,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                check=False,
-            )
+            with self._pinned_executable.snapshot(prefix="fpp-roughtime-verifier-bin-") as executable:
+                completed = subprocess.run(
+                    [str(executable), action, "--input", str(input_path), "--output", str(output_path)],
+                    stdin=subprocess.DEVNULL,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    check=False,
+                )
             if completed.returncode != 0:
                 detail = completed.stderr.decode("utf-8", errors="replace").strip()
                 raise ValueError(detail or f"verifier exited {completed.returncode}")
