@@ -192,6 +192,8 @@ class RealUDPTransport:
 
 
 class QualifiedVerifierBackend:
+    PROCESS_TIMEOUT_SECONDS = 10
+
     def __init__(self, binary: Path, build_profile: Mapping[str, Any]) -> None:
         validate_verifier_build_profile(build_profile)
         self.binary_sha256 = build_profile["binary_sha256"]
@@ -206,14 +208,18 @@ class QualifiedVerifierBackend:
             input_path = Path(directory) / "input.json"
             output_path = Path(directory) / "output.json"
             input_path.write_bytes(canonical_json(dict(payload)) + b"\n")
-            with self._pinned_executable.snapshot(prefix="fpp-roughtime-verifier-bin-") as executable:
-                completed = subprocess.run(
-                    [str(executable), action, "--input", str(input_path), "--output", str(output_path)],
-                    stdin=subprocess.DEVNULL,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    check=False,
-                )
+            try:
+                with self._pinned_executable.snapshot(prefix="fpp-roughtime-verifier-bin-") as executable:
+                    completed = subprocess.run(
+                        [str(executable), action, "--input", str(input_path), "--output", str(output_path)],
+                        stdin=subprocess.DEVNULL,
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE,
+                        check=False,
+                        timeout=self.PROCESS_TIMEOUT_SECONDS,
+                    )
+            except subprocess.TimeoutExpired as exc:
+                raise ValueError("qualified Roughtime verifier process timed out") from exc
             if completed.returncode != 0:
                 detail = completed.stderr.decode("utf-8", errors="replace").strip()
                 raise ValueError(detail or f"verifier exited {completed.returncode}")
