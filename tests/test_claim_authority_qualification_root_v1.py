@@ -134,6 +134,26 @@ def test_provider_runtime_cannot_inject_signature_verifier(monkeypatch):
         )
 
 
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("expected_authority_id", "authority:substitute:test:v1"),
+        ("expected_authority_public_key", b"x" * 32),
+    ],
+)
+def test_provider_runtime_cannot_inject_expected_authority_fields(monkeypatch, field, value):
+    fx = fixture()
+    patch_pinned_verifier(monkeypatch)
+    fx["wall"]["provider_authority_inputs"]["p0"][field] = value
+    with pytest.raises(ValueError, match="caller authority override prohibited"):
+        trust_root.bind_wall_clock_inputs_to_manifest(
+            fx["manifest"],
+            fx["wall"],
+            qualification_authority_id=AUTHORITY_ID,
+            qualification_authority_public_key=AUTHORITY_PUBLIC_KEY,
+        )
+
+
 def test_external_authority_key_must_match_manifest_bound_contract(monkeypatch):
     fx = fixture()
     patch_pinned_verifier(monkeypatch)
@@ -143,6 +163,18 @@ def test_external_authority_key_must_match_manifest_bound_contract(monkeypatch):
             fx["wall"],
             qualification_authority_id=AUTHORITY_ID,
             qualification_authority_public_key=b"x" * 32,
+        )
+
+
+def test_external_authority_id_must_match_manifest_bound_contract(monkeypatch):
+    fx = fixture()
+    patch_pinned_verifier(monkeypatch)
+    with pytest.raises(ValueError, match="authority_id differs from frozen contract"):
+        trust_root.bind_wall_clock_inputs_to_manifest(
+            fx["manifest"],
+            fx["wall"],
+            qualification_authority_id="authority:substitute:test:v1",
+            qualification_authority_public_key=AUTHORITY_PUBLIC_KEY,
         )
 
 
@@ -211,10 +243,52 @@ def test_qualification_contract_cannot_bind_different_main_validator(monkeypatch
         )
 
 
+def test_qualification_contract_rejects_wrong_ed25519_build_profile_identity(monkeypatch):
+    fx = fixture()
+    monkeypatch.setattr(
+        trust_root,
+        "validate_ed25519_build_profile",
+        lambda _profile: "c" * 64,
+    )
+    with pytest.raises(ValueError, match="build profile mismatch"):
+        trust_root.bind_wall_clock_inputs_to_manifest(
+            fx["manifest"],
+            fx["wall"],
+            qualification_authority_id=AUTHORITY_ID,
+            qualification_authority_public_key=AUTHORITY_PUBLIC_KEY,
+        )
+
+
+def test_qualification_contract_rejects_wrong_ed25519_binary_identity(monkeypatch):
+    fx = fixture()
+    patch_pinned_verifier(monkeypatch)
+    fx["wall"]["qualification_ed25519_build_profile"] = {"binary_sha256": "c" * 64}
+    with pytest.raises(ValueError, match="binary binding mismatch"):
+        trust_root.bind_wall_clock_inputs_to_manifest(
+            fx["manifest"],
+            fx["wall"],
+            qualification_authority_id=AUTHORITY_ID,
+            qualification_authority_public_key=AUTHORITY_PUBLIC_KEY,
+        )
+
+
 def test_extra_provider_authority_input_is_rejected(monkeypatch):
     fx = fixture()
     patch_pinned_verifier(monkeypatch)
     fx["wall"]["provider_authority_inputs"]["p-extra"] = {}
+    with pytest.raises(ValueError, match="exactly match the admitted provider identity set"):
+        trust_root.bind_wall_clock_inputs_to_manifest(
+            fx["manifest"],
+            fx["wall"],
+            qualification_authority_id=AUTHORITY_ID,
+            qualification_authority_public_key=AUTHORITY_PUBLIC_KEY,
+        )
+
+
+def test_missing_provider_authority_input_is_rejected(monkeypatch):
+    fx = fixture()
+    patch_pinned_verifier(monkeypatch)
+    del fx["wall"]["provider_authority_inputs"]["p2"]
     with pytest.raises(ValueError, match="exactly match the admitted provider identity set"):
         trust_root.bind_wall_clock_inputs_to_manifest(
             fx["manifest"],
