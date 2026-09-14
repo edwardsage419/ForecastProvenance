@@ -1,100 +1,84 @@
 # Trusted Manifest Contract
 
-Version: 0.4 candidate
-Status: FTC_001 FINAL FREEZE CANDIDATE
+Version: 0.5 candidate
+Status: GEN_001 ARCHITECTURE COMPRESSION P5
 
 ## Purpose
 
-The trusted manifest is the explicit protocol trust root for a declared project state. It is supplied to the validator from outside the candidate scientific object graph.
+TrustedManifest is the explicit content-addressed protocol trust root for a declared historical project state. Candidate objects cannot select or regenerate their own trust roots.
 
-## Candidate manifest
+## Genesis v1 candidate bindings
 
-A candidate binds:
+The compressed Genesis v1 TrustedManifest binds exact full references for the instantiated profile, including:
 
 ```text
-manifest_id
-protocol_id
-manifest_sequence
-canonicalization_scheme
-hash_algorithm
-validator_contract
-targets
-resolution_rules
-methods
-source_contracts
-transformation_definitions
-review_rules
-anchor_schemes
-issuance_schedule_policy
-public_randomness_policies
-correction_policy
-retry_policy
-omission_policy
-evaluation_policy
-retention_policy
-acceptance_rule
-previous_manifest
-content_sha256
+validator_contract_ref
+target_refs
+resolution_rule_refs
+method_refs
+source_contract_refs
+issuance_schedule_policy_ref
+retry_policy_ref
+omission_policy_ref
+correction_policy_ref
+evaluation_policy_ref
+retention_policy_ref
+acceptance_rule_ref
+deadline_receipt_quorum_policy_ref
+provider_profile_refs
+qualification_decision_refs
+qualification_verifier_contract_ref
+anchor/verifier contracts actually used by Genesis v1
 ```
 
-Set like reference arrays are sorted by object ID and full hash. Consequential policies are first class content bound objects.
+Set-like arrays are deterministically sorted by object ID and full content hash.
 
-A candidate contains no authoritative mutable acceptance status.
+Genesis v1 does not require placeholder manifest dependencies for dormant interfaces such as PublicRandomnessPolicy, FittedState, scientific Human Review, closed-model observability/retrieval accounting, stochastic execution, externally audited attempts, or multi-method comparison.
+
+## Provider qualification firewall
+
+Genesis v1 binds exactly three production ProviderProfiles and exactly three matching signed QualificationDecisions.
+
+The signed QualificationDecision transitively binds the exact frozen qualification criteria, ProviderProfile, initial qualification evidence-manifest SHA256, verifier identity, independent review, decision-bound metadata review, authority, and decision result.
+
+Qualification workflow internals are supporting evidence and are not duplicated into TrustedManifest.
+
+Dynamic historical provider state is reconstructed separately for each consequential deadline with:
+
+```text
+as_of_utc = frozen_deadline_utc
+```
+
+using the exact `qualification_verifier_contract_ref` and a content-closed qualification-state package. All three admitted providers must be `PRODUCTION_QUALIFIED` at that historical as-of before the deadline event may use the frozen production-ready three-provider pool.
 
 ## Genesis acceptance
 
-Genesis authority is not derived from the candidate manifest.
+Genesis authority comes from an out-of-graph `BootstrapGovernanceRoot` supplied independently to validation.
 
-The validator receives an out of graph `BootstrapGovernanceRoot` that binds project identity, authority identity and public key, acceptance rule identity, canonicalization scheme, hash algorithm, and bootstrap version.
+ManifestAcceptance v2 binds the exact candidate manifest, exact bootstrap root, exact AcceptancePolicy v2, required validation reports, authority reference, decision, reason codes, blocking findings, and signature reference.
 
-A Genesis ManifestAcceptance must bind the exact candidate manifest hash, required external anchor evidence, bootstrap root, exact acceptance rule, authority proof, required validation reports, and decision.
+The signed ManifestAcceptance does not contain a required reference to its later final external evidence package. That would be circular.
 
-FTC_001 freezes this interface. Genesis must instantiate the exact bootstrap key and exact rule bytes before any prospective operation.
-
-## Successor acceptance
-
-After Genesis, a successor manifest binds the prior accepted manifest and prior acceptance object and follows the governance change rule already authorized by the accepted predecessor state.
-
-If two successor acceptances compete for the same predecessor and the predecessor AcceptanceRule does not deterministically resolve that fork, historical trust resolution fails closed until an authorized conflict process resolves it.
-
-## Validator trust inputs
-
-Genesis validation logically receives:
+After signing, final external evidence is created over the exact signed ManifestAcceptance. Independent final validation receives that evidence separately and requires:
 
 ```text
-bootstrap_governance_root
-trusted_manifest
-manifest_acceptance
-candidate_object
-dependency_store
+final_evidence_subject_ref == signed_manifest_acceptance_ref
+EXTERNAL_EXISTENCE_BOUND_VERIFIED == VERIFIED
+BITCOIN_DURABILITY_VERIFIED == VERIFIED
 ```
 
-Post Genesis validation uses the accepted governance lineage rooted in Genesis.
+Standalone bootstrap-root or candidate-manifest anchors may exist as optional audit evidence but cannot substitute for the final acceptance evidence.
 
-Candidate objects cannot select or regenerate these trust roots.
+## Genesis authorization boundary
 
-## Schedule and output selection
+Successful final validation does not itself start Genesis.
 
-Every confirmatory issuance cycle must validate against the exact IssuanceSchedulePolicy bound by its historical trusted manifest.
-
-The schedule policy determines the required target and method slots before cycle outputs exist.
-
-Any PublicRandomnessPolicy used by a method is likewise content bound by the trusted manifest. An operator cannot substitute a later randomness source or event after inspecting candidate outputs.
-
-## External anchoring and governance
-
-External time evidence establishes content existence under the AnchorScheme's conservative time semantics.
-
-ManifestAcceptance establishes project governance approval.
-
-Both are required where the active protocol requires both claims.
+A separate explicit Genesis authorization is required after all readiness conditions close. First prospective execution must occur strictly after that authorization.
 
 ## Historical manifest selection
 
-A verifier never substitutes the newest manifest or policy version for the exact manifest applicable to a historical object or issuance cycle.
-
-If the required manifest, acceptance object, governance lineage, policy object, or required dependency cannot be produced and verified, the stronger trust claim fails closed.
+A verifier always uses the exact historical manifest and policy versions applicable to the object or cycle being verified. Newer policies or manifests never reinterpret older history.
 
 ## Retention
 
-Canonical manifest bytes, acceptance bytes, bootstrap governance root bytes, hashes, external anchor evidence, referenced compact normative objects, and successor lineage records are retained by content for the life of the project.
+Canonical TrustedManifest bytes, ManifestAcceptance bytes, BootstrapGovernanceRoot bytes, public keys, signatures, final external evidence, referenced normative objects, provider admission objects, and successor lineage records are retained by content for the life of the project.
