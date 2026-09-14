@@ -1,7 +1,7 @@
 # Supporting Normative Contracts
 
 Version: 0.5 candidate
-Status: GEN_001 ARCHITECTURE COMPRESSION P5
+Status: GEN_001 ARCHITECTURE COMPRESSION P5 CLAIM-AUTHORITY HARDENING
 
 These objects define supporting Trust Core contracts. They create no prospective history by themselves.
 
@@ -95,6 +95,8 @@ NOT_APPLICABLE
 
 A stronger claim failure never rewrites a weaker verified historical fact.
 
+Schema validity or a sealed persisted report is not claim authority. Successor authoritative report validation recomputes the applicable claims from exact retained evidence under the manifest-bound ValidatorContract, rebuilds the deterministic report, and requires exact equality with the persisted bytes.
+
 ## RoughtimeProviderQualificationStatePackage
 
 This is supporting evidence, not qualification or governance authority.
@@ -120,6 +122,44 @@ A caller-selected event subset is insufficient.
 
 For a Genesis v1 deadline event, `as_of_utc` equals the event's exact frozen deadline. Only `qualification_state = PRODUCTION_QUALIFIED` is admissible, and all three manifest-admitted providers must independently satisfy that state gate before receipt quorum is evaluated.
 
+The three state-package provider identities and the runtime provider-authority input key set must exactly equal the three manifest-admitted ProviderProfile identities. Extra, missing, duplicate or substituted provider authority inputs fail closed.
+
+## RoughtimeQualificationVerifierContract
+
+`schemas/roughtime_qualification_verifier_contract_v1.schema.json` describes the sealed supporting verifier contract referenced by the TrustedManifest.
+
+The contract freezes:
+
+```text
+criteria_id
+criteria_sha256
+validator_contract_ref
+decision_signature_projection
+signature_algorithm = ED25519
+authority_id
+authority_public_key_sha256
+ed25519_verifier_build_profile_sha256
+ed25519_verifier_binary_sha256
+```
+
+The high-level claim-authority adapter requires the exact manifest-bound contract, validates the exact Ed25519 build profile, verifies the local executable hash, and constructs `PinnedEd25519Verifier` internally. Provider runtime inputs may not inject `expected_authority_id`, `expected_authority_public_key`, or a `signature_verifier` callback.
+
+For Genesis, the authority ID and public-key bytes are supplied independently from the accepted BootstrapGovernanceRoot/governance context. The public key must hash to the value frozen by the contract. The private key is neither required nor permitted as a verification input.
+
+This contract is a supporting verification boundary. It does not itself qualify a provider and does not authorize qualification execution.
+
+## ExternalTimeEvidenceBundle and RoughtimeProductionReceiptEvidence
+
+The successor claim-authority path treats production-shaped wall-clock evidence as exact retained bytes. Receipt verification replays the exact deterministic request and retained response through the manifest-admitted ProviderProfile and strict verifier, checks historical provider admission at the frozen deadline, and derives a conservative quorum upper bound.
+
+Production readiness wrappers require `LIVE_OPERATIONAL` evidence. Synthetic fixtures remain non-prospective test material.
+
+## StrongBitcoinVerifierContract and StrongBitcoinVerificationReport
+
+The manifest binds the exact StrongBitcoinVerifierContract. The authoritative durability path re-executes its hash-pinned local verifier over exact bundle/proof bytes. A persisted StrongBitcoinVerificationReport is only an audit artifact and must equal the deterministic recomputation if supplied.
+
+Bitcoin block header time is durability evidence only and never a precise civil-time upper bound.
+
 ## Anchor evidence
 
 Wall-clock existence evidence and Bitcoin durability remain separate evidence families. Bitcoin block header time is never interpreted as a precise civil-time upper bound.
@@ -130,4 +170,4 @@ Current availability of retained bytes is a separate derived operational claim. 
 
 ## Historical compatibility
 
-Historical contract versions and historical validators remain valid for the bytes they originally governed. Architecture Compression v0.5 contracts apply prospectively only to the successor pre-Genesis candidate and do not reinterpret earlier candidate artifacts.
+Historical contract versions and historical validators remain valid for the bytes they originally governed. Architecture Compression successor contracts apply only to the successor pre-Genesis candidate and do not reinterpret earlier candidate artifacts.
