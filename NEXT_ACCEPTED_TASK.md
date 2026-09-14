@@ -1,88 +1,99 @@
 # Next Accepted Task
 
-Task ID: GEN_001-AC-P2
-State: PRE_GENESIS ARCHITECTURE COMPRESSION; P2 TEMPORAL CLAIM SEPARATION; NETWORK REQUEST NOT AUTHORIZED
+Task ID: GEN_001-AC-P3
+State: PRE_GENESIS ARCHITECTURE COMPRESSION; P3 GENESIS V1 DEPENDENCY AND REVIEW SURFACE REDUCTION; NETWORK REQUEST NOT AUTHORIZED
 
 ## Objective
 
-Separate wall-clock existence, public durability, pre-outcome durability, and derived confirmatory prospective eligibility into explicit claims whose truth values can be independently validated and preserved.
+Reduce the instantiated Genesis v1 dependency set to capabilities actually used by the initial target and method profile, and reduce human review and evaluation surface while preserving provenance, mandatory cycle accounting, temporal claims, immutable history, and cohort integrity.
 
-P2 is a design and dependency-reconciliation task. Candidate objects, schemas, validator implementation, readiness matrix, abort conditions, and full tests are updated together later in P5.
+P3 is a design and dependency reconciliation task. Candidate objects, schemas, validator implementation, readiness matrix, abort conditions, and full tests are updated together later in P5.
 
-## P1 boundary already established
+## P1 and P2 boundary already established
 
 P1 design control is recorded in:
 
 `docs/GEN_001_GENESIS_ANCHORING_RECONCILIATION_V1.md`
 
-The successor Genesis governance commitment chain is:
+P2 design control is recorded in:
+
+`docs/GEN_001_TEMPORAL_CLAIM_SEPARATION_V1.md`
+
+The successor Genesis governance path uses one mandatory final external evidence package over the exact signed `ManifestAcceptance`.
+
+The successor temporal model separately derives:
 
 ```text
-BootstrapGovernanceRoot
-→ TrustedManifest
-→ Validation Reports
-→ owner-signed ManifestAcceptance
-→ one final external time/durability evidence package
-→ independent final validation
-→ separate explicit Genesis authorization
-```
-
-Standalone bootstrap and manifest anchoring are optional audit evidence in the successor design. The current v0.5 candidate and validator remain unaligned until P5 performs explicit versioned implementation.
-
-## P2 design target
-
-Review and define at least these independent outputs:
-
-```text
+EXTERNAL_EXISTENCE_BOUND_VERIFIED
 DEADLINE_EXISTENCE_VERIFIED
 BITCOIN_DURABILITY_VERIFIED
 PRE_OUTCOME_DURABILITY_VERIFIED
 CONFIRMATORY_PROSPECTIVE_ELIGIBLE
 ```
 
-The design must prevent a late durability completion from erasing a valid earlier existence fact.
+P3 must preserve these P1 and P2 properties.
 
-A record may therefore have:
+## Initial Genesis profile to audit
+
+The current initial method is:
 
 ```text
-DEADLINE_EXISTENCE_VERIFIED = YES
-BITCOIN_DURABILITY_VERIFIED = YES
-PRE_OUTCOME_DURABILITY_VERIFIED = NO
-CONFIRMATORY_PROSPECTIVE_ELIGIBLE = NO
+method:last-observed-value:v1
+selection_control_class = DETERMINISTIC_REPLAY
+randomness_policy = NONE
 ```
 
-when the exact subject received valid deadline-existence evidence in time and durable anchoring completed only after the applicable outcome information barrier.
+The initial target set remains the three reconstructable low frequency official release targets already selected for GEN_001.
 
-## Accepted P2 execution
+The initial method does not require stochastic execution, public randomness, model fitted state, hidden model retrieval, closed model observability, or multi method selection.
 
-1. Locate every current field, policy, validator result, readiness statement, abort condition, and evaluation rule that collapses wall-clock evidence, Bitcoin durability, pre-outcome completion, or prospective eligibility into one status.
-2. Identify each exact subject to which the claim applies, including Genesis acceptance evidence and forecast-cycle evidence where their semantics differ.
-3. Define deterministic derivation rules for each retained claim.
-4. State which evidence proves each claim and which trust assumptions remain external.
-5. Preserve the distinction between Roughtime wall-clock trust and Bitcoin durability.
-6. Keep Bitcoin block header time outside the precise civil-time upper-bound role.
-7. Preserve historical facts when a stronger derived claim fails.
-8. Identify the exact P5 object, schema, validator, readiness, abort-condition, and test changes required to implement the design.
-9. Keep all work offline.
+The current evaluation design also compares forecasts to `method:last-observed-value:v1` as a transparent baseline even though that same method is the only admitted Genesis method. P3 must determine whether that comparison is redundant and should be deferred until a distinct method exists.
 
-## Required P2 properties
+## Accepted P3 execution
 
-The P2 candidate must preserve these properties:
+1. Build an exact inventory of current Trust Core and GEN_001 dependencies that the initial method, targets, schedule, source contracts, time evidence, resolution, correction, retention, and evaluation path actually consume.
+2. Identify generic Trust Core interfaces that may remain available for successor manifests without becoming Genesis v1 readiness blockers or mandatory manifest dependencies.
+3. Review stochastic execution, `PublicRandomnessPolicy`, `FittedState`, closed model observability, retrieval accounting, transformation state, and similar unused capabilities for removal from the instantiated Genesis profile.
+4. Review the current human review policy and determine whether Genesis v1 needs any human semantic override capability. Prefer deterministic fail closed `UNRESOLVED` or `REVIEW_REQUIRED` handling when human discretion adds no necessary provenance value.
+5. Review the current evaluation policy and reduce it to the smallest surface needed to preserve cohort integrity and basic point forecast scoring.
+6. Specifically review transparent baseline deltas, method comparison, within target aggregation, cross target aggregation, significance claims, and other metrics that have no value with only one admitted method.
+7. Preserve expected, issued, failed, omitted, ineligible, unresolved, withdrawn, and temporal claim denominators even if scoring metrics are reduced.
+8. Identify every current candidate object, policy field, manifest dependency, readiness item, abort condition, validator path, schema, and test affected by the proposed compression.
+9. Define successor semantics without editing or reinterpreting historical candidate objects.
+10. Keep all work offline.
 
-1. wall-clock deadline existence is determined from the applicable signed-receipt policy and exact subject binding;
-2. Bitcoin durability is determined independently from the durable commitment and strong verification rule;
-3. pre-outcome durability compares the validated durability-completion evidence against the frozen outcome information barrier using an admissible wall-clock claim rather than Bitcoin block time as a precise timestamp;
-4. confirmatory prospective eligibility is derived from all required claims and other applicable Trust Core conditions;
-5. a failure of a stronger claim never rewrites a previously established weaker fact;
-6. missing evidence produces an explicit fail-closed or unresolved state rather than an inferred success;
-7. provider and verifier trust assumptions remain disclosed;
-8. historical candidate and rehearsal semantics remain unchanged.
+## Required P3 properties
 
-## Out of scope for P2
+The P3 candidate must preserve at least these properties:
 
-P2 does not reopen provider selection, production qualification criteria, Roughtime transport or wire semantics, RFC3161 engineering, stochastic execution, randomness, `FittedState`, closed-model support, evaluation metric reduction, or product-layer functionality.
+1. deterministic mandatory cycle and slot construction;
+2. complete attempt, retry, failure, omission, and withdrawal accounting;
+3. point in time source evidence and frozen information cutoffs;
+4. exact target, method, source, schedule, and resolution bindings;
+5. P2 temporal and durability claim separation;
+6. immutable forecast, correction, resolution, and evaluation history;
+7. cohort inclusion derived from expected slots rather than successful forecast selection;
+8. unresolved outcomes and failed temporal claims remain visible in denominators;
+9. no human review may override cryptographic mismatch, future information, missing mandatory cycle evidence, output selection violation, or failed required time claims;
+10. future capabilities may be added through successor manifests without reinterpreting Genesis history.
 
-P3 will reduce unused Genesis dependencies and human-review/evaluation surface. P4 will establish the provider-qualification complexity firewall. P5 will perform the consolidated versioned implementation.
+## Design questions P3 must answer
+
+1. Can `PublicRandomnessPolicy` be completely absent from the Genesis v1 manifest and cycle plan when every admitted method declares `randomness_policy = NONE`?
+2. Can `FittedState` and fitted transformation requirements be absent when the initial method performs no fitting?
+3. Can closed model observability and retrieval accounting remain dormant Trust Core interfaces rather than Genesis blockers?
+4. Can human review be removed from Genesis v1 resolution and replaced by deterministic unresolved semantics for official source ambiguity or layout change?
+5. Should `policy:genesis-human-review:v1` be retired from the successor Genesis candidate if no unavoidable human review case remains?
+6. Should transparent baseline comparison be removed because the only admitted method is itself the transparent baseline?
+7. Should Genesis v1 evaluation retain only resolved outcome, forecast value, absolute error, squared error, and complete denominator accounting?
+8. Should aggregate MAE, RMSE, baseline deltas, pairwise method comparison, probabilistic scoring, calibration, and leaderboard semantics be deferred until a real second method or forecast class exists?
+9. Which generic interfaces should remain in the frozen Trust Core contract while being omitted from the Genesis v1 instantiated dependency graph?
+
+## Out of scope for P3
+
+P3 does not reopen Genesis anchoring topology, temporal claim semantics, provider selection, production qualification criteria, Roughtime transport or wire semantics, RFC3161 engineering, target selection, schedule timing margins, or product layer functionality except where an unused direct dependency is identified.
+
+P4 will establish the provider qualification complexity firewall. P5 will perform the consolidated versioned implementation of accepted P1 through P4 changes.
 
 ## Network boundary
 
