@@ -13,6 +13,7 @@ import shlex
 import shutil
 import subprocess
 import sys
+import tempfile
 import tomllib
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
@@ -63,8 +64,12 @@ ADVERSARIAL_TESTS = (
 )
 
 
+class P6EnvironmentIneligible(RuntimeError):
+    """Execution environment cannot start the frozen P6 test program."""
+
+
 class P6Failure(RuntimeError):
-    pass
+    """Frozen P6 execution encountered a repository correctness/security failure."""
 
 
 def run_quiet(command: list[str], cwd: Path, env: dict[str, str] | None = None) -> str:
@@ -165,6 +170,7 @@ def main() -> int:
 
     log_handle = report.open("w", encoding="utf-8", newline="\n")
     failed = False
+    environment_ineligible = False
     failure_reason = ""
 
     def log(line: str = "") -> None:
@@ -215,7 +221,7 @@ def main() -> int:
             raise P6Failure(f"{label} JUnit report contains failure or error")
         if counts["skipped"]:
             raise P6Failure(
-                f"{label} contains skipped tests; mandatory P6 skips require classification before PASS"
+                f"{label} contains an unexpected skip after environment preflight"
             )
 
     def pytest_suite(
@@ -253,18 +259,18 @@ def main() -> int:
         log("python_version=" + platform.python_version())
 
         if sys.version_info < (3, 11):
-            raise P6Failure("Python 3.11 or newer is required")
+            raise P6EnvironmentIneligible("Python 3.11 or newer is required")
 
         pytest_version = importlib.metadata.version("pytest")
         jsonschema_version = importlib.metadata.version("jsonschema")
         log(f"pytest_version={pytest_version}")
         log(f"jsonschema_version={jsonschema_version}")
         if pytest_version != PINNED_PYTEST:
-            raise P6Failure(
+            raise P6EnvironmentIneligible(
                 f"pytest version {pytest_version} differs from pin {PINNED_PYTEST}"
             )
         if jsonschema_version != PINNED_JSONSCHEMA:
-            raise P6Failure(
+            raise P6EnvironmentIneligible(
                 f"jsonschema version {jsonschema_version} differs from pin {PINNED_JSONSCHEMA}"
             )
 
@@ -292,9 +298,39 @@ def main() -> int:
         log(f"go_version={go_version}")
         go_match = re.search(r"\bgo1\.27(?:\.\d+)?\b", go_version)
         if go_match is None:
-            raise P6Failure(
+            raise P6EnvironmentIneligible(
                 "P6 requires a local Go 1.27.x toolchain for the strict Roughtime verifier"
             )
+
+        bash = shutil.which("bash")
+        openssl = shutil.which("openssl")
+        if bash is None:
+            raise P6EnvironmentIneligible("bash is required for retained POSIX script regression")
+        if openssl is None:
+            raise P6EnvironmentIneligible(
+                "OpenSSL is required so PKI integration coverage is executed rather than skipped"
+            )
+        log("bash_executable=" + bash)
+        log("bash_version=" + run_quiet([bash, "--version"], repo_root).splitlines()[0])
+        log("openssl_executable=" + openssl)
+        log("openssl_version=" + run_quiet([openssl, "version"], repo_root))
+
+        try:
+            with tempfile.TemporaryDirectory(prefix="fpp-p6-symlink-") as tmpdir:
+                tmp_root = Path(tmpdir)
+                target = tmp_root / "target.txt"
+                link = tmp_root / "link.txt"
+                target.write_text("p6-symlink-preflight\n", encoding="utf-8")
+                link.symlink_to(target)
+                if not link.is_symlink() or link.resolve() != target.resolve():
+                    raise OSError("created symlink did not resolve to its target")
+        except (OSError, NotImplementedError) as exc:
+            raise P6EnvironmentIneligible(
+                f"symlink capability is required for fail-closed state-store regression: {exc}"
+            ) from exc
+        log("symlink_capability=PASS")
+        log("environment_preflight=PASS")
+        log("P6_EXECUTION_STARTED=YES")
 
         src_path = str(repo_root / "src")
         if src_path not in sys.path:
@@ -303,6 +339,7 @@ def main() -> int:
         test_env = os.environ.copy()
         test_env["PYTHONPATH"] = src_path
         test_env["FPP_NETWORK_AUTHORIZED"] = "false"
+        test_env["OPENSSL_EXECUTABLE"] = openssl
 
         go_env = test_env.copy()
         go_env.update(
@@ -380,14 +417,27 @@ def main() -> int:
         log()
         log("execution_result=ALL_MANDATORY_EXECUTION_PASSED_PENDING_INDEPENDENT_REPORT_REVIEW")
         log("P6_PASS=NO")
+        log("P6_FAIL=NO")
         log("P6_REPORT_REVIEW=PENDING")
         log("P7=PROHIBITED_UNTIL_P6_PASS")
+    except P6EnvironmentIneligible as exc:
+        environment_ineligible = True
+        failure_reason = f"{type(exc).__name__}: {exc}"
+        log()
+        log("execution_result=NOT_STARTED_ENVIRONMENT_INELIGIBLE")
+        log("P6_EXECUTION_STARTED=NO")
+        log("P6_PASS=NO")
+        log("P6_FAIL=NO")
+        log("P6_REPORT_REVIEW=NOT_ELIGIBLE")
+        log("P7=PROHIBITED_UNTIL_P6_PASS")
+        log(f"environment_ineligibility_reason={failure_reason}")
     except Exception as exc:
         failed = True
         failure_reason = f"{type(exc).__name__}: {exc}"
         log()
         log("execution_result=FAILED")
         log("P6_PASS=NO")
+        log("P6_FAIL=YES")
         log("P6_REPORT_REVIEW=NOT_ELIGIBLE")
         log("P7=PROHIBITED_UNTIL_P6_PASS")
         log(f"failure_reason={failure_reason}")
@@ -411,6 +461,9 @@ def main() -> int:
     sidecar.write_text(f"{digest}  {report.name}\n", encoding="utf-8")
     print(f"Report: {report}")
     print(f"SHA256: {sidecar}")
+    if environment_ineligible:
+        print(f"P6 execution did not start: {failure_reason}", file=sys.stderr)
+        return 2
     if failed:
         print(f"P6 execution failed: {failure_reason}", file=sys.stderr)
         return 1
