@@ -58,6 +58,32 @@ class GenesisRetrospectiveFixtureManifestTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 self.fetcher.fetch_fixture(bad, Path(tmpdir))
 
+    def test_fetcher_blocks_cross_host_redirect_before_following(self):
+        handler = self.fetcher._SameHostRedirectHandler("www.bls.gov")
+        request = self.fetcher.urllib.request.Request("https://www.bls.gov/start")
+        with self.assertRaises(ValueError):
+            handler.redirect_request(
+                request,
+                None,
+                302,
+                "Found",
+                {},
+                "https://example.com/redirected",
+            )
+
+    def test_fetcher_blocks_https_downgrade_redirect_before_following(self):
+        handler = self.fetcher._SameHostRedirectHandler("www.bls.gov")
+        request = self.fetcher.urllib.request.Request("https://www.bls.gov/start")
+        with self.assertRaises(ValueError):
+            handler.redirect_request(
+                request,
+                None,
+                302,
+                "Found",
+                {},
+                "http://www.bls.gov/redirected",
+            )
+
     def test_fetcher_manifest_loader_enforces_non_prospective_classification(self):
         loaded = self.fetcher.load_manifest(MANIFEST)
         self.assertIs(loaded["prospective_eligible"], False)
