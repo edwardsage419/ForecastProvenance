@@ -1,25 +1,21 @@
 # Next Accepted Task
 
-Task ID: GEN_001-AC-P1
-State: PRE_GENESIS ARCHITECTURE COMPRESSION; P1 GENESIS ANCHORING SPECIFICATION RECONCILIATION; NETWORK REQUEST NOT AUTHORIZED
+Task ID: GEN_001-AC-P2
+State: PRE_GENESIS ARCHITECTURE COMPRESSION; P2 TEMPORAL CLAIM SEPARATION; NETWORK REQUEST NOT AUTHORIZED
 
 ## Objective
 
-Reconcile the Genesis anchoring requirements and produce a versioned candidate for a minimal final-acceptance anchoring chain.
+Separate wall-clock existence, public durability, pre-outcome durability, and derived confirmatory prospective eligibility into explicit claims whose truth values can be independently validated and preserved.
 
-P1 must identify every current normative and readiness-control statement that requires separate bootstrap, manifest, acceptance, or related anchoring; determine which requirements conflict or overlap; and propose one internally consistent candidate without silently reinterpreting historical documents.
+P2 is a design and dependency-reconciliation task. Candidate objects, schemas, validator implementation, readiness matrix, abort conditions, and full tests are updated together later in P5.
 
-## P0 boundary already established
+## P1 boundary already established
 
-The active project mainline is Pre-Genesis Architecture Compression.
+P1 design control is recorded in:
 
-Roughtime production qualification is paused as the active mainline. Existing qualification criteria and retained evidence remain unchanged supporting evidence.
+`docs/GEN_001_GENESIS_ANCHORING_RECONCILIATION_V1.md`
 
-P0 changed project control state only. It did not change candidate objects, schemas, validators, historical classifications, Genesis semantics, or prospective eligibility.
-
-## P1 design target
-
-Review this minimal commitment-chain candidate:
+The successor Genesis governance commitment chain is:
 
 ```text
 BootstrapGovernanceRoot
@@ -31,37 +27,62 @@ BootstrapGovernanceRoot
 → separate explicit Genesis authorization
 ```
 
-The review must determine whether separate bootstrap and manifest anchoring can be reduced from mandatory Genesis requirements to optional audit evidence while preserving the intended security properties.
+Standalone bootstrap and manifest anchoring are optional audit evidence in the successor design. The current v0.5 candidate and validator remain unaligned until P5 performs explicit versioned implementation.
 
-The design must retain a clear distinction between signed wall-clock evidence and durable public anchoring. Bitcoin block timestamps must not be treated as precise civil-time upper bounds.
+## P2 design target
 
-## Accepted P1 execution
+Review and define at least these independent outputs:
 
-1. Locate the exact normative Genesis anchoring procedure, acceptance-policy, readiness-matrix, validator-contract, and candidate-object requirements that currently govern bootstrap, manifest, validation reports, acceptance, and final external evidence.
-2. Build a contradiction and redundancy table that identifies every requirement that must be reconciled.
-3. State the security property provided by each retained anchoring step and the attack surface created by removing or weakening a step.
-4. Draft the smallest internally consistent anchoring candidate that preserves independently verifiable precommitment and final acceptance.
-5. Preserve existing historical candidate semantics. Any normative change must use a new versioned policy, patch, or successor object as appropriate.
-6. Update documentation and tests only after the proposed semantics are explicit enough to validate deterministically.
-7. Keep all work offline. Do not execute any provider request, production qualification event, Genesis acceptance, forecast issuance, or ledger creation.
+```text
+DEADLINE_EXISTENCE_VERIFIED
+BITCOIN_DURABILITY_VERIFIED
+PRE_OUTCOME_DURABILITY_VERIFIED
+CONFIRMATORY_PROSPECTIVE_ELIGIBLE
+```
 
-## Required review constraints
+The design must prevent a late durability completion from erasing a valid earlier existence fact.
 
-The proposed P1 candidate must preserve at least these properties:
+A record may therefore have:
 
-1. the trusted bootstrap authority is supplied outside the candidate manifest graph;
-2. the owner signature binds the exact accepted manifest and required validation reports;
-3. the final external evidence package binds the accepted object set without depending on mutable repository state;
-4. independent final validation can reconstruct the exact acceptance basis;
-5. no candidate object can select its own trust root;
-6. no historical object is modified or reclassified;
-7. Genesis remains subject to a separate explicit authorization after readiness closure.
+```text
+DEADLINE_EXISTENCE_VERIFIED = YES
+BITCOIN_DURABILITY_VERIFIED = YES
+PRE_OUTCOME_DURABILITY_VERIFIED = NO
+CONFIRMATORY_PROSPECTIVE_ELIGIBLE = NO
+```
 
-## Out of scope for P1
+when the exact subject received valid deadline-existence evidence in time and durable anchoring completed only after the applicable outcome information barrier.
 
-P1 does not reopen production qualification criteria, provider selection, Roughtime transport semantics, RFC3161 engineering, stochastic execution, public randomness, `FittedState`, closed-model support, evaluation metrics, or product-layer functionality except where a direct anchoring dependency must be identified.
+## Accepted P2 execution
 
-P2 and later phases will address temporal-claim separation, dependency reduction, qualification firewalling, candidate/schema/validator updates, and full offline regression.
+1. Locate every current field, policy, validator result, readiness statement, abort condition, and evaluation rule that collapses wall-clock evidence, Bitcoin durability, pre-outcome completion, or prospective eligibility into one status.
+2. Identify each exact subject to which the claim applies, including Genesis acceptance evidence and forecast-cycle evidence where their semantics differ.
+3. Define deterministic derivation rules for each retained claim.
+4. State which evidence proves each claim and which trust assumptions remain external.
+5. Preserve the distinction between Roughtime wall-clock trust and Bitcoin durability.
+6. Keep Bitcoin block header time outside the precise civil-time upper-bound role.
+7. Preserve historical facts when a stronger derived claim fails.
+8. Identify the exact P5 object, schema, validator, readiness, abort-condition, and test changes required to implement the design.
+9. Keep all work offline.
+
+## Required P2 properties
+
+The P2 candidate must preserve these properties:
+
+1. wall-clock deadline existence is determined from the applicable signed-receipt policy and exact subject binding;
+2. Bitcoin durability is determined independently from the durable commitment and strong verification rule;
+3. pre-outcome durability compares the validated durability-completion evidence against the frozen outcome information barrier using an admissible wall-clock claim rather than Bitcoin block time as a precise timestamp;
+4. confirmatory prospective eligibility is derived from all required claims and other applicable Trust Core conditions;
+5. a failure of a stronger claim never rewrites a previously established weaker fact;
+6. missing evidence produces an explicit fail-closed or unresolved state rather than an inferred success;
+7. provider and verifier trust assumptions remain disclosed;
+8. historical candidate and rehearsal semantics remain unchanged.
+
+## Out of scope for P2
+
+P2 does not reopen provider selection, production qualification criteria, Roughtime transport or wire semantics, RFC3161 engineering, stochastic execution, randomness, `FittedState`, closed-model support, evaluation metric reduction, or product-layer functionality.
+
+P3 will reduce unused Genesis dependencies and human-review/evaluation surface. P4 will establish the provider-qualification complexity firewall. P5 will perform the consolidated versioned implementation.
 
 ## Network boundary
 
