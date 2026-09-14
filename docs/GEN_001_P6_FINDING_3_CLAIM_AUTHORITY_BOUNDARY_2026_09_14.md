@@ -1,7 +1,7 @@
 # GEN_001 P6 Finding 3: Claim Authority Boundary
 
 Date: 2026-09-14
-Status: PRE_GENESIS BLOCKING CORRECTNESS FINDING
+Status: IMPLEMENTATION REPAIRED PENDING REGRESSION
 Classification: NON_FORECAST_REVIEW
 Prospective eligible: false
 Network authorization: none
@@ -27,9 +27,9 @@ Severity: BLOCKING FOR P2 CLAIM AUTHORITY AND GENESIS FINAL VALIDATION
 
 P5 and the first P6 hardening pass correctly improved exact claim-type and subject binding, but they did not close the provenance boundary between raw retained evidence and a derived claim marked `VERIFIED`.
 
-The remaining defect is that structurally valid claim records or caller-supplied state values can still be treated as if they were the deterministic output of the exact ValidatorContract.
+The remaining defect was that structurally valid claim records or caller-supplied state values could still be treated as if they were the deterministic output of the exact ValidatorContract.
 
-Three concrete manifestations were identified.
+Three initial manifestations were identified.
 
 ### 1. Final Genesis acceptance trusted caller-supplied states
 
@@ -44,7 +44,7 @@ as plain strings and checks only whether each equals `VERIFIED`.
 
 Therefore the function can return valid without independently proving that the exact signed ManifestAcceptance produced those claims from retained external time evidence and Bitcoin durability evidence.
 
-This function is henceforth classified as a low-level structural helper only. It is not an authoritative Genesis-final-validation entry point.
+This function is classified as a low-level structural helper only. It is not an authoritative Genesis-final-validation entry point.
 
 ### 2. Cycle-plan validation retained an untyped raw time bound
 
@@ -82,7 +82,7 @@ Finding 3 is therefore an implementation-alignment defect, not a change to P2 se
 
 ## Existing evidence implementation boundary
 
-The repository currently contains a strict Roughtime rehearsal receipt validator and schema. Those artifacts are explicitly constrained to:
+The repository contains a strict Roughtime rehearsal receipt validator and schema. Those historical artifacts are explicitly constrained to:
 
 ```text
 classification = NON_FORECAST_REHEARSAL
@@ -91,9 +91,9 @@ prospective_eligible = false
 
 They cannot be silently promoted into a production claim-authority path.
 
-`production_receipt_admission_v1.py` currently verifies exact ProviderProfile / QualificationDecision / state-package field binding, but that binding layer does not by itself perform the complete production receipt cryptographic verification or derive the wall-clock claim.
+`production_receipt_admission_v1.py` verifies exact ProviderProfile / QualificationDecision / state-package field binding, but that binding layer does not by itself perform the complete production receipt cryptographic verification or derive the wall-clock claim.
 
-The Genesis time-evidence design already defines the required evidence chain:
+The Genesis time-evidence design defines the required evidence chain:
 
 ```text
 exact sealed subject
@@ -105,8 +105,6 @@ exact sealed subject
 → DurabilityVerificationRecord where applicable
 → deterministic P2 claim vector
 ```
-
-P5 must implement the minimum authoritative offline reconstruction path for that chain before P6 may resume.
 
 ## Repair rule
 
@@ -120,24 +118,89 @@ schema validity alone
 content addressing alone
 report signature or seal alone
 self-asserted ValidationReport derived_claims
+caller-selected verifier authority
+caller-selected signature-verification callback
 ```
 
-The authoritative validator must reconstruct the applicable claim from exact retained inputs under the exact frozen ValidatorContract, or verify exact equality between a persisted report and a deterministic report recomputed by that same contract from those inputs.
+The authoritative validator reconstructs the applicable claim from exact retained inputs under the exact frozen ValidatorContract, or verifies exact equality between a persisted report and a deterministic report recomputed by that same contract from those inputs.
 
-## Minimum P5 claim-authority closure
+## Implemented P5 claim-authority closure
 
-P5 is reopened with the following minimum scope.
+The successor repair now provides the following layers.
 
-1. Define the production-shaped external-time evidence input contract needed for deterministic offline verification. Synthetic fixtures are allowed; live provider traffic is not.
-2. Implement an authoritative subject-existence derivation path that verifies exact subject binding, exact admitted provider state, exact production ProviderProfile binding, frozen quorum policy and conservative upper bound before producing `EXTERNAL_EXISTENCE_BOUND_VERIFIED` or `DEADLINE_EXISTENCE_VERIFIED`.
-3. Implement an authoritative Bitcoin-durability derivation path that verifies exact ExternalTimeEvidenceBundle binding and exact strong-verification report/proof binding before producing `BITCOIN_DURABILITY_VERIFIED`.
-4. Implement exact DurabilityVerificationRecord binding and deadline recomputation for `PRE_OUTCOME_DURABILITY_VERIFIED` where applicable.
-5. Make confirmatory eligibility consume only claims produced through the authoritative recomputation path plus exact non-temporal Trust Core checks.
-6. Make final Genesis acceptance validation consume the exact recomputed external-existence and Bitcoin-durability claims for the exact signed ManifestAcceptance, never state strings.
-7. Add a successor cycle-plan validator that consumes authoritative claim evidence rather than the historical raw bound interface.
-8. Add deterministic ValidationReport v2 recomputation/equality validation so persisted derived claims are audit outputs, not trust inputs.
-9. Preserve all historical validator behavior under historical contracts without reinterpretation.
-10. Add adversarial tests for forged VERIFIED state, forged report claim, wrong ValidatorContract, correct subject with fabricated state, wrong evidence refs, omitted evidence, and report/recomputation mismatch.
+### Evidence to claim recomputation
+
+`src/forecast_trust_core/claim_authority_v1.py` provides the authoritative evidence-recomputation primitives.
+
+Wall-clock claims replay exact retained request/response bytes through the strict Roughtime verifier, recompute historical provider admission, enforce exact subject binding and frozen deadline/quorum semantics, and derive the conservative upper bound. The authoritative production wrappers require `LIVE_OPERATIONAL` evidence; synthetic evidence remains usable only for tests and cannot satisfy production readiness.
+
+Bitcoin durability executes a hash-pinned local strong-verification contract over the exact ExternalTimeEvidenceBundle and OTS proof bytes. Persisted strong-verification reports are equality-audit outputs only. Bitcoin block-header time remains durability evidence only and is never used as a precise civil-time upper bound.
+
+DurabilityVerificationRecord and confirmatory-eligibility paths reconstruct their prerequisite claims from exact evidence rather than caller-provided claim mappings.
+
+### ValidationReport authority
+
+Successor report validation internally recomputes the claims and deterministic report from raw evidence and then requires exact equality with the persisted ValidationReport v2. A persisted report cannot authorize itself.
+
+### TrustedManifest trust root
+
+`src/forecast_trust_core/claim_authority_trust_root_v1.py` makes the exact sealed TrustedManifest the source of expected refs for:
+
+```text
+ValidatorContract
+deadline receipt quorum policy
+three ProviderProfiles
+three QualificationDecisions
+qualification verifier contract
+strong Bitcoin verifier contract
+```
+
+The caller cannot replace a verifier and simultaneously replace its expected ref.
+
+### Qualification-signature authority hardening
+
+A final static adversarial pass found a fourth manifestation inside the same Finding 3 root cause: provider-state recomputation still accepted a caller-provided `signature_verifier` callback plus authority fields. A callback that always returned true could otherwise bypass real QualificationDecision signature verification.
+
+This path is now repaired.
+
+The manifest-bound `RoughtimeQualificationVerifierContract` freezes:
+
+```text
+frozen criteria ID/hash
+main ValidatorContract ref
+QualificationDecision signature projection
+signature algorithm = ED25519
+qualification authority ID
+qualification authority public-key SHA256
+Ed25519 verifier build-profile SHA256
+Ed25519 verifier binary SHA256
+```
+
+The high-level trust-root adapter validates the exact contract, validates the exact Ed25519 build profile, verifies the executable hash, and constructs `PinnedEd25519Verifier` itself. Provider runtime inputs are prohibited from supplying `expected_authority_id`, `expected_authority_public_key`, or `signature_verifier`.
+
+The external authority public-key bytes remain an independent validation input. For Genesis they must come from the independently supplied accepted BootstrapGovernanceRoot/governance context. They are checked against the hash frozen in the manifest-bound qualification verifier contract. The private key is never an input to this path.
+
+The provider runtime input key set and state-package provider identity set must exactly equal the three manifest-admitted provider identities. Extra, missing, duplicate, or substituted provider authority inputs fail closed.
+
+Schema:
+
+```text
+schemas/roughtime_qualification_verifier_contract_v1.schema.json
+```
+
+Focused adversarial tests:
+
+```text
+tests/test_claim_authority_v1.py
+tests/test_claim_authority_trust_root_v1.py
+tests/test_claim_authority_qualification_root_v1.py
+```
+
+The tests are committed but have not yet been executed on the final repaired exact HEAD. Their presence is not a PASS result.
+
+## Historical compatibility
+
+Historical low-level validators remain available under their historical contracts. The successor authority entry points are the only paths allowed to establish P2 claims or Genesis readiness under the compressed candidate. No historical candidate bytes were rewritten by this repair.
 
 ## Explicit non-goals
 
@@ -149,7 +212,7 @@ production qualification execution
 provider-criteria changes
 new time protocols
 new RFC3161 engineering
-Genesis key access
+Genesis private-key access
 Genesis acceptance
 Forecast Ledger creation
 prospective forecast issuance
@@ -160,15 +223,17 @@ It may use synthetic, locally generated and retained fixtures to prove fail-clos
 ## Stage disposition
 
 ```text
-P5_VERSIONED_IMPLEMENTATION = REOPENED_FOR_CLAIM_AUTHORITY_CLOSURE
-P6_STATIC_REVIEW = THIRD_BLOCKING_FINDING_FOUND
-P6_FULL_REGRESSION = STOPPED
+P5_CLAIM_AUTHORITY_IMPLEMENTATION = REPAIRED_PENDING_REGRESSION
+P6_FINDING_3 = REPAIRED_PENDING_REGRESSION
+P6_FULL_REGRESSION = NOT_YET_RESTARTED
 P6_PASS = NO
 P7 = PROHIBITED
 GENESIS_READY = NO
 ```
 
-P6 may restart only after the P5 claim-authority repair is implemented, adversarially reviewed, and the exact new HEAD is frozen for regression.
+Finding 3 may be considered closed only after a fresh P6 run on the exact final repaired HEAD executes the required compile/import checks, schema meta-validation, historical and successor regressions, focused claim-authority tests, full pytest and synthetic adversarial suite without a correctness/security failure.
+
+Any consequential code/schema change after the P6 input HEAD is frozen invalidates earlier P6 execution evidence and requires a fresh run.
 
 ## Safety state
 
