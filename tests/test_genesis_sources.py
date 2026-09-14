@@ -91,6 +91,51 @@ class GenesisSourceParserTests(unittest.TestCase):
                 information_cutoff="2026-08-10T00:00:00Z",
             )
 
+    def test_baseline_accepts_exact_cutoff_boundary(self):
+        rows = [{
+            "target_family": "CPI_U",
+            "reference_period": "2026-07",
+            "release_stage": "FIRST",
+            "available_at": "2026-08-10T00:00:00Z",
+        }]
+        selected = select_baseline_first_release(
+            rows,
+            target_family="CPI_U",
+            previous_reference_period="2026-07",
+            information_cutoff="2026-08-10T00:00:00Z",
+        )
+        self.assertIs(selected, rows[0])
+
+    def test_baseline_rejects_noncanonical_offset_timestamp(self):
+        rows = [{
+            "target_family": "CPI_U",
+            "reference_period": "2026-07",
+            "release_stage": "FIRST",
+            "available_at": "2026-08-12T00:30:00-01:00",
+        }]
+        with self.assertRaises(GenesisSourceParseError):
+            select_baseline_first_release(
+                rows,
+                target_family="CPI_U",
+                previous_reference_period="2026-07",
+                information_cutoff="2026-08-12T00:45:00Z",
+            )
+
+    def test_baseline_rejects_malformed_cutoff_timestamp(self):
+        rows = [{
+            "target_family": "CPI_U",
+            "reference_period": "2026-07",
+            "release_stage": "FIRST",
+            "available_at": "2026-08-10T00:00:00Z",
+        }]
+        with self.assertRaises(GenesisSourceParseError):
+            select_baseline_first_release(
+                rows,
+                target_family="CPI_U",
+                previous_reference_period="2026-07",
+                information_cutoff="2026-08-10 00:00:00",
+            )
+
     def test_official_artifact_host_and_hash(self):
         validate_official_artifact(
             {
