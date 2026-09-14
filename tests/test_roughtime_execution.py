@@ -315,6 +315,26 @@ def test_qualified_verifier_executes_verified_bytes_after_source_path_replacemen
     assert verifier._run("probe", {"schema_version": "1.0"}) == {"source": "original"}
 
 
+def test_qualified_verifier_timeout_fails_closed(tmp_path, monkeypatch):
+    binary = tmp_path / "synthetic-roughtime-verifier"
+    binary.write_text(
+        "#!/usr/bin/env python3\n"
+        "import time\n"
+        "time.sleep(60)\n",
+        encoding="utf-8",
+    )
+    binary.chmod(0o755)
+    build = build_profile()
+    build["binary_sha256"] = hashlib.sha256(binary.read_bytes()).hexdigest()
+    build["profile_sha256"] = hashlib.sha256(
+        canonical_json({key: value for key, value in build.items() if key != "profile_sha256"})
+    ).hexdigest()
+    verifier = QualifiedVerifierBackend(binary, build)
+    monkeypatch.setattr(verifier, "PROCESS_TIMEOUT_SECONDS", 0.01)
+    with pytest.raises(ValueError, match="process timed out"):
+        verifier._run("probe", {"schema_version": "1.0"})
+
+
 def test_qualified_verifier_accepts_only_exact_success_output():
     provider = plan_and_auth()[0]["providers"][0]
     request, response = b"request", b"response"
