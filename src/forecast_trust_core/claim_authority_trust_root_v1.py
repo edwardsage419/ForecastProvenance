@@ -174,6 +174,25 @@ def _package_decision_refs(packages: Sequence[Mapping[str, Any]]) -> list[dict[s
     return sorted_refs(refs)
 
 
+def _provider_id_set(
+    profiles: Sequence[Mapping[str, Any]],
+    packages: Sequence[Mapping[str, Any]],
+) -> frozenset[str]:
+    profile_ids = [item.get("provider_id") for item in profiles]
+    package_ids = [item.get("provider_id") for item in packages]
+    if any(not isinstance(item, str) or not item for item in profile_ids + package_ids):
+        raise ValueError("provider identity set contains a missing or invalid provider_id")
+    profile_set = frozenset(profile_ids)
+    package_set = frozenset(package_ids)
+    if len(profile_ids) != 3 or len(profile_set) != 3:
+        raise ValueError("ProviderProfile set must contain exactly three unique provider identities")
+    if len(package_ids) != 3 or len(package_set) != 3:
+        raise ValueError("qualification state package set must contain exactly three unique provider identities")
+    if profile_set != package_set:
+        raise ValueError("qualification state package provider identities differ from ProviderProfiles")
+    return profile_set
+
+
 def _hex64(value: Any, field: str) -> str:
     if (
         not isinstance(value, str)
@@ -230,12 +249,15 @@ def _validate_qualification_verifier_contract(
 def _bind_provider_authority_inputs(
     provider_authority_inputs: Mapping[str, Mapping[str, Any]],
     *,
+    expected_provider_ids: frozenset[str],
     authority_id: str,
     authority_public_key: bytes,
     signature_verifier: PinnedEd25519Verifier,
 ) -> dict[str, dict[str, Any]]:
     if not isinstance(provider_authority_inputs, Mapping):
         raise ValueError("provider_authority_inputs must be a mapping")
+    if frozenset(provider_authority_inputs) != expected_provider_ids:
+        raise ValueError("provider_authority_inputs must exactly match the admitted provider identity set")
     bound: dict[str, dict[str, Any]] = {}
     for provider_id, raw in provider_authority_inputs.items():
         if not isinstance(provider_id, str) or not provider_id:
@@ -280,6 +302,7 @@ def bind_wall_clock_inputs_to_manifest(
         raise ValueError("wall-clock ProviderProfile set differs from TrustedManifest")
     if _package_decision_refs(packages) != list(context.qualification_decision_refs):
         raise ValueError("wall-clock QualificationDecision set differs from TrustedManifest")
+    expected_provider_ids = _provider_id_set(profiles, packages)
 
     qualification_contract = wall_clock_inputs.get("qualification_verifier_contract")
     ed25519_build_profile = wall_clock_inputs.get("qualification_ed25519_build_profile")
@@ -302,6 +325,7 @@ def bind_wall_clock_inputs_to_manifest(
     raw_provider_inputs = wall_clock_inputs.get("provider_authority_inputs")
     provider_inputs = _bind_provider_authority_inputs(
         raw_provider_inputs,
+        expected_provider_ids=expected_provider_ids,
         authority_id=qualification_authority_id,
         authority_public_key=qualification_authority_public_key,
         signature_verifier=signature_verifier,
