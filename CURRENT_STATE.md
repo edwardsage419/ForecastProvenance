@@ -4,79 +4,55 @@ Date: 2026-09-14
 Project: Forecast Provenance Project
 State: PRE_GENESIS_ARCHITECTURE_COMPRESSION
 
-Current formal branch and transition basis:
+Current formal branch and Architecture Compression basis:
 
 ```text
 branch = design/gen-001
-transition_basis_commit = b8356f70844034fa7c448be30f39312ef95907cc
+architecture_compression_basis_commit = 9790e323a519558b92b7d6c1324b3bd847cfacfe
 ```
 
 The commit containing this file must be identified from Git metadata. This document does not embed its own commit SHA.
 
-## Current project direction
+## Active workstream
 
-The active pre-Genesis workstream is **Pre-Genesis Architecture Compression**.
+The active pre-Genesis mainline is **Pre-Genesis Architecture Compression**.
 
-The immediate objective is to reduce Genesis v1 to the smallest credible trust core that can establish a genuine prospective history while preserving independent auditability of mandatory cycles, attempts, failures, omissions, information cutoffs, execution, resolution, and evaluation cohorts.
+Roughtime production qualification remains paused as the active mainline. Existing frozen criteria, schemas, validators, evidence packages, reviews, and historical rehearsal classifications remain retained supporting evidence.
 
-The previous Roughtime production qualification workstream is paused as the active mainline. Existing qualification criteria, evidence, schemas, validators, reports, and historical rehearsal classifications remain retained evidence and are not reinterpreted or deleted.
-
-No further production qualification governance expansion or live provider execution is part of the current workstream unless a new correctness or security defect requires it or a later project-control decision explicitly reopens it.
+No live provider execution or qualification execution is authorized by the current workstream.
 
 ## Architecture Compression sequence
 
 ```text
-P0  project-control transition and non-normative review record                COMPLETE
-P1  reconcile Genesis anchoring requirements and single-anchor candidate      NEXT
-P2  separate temporal and durability claims from derived eligibility          PENDING
+P0  project-control transition and non-normative review record                 COMPLETE
+P1  reconcile Genesis anchoring requirements and single-anchor candidate       COMPLETE
+P2  separate temporal and durability claims from derived eligibility           NEXT
 P3  remove unused Genesis v1 dependencies and reduce review/evaluation surface PENDING
-P4  establish provider-qualification complexity firewall                      PENDING
-P5  update candidate objects, schemas, validators, tests, readiness controls  PENDING
-P6  rerun complete offline regression and synthetic adversarial suite          PENDING
+P4  establish provider-qualification complexity firewall                       PENDING
+P5  update candidate objects, schemas, validators, tests, readiness controls   PENDING
+P6  rerun complete offline regression and synthetic adversarial suite           PENDING
 P7  reconsider need for Roughtime production qualification only after refreeze PENDING
-P8  separate final pre-Genesis high-level review                              PENDING
-P9  separate explicit Genesis authorization                                  PENDING
+P8  separate final pre-Genesis high-level review                               PENDING
+P9  separate explicit Genesis authorization                                    PENDING
 ```
 
-## P0 control decision
+## P0 control record
 
-P0 records the workstream transition without changing Genesis candidate semantics.
-
-The controlling non-normative review record is:
+The workstream transition is recorded in:
 
 `docs/GEN_001_PRE_GENESIS_ARCHITECTURE_COMPRESSION_REVIEW_2026_09_14.md`
 
-The transition establishes these control rules:
+P0 changed project control state only and preserved all historical semantics.
 
-1. Architecture Compression is the active repository mainline.
-2. Production qualification remains a supporting subsystem rather than the active Trust Core development track.
-3. The Trust Core may consume frozen `ProviderProfile`, `QualificationDecision`, criteria version, and evidence-package hash after those inputs satisfy their own subsystem rules.
-4. Existing production qualification evidence remains historically classified exactly as recorded.
-5. P1 through P5 must use explicit versioned changes where normative semantics change. No existing candidate is silently reinterpreted.
-6. P6 is an offline validation gate. Network provider requests remain unauthorized.
+## P1 Genesis anchoring reconciliation
 
-## Current Genesis v1 design direction
+P1 is complete at the design-control level.
 
-The intended minimum Genesis v1 profile remains limited to capabilities actually used at Genesis:
+The controlling P1 record is:
 
-1. a small number of low-frequency targets whose official schedules can be reconstructed;
-2. deterministic issuance schedules and mandatory cycle universe;
-3. deterministic or fully auditable execution, with the initial method surface kept minimal;
-4. point-in-time `SourceContract` inputs;
-5. complete attempt, retry, failure, and omission accounting;
-6. immutable forecast, correction, resolution, and evaluation cohort records;
-7. external deadline-existence evidence;
-8. durable public anchoring;
-9. exact `ValidatorContract`;
-10. `BootstrapGovernanceRoot`, `TrustedManifest`, and `ManifestAcceptance`.
+`docs/GEN_001_GENESIS_ANCHORING_RECONCILIATION_V1.md`
 
-Unused stochastic execution, public randomness, `FittedState`, closed-model strong-confirmatory support, custom transparency logging, complex identity systems, and additional time protocols remain deferred until a real use case requires them.
-
-## Genesis anchoring review target
-
-P1 must reconcile the current specification inconsistency between multi-stage anchoring requirements and the acceptance/readiness controls.
-
-The current design direction to review is:
+The successor Genesis anchoring topology is:
 
 ```text
 BootstrapGovernanceRoot
@@ -88,11 +64,47 @@ BootstrapGovernanceRoot
 → separate explicit Genesis authorization
 ```
 
-This is a review target only. P0 does not change the current normative anchoring requirements.
+For the successor compressed profile, standalone external anchoring of the bootstrap root, a containing governance envelope, or the candidate manifest is `OPTIONAL_AUDIT_EVIDENCE`.
 
-## Temporal claim separation target
+The mandatory final external evidence subject is the exact signed `ManifestAcceptance`.
 
-P2 will explicitly separate at least these claims:
+The final evidence package is supplied separately to independent final validation. It is not a required self-reference inside the signed `ManifestAcceptance`.
+
+This topology preserves the external trust-root boundary, exact manifest and validation-report binding, owner signature verification, immutable final commitment, independent final validation, and a separate Genesis authorization gate.
+
+## P1 implementation boundary
+
+P1 did not modify historical candidate objects, schemas, validators, readiness matrix entries, or abort conditions.
+
+The current effective candidate lineage remains:
+
+```text
+candidate_object_set_v0_2.json
++ candidate_patch_v0_3.json
++ candidate_patch_v0_4.json
++ candidate_patch_v0_5.json
+```
+
+Its existing `policy:genesis-acceptance:v1` and the current `validate_manifest_acceptance` semantics are not the successor compressed profile.
+
+P5 must create a new versioned acceptance policy and align candidate objects, validation semantics, readiness controls, abort conditions, and tests. No historical object may be edited or reclassified.
+
+Current alignment state:
+
+```text
+P1_ANCHORING_RECONCILIATION = COMPLETE
+CURRENT_V0_5_CANDIDATE_ALIGNED = NO
+CURRENT_VALIDATOR_ALIGNED = NO
+CURRENT_READINESS_MATRIX_ALIGNED = NO
+P5_VERSIONED_IMPLEMENTATION_REQUIRED = YES
+GENESIS_READY = NO
+```
+
+## P2 temporal claim target
+
+P2 must separate the currently coupled time and durability conclusions into explicit independently verifiable claims.
+
+At minimum P2 will review:
 
 ```text
 DEADLINE_EXISTENCE_VERIFIED
@@ -101,17 +113,30 @@ PRE_OUTCOME_DURABILITY_VERIFIED
 CONFIRMATORY_PROSPECTIVE_ELIGIBLE
 ```
 
-P0 does not alter any current validator result or historical classification.
+A timely existence proof must remain a true historical fact even if durable anchoring completes too late for a stronger cohort claim.
 
-## Evaluation direction
+Bitcoin durability strengthens resistance to historical rewriting. Bitcoin block header time remains ineligible as a precise civil-time upper bound.
 
-Genesis v1 evaluation should prioritize cohort integrity. The minimum scoring surface may be limited to resolved outcome, forecast value, absolute error, and squared error while preserving expected, issued, failed, omitted, ineligible, unresolved, and withdrawn denominators.
+Roughtime and any other wall-clock provider retain their key, operator, and governance trust assumptions. Those assumptions must remain explicit.
 
-Any removal of existing candidate evaluation requirements requires a versioned P3 or P5 change and review.
+## Genesis v1 minimum direction
+
+The intended minimum profile remains limited to capabilities used at Genesis:
+
+1. a small number of low-frequency targets with reconstructable official schedules;
+2. deterministic issuance schedules and mandatory cycle universe;
+3. deterministic or fully auditable execution with a minimal initial method surface;
+4. point-in-time `SourceContract` inputs;
+5. complete attempt, retry, failure, and omission accounting;
+6. immutable forecast, correction, resolution, and evaluation-cohort records;
+7. deadline-existence evidence;
+8. durable public anchoring;
+9. exact `ValidatorContract`;
+10. `BootstrapGovernanceRoot`, `TrustedManifest`, and `ManifestAcceptance`.
+
+Unused stochastic execution, public randomness, `FittedState`, closed-model strong-confirmatory support, custom transparency logging, complex identity systems, additional time protocols, and new recurring paid infrastructure remain deferred.
 
 ## Retained production qualification state
-
-The production qualification subsystem remains historically retained with its existing frozen criteria and evidence.
 
 ```text
 PRODUCTION_QUALIFICATION_CRITERIA = FROZEN_V1
@@ -123,20 +148,18 @@ PRODUCTION_QUALIFICATION_EXECUTION = NOT_READY
 ACTIVE_MAINLINE = PAUSED
 ```
 
-The retained rehearsal remains:
+Retained provider rehearsal evidence remains:
 
 ```text
 classification = NON_FORECAST_REHEARSAL
 prospective_eligible = false
 ```
 
-No rehearsal result is upgraded by this transition.
+No retained result is upgraded by Architecture Compression.
 
 ## Repository and PR control
 
 PR #6 remains the active design PR and must remain Draft, open, and unmerged unless separately authorized.
-
-The PR description should describe Architecture Compression as the active workstream while retaining the historical production-qualification evidence as supporting context.
 
 ## Network boundary
 
@@ -146,7 +169,7 @@ Roughtime provider requests authorized by this state = 0
 RFC3161 requests authorized by this state = 0
 ```
 
-No new live provider request is authorized by Architecture Compression P0 through P6 unless the owner separately grants exact authorization.
+No prior rehearsal or qualification authorization may be reused.
 
 ## Safety state
 
@@ -161,4 +184,4 @@ production forecasting = PROHIBITED
 network_authorized = false
 ```
 
-The Genesis Ed25519 private key remains outside the repository, GitHub, CI, ChatGPT, Codex, logs, prompts, fixtures, and third-party systems. Only the public key may become a project object when the appropriate later governance step is reached.
+The Genesis Ed25519 private key remains outside repository, GitHub, CI, ChatGPT, Codex, logs, prompts, fixtures, and third-party systems. Only the public key may enter project objects at a later authorized governance step.
