@@ -51,6 +51,7 @@ CLAIM_AUTHORITY_TESTS = (
 
 PROVIDER_AUTHORITY_TESTS = (
     "tests/test_production_receipt_admission_v1.py",
+    "tests/test_roughtime_execution.py",
     "tests/test_roughtime_production_qualification.py",
     "tests/test_roughtime_production_qualification_hardening.py",
     "tests/test_ed25519_qualification.py",
