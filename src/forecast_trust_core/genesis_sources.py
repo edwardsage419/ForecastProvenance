@@ -98,7 +98,10 @@ def validate_official_artifact(
     sha = artifact.get("raw_sha256")
     if not isinstance(url, str):
         raise GenesisSourceParseError("resolved_url missing")
-    host = (urlparse(url).hostname or "").lower()
+    parsed = urlparse(url)
+    if parsed.scheme != "https":
+        raise GenesisSourceParseError("artifact URL must use HTTPS")
+    host = (parsed.hostname or "").lower()
     allowed = {h.lower() for h in allowed_hosts}
     if host not in allowed:
         raise GenesisSourceParseError("artifact host is not admitted")
