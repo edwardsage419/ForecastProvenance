@@ -1,99 +1,158 @@
 # Next Accepted Task
 
-Task ID: GEN_001-AC-P3
-State: PRE_GENESIS ARCHITECTURE COMPRESSION; P3 GENESIS V1 DEPENDENCY AND REVIEW SURFACE REDUCTION; NETWORK REQUEST NOT AUTHORIZED
+Task ID: GEN_001-AC-P4
+State: PRE_GENESIS ARCHITECTURE COMPRESSION; P4 PROVIDER-QUALIFICATION COMPLEXITY FIREWALL; NETWORK REQUEST NOT AUTHORIZED
 
 ## Objective
 
-Reduce the instantiated Genesis v1 dependency set to capabilities actually used by the initial target and method profile, and reduce human review and evaluation surface while preserving provenance, mandatory cycle accounting, temporal claims, immutable history, and cohort integrity.
+Establish a strict boundary between Forecast Trust Core and the provider-qualification supporting subsystem so Genesis v1 consumes only the minimum frozen qualification outputs required to validate deadline evidence.
 
-P3 is a design and dependency reconciliation task. Candidate objects, schemas, validator implementation, readiness matrix, abort conditions, and full tests are updated together later in P5.
+P4 is a design and dependency-reconciliation task. It does not execute production qualification, change the frozen production qualification criteria, request live provider evidence, or qualify any provider.
 
-## P1 and P2 boundary already established
+Candidate objects, schemas, validator implementation, readiness matrix, abort conditions, and full tests are updated together later in P5.
 
-P1 design control is recorded in:
+## P1 through P3 boundary already established
+
+P1 design control:
 
 `docs/GEN_001_GENESIS_ANCHORING_RECONCILIATION_V1.md`
 
-P2 design control is recorded in:
+P2 design control:
 
 `docs/GEN_001_TEMPORAL_CLAIM_SEPARATION_V1.md`
 
-The successor Genesis governance path uses one mandatory final external evidence package over the exact signed `ManifestAcceptance`.
+P3 design control:
 
-The successor temporal model separately derives:
+`docs/GEN_001_GENESIS_V1_DEPENDENCY_COMPRESSION_V1.md`
 
-```text
-EXTERNAL_EXISTENCE_BOUND_VERIFIED
-DEADLINE_EXISTENCE_VERIFIED
-BITCOIN_DURABILITY_VERIFIED
-PRE_OUTCOME_DURABILITY_VERIFIED
-CONFIRMATORY_PROSPECTIVE_ELIGIBLE
-```
+P4 must preserve all accepted P1 through P3 properties.
 
-P3 must preserve these P1 and P2 properties.
-
-## Initial Genesis profile to audit
-
-The current initial method is:
+## Retained qualification state
 
 ```text
-method:last-observed-value:v1
-selection_control_class = DETERMINISTIC_REPLAY
-randomness_policy = NONE
+PRODUCTION_QUALIFICATION_CRITERIA = FROZEN_V1
+criteria_id = FPP_ROUGHTIME_PRODUCTION_QUALIFICATION_V1
+criteria_sha256 = 88cc910fdb7e573f3a84d860ad0cdc5fffc287db18678956c7e50dc52a07639e
+production-qualified provider count = 0
+PRODUCTION_QUALIFIED = NO
+PRODUCTION_QUALIFICATION_EXECUTION = NOT_READY
+ACTIVE_MAINLINE = PAUSED
 ```
 
-The initial target set remains the three reconstructable low frequency official release targets already selected for GEN_001.
+The completed provider exercise remains permanently:
 
-The initial method does not require stochastic execution, public randomness, model fitted state, hidden model retrieval, closed model observability, or multi method selection.
+```text
+classification = NON_FORECAST_REHEARSAL
+prospective_eligible = false
+```
 
-The current evaluation design also compares forecasts to `method:last-observed-value:v1` as a transparent baseline even though that same method is the only admitted Genesis method. P3 must determine whether that comparison is redundant and should be deferred until a distinct method exists.
+P4 cannot promote it or use it as an authorization for another request.
 
-## Accepted P3 execution
+## Firewall design target
 
-1. Build an exact inventory of current Trust Core and GEN_001 dependencies that the initial method, targets, schedule, source contracts, time evidence, resolution, correction, retention, and evaluation path actually consume.
-2. Identify generic Trust Core interfaces that may remain available for successor manifests without becoming Genesis v1 readiness blockers or mandatory manifest dependencies.
-3. Review stochastic execution, `PublicRandomnessPolicy`, `FittedState`, closed model observability, retrieval accounting, transformation state, and similar unused capabilities for removal from the instantiated Genesis profile.
-4. Review the current human review policy and determine whether Genesis v1 needs any human semantic override capability. Prefer deterministic fail closed `UNRESOLVED` or `REVIEW_REQUIRED` handling when human discretion adds no necessary provenance value.
-5. Review the current evaluation policy and reduce it to the smallest surface needed to preserve cohort integrity and basic point forecast scoring.
-6. Specifically review transparent baseline deltas, method comparison, within target aggregation, cross target aggregation, significance claims, and other metrics that have no value with only one admitted method.
-7. Preserve expected, issued, failed, omitted, ineligible, unresolved, withdrawn, and temporal claim denominators even if scoring metrics are reduced.
-8. Identify every current candidate object, policy field, manifest dependency, readiness item, abort condition, validator path, schema, and test affected by the proposed compression.
-9. Define successor semantics without editing or reinterpreting historical candidate objects.
-10. Keep all work offline.
+Forecast Trust Core should consume a small content-addressed qualification boundary rather than the full qualification workflow.
 
-## Required P3 properties
+The expected minimum consumed interface is approximately:
 
-The P3 candidate must preserve at least these properties:
+```text
+ProviderProfile exact full reference
+QualificationDecision exact full reference
+qualification criteria ID and version/hash
+qualification evidence package or manifest full hash
+qualification state required by the active deadline-receipt policy
+```
 
-1. deterministic mandatory cycle and slot construction;
-2. complete attempt, retry, failure, omission, and withdrawal accounting;
-3. point in time source evidence and frozen information cutoffs;
-4. exact target, method, source, schedule, and resolution bindings;
-5. P2 temporal and durability claim separation;
-6. immutable forecast, correction, resolution, and evaluation history;
-7. cohort inclusion derived from expected slots rather than successful forecast selection;
-8. unresolved outcomes and failed temporal claims remain visible in denominators;
-9. no human review may override cryptographic mismatch, future information, missing mandatory cycle evidence, output selection violation, or failed required time claims;
-10. future capabilities may be added through successor manifests without reinterpreting Genesis history.
+The exact P4 record must determine which of these are mandatory and whether any can be transitively bound by another object without loss of independent verification.
 
-## Design questions P3 must answer
+## Supporting-subsystem internals
 
-1. Can `PublicRandomnessPolicy` be completely absent from the Genesis v1 manifest and cycle plan when every admitted method declares `randomness_policy = NONE`?
-2. Can `FittedState` and fitted transformation requirements be absent when the initial method performs no fitting?
-3. Can closed model observability and retrieval accounting remain dormant Trust Core interfaces rather than Genesis blockers?
-4. Can human review be removed from Genesis v1 resolution and replaced by deterministic unresolved semantics for official source ambiguity or layout change?
-5. Should `policy:genesis-human-review:v1` be retired from the successor Genesis candidate if no unavoidable human review case remains?
-6. Should transparent baseline comparison be removed because the only admitted method is itself the transparent baseline?
-7. Should Genesis v1 evaluation retain only resolved outcome, forecast value, absolute error, squared error, and complete denominator accounting?
-8. Should aggregate MAE, RMSE, baseline deltas, pairwise method comparison, probabilistic scoring, calibration, and leaderboard semantics be deferred until a real second method or forecast class exists?
-9. Which generic interfaces should remain in the frozen Trust Core contract while being omitted from the Genesis v1 instantiated dependency graph?
+The following are presumptively outside the Forecast Trust Core dependency graph unless P4 finds a specific security property that requires direct consumption:
 
-## Out of scope for P3
+```text
+provider discovery workflow
+metadata collection workflow
+network transport diagnostics
+rehearsal orchestration
+qualification execution orchestration
+review workflow mechanics
+individual raw evidence-file enumeration in the TrustedManifest
+requalification scheduling machinery
+operator research notes
+provider continuity monitoring implementation
+build and packaging workflow internals beyond frozen verifier identity
+```
 
-P3 does not reopen Genesis anchoring topology, temporal claim semantics, provider selection, production qualification criteria, Roughtime transport or wire semantics, RFC3161 engineering, target selection, schedule timing margins, or product layer functionality except where an unused direct dependency is identified.
+These materials remain retained where required for independent qualification verification. Exclusion from the Trust Core graph does not authorize deletion or weaken the frozen qualification criteria.
 
-P4 will establish the provider qualification complexity firewall. P5 will perform the consolidated versioned implementation of accepted P1 through P4 changes.
+## Accepted P4 execution
+
+1. Inventory every current provider-qualification object, schema, validator, readiness item, candidate dependency, and report that could leak qualification subsystem complexity into Genesis Trust Core.
+2. Identify the exact security properties Forecast Trust Core needs from a provider qualification result.
+3. Define the smallest frozen qualification output interface that preserves those properties.
+4. Determine whether `ProviderProfile`, `QualificationDecision`, criteria identity, and evidence-package hash provide sufficient transitive binding.
+5. Identify which qualification internals remain supporting evidence and which must be directly referenced by a final provider profile or qualification decision.
+6. Ensure the active deadline receipt validator can determine whether a receipt provider was admitted at the historical cycle without re-running governance research or provider discovery.
+7. Preserve exact provider key, protocol/wire profile, endpoint or identity rules, operational authority, and independence assumptions required by the active quorum policy.
+8. Preserve fail-closed handling of stale, revoked, superseded, requalified, or mismatched provider state.
+9. Prevent future qualification feature growth from automatically expanding the Forecast Trust Core manifest schema.
+10. Identify every P5 object, schema, validator, readiness, abort-condition, and test change required to implement the firewall.
+11. Keep all work offline.
+
+## Required security properties
+
+The firewall must preserve at least:
+
+1. exact provider identity and cryptographic root binding;
+2. exact protocol and wire-profile identity where required by receipt verification;
+3. exact qualification criteria identity and version;
+4. explicit qualification decision under the accepted authority model;
+5. content identity of the retained evidence package sufficient to independently verify that decision;
+6. provider-group independence classification required by the two-of-three quorum;
+7. key rotation and standards-transition fail-closed behavior;
+8. historical provider state selection by exact content identity rather than current provider metadata;
+9. no automatic promotion of rehearsal evidence into production qualification;
+10. no lowering of the frozen qualification standard to simplify Genesis.
+
+## Complexity firewall rule
+
+A new provider-qualification feature should change Forecast Trust Core only when the core needs a new security fact that cannot be represented by the existing frozen qualification output interface.
+
+Changes to evidence collection, diagnostics, research workflow, operator review notes, or qualification automation should remain inside the qualification subsystem when the final frozen outputs are unchanged.
+
+This rule is intended to prevent the provider qualification subsystem from becoming a second governance platform inside the Forecast Trust Core.
+
+## P4 out of scope
+
+P4 does not:
+
+1. select a new provider;
+2. remove or weaken the frozen two-of-three quorum;
+3. change `FPP_ROUGHTIME_PRODUCTION_QUALIFICATION_V1`;
+4. execute live repeatability;
+5. make a QualificationDecision;
+6. seal a production ProviderProfile;
+7. reopen Roughtime wire or verifier engineering absent a concrete correctness/security defect;
+8. reopen RFC3161 engineering;
+9. modify P1 anchoring, P2 temporal claims, or P3 dependency/evaluation decisions;
+10. authorize Genesis or prospective forecasting.
+
+## P5 handoff requirement
+
+P4 must end with an explicit implementation map for P5 covering at least:
+
+```text
+TrustedManifest provider references
+ProviderProfile schema/profile boundary
+QualificationDecision references
+qualification evidence package binding
+historical provider-state selection
+receipt validator admission checks
+readiness matrix entries
+abort conditions
+tests for stale/mismatched/unqualified providers
+```
+
+P5 then implements P1 through P4 together as one versioned compressed Genesis candidate rather than incrementally mutating historical candidate semantics.
 
 ## Network boundary
 
@@ -101,6 +160,7 @@ P4 will establish the provider qualification complexity firewall. P5 will perfor
 network_authorized = false
 Roughtime provider requests authorized by this task = 0
 RFC3161 requests authorized by this task = 0
+production qualification requests authorized by this task = 0
 ```
 
 No prior rehearsal or qualification authorization may be reused.
@@ -118,4 +178,4 @@ production forecasting = PROHIBITED
 network_authorized = false
 ```
 
-The Genesis Ed25519 private key must not be accessed, read, copied, displayed, uploaded, transmitted, logged, referenced, or processed. Only the public key may enter project objects at a later authorized governance step.
+The Genesis Ed25519 private key must not be accessed, read, copied, displayed, uploaded, transmitted, logged, referenced, or processed. Only the public key may enter project objects at a later separately authorized governance step.

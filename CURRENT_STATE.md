@@ -27,8 +27,8 @@ No live provider execution or qualification execution is authorized by the curre
 P0  project-control transition and non-normative review record                 COMPLETE
 P1  reconcile Genesis anchoring requirements and single-anchor candidate       COMPLETE
 P2  separate temporal and durability claims from derived eligibility           COMPLETE
-P3  remove unused Genesis v1 dependencies and reduce review/evaluation surface NEXT
-P4  establish provider-qualification complexity firewall                       PENDING
+P3  remove unused Genesis v1 dependencies and reduce review/evaluation surface COMPLETE
+P4  establish provider-qualification complexity firewall                       NEXT
 P5  update candidate objects, schemas, validators, tests, readiness controls   PENDING
 P6  rerun complete offline regression and synthetic adversarial suite           PENDING
 P7  reconsider need for Roughtime production qualification only after refreeze PENDING
@@ -42,7 +42,7 @@ The workstream transition is recorded in:
 
 `docs/GEN_001_PRE_GENESIS_ARCHITECTURE_COMPRESSION_REVIEW_2026_09_14.md`
 
-P0 changed project control state only and preserved all historical semantics.
+P0 changed project control state only and preserved historical semantics.
 
 ## P1 Genesis anchoring reconciliation
 
@@ -50,7 +50,7 @@ P1 design control is recorded in:
 
 `docs/GEN_001_GENESIS_ANCHORING_RECONCILIATION_V1.md`
 
-The successor Genesis anchoring topology is:
+The successor Genesis governance path is:
 
 ```text
 BootstrapGovernanceRoot
@@ -62,9 +62,9 @@ BootstrapGovernanceRoot
 → separate explicit Genesis authorization
 ```
 
-Standalone bootstrap governance and candidate manifest anchoring are optional audit evidence in the successor compressed profile. The mandatory final external evidence subject is the exact signed `ManifestAcceptance`.
+Standalone bootstrap-governance and candidate-manifest anchors are optional audit evidence in the compressed successor design. The mandatory final external evidence subject is the exact signed `ManifestAcceptance`.
 
-The final evidence package is supplied separately to independent final validation and is not a required self reference inside the signed acceptance.
+P5 must implement the P1 topology with a new versioned acceptance policy and a noncircular final-validation interface.
 
 ## P2 temporal claim separation
 
@@ -72,7 +72,7 @@ P2 design control is recorded in:
 
 `docs/GEN_001_TEMPORAL_CLAIM_SEPARATION_V1.md`
 
-The successor validator must expose independently derived claims:
+The successor validator separately derives:
 
 ```text
 EXTERNAL_EXISTENCE_BOUND_VERIFIED
@@ -91,50 +91,91 @@ UNRESOLVED
 NOT_APPLICABLE
 ```
 
-A stronger claim failure never rewrites a weaker verified fact. Missing evidence remains unresolved and fails closed for stronger cohort inclusion.
+A stronger claim failure never rewrites a weaker verified historical fact. Bitcoin block header time remains outside the precise civil-time upper-bound role.
 
-Bitcoin block header time remains outside the precise civil time upper bound role.
+For Genesis governance, the exact signed `ManifestAcceptance` is the direct final evidence subject. For Genesis forecast cycles, the direct temporal subjects are the exact `IssuanceCyclePlan`, exact `IssuanceCycleManifest`, and exact `DurabilityVerificationRecord` under the P2 rules.
 
-### Genesis governance mapping
+## P3 Genesis v1 dependency compression
 
-The exact signed `ManifestAcceptance` is the direct final Genesis evidence subject.
+P3 design control is recorded in:
 
-Final validation requires separate verified existence and Bitcoin durability facts for that acceptance. The compressed Genesis governance profile has no scientific outcome barrier, so `PRE_OUTCOME_DURABILITY_VERIFIED` and `CONFIRMATORY_PROSPECTIVE_ELIGIBLE` are not applicable to `ManifestAcceptance`.
+`docs/GEN_001_GENESIS_V1_DEPENDENCY_COMPRESSION_V1.md`
 
-### Forecast cycle mapping
+The current v0.5 effective candidate contains 22 normative objects. The compressed successor profile keeps the capabilities actually consumed by the initial deterministic method and selected targets while leaving unused generic Trust Core interfaces dormant.
 
-Genesis v1 uses these direct temporal subjects:
+### Dormant Genesis v1 capabilities
 
-```text
-IssuanceCyclePlan
-IssuanceCycleManifest
-DurabilityVerificationRecord
-```
-
-The exact `IssuanceCyclePlan` must satisfy deadline existence against `plan_commitment_deadline`.
-
-The exact `IssuanceCycleManifest` is the Genesis v1 forecast deadline subject and must satisfy deadline existence against the frozen `external_proof_deadline`. The manifest binds complete slot accounting and exact issued forecast full references, so Genesis v1 does not require a separate wall clock provider request for each individual `IssuedForecast` when the forecast is correctly bound into the verified manifest.
-
-The exact `DurabilityVerificationRecord` is independently wall clock evidenced against the frozen `outcome_information_barrier`. That result, together with independently verified Bitcoin durability, derives `PRE_OUTCOME_DURABILITY_VERIFIED`.
-
-## P1 and P2 implementation boundary
-
-P1 and P2 changed design control only. Historical candidate objects, schemas, validators, readiness matrix entries, abort conditions, and evaluation policy remain unchanged until consolidated P5 implementation.
-
-The current effective candidate lineage remains:
+These capabilities are not instantiated Genesis v1 dependencies or readiness blockers:
 
 ```text
-candidate_object_set_v0_2.json
-+ candidate_patch_v0_3.json
-+ candidate_patch_v0_4.json
-+ candidate_patch_v0_5.json
+PublicRandomnessPolicy
+FittedState
+fitted transformation state
+POSTCOMMIT_PUBLIC_RANDOMNESS execution
+EXTERNALLY_AUDITED_ATTEMPTS execution
+closed-model observability paths
+model TrustReport
+model retrieval-accounting paths
+multi-method comparison policy
 ```
 
-Current alignment state:
+The generic Trust Core interfaces remain available for successor manifests.
+
+### Human review reduction
+
+Genesis v1 does not instantiate a scientific Human Review Policy.
+
+Official-source conflict, changed layout ambiguity, or insufficient semantic evidence produces `REVIEW_REQUIRED` or `UNRESOLVED`. `REVIEW_REQUIRED` is diagnostic and does not authorize an operator or ReviewDecision to select a resolved value.
+
+P5 must retire historical candidate object `policy:genesis-human-review:v1` by exact predecessor hash in the successor candidate lineage. The historical object remains immutable.
+
+### Evaluation reduction
+
+The only initial method is:
+
+```text
+method:last-observed-value:v1
+selection_control_class = DETERMINISTIC_REPLAY
+randomness_policy = NONE
+```
+
+Because this same method is the current evaluation baseline, baseline deltas are tautologically zero in a one-method Genesis. P3 therefore defers baseline comparison, method comparison, aggregation, significance claims, and similar predictive-skill surfaces until a distinct second method exists.
+
+The minimum Genesis v1 numerical evaluation is:
+
+```text
+resolved_outcome
+forecast_value
+absolute_error
+squared_error
+```
+
+Cohort integrity remains mandatory. At minimum these denominator classes remain visible:
+
+```text
+expected
+issued
+failed
+omitted
+ineligible
+unresolved
+withdrawn
+```
+
+P2 temporal claim states remain separately inspectable and cannot be hidden inside a generic nonscorable label.
+
+### Successor object-count target
+
+If P1, P2, and P3 are implemented without another Genesis-specific policy object, the expected compressed candidate count after P5 is 21. This is a P3 design target, not a frozen P5 result.
+
+The reduction comes from retiring the instantiated Human Review Policy. EvaluationPolicy and AcceptancePolicy are replaced by successor versions and therefore do not reduce cardinality.
+
+## Current implementation alignment
 
 ```text
 P1_ANCHORING_RECONCILIATION = COMPLETE
 P2_TEMPORAL_CLAIM_SEPARATION = COMPLETE
+P3_DEPENDENCY_COMPRESSION = COMPLETE
 CURRENT_V0_5_CANDIDATE_ALIGNED = NO
 CURRENT_VALIDATOR_ALIGNED = NO
 CURRENT_READINESS_MATRIX_ALIGNED = NO
@@ -143,32 +184,35 @@ P5_VERSIONED_IMPLEMENTATION_REQUIRED = YES
 GENESIS_READY = NO
 ```
 
-`Result.LATE_OR_INELIGIBLE`, the current raw bound handling in `validate_external_deadline` and `validate_cycle_plan`, and the current single prospective eligibility reporting surface are historical implementation semantics. P5 must version their successor behavior rather than silently reinterpret them.
+P1 through P3 are design controls. Historical candidate files, validators, readiness entries, abort conditions, and tests retain their historical behavior until P5 performs the consolidated versioned implementation.
 
-## P3 next gate
+## P4 next gate
 
-P3 must identify Genesis v1 dependencies that are not used by the actual initial method and target profile, and reduce the human review and evaluation surface without weakening cohort integrity, mandatory cycle accounting, point in time evidence, temporal claims, or immutable historical records.
+P4 establishes the provider-qualification complexity firewall.
 
-The review must specifically test whether unused stochastic execution, public randomness, `FittedState`, broad human review capabilities, baseline comparison requirements, complex aggregation, and other unused Trust Core dependencies can be removed from the Genesis v1 instantiated profile while remaining available for successor manifests.
+The intended boundary is that Forecast Trust Core consumes only a small frozen qualification interface, including exact provider identity/profile, exact qualification decision, qualification criteria identity/version, and retained evidence-package content identity.
 
-Any normative removal or replacement remains deferred to P5 versioned implementation.
+Qualification execution, evidence collection, transport diagnostics, governance review mechanics, requalification workflow, and other supporting internals remain outside the core forecast-validation dependency graph unless a concrete security property requires otherwise.
+
+P4 does not reopen provider selection, lower qualification criteria, authorize a live provider request, or create a production qualification decision.
 
 ## Genesis v1 minimum direction
 
-The intended minimum profile remains limited to capabilities used at Genesis:
+The intended minimum profile remains:
 
 1. a small number of low-frequency targets with reconstructable official schedules;
 2. deterministic issuance schedules and mandatory cycle universe;
-3. deterministic or fully auditable execution with a minimal initial method surface;
+3. one deterministic replayable initial method;
 4. point-in-time `SourceContract` inputs;
 5. complete attempt, retry, failure, and omission accounting;
-6. immutable forecast, correction, resolution, and evaluation cohort records;
-7. deadline existence evidence;
+6. immutable forecast, correction, resolution, and evaluation-cohort records;
+7. deadline-existence evidence;
 8. durable public anchoring;
 9. exact `ValidatorContract`;
-10. `BootstrapGovernanceRoot`, `TrustedManifest`, and `ManifestAcceptance`.
+10. `BootstrapGovernanceRoot`, `TrustedManifest`, and `ManifestAcceptance`;
+11. minimal per-forecast absolute and squared error scoring plus complete denominators.
 
-Unused capabilities remain deferred until a real successor use case requires them.
+Unused future capabilities remain available only through successor manifests and versioned policies.
 
 ## Retained production qualification state
 
@@ -195,6 +239,8 @@ No retained result is upgraded by Architecture Compression.
 
 PR #6 remains the active design PR and must remain Draft, open, and unmerged unless separately authorized.
 
+PR mergeability is dynamic and must be rechecked before any later integration action.
+
 ## Network boundary
 
 ```text
@@ -218,4 +264,4 @@ production forecasting = PROHIBITED
 network_authorized = false
 ```
 
-The Genesis Ed25519 private key remains outside repository, GitHub, CI, ChatGPT, Codex, logs, prompts, fixtures, and third-party systems. Only the public key may enter project objects at a later authorized governance step.
+The Genesis Ed25519 private key remains outside repository, GitHub, CI, ChatGPT, Codex, logs, prompts, fixtures, and third-party systems. Only the public key may enter project objects at a later separately authorized governance step.
