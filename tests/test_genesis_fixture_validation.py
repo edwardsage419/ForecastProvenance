@@ -25,7 +25,13 @@ class GenesisRetrospectiveFixtureValidationTests(unittest.TestCase):
     def setUpClass(cls):
         cls.validator = load_module()
 
-    def _write_cpi_fixture(self, root: Path, *, tamper_hash: bool = False) -> Path:
+    def _write_cpi_fixture(
+        self,
+        root: Path,
+        *,
+        tamper_hash: bool = False,
+        overrides: dict | None = None,
+    ) -> Path:
         fixture_dir = root / "bls_cpi_2026_07_first_release"
         fixture_dir.mkdir()
         raw = b"""
@@ -45,6 +51,8 @@ class GenesisRetrospectiveFixtureValidationTests(unittest.TestCase):
             "resolved_url": "https://www.bls.gov/news.release/archives/cpi_08122026.htm",
             "allowed_host": "www.bls.gov",
             "http_status": 200,
+            "raw_filename": "artifact.html",
+            "raw_byte_length": len(raw),
             "raw_sha256": "0" * 64 if tamper_hash else raw_sha,
             "expected_target_id": "target:us-cpi-all-items-mom-sa:v1",
             "reference_period": "2026-07",
@@ -59,7 +67,10 @@ class GenesisRetrospectiveFixtureValidationTests(unittest.TestCase):
             "expected_display_value": "0.1",
             "expected_canonical_decimal": "0.1",
             "expected_display_scale": 1,
+            "scientific_role": "RETROSPECTIVE_SOURCE_ADAPTER_REHEARSAL_ONLY",
         }
+        if overrides:
+            metadata.update(overrides)
         (fixture_dir / "metadata.json").write_text(
             json.dumps(metadata, indent=2, sort_keys=True) + "\n", encoding="utf-8"
         )
@@ -78,6 +89,59 @@ class GenesisRetrospectiveFixtureValidationTests(unittest.TestCase):
     def test_raw_hash_tamper_fails_closed(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             fixture_dir = self._write_cpi_fixture(Path(tmpdir), tamper_hash=True)
+            with self.assertRaises(ValueError):
+                self.validator.validate_fixture(fixture_dir)
+
+    def test_metadata_cannot_substitute_allowed_host(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            fixture_dir = self._write_cpi_fixture(
+                Path(tmpdir),
+                overrides={
+                    "allowed_host": "example.com",
+                    "resolved_url": "https://example.com/cpi.htm",
+                },
+            )
+            with self.assertRaises(ValueError):
+                self.validator.validate_fixture(fixture_dir)
+
+    def test_metadata_cannot_substitute_frozen_expected_value(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            fixture_dir = self._write_cpi_fixture(
+                Path(tmpdir),
+                overrides={
+                    "expected_display_value": "9.9",
+                    "expected_canonical_decimal": "9.9",
+                },
+            )
+            with self.assertRaises(ValueError):
+                self.validator.validate_fixture(fixture_dir)
+
+    def test_metadata_cannot_substitute_frozen_source_url(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            fixture_dir = self._write_cpi_fixture(
+                Path(tmpdir),
+                overrides={"source_url": "https://www.bls.gov/other"},
+            )
+            with self.assertRaises(ValueError):
+                self.validator.validate_fixture(fixture_dir)
+
+    def test_fixture_directory_name_is_bound_to_fixture_id(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            fixture_dir = self._write_cpi_fixture(Path(tmpdir))
+            renamed = Path(tmpdir) / "renamed-fixture"
+            fixture_dir.rename(renamed)
+            with self.assertRaises(ValueError):
+                self.validator.validate_fixture(renamed)
+
+    def test_duplicate_metadata_key_fails_closed(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            fixture_dir = self._write_cpi_fixture(Path(tmpdir))
+            metadata_path = fixture_dir / "metadata.json"
+            metadata_path.write_text(
+                '{"fixture_id":"bls_cpi_2026_07_first_release",'
+                '"fixture_id":"bea_gdp_2026_q2_advance"}',
+                encoding="utf-8",
+            )
             with self.assertRaises(ValueError):
                 self.validator.validate_fixture(fixture_dir)
 
