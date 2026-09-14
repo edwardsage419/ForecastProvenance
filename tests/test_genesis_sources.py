@@ -110,6 +110,17 @@ class GenesisSourceParserTests(unittest.TestCase):
                 allowed_hosts=["www.bls.gov"],
             )
 
+    def test_official_artifact_rejects_non_https_url(self):
+        with self.assertRaises(GenesisSourceParseError):
+            validate_official_artifact(
+                {
+                    "resolved_url": "http://www.bls.gov/news.release/cpi.htm",
+                    "raw_sha256": "a" * 64,
+                    "http_status": 200,
+                },
+                allowed_hosts=["www.bls.gov"],
+            )
+
     def test_raw_cpi_adapter_to_semantic_parser(self):
         raw = b"""
         <html><body>
