@@ -16,17 +16,17 @@ The commit containing this file is identified from Git metadata and is not self-
 ```text
 P0  project-control transition                                      COMPLETE
 P1  Genesis final-acceptance anchoring reconciliation               COMPLETE
-P2  temporal/durability claim separation                            COMPLETE
+P2  temporal/durability claim separation                            COMPLETE_DESIGN / IMPLEMENTATION_REPAIR_REQUIRED
 P3  Genesis v1 dependency/review/evaluation compression             COMPLETE
-P4  provider-qualification complexity firewall                      COMPLETE
-P5  consolidated versioned implementation of P1-P4                  COMPLETE_WITH_P6_HARDENING
-P6  complete offline regression and synthetic adversarial suite     IN_PROGRESS_EXECUTION_ENVIRONMENT_BLOCKED
-P7  reconsider need for Roughtime production qualification          PENDING
+P4  provider-qualification complexity firewall                      COMPLETE_HARDENED
+P5  consolidated versioned implementation of P1-P4                  REOPENED_CLAIM_AUTHORITY_CLOSURE
+P6  complete offline regression and synthetic adversarial suite     STOPPED_ON_CORRECTNESS_FINDING
+P7  reconsider need for Roughtime production qualification          PENDING / PROHIBITED_UNTIL_P6_PASS
 P8  separate final pre-Genesis high-level review                    PENDING
 P9  separate explicit Genesis authorization                         PENDING
 ```
 
-P7 cannot begin until P6 passes against the exact post-repair HEAD.
+P6 cannot resume until the P5 claim-authority boundary is closed. P7 cannot begin until a later P6 run passes against the exact repaired HEAD.
 
 ## Controlling records
 
@@ -37,9 +37,10 @@ docs/GEN_001_GENESIS_V1_DEPENDENCY_COMPRESSION_V1.md
 docs/GEN_001_PROVIDER_QUALIFICATION_COMPLEXITY_FIREWALL_V1.md
 docs/GEN_001_ARCHITECTURE_COMPRESSION_P5_IMPLEMENTATION_REVIEW.md
 docs/GEN_001_ARCHITECTURE_COMPRESSION_P6_STATIC_REVIEW_AND_P5_HARDENING_2026_09_14.md
+docs/GEN_001_P6_FINDING_3_CLAIM_AUTHORITY_BOUNDARY_2026_09_14.md
 ```
 
-The P6 static-review record is the controlling repair addendum for the P5 successor validator authority path.
+The Finding 3 record is the controlling addendum for the open P2 claim-authority defect.
 
 ## Effective candidate
 
@@ -70,17 +71,19 @@ policy:genesis-acceptance:v2
 policy:genesis-evaluation:v2
 ```
 
-Historical v0.2 through v0.5 candidate bytes remain unchanged.
+Historical v0.2 through v0.5 candidate bytes remain unchanged. Finding 3 has not changed candidate bytes or candidate lineage.
 
 ## P1 state
 
-ManifestAcceptance v2 remains noncircular. Final external evidence is a separate final-validation input and must bind the exact signed ManifestAcceptance.
+ManifestAcceptance v2 remains noncircular. Final external evidence remains a separate final-validation input and must bind the exact signed ManifestAcceptance.
 
 Separate explicit Genesis authorization remains mandatory after successful independent final validation.
 
-## P2 state and P6 hardening
+The current low-level `validate_final_genesis_acceptance` function is not authoritative because it accepts caller-supplied claim-state strings. It cannot satisfy the independent-final-validation gate until P5 claim-authority closure replaces or wraps that interface with deterministic evidence recomputation.
 
-The successor claim vocabulary remains:
+## P2 state and P6 findings
+
+The claim vocabulary remains:
 
 ```text
 EXTERNAL_EXISTENCE_BOUND_VERIFIED
@@ -99,15 +102,22 @@ UNRESOLVED
 NOT_APPLICABLE
 ```
 
-P6 static review found that the initial P5 composition helpers did not always enforce exact lower-claim type/subject binding.
-
-The repaired authoritative path is now:
+The first P6 hardening pass closed exact lower-claim type/subject substitution through:
 
 `src/forecast_trust_core/architecture_compression_v1_hardening.py`
 
-It requires exact claim type, closed claim state, exact subject reference, exact DurabilityVerificationRecord-to-primary binding where applicable, and exact predeclared component claim-set equality before confirmatory aggregation.
+That repair remains valid and required.
 
-The original composition functions in `architecture_compression_v1.py` remain low-level helpers only and are not authoritative stronger-claim entry points.
+P6 Finding 3 identified the deeper remaining boundary: a structurally correct claim mapping or caller-supplied `VERIFIED` state is not proof that the claim was deterministically reconstructed from retained evidence under the exact ValidatorContract.
+
+The current gaps include:
+
+1. final Genesis acceptance trusts caller-supplied existence/durability state strings;
+2. the historical cycle-plan validator still accepts an untyped raw existence bound;
+3. ValidationReport v2 freezes claim structure but does not itself prove claim derivation truth;
+4. the current Roughtime receipt verifier/schema is explicitly rehearsal-only and cannot be promoted into production claim authority.
+
+P5 must now implement the minimum offline production-shaped evidence-to-claim reconstruction path before P6 restarts.
 
 ## P3 state
 
@@ -155,20 +165,13 @@ as_of_utc = frozen_deadline_utc
 
 All three manifest-admitted providers must be authoritatively `PRODUCTION_QUALIFIED` before receipt quorum can operate as two-of-three.
 
-P6 static review found that the initial P5 package validator closed event-set enumeration but still allowed `qualification_state` to be self-asserted unless the caller separately invoked the qualification subsystem.
+The first P6 hardening pass remains controlling for provider-state reconstruction. It requires a fail-closed dedicated state store, exact metadata/requalification closure, exact ProviderProfile/QualificationDecision/evidence/verifier bindings, deterministic `derive_authoritative_qualification_state`, and exact state/report equality before provider admission.
 
-The repaired authoritative path now:
-
-1. scans a dedicated provider-state store fail-closed;
-2. requires exact metadata-review and requalification-event closure through the as-of;
-3. requires exact ProviderProfile, QualificationDecision, evidence-manifest and qualification-verifier bindings;
-4. calls existing `derive_authoritative_qualification_state` with the complete collected inputs;
-5. requires package state and state-report SHA256 to exactly equal the deterministic result;
-6. only then evaluates the three-provider admission set.
-
-Production receipt exact-profile binding remains separately required.
+Production receipt profile binding remains separately required and does not by itself derive P2 temporal claims.
 
 ## Successor implementation surfaces
+
+Existing surfaces include:
 
 ```text
 src/forecast_trust_core/architecture_compression_v1.py
@@ -183,6 +186,8 @@ tests/test_genesis_candidate_patch_v06.py
 tests/test_production_receipt_admission_v1.py
 ```
 
+Finding 3 requires additional or versioned authoritative claim-reconstruction surfaces. Historical validators must remain available under their historical contracts.
+
 ## P6 execution status
 
 P6 began against pre-repair P5 HEAD:
@@ -191,37 +196,42 @@ P6 began against pre-repair P5 HEAD:
 c95a79425eb68e48893f9143eec002344829d3a6
 ```
 
-The available local environment could not resolve `github.com` or `api.github.com`, so no exact local checkout and no complete offline regression were executed.
+The local execution environment could not resolve `github.com` or `api.github.com`, so no exact local checkout and no complete offline regression were executed.
 
-GitHub's exact recursive tree was available and static review found the two blocking correctness defects described above. Those defects were repaired rather than weakening tests or standards.
+Static review first found two blocking defects and triggered hardening. Continued static review then found Finding 3 before P6 could restart.
 
 Current disposition:
 
 ```text
-P6_STATIC_REVIEW = BLOCKING_FINDINGS_FOUND_AND_REPAIRED
-P6_FULL_REGRESSION = NOT_EXECUTED
+P6_STATIC_REVIEW = THREE_BLOCKING_FINDINGS_TOTAL
+P6_FINDINGS_1_2 = REPAIRED_PENDING_REGRESSION
+P6_FINDING_3 = OPEN
+P6_FULL_REGRESSION = STOPPED
 P6_PASS = NO
-P6_RESTART_REQUIRED_ON_EXACT_POST_REPAIR_HEAD = YES
+P6_RESTART_REQUIRED_AFTER_P5_CLAIM_AUTHORITY_CLOSURE = YES
 ```
 
-No pre-repair test result may be carried forward after the repair commits.
+No pre-repair test result may be carried forward after any repair commit.
 
 ## Implementation alignment
 
 ```text
-P1_ANCHORING_RECONCILIATION = COMPLETE
-P2_TEMPORAL_CLAIM_SEPARATION = COMPLETE_HARDENED
+P1_ANCHORING_RECONCILIATION = COMPLETE_DESIGN
+P2_TEMPORAL_CLAIM_SEPARATION = COMPLETE_DESIGN / CLAIM_AUTHORITY_IMPLEMENTATION_OPEN
 P3_DEPENDENCY_COMPRESSION = COMPLETE
-P4_PROVIDER_QUALIFICATION_COMPLEXITY_FIREWALL = COMPLETE_HARDENED
-P5_VERSIONED_IMPLEMENTATION = COMPLETE_WITH_P6_HARDENING
+P4_PROVIDER_QUALIFICATION_COMPLEXITY_FIREWALL = COMPLETE_HARDENED_PENDING_REGRESSION
+P5_VERSIONED_IMPLEMENTATION = REOPENED_CLAIM_AUTHORITY_CLOSURE
 CURRENT_EFFECTIVE_CANDIDATE = V0_6
 CURRENT_EFFECTIVE_OBJECT_COUNT = 21
 CURRENT_V0_6_CANDIDATE_DESIGN_ALIGNED = YES
-CURRENT_SUCCESSOR_LOW_LEVEL_VALIDATOR = NON_AUTHORITATIVE_FOR_COMPOSED_P2_P4_CLAIMS
-CURRENT_SUCCESSOR_HARDENING_PATH_REQUIRED = YES
-CURRENT_READINESS_MATRIX_ALIGNED = YES
-CURRENT_EVALUATION_REPORTING_ALIGNED = YES
-P6_REGRESSION_REQUIRED = YES
+CURRENT_SUCCESSOR_LOW_LEVEL_CLAIM_HELPERS = NON_AUTHORITATIVE
+CURRENT_FINAL_GENESIS_VALIDATOR_AUTHORITATIVE = NO
+CURRENT_CYCLE_PLAN_SUCCESSOR_CLAIM_INPUT_ALIGNED = NO
+CURRENT_VALIDATION_REPORT_CLAIM_AUTHORITY_CLOSED = NO
+CURRENT_PROVIDER_ADMISSION_FIREWALL_ALIGNED = YES_PENDING_REGRESSION
+CURRENT_READINESS_MATRIX_ALIGNED = NO_PENDING_CLAIM_AUTHORITY_REPAIR
+P5_CLAIM_AUTHORITY_REPAIR_REQUIRED = YES
+P6_REGRESSION_REQUIRED = YES_AFTER_REPAIR
 GENESIS_READY = NO
 ```
 
