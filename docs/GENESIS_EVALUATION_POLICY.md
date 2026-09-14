@@ -1,176 +1,130 @@
 # Genesis Evaluation Policy
 
-Version: 0.1 candidate
-Status: GEN_001 REVIEW CANDIDATE
+Version: 0.2 candidate
+Status: GEN_001 ARCHITECTURE COMPRESSION P5
 
-Policy ID: `policy:genesis-evaluation:v1`
+Policy ID: `policy:genesis-evaluation:v2`
 
 ## Scope
 
-Genesis version 1 evaluates continuous scalar point forecasts only.
+Genesis v1 evaluates continuous scalar point forecasts only. The sole admitted initial method is `method:last-observed-value:v1`.
 
-The policy does not claim probabilistic calibration, interval coverage, distributional skill, causal accuracy, or universal cross-domain forecast quality.
+Genesis v1 does not make normative claims about probabilistic calibration, interval coverage, distributional skill, statistical significance, method superiority, or a universal cross-target score.
 
-## Forecast output contract
+## Normative per-forecast output
 
-Every confirmatory forecast uses:
+For forecast value `f` and resolved first-release outcome `y`, the normative numerical evaluation surface is exactly:
 
 ```text
-output_schema = continuous_scalar_forecast_v1
-point_forecast_decimal = canonical decimal string
+resolved_outcome
+forecast_value
+absolute_error
+squared_error
 ```
 
-The forecast value is interpreted in the exact unit of its bound TargetDefinition.
-
-No hidden extra precision is inferred from model internals or source databases.
-
-## Resolution value
-
-The authoritative outcome is the canonical decimal parsed from the frozen first-release official artifact under the target ResolutionRule and SourceContract.
-
-The released display precision is authoritative for Genesis version 1.
-
-Later revised values cannot replace the resolved outcome.
-
-## Per-forecast metrics
-
-For forecast value `f` and resolved outcome `y`:
+with:
 
 ```text
 absolute_error = abs(f - y)
 squared_error = (f - y)^2
 ```
 
-Calculations use an exact decimal arithmetic implementation with a frozen precision and rounding contract. Binary floating point is not authoritative.
+Authoritative arithmetic uses canonical decimal semantics. Binary floating point is not authoritative.
 
-Metric outputs are canonical decimal strings.
+## Baseline and method-comparison rule
 
-## Transparent baseline comparison
+The only Genesis v1 method is itself the historical transparent persistence baseline. Comparing it with itself would produce tautological zero deltas.
 
-Every confirmatory target-method forecast is paired with the bound transparent baseline defined in `GENESIS_BASELINE_METHOD.md`.
-
-Derived baseline comparison fields are:
+Genesis v1 therefore does not define normative:
 
 ```text
-absolute_error_delta = method_absolute_error - baseline_absolute_error
-squared_error_delta = method_squared_error - baseline_squared_error
-```
-
-Negative delta means the method had lower error than the baseline for that forecast.
-
-These deltas are descriptive evaluation outputs. They are not converted into a universal trust score.
-
-## Cohort definition
-
-A confirmatory evaluation cohort is generated from the accepted IssuanceCyclePlan and IssuanceCycleManifest rather than from a later list of successful forecasts.
-
-Every expected slot remains accounted for with one of the precommitted terminal states.
-
-Issued forecasts remain in cohort accounting after withdrawal unless the frozen CorrectionPolicy and EvaluationPolicy provide an independently observable pre-issuance exception.
-
-Failed attempts, omitted slots, ineligible slots, unresolved outcomes, withdrawn forecasts, and anchor failures are retained in cohort accounting.
-
-Only slots whose protocol-defined scoring status is `SCORABLE` contribute numerical error metrics.
-
-## Non-scorable states
-
-A slot can be non-scorable only under a precommitted reason such as:
-
-```text
-NO_VALID_FORECAST_ISSUED
-TARGET_UNRESOLVED
-PROSPECTIVE_ELIGIBILITY_FAILED
-PROTOCOL_INVALIDATED
-```
-
-The non-scorable record remains in the denominator of operational completeness reporting.
-
-A poor forecast outcome is never a valid non-scorable reason.
-
-## Reporting denominators
-
-Every evaluation report contains at least:
-
-```text
-expected_slots
-issued_slots
-prospective_eligible_slots
-resolved_slots
-scorable_slots
-unresolved_slots
-failed_slots
-omitted_slots
-withdrawn_slots
-```
-
-Counts are derived from immutable ledger objects and policies.
-
-A score table without these denominators is incomplete for confirmatory reporting.
-
-## Aggregation
-
-### Within one target definition
-
-For a declared cohort window, the project may report:
-
-```text
-mean_absolute_error
-root_mean_squared_error
+absolute_error_delta
+squared_error_delta
 mean_absolute_error_delta_vs_baseline
 mean_squared_error_delta_vs_baseline
+pairwise_method_comparison
 ```
 
-The exact cohort start, end, target version, method version, baseline version, and number of scorable observations are always shown.
+A distinct second method or forecast class may introduce comparison through a successor EvaluationPolicy and successor manifest. Historical Genesis evaluation is never reinterpreted under that later policy.
 
-### Across target definitions
+## Aggregation rule
 
-Genesis version 1 prohibits an authoritative single aggregate score across CPI monthly change, unemployment rate, and GDP annualized growth.
+Genesis v1 normative evaluation does not require MAE, RMSE, cross-target aggregation, significance tests, or leaderboard ranking.
 
-These outcomes have different scales, variances, release frequencies, and operational regimes.
+Those reports may be added later only after their cohort and arithmetic semantics are prospectively versioned. Per-forecast absolute and squared error remain sufficient for the minimum Genesis scientific record.
 
-A later protocol can introduce a normalized cross-target score only after its normalization rule is frozen prospectively and scientifically justified.
+## Cohort integrity
 
-## Method comparison
+The evaluation cohort is derived from deterministic expected slots and immutable lifecycle records rather than a later list of successful forecasts.
 
-Two methods are compared only on the intersection of target instances for which both methods had protocol-valid expected slots under compatible information cutoffs and source contracts.
+At minimum reporting preserves these denominator classes:
 
-Pairwise comparison cannot silently discard instances where one method failed to produce a forecast.
+```text
+expected
+issued
+failed
+omitted
+ineligible
+unresolved
+withdrawn
+```
 
-If method failure itself is scientifically relevant, it is reported separately as availability or execution failure rather than converted into a favorable scoring omission.
+A poor outcome is never a valid reason to remove a slot from the denominator.
 
-## Corrections and withdrawals
+Withdrawals and substantive corrections do not erase the original issued forecast or its historical cohort membership.
 
-ForecastCorrection never edits a scored forecast value.
+## P2 temporal claim reporting
 
-A substantive correction creates a replacement forecast under the frozen correction rule.
+Temporal and durability state is not collapsed into a generic nonscorable label.
 
-Evaluation treatment is determined from the policy that was active before issuance.
+Evaluation/reporting must retain or reconstruct the independent claim vector:
 
-A withdrawal does not erase the original issued value or its cohort membership.
+```text
+EXTERNAL_EXISTENCE_BOUND_VERIFIED
+DEADLINE_EXISTENCE_VERIFIED
+BITCOIN_DURABILITY_VERIFIED
+PRE_OUTCOME_DURABILITY_VERIFIED
+CONFIRMATORY_PROSPECTIVE_ELIGIBLE
+```
 
-## Resolution corrections
+with states:
 
-If an official source artifact was parsed incorrectly, the original Resolution object remains retained and a correction record explains the parser or evidence error.
+```text
+VERIFIED
+FAILED
+UNRESOLVED
+NOT_APPLICABLE
+```
 
-A corrected evaluation is a new versioned Evaluation record. Prior published evaluation records remain addressable and are never silently overwritten.
+A later durability failure does not rewrite a previously verified deadline-existence fact.
 
-## Publication threshold
+Only `CONFIRMATORY_PROSPECTIVE_ELIGIBLE = VERIFIED` permits inclusion in the strong confirmatory prospective cohort. Failed and unresolved slots remain visible in denominator reporting.
 
-The project may publish individual resolved forecast results immediately after valid resolution.
+## Resolution rule
 
-Claims about comparative skill require a declared minimum sample count. Genesis version 1 sets no universal statistical significance threshold and must avoid claims of stable method superiority from a very small cohort.
+The authoritative outcome remains the canonical decimal parsed from the frozen first-release official artifact under the target ResolutionRule and SourceContract.
 
-The Trust Layer can establish protocol integrity before there is enough elapsed history to establish predictive skill.
+`REVIEW_REQUIRED` and `UNRESOLVED` do not authorize owner value selection under compressed Genesis v1. An unresolved outcome remains visible and has no numerical error score until deterministically resolved under an admitted rule.
 
-## Frozen arithmetic requirements
+## Corrections
 
-Before Genesis acceptance, implementation tests must freeze:
+A ForecastCorrection never edits historical forecast or evaluation bytes.
 
-1. Decimal parsing.
-2. Subtraction and absolute value behavior.
-3. Squaring precision.
-4. Mean calculation precision.
-5. Square-root calculation and rounding for RMSE.
-6. Canonical decimal serialization.
+A substantive forecast replacement is a new IssuedForecast. A resolution/parser correction creates a new versioned Resolution/Evaluation record while retaining the prior record and reason evidence.
 
-Any arithmetic change capable of altering a reported metric requires a new EvaluationPolicy version.
+## Successor boundary
+
+The following surfaces are explicitly deferred:
+
+```text
+baseline delta
+pairwise method comparison
+MAE/RMSE normative aggregation
+probabilistic scoring
+calibration
+significance claims
+leaderboards
+cross-target universal score
+```
+
+Introducing any of them requires a new versioned EvaluationPolicy when an actual scientific use case exists.
