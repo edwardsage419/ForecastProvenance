@@ -134,7 +134,7 @@ unresolved
 withdrawn
 ```
 
-The current design target after P5 is 21 effective candidate objects if no additional Genesis-specific policy object is required. Final cardinality must be recomputed from actual P5 dependency closure.
+The current design target after P5 is 21 effective candidate objects if no additional Genesis-specific normative policy object is required. Final cardinality must be recomputed from actual P5 dependency closure.
 
 ## P4 provider-qualification complexity firewall
 
@@ -252,6 +252,8 @@ validators
 tests
 adversarial review updates
 ```
+
+The provider-state package is a supporting evidence boundary. P5 must preserve the existing frozen qualification criteria and historical qualification object semantics. Any correctness repair to a supporting schema or validator must be versioned or otherwise explicitly compatibility-scoped; no existing production qualification decision exists to migrate.
 
 P5 remains offline and does not execute production qualification.
 
