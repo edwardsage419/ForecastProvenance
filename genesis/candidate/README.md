@@ -2,9 +2,7 @@
 
 Status: GEN_001 only
 
-This directory contains candidate normative objects prepared for Genesis readiness review.
-
-It does not contain Forecast Ledger history and does not authorize prospective forecasting.
+This directory contains candidate normative objects prepared for Genesis readiness review. It does not contain Forecast Ledger history and does not authorize prospective forecasting.
 
 ## Current effective candidate lineage
 
@@ -15,79 +13,114 @@ objects/candidate_object_set_v0_2.json
     + objects/candidate_patch_v0_3.json
     + objects/candidate_patch_v0_4.json
     + objects/candidate_patch_v0_5.json
+    + objects/candidate_patch_v0_6.json
 ```
 
-Version 0.2 supplies the sealed base object set.
+Versions 0.2 through 0.5 remain immutable historical candidate material.
 
-Version 0.3 replaces the issuance schedule policy and adds the operational policies required for Genesis readiness.
+Version 0.6 is the Architecture Compression P1 through P4 successor patch. It retires, by exact predecessor content hash:
 
-Version 0.4 preserves the earlier files as append-only review history, retires `policy:deadline-receipt-quorum:v1` by exact predecessor content hash, and adds `policy:deadline-receipt-quorum:v2`.
+```text
+policy:genesis-acceptance:v1
+policy:genesis-evaluation:v1
+policy:genesis-human-review:v1
+```
 
-Version 0.5 preserves the earlier files as append-only review history, retires `policy:deadline-receipt-quorum:v2` by exact predecessor content hash, and adds `policy:deadline-receipt-quorum:v3` with the frozen zero-cost pre-rehearsal Roughtime protocol rules.
+It adds:
 
-The effective version 0.5 candidate contains 22 sealed normative objects:
+```text
+policy:genesis-acceptance:v2
+policy:genesis-evaluation:v2
+```
+
+The effective version 0.6 candidate therefore contains 21 sealed normative objects:
 
 1. Three TargetDefinition objects.
 2. Three ResolutionRule objects.
 3. Six SourceContract objects.
 4. One IssuanceSchedule PolicyDefinition.
-5. One Evaluation PolicyDefinition.
-6. One Deadline Receipt Quorum PolicyDefinition, version 3.
-7. One transparent ForecastMethod baseline.
+5. One minimal Evaluation PolicyDefinition v2.
+6. One Deadline Receipt Quorum PolicyDefinition v3.
+7. One deterministic ForecastMethod, `method:last-observed-value:v1`.
 8. One Retry PolicyDefinition.
 9. One Omission PolicyDefinition.
 10. One Correction PolicyDefinition.
 11. One Retention PolicyDefinition.
-12. One Human Review PolicyDefinition.
-13. One Acceptance PolicyDefinition.
+12. One Acceptance PolicyDefinition v2.
 
-The current Deadline Receipt Quorum candidate requires two independently qualifying Roughtime provider groups from an exactly three profile frozen pool. RFC 3161 is optional auxiliary evidence and is not required by the candidate minimum profile. The controlling pre-rehearsal protocol details are in `docs/GEN_001_PRE_REHEARSAL_PROTOCOL_FREEZE_2026_09_12.md`.
+Genesis v1 no longer instantiates a scientific Human Review Policy. Official-source conflict or semantic ambiguity remains `REVIEW_REQUIRED` or `UNRESOLVED`; there is no Genesis v1 ReviewDecision path that selects a resolved value.
 
-The materializer applies the predecessor patch chain in order. A retirement or replacement must bind the exact predecessor content hash. Repository tests require the effective object count, sealed object validity, retirement and replacement predecessor hashes, full dependency closure, one cycle per release semantics, operational policy presence, and the fail closed zero recurring cash cost time quorum semantics.
+The EvaluationPolicy v2 retains only point-forecast values needed for minimal scoring and cohort integrity:
+
+```text
+resolved_outcome
+forecast_value
+absolute_error
+squared_error
+```
+
+Baseline delta, pairwise method comparison, aggregate predictive-skill claims, probabilistic scoring, significance claims, and leaderboard semantics remain deferred until a distinct second method or forecast class is admitted by a successor manifest.
+
+The AcceptancePolicy v2 requires final external evidence over the exact signed ManifestAcceptance as a separate final-validation input. Intermediate bootstrap or candidate-manifest anchors are optional audit evidence and cannot substitute for the final acceptance evidence.
 
 ## Initial method set
 
-The initial Genesis candidate admits only the transparent method:
+The initial Genesis candidate admits only:
 
 ```text
 method:last-observed-value:v1
+selection_control_class = DETERMINISTIC_REPLAY
+randomness_policy = NONE
 ```
 
-This is deliberate. The first genuine history, if later authorized by a separate Genesis acceptance decision, is intended to validate provenance, external time evidence, completeness accounting, official source resolution, evaluation, and Failure Corpus mechanics before adding more complex forecasting methods.
+PublicRandomnessPolicy, FittedState, closed-model observability and retrieval paths, stochastic selection control, externally audited attempts, and multi-method comparison remain dormant Trust Core interfaces rather than Genesis v1 dependencies.
 
-Any later model or additional method requires an accepted successor manifest and cannot be inserted retrospectively into Genesis history.
+## Provider qualification boundary
 
-## Superseded review artifacts
+The candidate policy set continues to require `policy:deadline-receipt-quorum:v3`.
 
-`objects/candidate_object_set.json` is the original object set review artifact.
+The final TrustedManifest is expected to bind the exact three production ProviderProfiles, matching signed QualificationDecisions, and exact qualification verifier contract. Dynamic provider state at each consequential deadline is reconstructed at:
 
-`objects/candidate_object_set_v0_2.json` corrected full hash bindings and remains the base of the current lineage.
+```text
+as_of_utc = frozen_deadline_utc
+```
 
-`objects/candidate_patch_v0_3.json` remains an immutable predecessor patch.
+All three admitted providers must remain `PRODUCTION_QUALIFIED` at that historical as-of before the event may use the frozen production-ready three-provider pool. Receipt quorum then remains two-of-three and provider outage never lowers the threshold.
 
-`objects/candidate_patch_v0_4.json` remains the immutable predecessor patch that introduced `policy:deadline-receipt-quorum:v2`.
+Provider qualification workflow internals remain supporting-subsystem evidence rather than candidate policy objects.
 
-`policy:deadline-receipt-quorum:v1` remains preserved inside the v0.2 base as historical candidate content. `policy:deadline-receipt-quorum:v2` remains preserved inside the v0.4 patch as historical candidate content. Neither historical object is rewritten; v0.5 retires v2 only in effective materialization.
+## Historical preservation
 
-All earlier artifacts are permanently non prospective and must never be treated as an accepted Genesis manifest.
+Earlier candidate objects and patches are never rewritten. Retirement or replacement in v0.6 binds the exact predecessor `content_sha256`; historical validators and historical reports retain their original semantics.
 
-## Still missing before final Genesis candidate construction
+No v0.6 object is an accepted Genesis manifest merely because it exists in the repository.
 
-The effective object set is intentionally incomplete for Genesis acceptance. The remaining external or evidence bound dependencies are:
+## Still missing before final Genesis acceptance
 
-1. Final BootstrapGovernanceRoot containing the owner generated Ed25519 public key.
-2. Three frozen Roughtime provider profiles with successful separately authorized non forecast rehearsals, allowing a two of three deadline receipt quorum.
-3. Final OTS Bitcoin verifier profile and strong rehearsal evidence.
-4. Exact validator implementation binding for Genesis acceptance.
-5. Content addressed real BLS and BEA archive and parser rehearsal artifacts.
-6. Final Genesis TrustedManifest constructed only after the preceding dependencies are fixed.
-7. Signed ManifestAcceptance and its external time evidence.
-8. Final readiness adversarial review with no blocking finding.
+The effective object set remains pre-Genesis. External and final-freeze blockers include:
 
-These omissions remain explicit GEN_001 blockers.
+1. final BootstrapGovernanceRoot containing the owner-generated Ed25519 public key;
+2. three production-qualified Roughtime ProviderProfiles and matching QualificationDecisions;
+3. final qualification verifier contract and content-closed qualification-state package semantics;
+4. final OTS Bitcoin verifier profile and strong rehearsal evidence;
+5. exact final Genesis ValidatorContract binding;
+6. retained real BLS and BEA archive/parser evidence;
+7. final TrustedManifest constructed after all dependencies are fixed;
+8. owner-signed ManifestAcceptance;
+9. final external existence and Bitcoin durability evidence over that exact signed ManifestAcceptance;
+10. independent final validation and final readiness adversarial review with no blocking finding;
+11. separate explicit Genesis authorization.
 
 ## Scientific boundary
 
 No file in this directory is prospective evidence.
 
-No candidate object, patch, rehearsal artifact, or test output can create Forecast Ledger Genesis or authorize a genuine forecast by its presence in the repository.
+```text
+Genesis = NOT STARTED
+Forecast Ledger Genesis = NOT CREATED
+Forecast Ledger = NOT CREATED
+prospective forecast count = 0
+production-qualified provider count = 0
+PRODUCTION_QUALIFIED = NO
+production forecasting = PROHIBITED
+```
