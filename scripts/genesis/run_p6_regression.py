@@ -269,9 +269,21 @@ def main() -> int:
             )
 
         pyproject = tomllib.loads((repo_root / "pyproject.toml").read_text(encoding="utf-8"))
-        declared = pyproject["project"]["optional-dependencies"]["test"]
-        log("declared_test_dependencies=" + json.dumps(declared, separators=(",", ":")))
-        if declared != PINNED_TEST_DEPENDENCIES:
+        declared_runtime = pyproject["project"].get("dependencies", [])
+        declared_test = pyproject["project"]["optional-dependencies"]["test"]
+        log(
+            "declared_runtime_dependencies="
+            + json.dumps(declared_runtime, separators=(",", ":"))
+        )
+        log(
+            "declared_test_dependencies="
+            + json.dumps(declared_test, separators=(",", ":"))
+        )
+        if declared_runtime != []:
+            raise P6Failure(
+                "declared runtime dependency set differs from the frozen P6 expectation"
+            )
+        if declared_test != PINNED_TEST_DEPENDENCIES:
             raise P6Failure(
                 "declared test dependency set differs from the frozen P6 expectation"
             )
@@ -367,15 +379,17 @@ def main() -> int:
 
         log()
         log("execution_result=ALL_MANDATORY_EXECUTION_PASSED_PENDING_INDEPENDENT_REPORT_REVIEW")
-        log("project_P6_PASS=NO_PENDING_INDEPENDENT_REPORT_REVIEW")
-        log("P7=PROHIBITED")
+        log("P6_PASS=NO")
+        log("P6_REPORT_REVIEW=PENDING")
+        log("P7=PROHIBITED_UNTIL_P6_PASS")
     except Exception as exc:
         failed = True
         failure_reason = f"{type(exc).__name__}: {exc}"
         log()
         log("execution_result=FAILED")
-        log("project_P6_PASS=NO")
-        log("P7=PROHIBITED")
+        log("P6_PASS=NO")
+        log("P6_REPORT_REVIEW=NOT_ELIGIBLE")
+        log("P7=PROHIBITED_UNTIL_P6_PASS")
         log(f"failure_reason={failure_reason}")
     finally:
         log()
