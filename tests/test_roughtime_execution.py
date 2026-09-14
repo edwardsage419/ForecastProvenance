@@ -324,11 +324,9 @@ def test_qualified_verifier_timeout_fails_closed(tmp_path, monkeypatch):
         encoding="utf-8",
     )
     binary.chmod(0o755)
-    build = build_profile()
+    build = profile()
     build["binary_sha256"] = hashlib.sha256(binary.read_bytes()).hexdigest()
-    build["profile_sha256"] = hashlib.sha256(
-        canonical_json({key: value for key, value in build.items() if key != "profile_sha256"})
-    ).hexdigest()
+    _rehash(build, "profile_sha256")
     verifier = QualifiedVerifierBackend(binary, build)
     monkeypatch.setattr(verifier, "PROCESS_TIMEOUT_SECONDS", 0.01)
     with pytest.raises(ValueError, match="process timed out"):
