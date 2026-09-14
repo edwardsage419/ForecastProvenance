@@ -28,29 +28,21 @@ P0  project-control transition and non-normative review record                 C
 P1  reconcile Genesis anchoring requirements and single-anchor candidate       COMPLETE
 P2  separate temporal and durability claims from derived eligibility           COMPLETE
 P3  remove unused Genesis v1 dependencies and reduce review/evaluation surface COMPLETE
-P4  establish provider-qualification complexity firewall                       NEXT
-P5  update candidate objects, schemas, validators, tests, readiness controls   PENDING
+P4  establish provider-qualification complexity firewall                       COMPLETE
+P5  consolidated versioned implementation of P1-P4                            NEXT
 P6  rerun complete offline regression and synthetic adversarial suite           PENDING
 P7  reconsider need for Roughtime production qualification only after refreeze PENDING
 P8  separate final pre-Genesis high-level review                               PENDING
 P9  separate explicit Genesis authorization                                    PENDING
 ```
 
-## P0 control record
-
-The workstream transition is recorded in:
-
-`docs/GEN_001_PRE_GENESIS_ARCHITECTURE_COMPRESSION_REVIEW_2026_09_14.md`
-
-P0 changed project control state only and preserved historical semantics.
-
 ## P1 Genesis anchoring reconciliation
 
-P1 design control is recorded in:
+Controlling record:
 
 `docs/GEN_001_GENESIS_ANCHORING_RECONCILIATION_V1.md`
 
-The successor Genesis governance path is:
+Successor governance path:
 
 ```text
 BootstrapGovernanceRoot
@@ -62,13 +54,11 @@ BootstrapGovernanceRoot
 → separate explicit Genesis authorization
 ```
 
-Standalone bootstrap-governance and candidate-manifest anchors are optional audit evidence in the compressed successor design. The mandatory final external evidence subject is the exact signed `ManifestAcceptance`.
-
-P5 must implement the P1 topology with a new versioned acceptance policy and a noncircular final-validation interface.
+The exact signed `ManifestAcceptance` is the mandatory final external-evidence subject. Standalone bootstrap-governance and candidate-manifest anchors are optional audit evidence.
 
 ## P2 temporal claim separation
 
-P2 design control is recorded in:
+Controlling record:
 
 `docs/GEN_001_TEMPORAL_CLAIM_SEPARATION_V1.md`
 
@@ -93,45 +83,27 @@ NOT_APPLICABLE
 
 A stronger claim failure never rewrites a weaker verified historical fact. Bitcoin block header time remains outside the precise civil-time upper-bound role.
 
-For Genesis governance, the exact signed `ManifestAcceptance` is the direct final evidence subject. For Genesis forecast cycles, the direct temporal subjects are the exact `IssuanceCyclePlan`, exact `IssuanceCycleManifest`, and exact `DurabilityVerificationRecord` under the P2 rules.
-
 ## P3 Genesis v1 dependency compression
 
-P3 design control is recorded in:
+Controlling record:
 
 `docs/GEN_001_GENESIS_V1_DEPENDENCY_COMPRESSION_V1.md`
 
-The current v0.5 effective candidate contains 22 normative objects. The compressed successor profile keeps the capabilities actually consumed by the initial deterministic method and selected targets while leaving unused generic Trust Core interfaces dormant.
+Genesis v1 instantiates only capabilities consumed by the initial deterministic method and selected target profile.
 
-### Dormant Genesis v1 capabilities
-
-These capabilities are not instantiated Genesis v1 dependencies or readiness blockers:
+Dormant Trust Core interfaces remain available for successor manifests but are not Genesis v1 dependencies or readiness blockers, including:
 
 ```text
 PublicRandomnessPolicy
 FittedState
-fitted transformation state
-POSTCOMMIT_PUBLIC_RANDOMNESS execution
-EXTERNALLY_AUDITED_ATTEMPTS execution
-closed-model observability paths
-model TrustReport
-model retrieval-accounting paths
-multi-method comparison policy
+fitted model state
+closed-model observability and retrieval paths
+POSTCOMMIT_PUBLIC_RANDOMNESS
+EXTERNALLY_AUDITED_ATTEMPTS
+multi-method comparison machinery
 ```
 
-The generic Trust Core interfaces remain available for successor manifests.
-
-### Human review reduction
-
-Genesis v1 does not instantiate a scientific Human Review Policy.
-
-Official-source conflict, changed layout ambiguity, or insufficient semantic evidence produces `REVIEW_REQUIRED` or `UNRESOLVED`. `REVIEW_REQUIRED` is diagnostic and does not authorize an operator or ReviewDecision to select a resolved value.
-
-P5 must retire historical candidate object `policy:genesis-human-review:v1` by exact predecessor hash in the successor candidate lineage. The historical object remains immutable.
-
-### Evaluation reduction
-
-The only initial method is:
+The only initial method remains:
 
 ```text
 method:last-observed-value:v1
@@ -139,9 +111,9 @@ selection_control_class = DETERMINISTIC_REPLAY
 randomness_policy = NONE
 ```
 
-Because this same method is the current evaluation baseline, baseline deltas are tautologically zero in a one-method Genesis. P3 therefore defers baseline comparison, method comparison, aggregation, significance claims, and similar predictive-skill surfaces until a distinct second method exists.
+Genesis v1 removes the instantiated scientific Human Review Policy from the successor profile. Official-source conflict or semantic ambiguity remains `REVIEW_REQUIRED` or `UNRESOLVED`; no ReviewDecision may select a resolved value under the compressed profile.
 
-The minimum Genesis v1 numerical evaluation is:
+Minimum normative numerical evaluation is:
 
 ```text
 resolved_outcome
@@ -150,7 +122,7 @@ absolute_error
 squared_error
 ```
 
-Cohort integrity remains mandatory. At minimum these denominator classes remain visible:
+Cohort accounting preserves at least:
 
 ```text
 expected
@@ -162,13 +134,79 @@ unresolved
 withdrawn
 ```
 
-P2 temporal claim states remain separately inspectable and cannot be hidden inside a generic nonscorable label.
+The current design target after P5 is 21 effective candidate objects if no additional Genesis-specific policy object is required. Final cardinality must be recomputed from actual P5 dependency closure.
 
-### Successor object-count target
+## P4 provider-qualification complexity firewall
 
-If P1, P2, and P3 are implemented without another Genesis-specific policy object, the expected compressed candidate count after P5 is 21. This is a P3 design target, not a frozen P5 result.
+Controlling record:
 
-The reduction comes from retiring the instantiated Human Review Policy. EvaluationPolicy and AcceptancePolicy are replaced by successor versions and therefore do not reduce cardinality.
+`docs/GEN_001_PROVIDER_QUALIFICATION_COMPLEXITY_FIREWALL_V1.md`
+
+Forecast Trust Core consumes only a small frozen provider-admission interface. Qualification research and workflow machinery remain a supporting subsystem.
+
+### Static manifest boundary
+
+The successor TrustedManifest should bind:
+
+```text
+deadline_receipt_quorum_policy_ref
+provider_profile_refs
+qualification_decision_refs
+qualification_verifier_contract_ref
+```
+
+Genesis v1 binds exactly three ProviderProfiles and exactly three matching QualificationDecisions.
+
+A valid signed QualificationDecision transitively binds the exact frozen criteria, ProviderProfile, qualification evidence-manifest SHA256, verifier build identity, independent review, metadata-review basis, authority, and decision result. TrustedManifest therefore does not duplicate the full qualification workflow or criteria matrix.
+
+### Dynamic historical provider state
+
+A signed production qualification decision is not sufficient for every later deadline event because metadata-review expiry and requalification triggers are time-dependent.
+
+For each consequential deadline event, provider state is recomputed with:
+
+```text
+as_of_utc = frozen_deadline_utc
+```
+
+All three manifest-admitted providers must derive to:
+
+```text
+PRODUCTION_QUALIFIED
+```
+
+before the event can operate as the frozen production-ready three-provider set. The receipt quorum then remains two-of-three.
+
+A provider outage does not lower the receipt threshold. A provider that is expired, blocked, or requires requalification prevents a new Genesis v1 deadline event from receiving the stronger admitted-provider claim.
+
+### Qualification-state input completeness
+
+P4 identified a concrete boundary gap in the existing authoritative state API: the validator recomputes correctly from supplied metadata-review and requalification-event sequences, but the caller currently supplies those sequences and their completeness is not independently closed.
+
+P5 must add a content-closed supporting qualification-state package and authoritative collector/verifier so a retained disqualifying event cannot be silently omitted from the state basis.
+
+The supporting state package is not a new governance policy and does not grant qualification by itself.
+
+The Trust Core adapter consumes an equivalent minimal result:
+
+```text
+provider_profile_ref
+qualification_decision_ref
+qualification_verifier_contract_ref
+qualification_state_package_sha256
+as_of_utc
+qualification_state
+```
+
+Only `qualification_state = PRODUCTION_QUALIFIED` is admissible for a qualifying Genesis v1 deadline event.
+
+### Qualification package terminology
+
+The content-closed initial QualificationEvidencePackage must be finalized before the signed QualificationDecision because the decision binds the evidence-manifest SHA256.
+
+The later signed decision is retained in the broader QualificationRecordSet but cannot also be a file covered by the same pre-decision evidence manifest without circularity.
+
+P5 must align implementation and documentation terminology with this executable ordering without weakening the frozen qualification criteria.
 
 ## Current implementation alignment
 
@@ -176,43 +214,46 @@ The reduction comes from retiring the instantiated Human Review Policy. Evaluati
 P1_ANCHORING_RECONCILIATION = COMPLETE
 P2_TEMPORAL_CLAIM_SEPARATION = COMPLETE
 P3_DEPENDENCY_COMPRESSION = COMPLETE
+P4_PROVIDER_QUALIFICATION_COMPLEXITY_FIREWALL = COMPLETE
 CURRENT_V0_5_CANDIDATE_ALIGNED = NO
 CURRENT_VALIDATOR_ALIGNED = NO
 CURRENT_READINESS_MATRIX_ALIGNED = NO
 CURRENT_EVALUATION_REPORTING_ALIGNED = NO
+CURRENT_PROVIDER_ADMISSION_FIREWALL_ALIGNED = NO
 P5_VERSIONED_IMPLEMENTATION_REQUIRED = YES
 GENESIS_READY = NO
 ```
 
-P1 through P3 are design controls. Historical candidate files, validators, readiness entries, abort conditions, and tests retain their historical behavior until P5 performs the consolidated versioned implementation.
+P1 through P4 are design controls. Historical candidate files, validator semantics, readiness entries, abort conditions, and tests retain their historical behavior until P5 performs the consolidated versioned implementation.
 
-## P4 next gate
+## P5 next gate
 
-P4 establishes the provider-qualification complexity firewall.
+P5 is the first Architecture Compression implementation phase.
 
-The intended boundary is that Forecast Trust Core consumes only a small frozen qualification interface, including exact provider identity/profile, exact qualification decision, qualification criteria identity/version, and retained evidence-package content identity.
+It must implement P1 through P4 together through explicit versioned successor material rather than editing or silently reinterpreting historical candidate objects.
 
-Qualification execution, evidence collection, transport diagnostics, governance review mechanics, requalification workflow, and other supporting internals remain outside the core forecast-validation dependency graph unless a concrete security property requires otherwise.
+P5 covers at least:
 
-P4 does not reopen provider selection, lower qualification criteria, authorize a live provider request, or create a production qualification decision.
+```text
+successor candidate patch and exact object retirement/replacement
+successor AcceptancePolicy
+minimal EvaluationPolicy
+retirement of Genesis Human Review Policy
+TrustedManifest provider-admission fields
+noncircular ManifestAcceptance validation
+P2 temporal claim vector and state vocabulary
+content-closed provider qualification-state package
+qualification-admission adapter
+production receipt provider-profile admission checks
+readiness matrix
+abort conditions
+schemas
+validators
+tests
+adversarial review updates
+```
 
-## Genesis v1 minimum direction
-
-The intended minimum profile remains:
-
-1. a small number of low-frequency targets with reconstructable official schedules;
-2. deterministic issuance schedules and mandatory cycle universe;
-3. one deterministic replayable initial method;
-4. point-in-time `SourceContract` inputs;
-5. complete attempt, retry, failure, and omission accounting;
-6. immutable forecast, correction, resolution, and evaluation-cohort records;
-7. deadline-existence evidence;
-8. durable public anchoring;
-9. exact `ValidatorContract`;
-10. `BootstrapGovernanceRoot`, `TrustedManifest`, and `ManifestAcceptance`;
-11. minimal per-forecast absolute and squared error scoring plus complete denominators.
-
-Unused future capabilities remain available only through successor manifests and versioned policies.
+P5 remains offline and does not execute production qualification.
 
 ## Retained production qualification state
 
@@ -247,6 +288,7 @@ PR mergeability is dynamic and must be rechecked before any later integration ac
 network_authorized = false
 Roughtime provider requests authorized by this state = 0
 RFC3161 requests authorized by this state = 0
+production qualification requests authorized by this state = 0
 ```
 
 No prior rehearsal or qualification authorization may be reused.
