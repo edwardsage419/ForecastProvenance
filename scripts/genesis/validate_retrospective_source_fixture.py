@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 from typing import Any, Mapping
 
-from forecast_trust_core.canonical import parse_json_strict, seal_object
+from forecast_trust_core.canonical import parse_json_strict, require_utc_timestamp, seal_object
 from forecast_trust_core.genesis_sources import (
     adapt_bea_real_gdp_advance_html,
     adapt_bls_cpi_html,
@@ -111,10 +111,18 @@ def validate_fixture(fixture_dir: Path) -> dict:
         raise ValueError("fixture metadata classification is not retrospective rehearsal")
     if metadata.get("prospective_eligible") is not False:
         raise ValueError("fixture metadata must remain non-prospective")
-    if metadata.get("raw_filename") not in (None, "artifact.html"):
+    if metadata.get("raw_filename") != "artifact.html":
         raise ValueError("fixture metadata raw_filename must identify artifact.html")
-    if "raw_byte_length" in metadata and metadata.get("raw_byte_length") != len(raw):
+    if metadata.get("raw_byte_length") != len(raw):
         raise ValueError("raw artifact byte length differs from metadata")
+    retrieved_at = metadata.get("retrieved_at")
+    try:
+        require_utc_timestamp(retrieved_at)
+    except Exception as exc:
+        raise ValueError("fixture metadata retrieved_at must be canonical UTC") from exc
+    content_type = metadata.get("content_type")
+    if not isinstance(content_type, str) or not content_type.strip():
+        raise ValueError("fixture metadata content_type missing")
     if metadata.get("raw_sha256") != raw_sha:
         raise ValueError("raw artifact SHA256 differs from metadata")
 
