@@ -263,6 +263,8 @@ The authoritative collector must scan the deterministic retained provider-state 
 
 The package/verifier must reject missing, unexpected, duplicate, mismatched, or hash-invalid retained state events.
 
+The package is supporting evidence, not an authority or policy object. It cannot grant qualification by its presence or by a self-asserted state.
+
 No custom transparency log is introduced.
 
 ### Provider state at a deadline event
@@ -312,6 +314,8 @@ QualificationEvidencePackage
 
 The signed decision binds the pre-decision evidence-manifest SHA256. Do not create a circular requirement that the same manifest also cover the later decision bytes.
 
+This is a correctness clarification of package boundaries, not a weakening of `FPP_ROUGHTIME_PRODUCTION_QUALIFICATION_V1`.
+
 ## Schemas and validator surfaces
 
 P5 must identify and version every schema or validation path whose semantics change.
@@ -329,6 +333,8 @@ candidate materialization and exact dependency closure
 ```
 
 Historical schema versions remain retained.
+
+Any change to an existing qualification-supporting schema or validator must be explicitly compatibility-scoped. No production QualificationDecision currently exists, so a concrete correctness repair may introduce a successor schema/contract without migrating a production-qualified provider, but the frozen qualification criteria must not be weakened.
 
 ## Readiness matrix
 
