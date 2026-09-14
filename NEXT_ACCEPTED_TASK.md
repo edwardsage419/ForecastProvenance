@@ -1,31 +1,440 @@
 # Next Accepted Task
 
-Task ID: GEN_001-AC-P4
-State: PRE_GENESIS ARCHITECTURE COMPRESSION; P4 PROVIDER-QUALIFICATION COMPLEXITY FIREWALL; NETWORK REQUEST NOT AUTHORIZED
+Task ID: GEN_001-AC-P5
+State: PRE_GENESIS ARCHITECTURE COMPRESSION; P5 CONSOLIDATED VERSIONED IMPLEMENTATION; NETWORK REQUEST NOT AUTHORIZED
 
 ## Objective
 
-Establish a strict boundary between Forecast Trust Core and the provider-qualification supporting subsystem so Genesis v1 consumes only the minimum frozen qualification outputs required to validate deadline evidence.
+Implement the accepted P1 through P4 Architecture Compression decisions as one coherent versioned successor Genesis candidate.
 
-P4 is a design and dependency-reconciliation task. It does not execute production qualification, change the frozen production qualification criteria, request live provider evidence, or qualify any provider.
+P5 is the first implementation phase after the design-control sequence. It must update candidate objects, schemas, validators, readiness controls, abort conditions, tests, and adversarial review together so the resulting compressed profile has one internally consistent security meaning.
 
-Candidate objects, schemas, validator implementation, readiness matrix, abort conditions, and full tests are updated together later in P5.
+P5 remains pre-Genesis and offline. It does not execute production provider qualification, authorize a provider request, create Genesis, create Forecast Ledger state, or issue a prospective forecast.
 
-## P1 through P3 boundary already established
+## Controlling design records
 
-P1 design control:
+P1:
 
 `docs/GEN_001_GENESIS_ANCHORING_RECONCILIATION_V1.md`
 
-P2 design control:
+P2:
 
 `docs/GEN_001_TEMPORAL_CLAIM_SEPARATION_V1.md`
 
-P3 design control:
+P3:
 
 `docs/GEN_001_GENESIS_V1_DEPENDENCY_COMPRESSION_V1.md`
 
-P4 must preserve all accepted P1 through P3 properties.
+P4:
+
+`docs/GEN_001_PROVIDER_QUALIFICATION_COMPLEXITY_FIREWALL_V1.md`
+
+P5 must preserve every accepted security property in these records.
+
+## Historical candidate boundary
+
+The current effective historical candidate remains:
+
+```text
+candidate_object_set_v0_2.json
++ candidate_patch_v0_3.json
++ candidate_patch_v0_4.json
++ candidate_patch_v0_5.json
+```
+
+Current effective object count:
+
+```text
+22
+```
+
+These files are immutable historical candidate material.
+
+P5 must create explicit successor patch material. It must not edit, replace in place, or silently reinterpret any predecessor object.
+
+Retirement and replacement must bind exact predecessor `content_sha256` values.
+
+## P1 implementation requirements
+
+### Acceptance policy
+
+Create a successor AcceptancePolicy with a new semantic policy ID/version.
+
+The successor policy must encode at least:
+
+```text
+intermediate_anchor_rule = OPTIONAL_AUDIT_ONLY
+final_external_evidence_required = true
+final_external_evidence_subject = SIGNED_MANIFEST_ACCEPTANCE
+final_external_evidence_role = EXTERNAL_FINAL_VALIDATION_INPUT
+bootstrap_root_source = EXTERNAL_TO_CANDIDATE_MANIFEST_GRAPH
+blocking_findings_rule = MUST_BE_EMPTY_FOR_ACCEPT
+first_execution_rule = STRICTLY_AFTER_FINAL_VALIDATION_AND_EXPLICIT_GENESIS_AUTHORIZATION
+```
+
+Retire or replace historical `policy:genesis-acceptance:v1` by exact predecessor hash.
+
+### ManifestAcceptance
+
+Version the ManifestAcceptance schema/validator so the signed object does not require a self-reference to the later final evidence package.
+
+The signed acceptance must bind at least:
+
+```text
+candidate_manifest_ref
+bootstrap_governance_root_ref
+acceptance_rule_ref
+required_validation_report_refs
+authority_ref
+decision
+reason_codes
+blocking_finding_refs_or_empty
+signature_or_signature_ref
+```
+
+Independent final validation receives the final external evidence package separately and requires:
+
+```text
+final_evidence_subject_ref == signed_manifest_acceptance_ref
+```
+
+Optional intermediate bootstrap or manifest anchors cannot satisfy a missing final acceptance anchor.
+
+## P2 implementation requirements
+
+Implement independent derived claims:
+
+```text
+EXTERNAL_EXISTENCE_BOUND_VERIFIED
+DEADLINE_EXISTENCE_VERIFIED
+BITCOIN_DURABILITY_VERIFIED
+PRE_OUTCOME_DURABILITY_VERIFIED
+CONFIRMATORY_PROSPECTIVE_ELIGIBLE
+```
+
+Claim states:
+
+```text
+VERIFIED
+FAILED
+UNRESOLVED
+NOT_APPLICABLE
+```
+
+A stronger claim failure must never rewrite a weaker verified historical fact.
+
+Missing or pending evidence remains `UNRESOLVED` until the applicable frozen rule makes the claim deterministically decidable.
+
+Bitcoin block header time must not become a precise civil-time upper bound.
+
+### Genesis governance mapping
+
+The exact signed ManifestAcceptance is the final governance evidence subject.
+
+Genesis governance final validation requires separate verified external existence and Bitcoin durability facts.
+
+`PRE_OUTCOME_DURABILITY_VERIFIED` and `CONFIRMATORY_PROSPECTIVE_ELIGIBLE` are `NOT_APPLICABLE` to ManifestAcceptance.
+
+### Forecast-cycle mapping
+
+Direct Genesis v1 temporal subjects are:
+
+```text
+IssuanceCyclePlan
+IssuanceCycleManifest
+DurabilityVerificationRecord
+```
+
+The exact IssuanceCycleManifest is the forecast-deadline subject and binds complete slot accounting plus exact issued-forecast references.
+
+## P3 implementation requirements
+
+### Dormant unused capability
+
+Do not instantiate Genesis v1 dependencies for:
+
+```text
+PublicRandomnessPolicy
+FittedState
+fitted model state
+POSTCOMMIT_PUBLIC_RANDOMNESS
+EXTERNALLY_AUDITED_ATTEMPTS
+closed-model observability/retrieval paths
+multi-method comparison machinery
+```
+
+Generic Trust Core interfaces may remain for successor manifests.
+
+### Human review
+
+Retire historical `policy:genesis-human-review:v1` by exact predecessor hash from the successor effective Genesis profile.
+
+Genesis v1 official-source conflict or semantic ambiguity produces deterministic `REVIEW_REQUIRED` or `UNRESOLVED` states. No ReviewDecision may select a resolved value under the compressed Genesis v1 profile.
+
+### Evaluation
+
+Replace `policy:genesis-evaluation:v1` with a minimal successor evaluation policy.
+
+Minimum normative numerical output:
+
+```text
+resolved_outcome
+forecast_value
+absolute_error
+squared_error
+```
+
+Do not include baseline delta, method comparison, aggregate predictive-skill claims, significance, calibration, or leaderboard semantics.
+
+Cohort accounting must preserve at least:
+
+```text
+expected
+issued
+failed
+omitted
+ineligible
+unresolved
+withdrawn
+```
+
+P2 temporal claim states remain separately reportable.
+
+### Candidate cardinality
+
+P3 design target is 21 effective objects if P5 introduces no additional Genesis-specific normative policy object.
+
+P5 must recompute exact dependency closure and object count rather than force the target. A different count is acceptable only when justified by an actual required object.
+
+## P4 implementation requirements
+
+### TrustedManifest provider boundary
+
+Add exact bindings for:
+
+```text
+deadline_receipt_quorum_policy_ref
+provider_profile_refs
+qualification_decision_refs
+qualification_verifier_contract_ref
+```
+
+Genesis v1 requires exactly three ProviderProfiles and three matching QualificationDecisions.
+
+The manifest must not enumerate individual qualification research captures, criteria checks, execution artifacts, or workflow records.
+
+### Qualification decision transitive binding
+
+The pinned qualification verifier must verify through each signed QualificationDecision:
+
+```text
+frozen criteria identity and SHA256
+exact ProviderProfile
+qualification evidence-manifest SHA256
+verifier build and binary identity
+independent qualification review
+metadata-review basis
+authority identity and signature
+decision_result
+```
+
+The Trust Core manifest need not duplicate those fields when the transitive validation is exact and fail-closed.
+
+### Dynamic qualification-state package
+
+Add a content-closed supporting provider-state package boundary.
+
+Working semantic requirements:
+
+```text
+provider_id
+as_of_utc
+provider_profile_ref
+qualification_decision_ref
+qualification_evidence_manifest_sha256
+qualification_verifier_contract_ref
+qualification_state_report_sha256
+complete metadata-review state inputs through as_of_utc
+complete requalification-event state inputs through as_of_utc
+content-closed package manifest SHA256
+```
+
+The authoritative collector must scan the deterministic retained provider-state store. Caller-selected event subsets are not an authoritative input.
+
+The package/verifier must reject missing, unexpected, duplicate, mismatched, or hash-invalid retained state events.
+
+No custom transparency log is introduced.
+
+### Provider state at a deadline event
+
+For every consequential wall-clock event:
+
+```text
+as_of_utc = frozen_deadline_utc
+```
+
+All three manifest-admitted provider states must recompute to:
+
+```text
+PRODUCTION_QUALIFIED
+```
+
+before the event can use the frozen production-ready three-provider pool.
+
+The receipt quorum remains:
+
+```text
+at_least_two_of_three_qualifying_receipts
+```
+
+One provider outage never lowers the threshold.
+
+A non-qualified third provider cannot be silently ignored to create an operational two-of-two qualified pool.
+
+### Production receipt validation
+
+Scientific receipt validation must use the exact manifest-admitted ProviderProfile rather than mutable current provider metadata or provider ID alone.
+
+Validate all profile-dependent receipt facts including root key, wire/version semantics, packet/transport/nonce profile, verifier identity, and no-fallback rule.
+
+The profile used by the receipt must equal the profile bound by its QualificationDecision and dynamic qualification-state package.
+
+### Qualification package terminology
+
+Preserve executable ordering:
+
+```text
+QualificationEvidencePackage
+→ independent review
+→ signed QualificationDecision
+→ later QualificationRecordSet and dynamic state history
+```
+
+The signed decision binds the pre-decision evidence-manifest SHA256. Do not create a circular requirement that the same manifest also cover the later decision bytes.
+
+## Schemas and validator surfaces
+
+P5 must identify and version every schema or validation path whose semantics change.
+
+At minimum review and update where applicable:
+
+```text
+ManifestAcceptance
+TrustedManifest
+ValidationReport / temporal claim result structure
+Evaluation output/cohort reporting
+provider qualification-state package
+production Roughtime receipt/admission path
+candidate materialization and exact dependency closure
+```
+
+Historical schema versions remain retained.
+
+## Readiness matrix
+
+Update readiness controls so the compressed profile closes the actual required gates without resurrecting dormant capability.
+
+At minimum retain independent closure for:
+
+```text
+BootstrapGovernanceRoot
+TrustedManifest
+ValidatorContract
+required validation reports
+owner signature
+final signed-ManifestAcceptance external evidence
+independent final validation
+separate Genesis authorization gate
+three exact ProviderProfiles
+three valid signed QualificationDecisions
+qualification-verifier contract
+qualification evidence-package retention
+provider-state package recomputation
+initial target/source/parser readiness
+OTS Bitcoin strong verification readiness
+```
+
+Do not create readiness rows for unused randomness, FittedState, closed-model, multi-method, or scientific human-review capability.
+
+## Abort conditions
+
+Update abort controls to fail closed on at least:
+
+```text
+missing/invalid/wrong-subject final ManifestAcceptance evidence
+bootstrap/manifest/acceptance/report binding mismatch
+P2 required temporal claim FAILED or UNRESOLVED where stronger eligibility requires VERIFIED
+missing mandatory cycle or incomplete slot accounting
+future information or point-in-time violation
+provider profile/decision mismatch
+qualification criteria/evidence binding mismatch
+provider non-PRODUCTION_QUALIFIED at applicable as_of
+qualification-state package incompleteness
+wrong provider root/wire/verifier identity
+frozen three-provider set not established
+```
+
+Optional intermediate Genesis audit anchor failure must not block the compressed profile.
+
+## Required P5 tests
+
+Add focused tests for all new semantics before P6 full regression.
+
+At minimum include:
+
+```text
+noncircular ManifestAcceptance final evidence path
+wrong final evidence subject rejection
+optional intermediate anchor cannot substitute for final evidence
+weaker P2 claim preserved when stronger claim fails
+UNRESOLVED evidence cannot aggregate to stronger VERIFIED claim
+Bitcoin block time rejected as civil-time upper bound
+cycle-manifest deadline subject binding
+retired Human Review Policy absent from effective successor candidate
+ambiguous resolution remains unresolved/review-required without value selection
+minimal evaluation exact errors and denominator preservation
+candidate dependency closure and exact predecessor retire/replace hashes
+three-provider admission plus two-of-three receipt quorum
+rehearsal-only provider cannot qualify
+expired provider blocks new event
+requalification trigger before as_of blocks event
+later trigger does not rewrite earlier state
+future clean metadata review cannot rescue earlier as_of
+omitted retained qualification-state event rejected
+forged qualification state report rejected
+profile/decision/criteria/evidence hash mismatch rejection
+wrong provider root/wire/verifier rejection
+duplicate provider identity cannot count twice
+one non-qualified provider prevents production-ready three-member set
+```
+
+P6 remains responsible for the complete repository regression and synthetic adversarial suite after P5 implementation stabilizes.
+
+## P5 completion conditions
+
+P5 is complete only when:
+
+1. successor candidate material is explicit and append-only;
+2. P1 through P4 semantics are implemented consistently across objects, schemas, validators, readiness controls, abort conditions, and focused tests;
+3. no historical candidate object is silently reinterpreted;
+4. exact dependency closure passes targeted offline validation;
+5. P6 can run the full regression without unresolved design ambiguity;
+6. Genesis remains not started and provider qualification remains unexecuted.
+
+## Out of scope
+
+P5 does not:
+
+1. execute production provider qualification;
+2. request Roughtime or RFC3161 traffic;
+3. qualify any provider;
+4. create the final owner ProviderProfile or QualificationDecision;
+5. access the Genesis private key;
+6. construct or authorize Forecast Ledger Genesis;
+7. issue a prospective forecast;
+8. merge PR #6;
+9. change the frozen provider criteria to make qualification easier;
+10. reopen deferred stochastic, closed-model, universal forecasting, or Product Layer features.
 
 ## Retained qualification state
 
@@ -38,121 +447,6 @@ PRODUCTION_QUALIFIED = NO
 PRODUCTION_QUALIFICATION_EXECUTION = NOT_READY
 ACTIVE_MAINLINE = PAUSED
 ```
-
-The completed provider exercise remains permanently:
-
-```text
-classification = NON_FORECAST_REHEARSAL
-prospective_eligible = false
-```
-
-P4 cannot promote it or use it as an authorization for another request.
-
-## Firewall design target
-
-Forecast Trust Core should consume a small content-addressed qualification boundary rather than the full qualification workflow.
-
-The expected minimum consumed interface is approximately:
-
-```text
-ProviderProfile exact full reference
-QualificationDecision exact full reference
-qualification criteria ID and version/hash
-qualification evidence package or manifest full hash
-qualification state required by the active deadline-receipt policy
-```
-
-The exact P4 record must determine which of these are mandatory and whether any can be transitively bound by another object without loss of independent verification.
-
-## Supporting-subsystem internals
-
-The following are presumptively outside the Forecast Trust Core dependency graph unless P4 finds a specific security property that requires direct consumption:
-
-```text
-provider discovery workflow
-metadata collection workflow
-network transport diagnostics
-rehearsal orchestration
-qualification execution orchestration
-review workflow mechanics
-individual raw evidence-file enumeration in the TrustedManifest
-requalification scheduling machinery
-operator research notes
-provider continuity monitoring implementation
-build and packaging workflow internals beyond frozen verifier identity
-```
-
-These materials remain retained where required for independent qualification verification. Exclusion from the Trust Core graph does not authorize deletion or weaken the frozen qualification criteria.
-
-## Accepted P4 execution
-
-1. Inventory every current provider-qualification object, schema, validator, readiness item, candidate dependency, and report that could leak qualification subsystem complexity into Genesis Trust Core.
-2. Identify the exact security properties Forecast Trust Core needs from a provider qualification result.
-3. Define the smallest frozen qualification output interface that preserves those properties.
-4. Determine whether `ProviderProfile`, `QualificationDecision`, criteria identity, and evidence-package hash provide sufficient transitive binding.
-5. Identify which qualification internals remain supporting evidence and which must be directly referenced by a final provider profile or qualification decision.
-6. Ensure the active deadline receipt validator can determine whether a receipt provider was admitted at the historical cycle without re-running governance research or provider discovery.
-7. Preserve exact provider key, protocol/wire profile, endpoint or identity rules, operational authority, and independence assumptions required by the active quorum policy.
-8. Preserve fail-closed handling of stale, revoked, superseded, requalified, or mismatched provider state.
-9. Prevent future qualification feature growth from automatically expanding the Forecast Trust Core manifest schema.
-10. Identify every P5 object, schema, validator, readiness, abort-condition, and test change required to implement the firewall.
-11. Keep all work offline.
-
-## Required security properties
-
-The firewall must preserve at least:
-
-1. exact provider identity and cryptographic root binding;
-2. exact protocol and wire-profile identity where required by receipt verification;
-3. exact qualification criteria identity and version;
-4. explicit qualification decision under the accepted authority model;
-5. content identity of the retained evidence package sufficient to independently verify that decision;
-6. provider-group independence classification required by the two-of-three quorum;
-7. key rotation and standards-transition fail-closed behavior;
-8. historical provider state selection by exact content identity rather than current provider metadata;
-9. no automatic promotion of rehearsal evidence into production qualification;
-10. no lowering of the frozen qualification standard to simplify Genesis.
-
-## Complexity firewall rule
-
-A new provider-qualification feature should change Forecast Trust Core only when the core needs a new security fact that cannot be represented by the existing frozen qualification output interface.
-
-Changes to evidence collection, diagnostics, research workflow, operator review notes, or qualification automation should remain inside the qualification subsystem when the final frozen outputs are unchanged.
-
-This rule is intended to prevent the provider qualification subsystem from becoming a second governance platform inside the Forecast Trust Core.
-
-## P4 out of scope
-
-P4 does not:
-
-1. select a new provider;
-2. remove or weaken the frozen two-of-three quorum;
-3. change `FPP_ROUGHTIME_PRODUCTION_QUALIFICATION_V1`;
-4. execute live repeatability;
-5. make a QualificationDecision;
-6. seal a production ProviderProfile;
-7. reopen Roughtime wire or verifier engineering absent a concrete correctness/security defect;
-8. reopen RFC3161 engineering;
-9. modify P1 anchoring, P2 temporal claims, or P3 dependency/evaluation decisions;
-10. authorize Genesis or prospective forecasting.
-
-## P5 handoff requirement
-
-P4 must end with an explicit implementation map for P5 covering at least:
-
-```text
-TrustedManifest provider references
-ProviderProfile schema/profile boundary
-QualificationDecision references
-qualification evidence package binding
-historical provider-state selection
-receipt validator admission checks
-readiness matrix entries
-abort conditions
-tests for stale/mismatched/unqualified providers
-```
-
-P5 then implements P1 through P4 together as one versioned compressed Genesis candidate rather than incrementally mutating historical candidate semantics.
 
 ## Network boundary
 
