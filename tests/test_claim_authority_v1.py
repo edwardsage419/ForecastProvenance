@@ -324,6 +324,37 @@ def test_hash_pinned_local_strong_verifier_recomputes_bitcoin_claim(tmp_path):
 
 
 @pytest.mark.skipif(os.name == "nt", reason="synthetic executable fixture is POSIX")
+def test_strong_bitcoin_verifier_executes_verified_bytes_after_source_path_replacement(tmp_path):
+    subject, validator, bundle, proof, exe, contract = make_bitcoin_fixture(tmp_path, verified=True)
+    contract_ref, pinned = authority._validate_bitcoin_verifier_contract(
+        contract,
+        expected_contract_ref=ref(contract),
+        executable=exe,
+    )
+    assert contract_ref == ref(contract)
+    exe.write_text(
+        "#!/usr/bin/env python3\n"
+        "import json,sys\n"
+        "r=json.load(sys.stdin)\n"
+        "o={"
+        "'schema_version':'1.0','action':'verify-bitcoin-durability',"
+        "'verification_mode':'OWNER_CONTROLLED_BITCOIN_CORE',"
+        "'bundle_sha256':r['bundle_sha256'],'proof_sha256':r['proof_sha256'],"
+        "'verified':False,'reason_code':'REPLACED_PATH_EXECUTED'"
+        "}\njson.dump(o,sys.stdout,separators=(',',':'),sort_keys=True)\n",
+        encoding="utf-8",
+    )
+    exe.chmod(0o755)
+    output = authority._run_bitcoin_verifier(
+        contract,
+        executable=pinned,
+        bundle_bytes=authority.canonical_json(dict(bundle)),
+        proof_bytes=base64.b64decode(proof["proof_base64"], validate=True),
+    )
+    assert output["verified"] is True
+
+
+@pytest.mark.skipif(os.name == "nt", reason="synthetic executable fixture is POSIX")
 def test_failed_strong_bitcoin_verifier_produces_failed_durability(tmp_path):
     subject, validator, bundle, proof, exe, contract = make_bitcoin_fixture(tmp_path, verified=False)
     result = authority.recompute_bitcoin_durability_claim_authoritatively(
