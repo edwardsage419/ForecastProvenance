@@ -211,6 +211,37 @@ def test_qualification_contract_cannot_bind_different_main_validator(monkeypatch
         )
 
 
+def test_extra_provider_authority_input_is_rejected(monkeypatch):
+    fx = fixture()
+    patch_pinned_verifier(monkeypatch)
+    fx["wall"]["provider_authority_inputs"]["p-extra"] = {}
+    with pytest.raises(ValueError, match="exactly match the admitted provider identity set"):
+        trust_root.bind_wall_clock_inputs_to_manifest(
+            fx["manifest"],
+            fx["wall"],
+            qualification_authority_id=AUTHORITY_ID,
+            qualification_authority_public_key=AUTHORITY_PUBLIC_KEY,
+        )
+
+
+def test_state_package_provider_identity_set_must_match_profiles(monkeypatch):
+    fx = fixture()
+    patch_pinned_verifier(monkeypatch)
+    fx["wall"]["qualification_state_packages"][2] = sealed(
+        "RoughtimeProviderQualificationStatePackage",
+        "state:wrong-provider:v1",
+        provider_id="other-provider",
+        qualification_decision_ref=ref(fx["decisions"][2]),
+    )
+    with pytest.raises(ValueError, match="provider identities differ from ProviderProfiles"):
+        trust_root.bind_wall_clock_inputs_to_manifest(
+            fx["manifest"],
+            fx["wall"],
+            qualification_authority_id=AUTHORITY_ID,
+            qualification_authority_public_key=AUTHORITY_PUBLIC_KEY,
+        )
+
+
 def test_exact_binding_injects_only_pinned_authority(monkeypatch):
     fx = fixture()
     sentinel = patch_pinned_verifier(monkeypatch)
