@@ -14,6 +14,7 @@ from ._roughtime_support import _parse_precise_utc_ns, derive_nonce_v2_hex
 from .architecture_compression_v1 import (
     _claim,
     derive_bitcoin_durability_claim,
+    validate_derived_claim_vector,
     validate_final_genesis_acceptance,
 )
 from .architecture_compression_v1_hardening import (
@@ -216,8 +217,8 @@ def recompute_external_existence_claim_authoritatively(
 ) -> WallClockRecomputation:
     """Recompute wall-clock claims from exact retained evidence. No claim state is accepted as input."""
     subject_ref = _exact_ref(subject)
-    _require_ref_equal(validator_contract_ref, expected_validator_contract_ref, "active ValidatorContract")
     try:
+        _require_ref_equal(validator_contract_ref, expected_validator_contract_ref, "active ValidatorContract")
         bundle_ref = _validate_bundle(
             bundle,
             subject_ref=subject_ref,
@@ -228,6 +229,9 @@ def recompute_external_existence_claim_authoritatively(
             validator_contract_ref=validator_contract_ref,
         )
         bundle_deadline = str(bundle["receipt_quorum_deadline_utc"])
+        bundle_origin = bundle.get("origin_class")
+        if any(receipt.get("origin_class") != bundle_origin for receipt in receipt_evidence):
+            raise ValueError("receipt evidence origin class differs from its bundle")
         if claim_deadline_utc is not None and claim_deadline_utc != bundle_deadline:
             raise ValueError("claim deadline differs from frozen receipt quorum deadline")
 
@@ -424,10 +428,13 @@ def recompute_bitcoin_durability_claim_authoritatively(
     """Execute the exact hash-pinned local strong verifier over exact bundle/proof bytes."""
     subject_ref = _exact_ref(subject)
     _require_ref_equal(validator_contract_ref, expected_validator_contract_ref, "active ValidatorContract")
+    _validate_origin_evidence(bundle, "ExternalTimeEvidenceBundle")
     bundle_ref = _exact_ref(bundle, object_type="ExternalTimeEvidenceBundle")
     _require_ref_equal(bundle.get("subject_ref"), subject_ref, "Bitcoin bundle subject")
     _require_ref_equal(bundle.get("validator_contract_ref"), validator_contract_ref, "Bitcoin bundle validator contract")
     _validate_origin_evidence(proof_artifact, "OpenTimestampsProofArtifact")
+    if proof_artifact.get("origin_class") != bundle.get("origin_class"):
+        raise ValueError("OTS proof origin class differs from its bundle")
     proof_ref = _exact_ref(proof_artifact)
     _require_ref_equal(proof_artifact.get("external_time_evidence_bundle_ref"), bundle_ref, "OTS proof bundle")
     proof_bytes = _decode_canonical_base64(proof_artifact.get("proof_base64"), "proof_base64")
@@ -505,6 +512,8 @@ def build_validation_report_v2(
         str(item.get("subject_ref", {}).get("object_id")),
         str(item.get("subject_ref", {}).get("content_sha256")),
     ))
+    if not validate_derived_claim_vector(claims).valid:
+        raise ValueError("derived claim vector is structurally invalid")
     payload: dict[str, Any] = {
         "schema_version": "2.0",
         "validator_contract_ref": dict(validator_contract_ref),
@@ -541,6 +550,140 @@ def compare_persisted_validation_report_to_recomputed(
     return aggregate(checks)
 
 
+def _require_live_wall_inputs(inputs: Mapping[str, Any]) -> None:
+    bundle = inputs.get("bundle")
+    _validate_origin_evidence(bundle, "ExternalTimeEvidenceBundle")
+    if bundle.get("origin_class") != "LIVE_OPERATIONAL":
+        raise ValueError("production readiness requires LIVE_OPERATIONAL wall-clock bundle")
+    receipts = inputs.get("receipt_evidence")
+    if not isinstance(receipts, Sequence) or isinstance(receipts, (str, bytes, bytearray)):
+        raise ValueError("wall-clock receipt evidence must be a sequence")
+    for receipt in receipts:
+        _validate_origin_evidence(receipt, "RoughtimeProductionReceiptEvidence")
+        if receipt.get("origin_class") != "LIVE_OPERATIONAL":
+            raise ValueError("production readiness requires LIVE_OPERATIONAL Roughtime evidence")
+
+
+def _require_live_bitcoin_inputs(inputs: Mapping[str, Any]) -> None:
+    bundle = inputs.get("bundle")
+    proof = inputs.get("proof_artifact")
+    _validate_origin_evidence(bundle, "ExternalTimeEvidenceBundle")
+    _validate_origin_evidence(proof, "OpenTimestampsProofArtifact")
+    if bundle.get("origin_class") != "LIVE_OPERATIONAL" or proof.get("origin_class") != "LIVE_OPERATIONAL":
+        raise ValueError("production readiness requires LIVE_OPERATIONAL Bitcoin evidence")
+    if bundle.get("origin_class") != proof.get("origin_class"):
+        raise ValueError("Bitcoin proof origin class differs from its bundle")
+
+
+def _genesis_non_scientific_claims(subject_ref: Mapping[str, Any]) -> tuple[Mapping[str, Any], Mapping[str, Any]]:
+    pre_outcome = _claim(
+        "PRE_OUTCOME_DURABILITY_VERIFIED",
+        subject_ref,
+        "NOT_APPLICABLE",
+        reason_codes=("NO_OUTCOME_INFORMATION_BARRIER",),
+    )
+    scientific = _claim(
+        "CONFIRMATORY_PROSPECTIVE_ELIGIBLE",
+        subject_ref,
+        "NOT_APPLICABLE",
+        reason_codes=("SCIENTIFIC_ELIGIBILITY_NOT_APPLICABLE",),
+    )
+    return pre_outcome, scientific
+
+
+def _collect_authority_dependency_refs(value: Any) -> list[dict[str, str]]:
+    found: dict[tuple[str, str], dict[str, str]] = {}
+
+    def visit(item: Any) -> None:
+        if isinstance(item, Mapping):
+            if verify_sealed_object(item):
+                exact = _exact_ref(item)
+                found[(exact["object_id"], exact["content_sha256"])] = exact
+                return
+            if set(item) == {"object_id", "content_sha256"}:
+                try:
+                    validate_ref(item)
+                except CanonicalizationError:
+                    return
+                exact = {"object_id": item["object_id"], "content_sha256": item["content_sha256"]}
+                found[(exact["object_id"], exact["content_sha256"])] = exact
+                return
+            for child in item.values():
+                visit(child)
+        elif isinstance(item, Sequence) and not isinstance(item, (str, bytes, bytearray)):
+            for child in item:
+                visit(child)
+
+    visit(value)
+    return sorted_refs(found.values())
+
+
+def validate_persisted_final_acceptance_report_authoritatively(
+    persisted_report: Mapping[str, Any],
+    acceptance: Mapping[str, Any],
+    *,
+    final_evidence_subject_ref: Mapping[str, Any],
+    wall_clock_inputs: Mapping[str, Any],
+    bitcoin_inputs: Mapping[str, Any],
+    trusted_manifest_ref: Mapping[str, Any],
+) -> tuple[Validation, Mapping[str, Any]]:
+    """Recompute final evidence from raw inputs before comparing a persisted ValidationReport."""
+    validation, claims, strong_report = validate_final_genesis_acceptance_authoritatively(
+        acceptance,
+        final_evidence_subject_ref=final_evidence_subject_ref,
+        wall_clock_inputs=wall_clock_inputs,
+        bitcoin_inputs=bitcoin_inputs,
+    )
+    validator_ref = wall_clock_inputs["validator_contract_ref"]
+    _require_ref_equal(bitcoin_inputs["validator_contract_ref"], validator_ref, "final report ValidatorContract")
+    dependencies = _collect_authority_dependency_refs(
+        {
+            "wall": wall_clock_inputs,
+            "bitcoin": bitcoin_inputs,
+            "strong_report": strong_report,
+        }
+    )
+    recomputed = build_validation_report_v2(
+        acceptance,
+        validator_contract_ref=validator_ref,
+        trusted_manifest_ref=trusted_manifest_ref,
+        dependency_refs=dependencies,
+        validation=validation,
+        derived_claims=claims,
+    )
+    return compare_persisted_validation_report_to_recomputed(persisted_report, recomputed), recomputed
+
+
+def validate_persisted_cycle_plan_report_authoritatively(
+    persisted_report: Mapping[str, Any],
+    plan: Mapping[str, Any],
+    *,
+    required_slots: Sequence[Mapping[str, Any]],
+    required_schedule_policy_ref: Mapping[str, Any],
+    wall_clock_inputs: Mapping[str, Any],
+    trusted_manifest_ref: Mapping[str, Any],
+) -> tuple[Validation, Mapping[str, Any]]:
+    """Recompute cycle-plan time claims from raw evidence before report equality."""
+    validation, wall = validate_cycle_plan_authoritatively(
+        plan,
+        required_slots=required_slots,
+        required_schedule_policy_ref=required_schedule_policy_ref,
+        wall_clock_inputs=wall_clock_inputs,
+    )
+    dependencies = _collect_authority_dependency_refs(
+        {"wall": wall_clock_inputs, "schedule_policy_ref": required_schedule_policy_ref, "required_slots": required_slots}
+    )
+    recomputed = build_validation_report_v2(
+        plan,
+        validator_contract_ref=wall_clock_inputs["validator_contract_ref"],
+        trusted_manifest_ref=trusted_manifest_ref,
+        dependency_refs=dependencies,
+        validation=validation,
+        derived_claims=(wall.external_existence_claim, wall.deadline_existence_claim),
+    )
+    return compare_persisted_validation_report_to_recomputed(persisted_report, recomputed), recomputed
+
+
 def validate_cycle_plan_authoritatively(
     plan: Mapping[str, Any],
     *,
@@ -551,6 +694,7 @@ def validate_cycle_plan_authoritatively(
     """Successor path: raw existence bounds are not accepted."""
     if not verify_sealed_object(plan):
         raise ValueError("successor cycle plan must be a valid sealed object")
+    _require_live_wall_inputs(wall_clock_inputs)
     wall = recompute_external_existence_claim_authoritatively(
         plan,
         claim_deadline_utc=str(plan["plan_commitment_deadline"]),
@@ -582,6 +726,8 @@ def validate_final_genesis_acceptance_authoritatively(
     """Final Genesis validation from raw evidence only; no state strings are accepted."""
     acceptance_ref = _exact_ref(acceptance, object_type="ManifestAcceptance")
     _require_ref_equal(final_evidence_subject_ref, acceptance_ref, "final evidence subject")
+    _require_live_wall_inputs(wall_clock_inputs)
+    _require_live_bitcoin_inputs(bitcoin_inputs)
     wall_bundle_ref = _exact_ref(wall_clock_inputs["bundle"], object_type="ExternalTimeEvidenceBundle")
     bitcoin_bundle_ref = _exact_ref(bitcoin_inputs["bundle"], object_type="ExternalTimeEvidenceBundle")
     if wall_bundle_ref != bitcoin_bundle_ref:
@@ -595,18 +741,7 @@ def validate_final_genesis_acceptance_authoritatively(
         acceptance,
         **dict(bitcoin_inputs),
     )
-    pre_outcome = _claim(
-        "PRE_OUTCOME_DURABILITY_VERIFIED",
-        acceptance_ref,
-        "NOT_APPLICABLE",
-        reason_codes=("NO_OUTCOME_INFORMATION_BARRIER",),
-    )
-    scientific = _claim(
-        "CONFIRMATORY_PROSPECTIVE_ELIGIBLE",
-        acceptance_ref,
-        "NOT_APPLICABLE",
-        reason_codes=("SCIENTIFIC_ELIGIBILITY_NOT_APPLICABLE",),
-    )
+    pre_outcome, scientific = _genesis_non_scientific_claims(acceptance_ref)
     checks = validate_final_genesis_acceptance(
         acceptance,
         final_evidence_subject_ref=final_evidence_subject_ref,
@@ -682,6 +817,7 @@ def derive_confirmatory_eligibility_from_evidence(
             subject = spec["subject"]
             if _exact_ref(subject) != dict(required_subject_ref):
                 raise ValueError("wall-clock component subject substitution")
+            _require_live_wall_inputs(spec["authority_inputs"])
             wall = recompute_external_existence_claim_authoritatively(
                 subject,
                 claim_deadline_utc=spec["claim_deadline_utc"],
@@ -692,6 +828,7 @@ def derive_confirmatory_eligibility_from_evidence(
             subject = spec["subject"]
             if _exact_ref(subject) != dict(required_subject_ref):
                 raise ValueError("Bitcoin component subject substitution")
+            _require_live_bitcoin_inputs(spec["authority_inputs"])
             bitcoin = recompute_bitcoin_durability_claim_authoritatively(
                 subject,
                 **dict(spec["authority_inputs"]),
@@ -701,15 +838,21 @@ def derive_confirmatory_eligibility_from_evidence(
             subject = spec["subject"]
             if _exact_ref(subject) != dict(required_subject_ref):
                 raise ValueError("pre-outcome component subject substitution")
+            pre_inputs = spec["authority_inputs"]
+            _require_live_bitcoin_inputs(pre_inputs["bitcoin_inputs"])
+            _require_live_wall_inputs(pre_inputs["durability_record_wall_clock_inputs"])
+            if pre_inputs["durability_record"].get("origin_class") != "LIVE_OPERATIONAL":
+                raise ValueError("production eligibility requires LIVE_OPERATIONAL DurabilityVerificationRecord")
             claim, _bitcoin, _wall = recompute_pre_outcome_durability_authoritatively(
                 subject,
-                **dict(spec["authority_inputs"]),
+                **dict(pre_inputs),
             )
             claims.append(claim)
         elif kind == "external_existence":
             subject = spec["subject"]
             if _exact_ref(subject) != dict(required_subject_ref):
                 raise ValueError("external-existence component subject substitution")
+            _require_live_wall_inputs(spec["authority_inputs"])
             wall = recompute_external_existence_claim_authoritatively(
                 subject,
                 claim_deadline_utc=None,
