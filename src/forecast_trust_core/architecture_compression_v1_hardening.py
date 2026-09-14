@@ -9,6 +9,8 @@ from ._roughtime_production_qualification_hardening import (
     derive_authoritative_qualification_state,
 )
 from .architecture_compression_v1 import (
+    CLAIM_STATES,
+    CLAIM_TYPES,
     _claim,
     derive_confirmatory_eligibility,
     derive_deadline_existence_claim,
@@ -25,6 +27,8 @@ from .canonical import (
     verify_sealed_object,
 )
 from .core import Validation, aggregate
+
+COMPONENT_CLAIM_TYPES = CLAIM_TYPES - {"CONFIRMATORY_PROSPECTIVE_ELIGIBLE"}
 
 
 def _exact_ref(obj: Mapping[str, Any]) -> dict[str, str]:
@@ -45,7 +49,9 @@ def _claim_matches(
     except (CanonicalizationError, TypeError):
         return False
     return (
-        claim.get("claim_type") == claim_type
+        claim_type in CLAIM_TYPES
+        and claim.get("claim_type") == claim_type
+        and claim.get("state") in CLAIM_STATES
         and dict(claim["subject_ref"]) == dict(subject_ref)
     )
 
@@ -73,7 +79,7 @@ def derive_deadline_existence_claim_strict(
             "DEADLINE_EXISTENCE_VERIFIED",
             subject_ref,
             "FAILED",
-            reason_codes=("EXTERNAL_EXISTENCE_SUBJECT_OR_TYPE_MISMATCH",),
+            reason_codes=("EXTERNAL_EXISTENCE_SUBJECT_TYPE_OR_STATE_MISMATCH",),
             frozen_deadline=frozen_deadline,
         )
     return derive_deadline_existence_claim(
@@ -128,9 +134,9 @@ def derive_pre_outcome_durability_claim_strict(
     )
     record_binding_exact = dict(durability_record_bound_subject_ref) == dict(primary_subject_ref)
     if not bitcoin_exact:
-        reason = "BITCOIN_DURABILITY_SUBJECT_OR_TYPE_MISMATCH"
+        reason = "BITCOIN_DURABILITY_SUBJECT_TYPE_OR_STATE_MISMATCH"
     elif not deadline_exact:
-        reason = "DURABILITY_RECORD_DEADLINE_SUBJECT_OR_TYPE_MISMATCH"
+        reason = "DURABILITY_RECORD_DEADLINE_SUBJECT_TYPE_OR_STATE_MISMATCH"
     elif not record_binding_exact:
         reason = "DURABILITY_RECORD_PRIMARY_SUBJECT_MISMATCH"
     else:
@@ -156,7 +162,7 @@ def derive_confirmatory_eligibility_strict(
     hard_invalidation_reason_codes: Sequence[str] = (),
     applicable: bool = True,
 ) -> dict[str, Any]:
-    """Aggregate only the exact predeclared claim-type/subject requirement set."""
+    """Aggregate only the exact predeclared known claim-type/subject requirement set."""
     if not applicable:
         return derive_confirmatory_eligibility(
             subject_ref,
@@ -170,19 +176,25 @@ def derive_confirmatory_eligibility_strict(
         for requirement in required_claim_requirements:
             if set(requirement) != {"claim_type", "subject_ref"}:
                 raise CanonicalizationError("malformed claim requirement")
+            claim_type = requirement["claim_type"]
+            if claim_type not in COMPONENT_CLAIM_TYPES:
+                raise CanonicalizationError("unknown or recursive claim requirement")
             validate_ref(requirement["subject_ref"])
             expected.append(
                 (
-                    str(requirement["claim_type"]),
+                    str(claim_type),
                     requirement["subject_ref"]["object_id"],
                     requirement["subject_ref"]["content_sha256"],
                 )
             )
         for claim in required_claims:
+            claim_type = claim.get("claim_type")
+            if claim_type not in COMPONENT_CLAIM_TYPES or claim.get("state") not in CLAIM_STATES:
+                raise CanonicalizationError("unknown component claim")
             validate_ref(claim.get("subject_ref"))
             actual.append(
                 (
-                    str(claim.get("claim_type")),
+                    str(claim_type),
                     claim["subject_ref"]["object_id"],
                     claim["subject_ref"]["content_sha256"],
                 )
@@ -192,7 +204,7 @@ def derive_confirmatory_eligibility_strict(
             "CONFIRMATORY_PROSPECTIVE_ELIGIBLE",
             subject_ref,
             "FAILED",
-            reason_codes=("MALFORMED_REQUIRED_CLAIM_BINDING",),
+            reason_codes=("MALFORMED_OR_UNKNOWN_REQUIRED_CLAIM_BINDING",),
         )
     if len(expected) != len(set(expected)):
         return _claim(
@@ -231,9 +243,11 @@ def collect_qualification_state_objects_strict(
     events: list[dict[str, Any]] = []
     seen_refs: set[tuple[str, str]] = set()
     for path in sorted(root.rglob("*"), key=lambda p: p.relative_to(root).as_posix()):
+        if path.is_symlink():
+            raise ValueError("qualification state store contains a symlink")
         if path.is_dir():
             continue
-        if path.is_symlink() or not path.is_file():
+        if not path.is_file():
             raise ValueError("qualification state store contains a non-regular file")
         if path.suffix != ".json":
             raise ValueError("qualification state store contains an unexpected non-JSON file")
@@ -354,19 +368,13 @@ def validate_qualification_state_package_authoritatively(
         checks.append(_check("qualification_state_authority.recompute", False, "AUTHORITATIVE_QUALIFICATION_STATE_RECOMPUTATION_FAILED"))
         return aggregate(checks)
 
-    checks.append(
-        _check(
-            "qualification_state_authority.state",
-            package.get("qualification_state") == authoritative.get("state"),
-            "SELF_ASSERTED_QUALIFICATION_STATE_MISMATCH",
-        )
-    )
-    checks.append(
-        _check(
-            "qualification_state_authority.report",
-            package.get("qualification_state_report_sha256") == authoritative.get("report_sha256"),
-            "QUALIFICATION_STATE_REPORT_HASH_MISMATCH",
-        )
+    checks.extend(
+        [
+            _check("qualification_state_authority.report_provider", authoritative.get("provider_id") in {None, package.get("provider_id")}, "AUTHORITATIVE_STATE_PROVIDER_MISMATCH"),
+            _check("qualification_state_authority.report_as_of", authoritative.get("as_of_utc") in {None, package.get("as_of_utc")}, "AUTHORITATIVE_STATE_AS_OF_MISMATCH"),
+            _check("qualification_state_authority.state", package.get("qualification_state") == authoritative.get("state"), "SELF_ASSERTED_QUALIFICATION_STATE_MISMATCH"),
+            _check("qualification_state_authority.report", package.get("qualification_state_report_sha256") == authoritative.get("report_sha256"), "QUALIFICATION_STATE_REPORT_HASH_MISMATCH"),
+        ]
     )
     return aggregate(checks)
 
