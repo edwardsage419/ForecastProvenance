@@ -41,6 +41,12 @@ CANDIDATE_TESTS = (
     "tests/test_genesis_fixture_validation.py",
 )
 
+SOURCE_PROVENANCE_TESTS = (
+    "tests/test_genesis_fixture_manifest.py",
+    "tests/test_genesis_fixture_validation.py",
+    "tests/test_genesis_sources.py",
+)
+
 CLAIM_AUTHORITY_TESTS = (
     "tests/test_architecture_compression_p5.py",
     "tests/test_architecture_compression_p5_hardening.py",
@@ -405,6 +411,7 @@ def main() -> int:
         )
 
         pytest_suite("focused_candidate_regression", CANDIDATE_TESTS)
+        pytest_suite("focused_source_provenance_regression", SOURCE_PROVENANCE_TESTS)
         pytest_suite("focused_claim_authority_regression", CLAIM_AUTHORITY_TESTS)
         pytest_suite("focused_provider_authority_regression", PROVIDER_AUTHORITY_TESTS)
         pytest_suite(
