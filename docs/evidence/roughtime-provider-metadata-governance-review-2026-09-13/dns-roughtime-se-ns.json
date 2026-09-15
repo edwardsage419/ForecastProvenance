@@ -1,0 +1,1 @@
+{"Status":0,"TC":false,"RD":true,"RA":true,"AD":true,"CD":false,"Question":[{"name":"roughtime.se","type":2}],"Answer":[{"name":"roughtime.se","type":2,"TTL":3600,"data":"ns1.loopiagroup.com."},{"name":"roughtime.se","type":2,"TTL":3600,"data":"ns2.loopiagroup.com."}]}

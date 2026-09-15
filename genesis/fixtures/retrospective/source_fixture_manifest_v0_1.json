@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0",
+  "classification": "RETROSPECTIVE_FIXTURE_MANIFEST",
+  "prospective_eligible": false,
+  "fixtures": [
+    {
+      "fixture_id": "bls_cpi_2026_07_first_release",
+      "agency": "BLS",
+      "allowed_host": "www.bls.gov",
+      "url": "https://www.bls.gov/news.release/archives/cpi_08122026.htm",
+      "target_id": "target:us-cpi-all-items-mom-sa:v1",
+      "reference_period": "2026-07",
+      "release_stage": "FIRST",
+      "expected_semantics": {
+        "target_family": "CPI_U",
+        "item": "All items",
+        "adjustment": "SEASONALLY_ADJUSTED",
+        "measure": "PERCENT_CHANGE_FROM_PRECEDING_MONTH",
+        "table_semantics": "CPI_TABLE_1"
+      },
+      "expected_display_value": "0.1",
+      "expected_canonical_decimal": "0.1",
+      "expected_display_scale": 1,
+      "scientific_role": "RETROSPECTIVE_SOURCE_ADAPTER_REHEARSAL_ONLY"
+    },
+    {
+      "fixture_id": "bls_u3_2026_08_first_release",
+      "agency": "BLS",
+      "allowed_host": "www.bls.gov",
+      "url": "https://www.bls.gov/news.release/archives/empsit_09042026.htm",
+      "target_id": "target:us-unemployment-rate-u3-sa:v1",
+      "reference_period": "2026-08",
+      "release_stage": "FIRST",
+      "expected_semantics": {
+        "target_family": "CPS_LABOR_FORCE",
+        "population_scope": "TOTAL",
+        "measure": "U3_UNEMPLOYMENT_RATE",
+        "adjustment": "SEASONALLY_ADJUSTED",
+        "table_semantics": "EMPLOYMENT_TABLE_A1"
+      },
+      "expected_display_value": "4.1",
+      "expected_canonical_decimal": "4.1",
+      "expected_display_scale": 1,
+      "scientific_role": "RETROSPECTIVE_SOURCE_ADAPTER_REHEARSAL_ONLY"
+    },
+    {
+      "fixture_id": "bea_gdp_2026_q2_advance",
+      "agency": "BEA",
+      "allowed_host": "www.bea.gov",
+      "url": "https://www.bea.gov/news/2026/gdp-advance-estimate-2nd-quarter-2026",
+      "target_id": "target:us-real-gdp-qoq-saar-advance:v1",
+      "reference_period": "2026-Q2",
+      "release_stage": "FIRST",
+      "expected_semantics": {
+        "target_family": "REAL_GDP",
+        "measure": "PERCENT_CHANGE_FROM_PRECEDING_PERIOD",
+        "seasonal_basis": "SAAR",
+        "estimate_type": "ADVANCE_ESTIMATE",
+        "table_semantics": "NIPA_TABLE_1_1_1"
+      },
+      "expected_display_value": "1.5",
+      "expected_canonical_decimal": "1.5",
+      "expected_display_scale": 1,
+      "scientific_role": "RETROSPECTIVE_SOURCE_ADAPTER_REHEARSAL_ONLY"
+    }
+  ]
+}

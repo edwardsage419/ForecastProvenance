@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" prefix="content: http://purl.org/rss/1.0/modules/content/  dc: http://purl.org/dc/terms/  foaf: http://xmlns.com/foaf/0.1/  og: http://ogp.me/ns#  rdfs: http://www.w3.org/2000/01/rdf-schema#  schema: http://schema.org/  sioc: http://rdfs.org/sioc/ns#  sioct: http://rdfs.org/sioc/types#  skos: http://www.w3.org/2004/02/skos/core#  xsd: http://www.w3.org/2001/XMLSchema# ">
+  <head>
+    <meta charset="utf-8" />
+<meta name="description" content="Many important security protocols depend on secure and accurate time to work correctly. But with the resource constraints in many IoT devices, there is currently no way to guarantee these devices can receive time from an accurate and trusted source. This leaves billions of devices without a secure method of getting time and vulnerable to attack. Roughtime is a draft protocol that is being developed to fix this problem." />
+<meta property="og:site_name" content="Netnod" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://www.netnod.se/blog/roughtime-securing-time-iot-devices" />
+<meta property="og:title" content="Roughtime: securing time for IoT devices | Netnod" />
+<meta property="og:description" content="Many important security protocols depend on secure and accurate time to work correctly. But with the resource constraints in many IoT devices, there is currently no way to guarantee these devices can receive time from an accurate and trusted source. This leaves billions of devices without a secure method of getting time and vulnerable to attack. Roughtime is a draft protocol that is being developed to fix this problem." />
+<meta property="og:image" content="https://www.netnod.se/sites/default/files/styles/opengraph/public/2024-08/Roughtime-%20securing%20time%20for%20IoT%20devices.png?itok=mAnDknAp" />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="Roughtime: securing time for IoT devices" />
+<meta name="Generator" content="Drupal 10 (https://www.drupal.org)" />
+<meta name="MobileOptimized" content="width" />
+<meta name="HandheldFriendly" content="true" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="/sites/default/files/FaviconNetnod.png" type="image/png" />
+<link rel="canonical" href="https://www.netnod.se/blog/roughtime-securing-time-iot-devices" />
+<link rel="shortlink" href="https://www.netnod.se/node/350772" />
+
+    <title>Roughtime: securing time for IoT devices | Netnod</title>
+    <link rel="stylesheet" media="all" href="/sites/default/files/css/css_b5ODJKmTg_TbgJuFLWIRT5DYTDdMXKzShZYyaply4Ec.css?delta=0&amp;language=en&amp;theme=nn_theme&amp;include=eJxNjl0OwiAQhC-EcKRmgUlFF7bpULWeXlJefJl8mWR-kgp5hiiES5MrSFlBlyyDrWwbevhjz34qfLVmTykLj6iljrTtCHk_NlEvD_lMo9leRcsXrrWl31ERVrUoehtb6HQ82VHngVfBm-HSUZ8PxQ9xij4R" />
+<link rel="stylesheet" media="all" href="/sites/default/files/css/css_DUkP6fnen8F4c_JR3AWH92jgwdRZXwTaXfTOgMZsD20.css?delta=1&amp;language=en&amp;theme=nn_theme&amp;include=eJxNjl0OwiAQhC-EcKRmgUlFF7bpULWeXlJefJl8mWR-kgp5hiiES5MrSFlBlyyDrWwbevhjz34qfLVmTykLj6iljrTtCHk_NlEvD_lMo9leRcsXrrWl31ERVrUoehtb6HQ82VHngVfBm-HSUZ8PxQ9xij4R" />
+
+    
+      <!-- Google Tag Manager -->
+      <!-- End Google Tag Manager -->
+
+      <!-- Mailchimp -->
+      <script id="mcjs">!function(c,h,i,m,p){m=c.createElement(h),p=c.getElementsByTagName(h)[0],m.async=1,m.src=i,p.parentNode.insertBefore(m,p)}(document,"script","https://chimpstatic.com/mcjs-connected/js/users/0f2224187d84957bffc6e7e69/ecb458b857f53efc9bf7220f2.js");</script>
+      <!-- End Mailchimp -->
+      <!-- Matomo -->
+      <script>
+        var _paq = window._paq = window._paq || [];
+        /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+        _paq.push(["setDoNotTrack", true]);
+        _paq.push(["disableCookies"]);
+        _paq.push(['trackPageView']);
+        _paq.push(['enableLinkTracking']);
+        (function() {
+          var u="https://matomo.netnod.se/";
+          _paq.push(['setTrackerUrl', u+'matomo.php']);
+          _paq.push(['setSiteId', '2']);
+          var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+          g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+        })();
+      </script>
+      <!-- End Matomo Code -->
+      </head>
+  <body class="path-node page-node-type-blog-post node-350772">
+    <!-- Google Tag Manager (noscript) -->
+    <!-- End Google Tag Manager (noscript) -->
+    <a href="#main-content" class="visually-hidden focusable skip-link">
+      Skip to main content
+    </a>
+    
+      <div class="dialog-off-canvas-main-canvas" data-off-canvas-main-canvas>
+    <div class="layout-container">
+
+  <div class="header-wrapper magic_container">
+    <header role="banner" class="header">
+      <div class="site-logo-container">
+        <a href="/" rel="home" class="site-logo">
+          <img src="/themes/custom/nn_theme/img/logo.svg" alt="Home">
+        </a>
+      </div>
+      <div class="mobile-icons">
+       <div class="header-mobile-search">
+        <a href="/search" rel="search" class="mobile-search">
+        </a>
+      </div>
+        <div class="header-mobile-nav">
+          <div class="mobile-nav">
+              <div></div>
+              <div></div>
+              <div></div>
+          </div>
+        </div>
+      </div>
+          <div class="region region-header">
+    <nav role="navigation" aria-labelledby="block-main-menu" id="block-main" class="block block-menu navigation menu--main">
+            
+  <h2 class="visually-hidden" id="block-main-menu">Main navigation</h2>
+  
+
+        
+
+    <ul class="menu menu-level-0">
+    
+              
+        <li class="menu-item menu-level--0 products menu-item--expanded">
+          <span>Products</span>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-0 menu-type-default">
+              
+    <ul class="menu menu-level-1">
+    
+              
+        <li class="menu-item menu-level--1 ix menu-item--expanded">
+          <a href="/ix" title="IX Services" data-drupal-link-system-path="node/350826">IX</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-1 menu-type-default">
+              
+    <ul class="menu menu-level-2">
+    
+              
+        <li class="menu-item menu-level--2 netnod-one-port">
+          <a href="/ix/netnod-one-port" data-drupal-link-system-path="node/350779">Netnod One Port</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-2 menu-type-default">
+              
+      </div>
+
+
+
+                            </li>
+          
+              
+        <li class="menu-item menu-level--2 remote-ix">
+          <a href="/netnod-remote-ix" title="Netnods Remote IX Solution" data-drupal-link-system-path="node/135481">Remote IX</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-2 menu-type-default">
+              
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-2 menu-type-default">
+              
+      </div>
+
+
+
+      </div>
+
+
+
+                            </li>
+          
+              
+        <li class="menu-item menu-level--2 cloud-connect">
+          <a href="/ix/cloud-connect" title="Connect directly to leading cloud providers" data-drupal-link-system-path="node/350833">Cloud Connect</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-2 menu-type-default">
+              
+      </div>
+
+
+
+                            </li>
+          
+              
+        <li class="menu-item menu-level--2 closed-user-group">
+          <a href="/ix/closed-user-group" title="Netnod’s Closed User Group" data-drupal-link-system-path="node/350655">Closed user group</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-2 menu-type-default">
+              
+      </div>
+
+
+
+                            </li>
+          
+              
+        <li class="menu-item menu-level--2 private-vlan">
+          <a href="/ix/private-vlan" data-drupal-link-system-path="node/350782">Private VLAN</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-2 menu-type-default">
+              
+      </div>
+
+
+
+                            </li>
+          
+              
+        <li class="menu-item menu-level--2 cross-ix">
+          <a href="/cross-ix" data-drupal-link-system-path="node/350713">Cross-IX</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-2 menu-type-default">
+              
+      </div>
+
+
+
+                            </li>
+          
+              
+        <li class="menu-item menu-level--2 reach">
+          <a href="/ix/reach" title="Netnod Reach - Remote peering that grows with your network" data-drupal-link-system-path="node/67">Reach</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-2 menu-type-default">
+              
+      </div>
+
+
+
+                            </li>
+          
+              
+        <li class="menu-item menu-level--2 ix-locations">
+          <a href="/ix-locations" data-drupal-link-system-path="node/350827">IX Locations</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-2 menu-type-default">
+              
+      </div>
+
+
+
+                            </li>
+          
+              
+        <li class="menu-item menu-level--2 pricing">
+          <a href="/ix/netnod-ix-pricing" title="See the pricing for Netnod IX" data-drupal-link-system-path="node/74">Pricing</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-2 menu-type-default">
+              
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-2 menu-type-default">
+              
+      </div>
+
+
+
+      </div>
+
+
+
+                            </li>
+            </ul>
+
+
+
+
+      </div>
+
+
+
+                                <span class="menu-expander"></span>
+                  </li>
+          
+              
+        <li class="menu-item menu-level--1 dns menu-item--expanded">
+          <a href="/dns" title="Netnod DNS Services" data-drupal-link-system-path="node/350828">DNS</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-1 menu-type-default">
+              
+    <ul class="menu menu-level-2">
+    
+              
+        <li class="menu-item menu-level--2 cctld">
+          <a href="/dns/cctld" title="DNSNODE for TLDs" data-drupal-link-system-path="node/91">ccTLD</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-2 menu-type-default">
+              
+      </div>
+
+
+
+                            </li>
+          
+              
+        <li class="menu-item menu-level--2 gtld">
+          <a href="/dns/gtlds" data-drupal-link-system-path="node/270984">gTLD</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-2 menu-type-default">
+              
+      </div>
+
+
+
+                            </li>
+          
+              
+        <li class="menu-item menu-level--2 enterprise">
+          <a href="/dns/dns-enterprise-services" title="Netnod DNS for Enterprises" data-drupal-link-system-path="node/926">Enterprise</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-2 menu-type-default">
+              
+      </div>
+
+
+
+                            </li>
+          
+              
+        <li class="menu-item menu-level--2 public-sector">
+          <a href="/dns/dns-for-public-sector" data-drupal-link-system-path="node/350880">Public sector</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-2 menu-type-default">
+              
+      </div>
+
+
+
+                            </li>
+          
+              
+        <li class="menu-item menu-level--2 find-a-partner">
+          <a href="/dns/find-a-partner" data-drupal-link-system-path="node/350829">Find a Partner</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-2 menu-type-default">
+              
+      </div>
+
+
+
+                            </li>
+          
+              
+        <li class="menu-item menu-level--2 become-a-partner">
+          <a href="/dns/dns-for-partners" data-drupal-link-system-path="node/92">Become a partner</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-2 menu-type-default">
+              
+      </div>
+
+
+
+                            </li>
+            </ul>
+
+
+
+
+      </div>
+
+
+
+                                <span class="menu-expander"></span>
+                  </li>
+          
+              
+        <li class="menu-item menu-level--1 time menu-item--expanded">
+          <a href="/time" title="Netnod Time" data-drupal-link-system-path="node/350830">Time</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-1 menu-type-default">
+              
+    <ul class="menu menu-level-2">
+    
+              
+        <li class="menu-item menu-level--2 free-time-services">
+          <a href="/free-time-services" data-drupal-link-system-path="node/350831">Free time services</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-2 menu-type-default">
+              
+      </div>
+
+
+
+                            </li>
+          
+              
+        <li class="menu-item menu-level--2 premium-time-services">
+          <a href="/premium-time-services" data-drupal-link-system-path="node/350832">Premium time services</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-2 menu-type-default">
+              
+      </div>
+
+
+
+                            </li>
+            </ul>
+
+
+
+
+      </div>
+
+
+
+                                <span class="menu-expander"></span>
+                  </li>
+          
+              
+        <li class="menu-item menu-level--1 transport menu-item--expanded">
+          <a href="/transport" data-drupal-link-system-path="node/350746">Transport</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-1 menu-type-default">
+              
+    <ul class="menu menu-level-2">
+    
+              
+        <li class="menu-item menu-level--2 regional">
+          <a href="/transport/regionaldwdm" data-drupal-link-system-path="node/350747">Regional</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-2 menu-type-default">
+              
+      </div>
+
+
+
+                            </li>
+          
+              
+        <li class="menu-item menu-level--2 metro">
+          <a href="/transport/metrodwdm" data-drupal-link-system-path="node/350748">Metro</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-2 menu-type-default">
+              
+      </div>
+
+
+
+                            </li>
+            </ul>
+
+
+
+
+      </div>
+
+
+
+                                <span class="menu-expander"></span>
+                  </li>
+          
+              
+        <li class="menu-item menu-level--1 domain-management menu-item--expanded">
+          <a href="/domain-management" data-drupal-link-system-path="node/350877">Domain Management</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-1 menu-type-default">
+              
+    <ul class="menu menu-level-2">
+    
+              
+        <li class="menu-item menu-level--2 registrar-services">
+          <a href="/registrar-services" data-drupal-link-system-path="node/350898">Registrar services</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-2 menu-type-default">
+              
+      </div>
+
+
+
+                            </li>
+            </ul>
+
+
+
+
+      </div>
+
+
+
+                                <span class="menu-expander"></span>
+                  </li>
+          
+              
+        <li class="menu-item menu-level--1 security menu-item--expanded">
+          <a href="/landing-page/security" data-drupal-link-system-path="node/350918">Security</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-1 menu-type-default">
+              
+    <ul class="menu menu-level-2">
+    
+              
+        <li class="menu-item menu-level--2 robusthetskollen">
+          <a href="/security/robusthetskollen" data-drupal-link-system-path="node/350915">Robusthetskollen</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-2 menu-type-default">
+              
+      </div>
+
+
+
+                            </li>
+          
+              
+        <li class="menu-item menu-level--2 flexible-operations-recovery-training-(fort)">
+          <a href="/Flexible-Operations-Recovery-Training-FORT" data-drupal-link-system-path="node/350917">Flexible Operations Recovery Training (FORT)</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-2 menu-type-default">
+              
+      </div>
+
+
+
+                            </li>
+          
+              
+        <li class="menu-item menu-level--2 system-services">
+          <a href="/security/system-services-" data-drupal-link-system-path="node/350919">System services</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-2 menu-type-default">
+              
+      </div>
+
+
+
+                            </li>
+          
+              
+        <li class="menu-item menu-level--2 secure-communications">
+          <a href="/security/secure-communications" data-drupal-link-system-path="node/350920">Secure communications</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-2 menu-type-default">
+              
+      </div>
+
+
+
+                            </li>
+            </ul>
+
+
+
+
+      </div>
+
+
+
+                                <span class="menu-expander"></span>
+                  </li>
+            </ul>
+
+
+
+
+      </div>
+
+
+
+                                <span class="menu-expander"></span>
+                  </li>
+          
+              
+        <li class="menu-item menu-level--0 tech-centre">
+          <a href="https://tech.netnod.se">Tech Centre</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-0 menu-type-default">
+              
+      </div>
+
+
+
+                            </li>
+          
+              
+        <li class="menu-item menu-level--0 events">
+          <a href="/events" title="Netnod Events" data-drupal-link-system-path="node/350543">Events</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-0 menu-type-default">
+              
+      </div>
+
+
+
+                            </li>
+          
+              
+        <li class="menu-item menu-level--0 about-us menu-item--expanded">
+          <span>About us</span>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-0 menu-type-default">
+              
+    <ul class="menu menu-level-1">
+    
+              
+        <li class="menu-item menu-level--1 blog">
+          <a href="/blog" title="Netnod Blog" data-drupal-link-system-path="node/142049">Blog</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-1 menu-type-default">
+              
+      </div>
+
+
+
+                            </li>
+          
+              
+        <li class="menu-item menu-level--1 netnod-management-team">
+          <a href="/about-netnod/the-netnod-management-team" data-drupal-link-system-path="node/306">Netnod Management Team</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-1 menu-type-default">
+              
+      </div>
+
+
+
+                            </li>
+          
+              
+        <li class="menu-item menu-level--1 netnod-board">
+          <a href="/about-netnod/the-netnod-board" data-drupal-link-system-path="node/935">Netnod Board</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-1 menu-type-default">
+              
+      </div>
+
+
+
+                            </li>
+          
+              
+        <li class="menu-item menu-level--1 netnod&#039;s-history">
+          <a href="/about-netnod/netnod-history" data-drupal-link-system-path="node/151">Netnod&#039;s history</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-1 menu-type-default">
+              
+      </div>
+
+
+
+                            </li>
+          
+              
+        <li class="menu-item menu-level--1 work-at-netnod">
+          <a href="https://career.netnod.se/">Work at Netnod</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-1 menu-type-default">
+              
+      </div>
+
+
+
+                            </li>
+          
+              
+        <li class="menu-item menu-level--1 public-policies-and-statements">
+          <a href="/policy/public-policies-and-statements" data-drupal-link-system-path="node/350479">Public policies and statements</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-1 menu-type-default">
+              
+      </div>
+
+
+
+                            </li>
+          
+              
+        <li class="menu-item menu-level--1 newsroom">
+          <a href="/news-feed/en" title="Newsroom" data-drupal-link-system-path="news-feed/en">Newsroom</a>
+          <div class="menu-item--arrow"></div>
+                                
+    
+
+
+  
+  <div class="menu_link_content menu-link-contentmain view-mode-default menu-dropdown menu-dropdown-1 menu-type-default">
+              
+      </div>
+
+
+
+                            </li>
+            </ul>
+
+
+
+
+      </div>
+
+
+
+                                <span class="menu-expander"></span>
+                  </li>
+            </ul>
+
+
+  </nav>
+<nav role="navigation" aria-labelledby="block-navigation-secondary-menu" id="block-navigation-secondary" class="block block-menu navigation menu--secondary">
+            
+  <h2 class="visually-hidden" id="block-navigation-secondary-menu">Secondary navigation</h2>
+  
+
+        
+              <ul class="menu">
+              
+      <li class="menu-item menu-level--0 search">
+
+                        <a href="/search" data-drupal-link-system-path="search">Search</a>
+          
+
+          
+      </li>
+          
+      <li class="menu-item menu-level--0 contact-us">
+
+                        <a href="/about-netnod/contact-netnod" data-drupal-link-system-path="node/336">Contact us</a>
+          
+
+          
+      </li>
+          
+      <li class="menu-item menu-level--0 login">
+
+                        <a href="https://portal.netnod.se">Login</a>
+          
+
+          
+      </li>
+        </ul>
+  
+
+
+  </nav>
+
+  </div>
+
+    </header>
+    
+  </div>
+
+  
+
+  
+
+  
+
+  <main role="main">
+    <a id="main-content" tabindex="-1"></a>
+    <div class="layout-content">
+        <div class="region region-content">
+    <div data-drupal-messages-fallback class="hidden"></div><div id="block-nn-mainpagecontent" class="block block-system block-system-main-block">
+  
+    
+      
+    
+<article class="blog-full--article"  about="/blog/roughtime-securing-time-iot-devices">
+
+    
+        
+
+    
+    <div>
+      <div class="content slim">
+        <div class="blog-author--image"><img class="swiper-image image-style-thumbnail" src="/sites/default/files/styles/thumbnail/public/2022-03/Rob-allan_600x600px_0.png?itok=OFxBckgl" alt="Rob Allen" typeof="foaf:Image" />
+
+</div>
+        <div class="blog-full--info">
+            <div class="blog-author--title"><a href="/rob-allen">Rob Allen</a><span>,&nbsp;</span></div>
+            <div class="blog-published--at">                        <div class="field blog-field field--name-published-at field--type-published-at field--label-hidden field__item"><time datetime="2024-08-27T09:21:24+02:00" class="datetime">2024.08.27</time>
+</div>
+            </div>
+        </div>
+        <div class="blog-full--image">
+                                    <div class="field blog-field field--name-field-blog-image field--type-image field--label-hidden field__item">  <img loading="lazy" src="/sites/default/files/styles/blog_full/public/2024-08/Roughtime-%20securing%20time%20for%20IoT%20devices.png?itok=xHoReZeh" width="865" height="450" alt="Roughtime: securing time for IoT devices " title="Roughtime: securing time for IoT devices " typeof="foaf:Image" class="image-style-blog-full" />
+
+
+</div>
+            
+        </div>
+        <h1 class="blog-full--title"><span class="field field--name-title field--type-string field--label-hidden">Roughtime: securing time for IoT devices </span>
+</h1>
+        <div class="blog-tags">
+            
+            <div class="field blog--tags field--name-field-blog-post-tags field--type-entity-reference field--label-hidden field__items">
+                            <div class="field__item"><a href="/taxonomy/term/3206" hreflang="en">Netnod Time</a></div>
+                            <div class="field__item"><a href="/taxonomy/term/7272" hreflang="en">Cybersecurity</a></div>
+                    </div>
+    
+        </div>
+        <div class="blog-full-intro">
+                                    <div class="field blog-field field--name-field-blog-intro field--type-string-long field--label-hidden field__item">We spoke with Marcus Dansarie, Technical Consultant at Netnod and co-author of the IETF draft on Roughtime. In the Q&amp;A below, we examine why secure time is essential, the challenges for IoT devices, and how Roughtime could be the solution to a widespread problem.</div>
+            
+        </div>
+        <div class="blog-full-body">
+                                    <div class="field blog-field simple-html field--name-body field--type-text-with-summary field--label-hidden field__item"><p>Many important security protocols depend on secure and accurate time to work correctly. But with the resource constraints in many IoT devices, there is currently no way to guarantee these devices can receive time from an accurate and trusted source. This leaves billions of devices without a secure method of getting time and vulnerable to attack. Roughtime is a draft protocol that is being developed to fix this problem.&nbsp;</p>
+<h2><span><span><span><strong><span><span>1. Why is accurate and secure time so important?</span></span></strong></span></span></span></h2>
+<p><span><span><span><span><span><span>Time synchronisation is essential for security. Critical security processes such as encryption, authentication, and data integrity checks rely on accurate and secure time. For instance, Transport Layer Security (TLS), which gives us secure communication across the Internet, uses certificates that are only valid within specific timeframes. Incorrect time can lead to certificate verification failures leaving devices unable to establish secure connections.&nbsp;</span></span></span></span></span></span></p>
+<p><span><span><span><span><span><span>Inaccurate or tampered time can also lead to cyberattacks. These include replay attacks, where an attacker reuses previously valid certificates, and man-in-the-middle attacks, where an attacker manipulates time to intercept and alter communications. The vulnerability of the Network Time Protocol (NTP) to these types of threats led to the development of Network Time Security (NTS) which secures time using cryptographic protection. There are also commercial time services delivered over dedicated fibre that ensure secure and high-precision time synchronisation. </span></span></span></span></span></span><br>
+&nbsp;</p>
+<h2><span><span><span><strong><span><span>2. What are the main issues stopping IoT devices from getting accurate and secure time?</span></span></strong></span></span></span></h2>
+<p><span><span><span><span><span><span>The primary challenge lies in the resource constraints of many IoT devices. These devices often have limited processing power and memory making it impossible to use robust security protocols like NTS. The resources required to handle the public-key cryptography used in NTS are beyond the capability of many IoT devices.&nbsp;</span></span></span></span></span></span></p>
+<p><span><span><span><span><span><span>The other problem is a bootstrapping issue. When an IoT device is powered on for the first time it has no idea of the time. To set up NTS, the device needs TLS which doesn’t work without the time being correct. An IoT device could get time from NTP but then you are back to the security issues with NTP we discussed in (1).&nbsp;</span></span></span></span></span></span></p>
+<h2><span><span><span><strong><span><span>3. How does Roughtime solve the problem?</span></span></strong></span></span></span></h2>
+<p><span><span><span><span><span><span>Roughtime focuses on providing a secure, lightweight, and resource-efficient way for IoT devices to obtain time. Unlike NTP, Roughtime always requires cryptographic verification, ensuring that the time information received by a device can be authenticated. Although NTS provides a mechanism for authenticated NTP, it is based on TLS. This can be hard to implement on small IoT platforms, especially when considering the requirement to keep an up-to-date root certificate database.</span></span></span></span></span></span></p>
+<p><span><span><span><span><span><span>Roughtime uses digital signatures to ensure the authenticity of time data. When a device requests the current time, the Roughtime server responds with a signed timestamp, along with a cryptographic proof that can easily be verified by the client. Roughtime signatures are rooted in long-term keys instead of a certificate hierarchy making them significantly easier to verify. This approach allows even resource-constrained devices to validate the time they receive without the need to implement the entire TLS protocol.</span></span></span></span></span></span></p>
+<p><span><span><span><span><span><span>Additionally, Roughtime includes mechanisms to detect and reject responses that are outside an expected range protecting against attempts to send falsified time data. The protocol is also designed to be tolerant of small inaccuracies making it suitable for environments where precise time synchronisation is not critical but where security is vital.</span></span></span></span></span></span></p>
+<h2><span><span><span><strong><span><span>4. What are the next steps for Roughtime?</span></span></strong></span></span></span></h2>
+<p><span><span><span><span><span><span>Roughtime is still in the development phase, with ongoing work to finalise the IETF draft and refine the protocol based on feedback from the community. The next steps involve updating client implementations to reflect the latest IETF draft, expanding the deployment of Roughtime servers, and conducting further testing in real-world IoT environments.</span></span></span></span></span></span></p>
+<h2><span><span><span><strong><span><span>5. More information&nbsp;</span></span></strong></span></span></span></h2>
+<p><span><span><span><span><span><span>At the RIPE NCC Open House focusing on projects funded by the RIPE Community Fund, Marcus Dansarie gave an update on work to develop the IETF Roughtime draft. You can see the slides </span></span></span></span></span></span><a href="https://www.ripe.net/media/documents/RIPE_Open_House_May_2024_Netnod_Roughtime_v.1.pdf"><span><span><span><span><span><span><span><span>here</span></span></span></span></span></span></span></span></a><span><span><span><span><span><span>.&nbsp;</span></span></span></span></span></span></p>
+<p><span><span><span><span><span><span>You can also see Christer Weinigel’s Roughtime presentation from RIPE 87. See the presentation </span></span></span></span></span></span><a href="https://ripe87.ripe.net/archives/video/1175/"><span><span><span><span><span><span><span><span>here</span></span></span></span></span></span></span></span></a><span><span><span><span><span><span>. &nbsp; &nbsp; &nbsp; &nbsp;</span></span></span></span></span></span></p>
+<p><span><span><span><span><span><span>For more on Netnod’s work developing world-leading time services, see </span></span></span></span></span></span><a href="https://www.netnod.se/time"><span><span><span><span><span><span><span><span>here</span></span></span></span></span></span></span></span></a><span><span><span><span><span><span>. </span></span></span></span></span></span></p>
+</div>
+            
+        </div>
+        <div class="blog-share-links">
+            
+        </div>
+        
+      </div>
+
+      <div class="blog-latest-2-blogposts">
+        <div class="paragraphs-wrapper">
+          <h2>Related blog articles</h2>
+            <div class="views-element-container block block-views block-views-blockblogposts-per-tag-block-1" id="block-views-block-blogposts-per-tag-block-1">
+  
+    
+      <div><div class="view view-blogposts-per-tag view-id-blogposts_per_tag view-display-id-block_1 js-view-dom-id-eac8f7679f340bbb68245632291736dc35a472032e8a31adff7a0593756d7935">
+  
+    
+      
+      <div class="view-content">
+          <div class="views-row">
+<article  about="/blog/securing-time-any-device-results-roughtime-hackathon-ietf-121" class="blog-post-teaser--list-item" >
+    <a class="blog--teaser-link-wrapper" href="/blog/securing-time-any-device-results-roughtime-hackathon-ietf-121" title="Go to blogpost" >
+          
+            <div class="field blog--tags field--name-field-blog-post-tags field--type-entity-reference field--label-hidden field__items">
+                            <div class="field__item">Netnod Time</div>
+                            <div class="field__item">Cybersecurity</div>
+                    </div>
+      
+        <div class="blog-image blog-teaser--image">
+                                    <div class="field blog-field field--name-field-blog-image field--type-image field--label-hidden field__item">  <img loading="lazy" src="/sites/default/files/styles/blog_teaser/public/2024-12/Time_graphic.png?itok=zvpsxkul" width="420" height="220" alt="Securing time for any device: Results from the Roughtime Hackathon at IETF 121" title="Securing time for any device: Results from the Roughtime Hackathon at IETF 121" typeof="foaf:Image" class="image-style-blog-teaser" />
+
+
+</div>
+            
+        </div>
+      
+                <h2 class="blog-teaser--title">
+              <span class="field field--name-title field--type-string field--label-hidden">Securing time for any device: Results from the Roughtime Hackathon at IETF 121</span>
+
+          </h2>
+            
+    </a>
+
+  
+  <div class="blog-teaser--published">
+      <div>
+          <div class="blog-teaser--info">
+              <div class="blog-teaser-published">                        <div class="field blog-field field--name-field-blog-author field--type-entity-reference field--label-hidden field__item"><article about="/rob-allen">
+
+    
+                    
+
+    <div>
+        
+            <div class="field field--name-field-teaser-title field--type-string field--label-hidden field__item">Rob Allen</div>
+      
+    </div>
+
+</article>
+</div>
+                                     <div class="field blog-field field--name-published-at field--type-published-at field--label-hidden field__item"><time datetime="2024-12-12T17:13:15+01:00" class="datetime">2024.12.12</time>
+</div>
+            </div>
+          </div>
+      </div>
+  </div>
+  <div class="blog-teaser--intro">  
+                            <div class="field blog-field field--name-field-blog-intro field--type-string-long field--label-hidden field__item">A Roughtime Hackathon at IETF 121 led by Netnod’s Technical Consultant, Marcus Dansarie, brought together developers and researchers to refine the protocol and its implementations. In this blogpost, we summarise some of the outcomes from the hackathon. </div>
+              
+  </div>
+</article>
+</div>
+    <div class="views-row">
+<article  about="/blog/unlocking-power-ports" class="blog-post-teaser--list-item" >
+    <a class="blog--teaser-link-wrapper" href="/blog/unlocking-power-ports" title="Go to blogpost" >
+          
+            <div class="field blog--tags field--name-field-blog-post-tags field--type-entity-reference field--label-hidden field__items">
+                            <div class="field__item">IX</div>
+                            <div class="field__item">Remote IX</div>
+                            <div class="field__item">Netnod Time</div>
+                    </div>
+      
+        <div class="blog-image blog-teaser--image">
+                                    <div class="field blog-field field--name-field-blog-image field--type-image field--label-hidden field__item">  <img loading="lazy" src="/sites/default/files/styles/blog_teaser/public/2024-02/hero_netnod_europe1%201.png?itok=r8R1CGJm" width="420" height="220" alt="Image of the Nordics " typeof="foaf:Image" class="image-style-blog-teaser" />
+
+
+</div>
+            
+        </div>
+      
+                <h2 class="blog-teaser--title">
+              <span class="field field--name-title field--type-string field--label-hidden">Unlocking the power of ports</span>
+
+          </h2>
+            
+    </a>
+
+  
+  <div class="blog-teaser--published">
+      <div>
+          <div class="blog-teaser--info">
+              <div class="blog-teaser-published">                        <div class="field blog-field field--name-field-blog-author field--type-entity-reference field--label-hidden field__item"><article about="/about-netnod/bjorn-stromgard">
+
+    
+                    
+
+    <div>
+        
+            <div class="field field--name-field-teaser-title field--type-string field--label-hidden field__item">Björn Strömgård</div>
+      
+    </div>
+
+</article>
+</div>
+                                     <div class="field blog-field field--name-published-at field--type-published-at field--label-hidden field__item"><time datetime="2024-04-15T11:38:09+02:00" class="datetime">2024.04.15</time>
+</div>
+            </div>
+          </div>
+      </div>
+  </div>
+  <div class="blog-teaser--intro">  
+                            <div class="field blog-field field--name-field-blog-intro field--type-string-long field--label-hidden field__item">We talk with Björn Stromgard, Product Owner at Netnod, about maximising the value of connecting to a Netnod IX and making life easier for customers.</div>
+              
+  </div>
+</article>
+</div>
+    <div class="views-row">
+<article  about="/blog/implementing-network-time-security-hardware-level" class="blog-post-teaser--list-item" >
+    <a class="blog--teaser-link-wrapper" href="/blog/implementing-network-time-security-hardware-level" title="Go to blogpost" >
+          
+            <div class="field blog--tags field--name-field-blog-post-tags field--type-entity-reference field--label-hidden field__items">
+                            <div class="field__item">Netnod Time</div>
+                    </div>
+      
+        <div class="blog-image blog-teaser--image">
+                                    <div class="field blog-field field--name-field-blog-image field--type-image field--label-hidden field__item">  <img loading="lazy" src="/sites/default/files/styles/blog_teaser/public/2022-07/Netnod--time.png?itok=eBCx7w7G" width="420" height="220" alt="Implementing Network Time Security at the Hardware Level" typeof="foaf:Image" class="image-style-blog-teaser" />
+
+
+</div>
+            
+        </div>
+      
+                <h2 class="blog-teaser--title">
+              <span class="field field--name-title field--type-string field--label-hidden">Implementing Network Time Security at the Hardware Level</span>
+
+          </h2>
+            
+    </a>
+
+  
+  <div class="blog-teaser--published">
+      <div>
+          <div class="blog-teaser--info">
+              <div class="blog-teaser-published">                         <div class="field blog-field field--name-published-at field--type-published-at field--label-hidden field__item"><time datetime="2022-07-07T14:36:44+02:00" class="datetime">2022.07.07</time>
+</div>
+            </div>
+          </div>
+      </div>
+  </div>
+  <div class="blog-teaser--intro">  
+                            <div class="field blog-field field--name-field-blog-intro field--type-string-long field--label-hidden field__item">Network Time Security (NTS) adds a vital layer of security to Network Time Protocol (NTP) services. Having carried out our software implementation of NTS back in 2019, we recently implemented NTS at the hardware level.</div>
+              
+  </div>
+</article>
+</div>
+
+    </div>
+  
+          </div>
+</div>
+
+  </div>
+
+          <span class="nn-icon-before nn-arrow-left-white"><a href="/blog/">Show all blog articles</a></span>
+        </div>
+      </div>
+    </div>
+    <div class="blog-paragraphs">
+        
+    </div>
+</article>
+
+  </div>
+<div class="mailchimp-signup-subscribe-form-block block block-mailchimp-signup block-mailchimp-signup-subscribe-blocksubscribe-to-our-blog" data-drupal-selector="mailchimp-signup-subscribe-block-subscribe-to-our-blog-form" id="block-mailchimpsubscriptionformsubscribetoourblog">
+    
+            <h2>Subscribe to the blog!</h2>
+        
+            <h3 class="blog-description">Keep up with the latest trends. Subscribe to our blog.</h3>
+        <form action="/blog/roughtime-securing-time-iot-devices" method="post" id="mailchimp-signup-subscribe-block-subscribe-to-our-blog-form" accept-charset="UTF-8">
+  <div class="mailchimp-signup-subscribe-description"></div>
+  <div id="mailchimp-newsletter-1d528d0f55-mergefields" class="mailchimp-newsletter-mergefields"><div class="js-form-item form-item js-form-type-email form-type-email js-form-item-mergevars-email form-item-mergevars-email">
+      
+    
+
+        <input autocomplete="email" data-drupal-selector="edit-mergevars-email" type="email" id="edit-mergevars-email" name="mergevars[EMAIL]" value="" size="25" maxlength="254" class="form-email required" required="required" aria-required="true" />
+
+        </div>
+</div><input autocomplete="off" data-drupal-selector="form-bssllll103ezs4kismuvzdpakyzb4t5ygio5py6ck1o" type="hidden" name="form_build_id" value="form-BSslLlL103ezS4kISMuVZdpaKYzb4t5ygIO5PY6ck1o" />
+<input data-drupal-selector="edit-mailchimp-signup-subscribe-block-subscribe-to-our-blog-form" type="hidden" name="form_id" value="mailchimp_signup_subscribe_block_subscribe_to_our_blog_form" />
+<div data-drupal-selector="edit-actions" class="form-actions js-form-wrapper form-wrapper" id="edit-actions--2"><span class="submit-label"><input data-drupal-selector="edit-submit" type="submit" id="edit-submit" name="op" class="button js-form-submit form-submit" value=""/>Subscribe</span>
+</div>
+
+</form>
+
+        <div class="rss-feed-wrapper">
+        <p class="rss-feed-text">follow our RSS-feed - Subscribe with RSS</p>
+        <a href="/blog/rss.xml" class="mailchimp-signup-subscribe-form-block block block-mailchimp-signup block-mailchimp-signup-subscribe-blocksubscribe-to-our-blog feed-icon rss-feed-icon" data-drupal-selector="mailchimp-signup-subscribe-block-subscribe-to-our-blog-form" id="block-mailchimpsubscriptionformsubscribetoourblog">
+            Subscribe with RSS
+        </a>
+    </div>
+</div>
+
+
+  </div>
+
+    </div>
+    
+          
+  </main>
+
+      <footer role="contentinfo">
+              <div class="region region-footer-main">
+    <div id="block-nn-contact" class="block block-block-content block-block-content84416ef5-608e-447c-935e-951ee4767db2">
+  
+      <h2>Contact</h2>
+    
+      
+            <div class="clearfix text-formatted new-template simple-html field field--name-body field--type-text-with-summary field--label-hidden field__item"><p>Greta Garbos väg 13<br>
+169 40 &nbsp;Solna<br>
+Sweden<br>
+Phone: +46 (0)8 562 860 00</p>
+<p>Registration number:&nbsp;556534-0014<br>
+Registered office: Stockholm</p>
+<p><a href="/about-netnod/contact-netnod">Contact Netnod</a></p>
+<p><a href="https://www.netnod.se/about-netnod/information-for-press" target="_blank">Press</a></p>
+<p>#netnod</p>
+</div>
+      
+  </div>
+<div id="block-nn-links" class="block block-block-content block-block-content855df5b7-7b39-4edf-87ed-d5ed4dd354dd">
+  
+      <h2>Support</h2>
+    
+      
+            <div class="clearfix text-formatted new-template simple-html field field--name-body field--type-text-with-summary field--label-hidden field__item"><p>General: <a href="mailto:info@netnod.se">info@netnod.se</a><br>
+Technical &amp; network: <a href="mailto:noc@netnod.se">noc@netnod.se</a><br>
+Web: <a href="mailto:webmaster@netnod.se">webmaster@netnod.se</a></p>
+<p><a href="/fault-report">Fault report</a><br>
+<a data-entity-substitution="canonical" data-entity-type="node" data-entity-uuid="31625793-8658-471b-a923-0c726be24efa" href="/domain-management/report-abuse">Report abuse</a><br>
+<a href="https://www.netnod.se/landing-page/whistleblower-report ">Whistleblower report</a></p>
+<p><a href="/about-netnod/peering-with-netnod">Peering with Netnod</a><br>
+<a href="/ix/route-servers">Route servers</a><br>
+<a href="/ntp/connect-to-ntp-servers">NTP servers</a><br>
+<a href="https://www.netnod.se/privacy-policy" title="Privacy policy">Data privacy policy</a></p>
+</div>
+      
+  </div>
+<div id="block-nn-boilerplate" class="block block-block-content block-block-content08425448-0ded-4b7b-aff8-8551edd50948">
+  
+      <h2>About</h2>
+    
+      
+            <div class="clearfix text-formatted new-template simple-html field field--name-body field--type-text-with-summary field--label-hidden field__item"><p><a href="/about-netnod/netnod---working-at-core-of-the-internet">About Netnod</a></p>
+<p><a data-entity-substitution="canonical" data-entity-type="node" data-entity-uuid="55168b42-0d4c-4448-9de3-4bb6af712407" href="/knowledge-base">Netnod knowledge base</a></p>
+<p><a href="/blog" target="_blank">Blog</a></p>
+<p><a href="https://www.netnod.se/about-netnod/netnod-history" target="_self">History</a></p>
+<p><a href="/staff/staff">Netnod Staff</a></p>
+<p><a href="https://www.netnod.se/about-netnod/the-netnod-board" target="_self">Netnod Board</a></p>
+<p><a href="https://career.netnod.se/" target="_blank">Work at Netnod</a></p>
+<p><a href="/netnod-dns-data-retention-and-web-policy" target="_blank">Netnod DNS Data Retention and Web poli</a><a href="/netnod-dns-data-retention-and-web-policy" target="_self">cies</a></p>
+<p><a href="https://netnod.us3.list-manage.com/subscribe?u=d5cd42538c4ac0a78dd2172c6&amp;id=17b606ddc6" target="_blank">Sign up for Newsletter</a></p>
+</div>
+      
+  </div>
+
+  </div>
+
+                <div class="region region-footer-bottom">
+    <div id="block-nn-copyright" class="block block-block-content block-block-contentb786c638-65fc-4476-917d-dbef4d74f83c">
+  
+    
+      
+            <div class="clearfix text-formatted new-template simple-html field field--name-body field--type-text-with-summary field--label-hidden field__item"><p>© Netnod 2026</p>
+</div>
+      
+  </div>
+
+  </div>
+
+          </footer>
+  
+</div>
+  </div>
+
+    
+
+    <div id="search-overlay">
+      <img src="/themes/custom/nn_theme/img/icons/cross-white.svg" id="search-close" alt="Stäng sökrutan">
+      <div>
+        <form class="views-exposed-form" data-drupal-selector="views-exposed-form-search-page-1" action="/search" method="get" id="views-exposed-form-search-page-1" accept-charset="UTF-8">
+  <div class="form--inline clearfix">
+  <div class="js-form-item form-item js-form-type-textfield form-type-textfield js-form-item-search-api-fulltext form-item-search-api-fulltext">
+      
+    
+
+        <input placeholder="ex: IX networks" data-drupal-selector="edit-search-api-fulltext" type="text" id="edit-search-api-fulltext" name="search_api_fulltext" value="" size="30" maxlength="128" class="form-text" />
+
+        </div>
+<div data-drupal-selector="edit-actions" class="form-actions js-form-wrapper form-wrapper" id="edit-actions"><span class="submit-label"><input data-drupal-selector="edit-submit-search" type="submit" id="edit-submit-search" class="button js-form-submit form-submit" value=""/>Go</span>
+</div>
+
+</div>
+
+</form>
+
+        <span class="hint">Search among pages, documents and articles</span>
+      </div>
+    </div>
+
+    <script type="application/json" data-drupal-selector="drupal-settings-json">{"path":{"baseUrl":"\/","pathPrefix":"","currentPath":"node\/350772","currentPathIsAdmin":false,"isFront":false,"currentLanguage":"en"},"pluralDelimiter":"\u0003","suppressDeprecationErrors":true,"ajaxPageState":{"libraries":"eJx1jsEOgzAMQ3-oaz8JhRJBWNIgHLaxrx8ah22HHWxZT5bsqgTspSdwqmc2BmhkpOoDo8mycJSvnCcZJz0U8_8OYlfO5s2vJB22XsWOBV-5NF-NVJ6cWutiYuMyqvekl2OeAwlBIQipKMO6LaT5QxJ2BNt5-CZ8R3l7ppkeP8B82JRf2H9YPQ","theme":"nn_theme","theme_token":null},"ajaxTrustedUrl":{"form_action_p_pvdeGsVG5zNF_XLGPTvYSKCf43t8qZYSwcfZl2uzM":true,"\/search":true},"ckeditorheight":{"offset":1,"line_height":1.5,"unit":"em","disable_autogrow":null},"statistics":{"data":{"nid":"350772"},"url":"\/core\/modules\/statistics\/statistics.php"},"views":{"ajax_path":"\/views\/ajax","ajaxViews":{"views_dom_id:eac8f7679f340bbb68245632291736dc35a472032e8a31adff7a0593756d7935":{"view_name":"blogposts_per_tag","view_display_id":"block_1","view_args":"3206,7272\/350772","view_path":"\/node\/350772","view_base_path":null,"view_dom_id":"eac8f7679f340bbb68245632291736dc35a472032e8a31adff7a0593756d7935","pager_element":0}}},"user":{"uid":0,"permissionsHash":"b267bdcf596caece7abadd87461823f44b4fc38f4e5acdd4766090d6eaa46c74"}}</script>
+<script src="/sites/default/files/js/js_zQq_xgqj6Xy7RvmcNImb796-9DakyJ841bAjiCo3CCk.js?scope=footer&amp;delta=0&amp;language=en&amp;theme=nn_theme&amp;include=eJxFiEsOgCAMBS-E9EimQgMlCMRXP8fXuGExk8mEHgVNxxCjMNtnTbl-WIFrbbUsu1CqfeO6MCAGB2NTmAZQPM7B1c_jLpUb9Ntz4ecFfCYpOQ"></script>
+<script src="/themes/custom/nn_theme/libs/masonry.pkgd.min.js?v=1.6"></script>
+<script src="/themes/custom/nn_theme/libs/imagesloaded.pkgd.min.js?v=1.6"></script>
+<script src="/themes/custom/nn_theme/libs/headroom.min.js?v=1.6"></script>
+<script src="/sites/default/files/js/js_-0pOCnGxMgPks57psvjOFEljX63ayrbxiehao1F6Ylc.js?scope=footer&amp;delta=4&amp;language=en&amp;theme=nn_theme&amp;include=eJxFiEsOgCAMBS-E9EimQgMlCMRXP8fXuGExk8mEHgVNxxCjMNtnTbl-WIFrbbUsu1CqfeO6MCAGB2NTmAZQPM7B1c_jLpUb9Ntz4ecFfCYpOQ"></script>
+
+  </body>
+</html>

@@ -24,11 +24,9 @@ Forecast Trust Core is the first implementation phase. Prospective forecasting i
 
 ## D004 Primary prospective time anchor candidate
 
-Status: SELECTED FOR GENESIS ACCEPTANCE TEST
+Status: SUPERSEDED BY D014 FOR GENESIS READINESS
 
-Scheme name: OTS_BTC_BATCH_V1
-
-OpenTimestamps with Bitcoin attestation remains the preferred zero cost candidate. Exact proof parsing and conservative time bound semantics remain Genesis blockers.
+The original OpenTimestamps-only candidate was insufficient for precise wall-clock deadline claims. OpenTimestamps remains part of the durability layer under D014.
 
 ## D005 Cost doctrine
 
@@ -97,3 +95,165 @@ Date: 2026-09-11
 Forecast Trust Core normative design version 0.4 is frozen for synthetic implementation after three adversarial design review passes and remediation.
 
 This decision authorizes synthetic implementation only. It does not authorize Forecast Ledger creation, genuine prospective forecasting, or Genesis acceptance.
+
+## D014 Dual external time evidence architecture
+
+Status: GEN_001 REVIEW CANDIDATE
+Date: 2026-09-11
+
+Scheme family: FPP_TIME_EVIDENCE_V1
+
+Precise deadline evidence uses signed external wall-clock receipts. Durable anchoring uses OpenTimestamps with Bitcoin attestation over the accepted evidence bundle.
+
+Bitcoin block header time is not used as the precise issuance clock.
+
+Final initial-cohort prospective eligibility also requires externally receipted DurabilityVerificationRecord completion before the target outcome information barrier.
+
+Reason: the two mechanisms establish different time claims and have different trust and precision properties.
+
+## D015 Deadline receipt quorum
+
+Status: GEN_001 REVIEW CANDIDATE
+Date: 2026-09-11
+
+Policy ID: DEADLINE_RECEIPT_QUORUM_V1
+
+At least two independent provider groups must supply qualifying signed receipts for the exact subject hash, and at least one qualifying receipt must use RFC 3161.
+
+Provider failure never lowers the threshold. A provider without a defensible conservative upper time bound cannot count toward quorum.
+
+## D016 GitHub time is auxiliary only
+
+Status: GEN_001 REVIEW CANDIDATE
+Date: 2026-09-11
+
+GitHub server timestamps may be retained as public auxiliary witnesses. They do not count toward deadline receipt quorum and do not establish bootstrap governance authority.
+
+## D017 Genesis bootstrap key model
+
+Status: GEN_001 REVIEW CANDIDATE
+Date: 2026-09-11
+
+Genesis uses a single owner-controlled Ed25519 bootstrap signing key for the first ManifestAcceptance.
+
+The private key stays outside GitHub, CI, repository fixtures, and ChatGPT-managed artifacts. The exact public key remains a Genesis readiness blocker until generated locally by the owner.
+
+## D018 Initial Genesis target candidate set
+
+Status: GEN_001 REVIEW CANDIDATE
+Date: 2026-09-11
+
+Genesis version 1 candidate targets are:
+
+1. U.S. CPI all-items monthly change, seasonally adjusted, first release.
+2. U.S. official U-3 unemployment rate, seasonally adjusted, first release.
+3. U.S. real GDP quarter-over-quarter annualized growth, Advance Estimate.
+
+Selection was based on official-source quality, release-calendar clarity, first-release archival semantics, low frequency, and zero-cost resolution before any production forecast values were generated.
+
+## D019 Genesis timing safety margin
+
+Status: GEN_001 REVIEW CANDIDATE
+Date: 2026-09-11
+
+Initial target instances require at least a seven-calendar-day forecast horizon and an external proof deadline no later than 24 hours before the frozen outcome information barrier.
+
+Intraday and same-day targets are excluded from Genesis version 1.
+
+## D020 Genesis point-forecast evaluation
+
+Status: GEN_001 REVIEW CANDIDATE
+Date: 2026-09-11
+
+Genesis version 1 uses continuous scalar point forecasts for the initial candidate targets.
+
+Primary metrics are absolute error and squared error. Reporting remains target-specific and includes deltas versus the frozen transparent baseline. No authoritative universal cross-target aggregate score is allowed.
+
+## D021 Transparent baseline
+
+Status: GEN_001 REVIEW CANDIDATE
+Date: 2026-09-11
+
+Method ID: method:last-observed-value:v1
+
+The baseline uses the immediately preceding first-release value of the same target statistic when that exact archived artifact was available by the current information cutoff.
+
+Current revised historical databases cannot substitute for the point-in-time first-release artifact.
+
+## D022 One cycle per official release instance
+
+Status: GEN_001 REVIEW CANDIDATE
+Date: 2026-09-11
+
+Genesis version 1 creates a separate issuance cycle for each admitted official target release instance.
+
+A cycle contains every manifest-admitted confirmatory method compatible with that target instance. Targets with different official release barriers are not forced into one shared cycle.
+
+Reason: one cycle per release instance gives each cycle one unambiguous information cutoff, precommitment deadline, execution window, external proof deadline, outcome information barrier, and completeness account.
+
+## D023 Minimal Genesis method set
+
+Status: GEN_001 REVIEW CANDIDATE
+Date: 2026-09-11
+
+The initial Genesis candidate admits only `method:last-observed-value:v1`.
+
+The first prospective history, if later authorized by a separate Genesis acceptance decision, is intended to establish real provenance, external time evidence, release-instance completeness, official-source resolution, evaluation, and Failure Corpus mechanics with the smallest operational and selection surface.
+
+Additional statistical models, LLMs, agents, experts, or other methods require an accepted successor manifest. They cannot be added retrospectively to Genesis history.
+
+## D024 Genesis candidate object lineage
+
+Status: GEN_001 REVIEW CANDIDATE
+Date: 2026-09-11
+
+The current effective normative candidate is `candidate_object_set_v0_2.json` plus `candidate_patch_v0_3.json`.
+
+The v0.3 patch replaces the issuance schedule policy only when the predecessor full hash matches and adds six operational policies. The resulting effective candidate contains 22 sealed objects.
+
+Earlier object sets remain immutable non-prospective review artifacts and are never silently rewritten.
+
+## D025 GEN_001 readiness closure evidence
+
+Status: GEN_001 REVIEW CONTROL
+Date: 2026-09-11
+
+`docs/GENESIS_READINESS_EVIDENCE_MATRIX.md` is the authoritative closure checklist for GEN_001.
+
+A readiness item closes only through the retained evidence specified by that matrix. Rehearsal success without retained verifiable artifacts, narrative confidence, or operator assertion does not close a blocker.
+
+## D026 Roughtime quorum v3 and production qualification governance
+
+Status: GEN_001 REVIEW CONTROL
+Date: 2026-09-13
+
+The current effective GEN_001 candidate lineage is `candidate_object_set_v0_2.json` plus `candidate_patch_v0_3.json`, `candidate_patch_v0_4.json`, and `candidate_patch_v0_5.json`. The v0.5 patch retires `policy:deadline-receipt-quorum:v2` by exact predecessor content hash and adds `policy:deadline-receipt-quorum:v3`.
+
+This decision supersedes D015 only where D015 names `DEADLINE_RECEIPT_QUORUM_V1` or requires an RFC 3161 receipt. It preserves D015's requirements that at least two operationally independent provider groups supply qualifying signed receipts, that provider failure never lowers the threshold, and that a provider without a defensible conservative upper time bound cannot count.
+
+Under the current v3 candidate, the frozen provider pool is `roughtime.se`, `time.txryan.com`, and `TimeNL-Roughtime`; the event threshold is two of three qualifying Roughtime provider groups. RFC 3161 evidence is optional auxiliary evidence and does not reduce or replace that threshold.
+
+This decision also supersedes only the effective-lineage sentence in D024. D024's append-only history, exact predecessor binding, sealed-object, and non-prospective rules remain unchanged.
+
+D025 remains in force. `docs/GENESIS_READINESS_EVIDENCE_MATRIX.md` remains the authoritative GEN_001 closure checklist and must track the current effective lineage, current quorum policy, retained rehearsal evidence, production qualification gates, and final freeze state.
+
+A successful `NON_FORECAST_REHEARSAL`, including a three-of-three qualifying result, is evidence for a later independent qualification review. It is not a production qualification decision, does not create a production ProviderProfile, and cannot change the production-qualified provider count.
+
+Roughtime production qualification criteria must be independently frozen by a later governance decision before qualification execution. Historical candidate objects, RFC 3161 evidence, Roughtime plans, authorizations, requests, responses, reports, and classifications retain their original semantics and are not rewritten by this decision.
+
+## D027 Roughtime production qualification governance freeze v1
+
+Status: ACCEPTED FOR GEN_001 CRITERIA FREEZE
+Date: 2026-09-13
+
+Criteria ID: `FPP_ROUGHTIME_PRODUCTION_QUALIFICATION_V1`
+
+Criteria SHA256: `88cc910fdb7e573f3a84d860ad0cdc5fffc287db18678956c7e50dc52a07639e`
+
+The exact criteria in `docs/GEN_001_ROUGHTIME_PRODUCTION_QUALIFICATION_CRITERIA_V1.md` are frozen by `docs/GEN_001_ROUGHTIME_PRODUCTION_QUALIFICATION_GOVERNANCE_FREEZE_V1.md`.
+
+The freeze resolves the nine previously open governance policies. Pilot or experimental services are conditionally admissible with at most one such provider in the three-member pool. Contractual SLA is not required. Affirmative low-volume automated production-use permission is required. Initial qualification requires a qualifying live event no more than 30 days old and two qualifying live events separated by at least seven days. Provider metadata review is required every 90 days. Root-secret and issuance-control independence require positive evidence, with unknown treated as blocking. Common dependency becomes blocking at a two-vote compromise or provider-side two-vote suppression threshold. Complete evidence manifests use `FPP_JCS_1`, exclude themselves, and are sealed by an externally bound SHA256. Final QualificationDecision authority is the owner-controlled Ed25519 bootstrap authority after the exact decision schema and signature projection are frozen.
+
+The freeze also corrects the draft manifest rule that permitted JSON null for non-applicable fields. Under `FPP_JCS_1`, non-applicable `provider_id` and `attempt_number` fields are omitted.
+
+This decision does not execute production qualification, create a ProviderProfile, create a QualificationDecision, authorize any live provider request, start Genesis, or change the production-qualified provider count. Production qualification execution remains `NOT_READY` pending schema, validator, independent review, and required owner authority readiness.

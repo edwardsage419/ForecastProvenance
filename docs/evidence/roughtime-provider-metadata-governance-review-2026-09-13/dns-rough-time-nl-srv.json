@@ -1,0 +1,1 @@
+{"Status":3,"TC":false,"RD":true,"RA":true,"AD":true,"CD":false,"Question":[{"name":"_roughtime._udp.rough.time.nl","type":33}],"Authority":[{"name":"time.nl","type":6,"TTL":300,"data":"ns1.sidnlabs.nl. hostmaster.sidn.nl. 3544 14400 3600 604800 300"}]}

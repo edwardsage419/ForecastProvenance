@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://forecastprovenance.org/schemas/roughtime_qualification_verifier_contract_v1.schema.json",
+  "title": "Roughtime Qualification Verifier Contract V1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "object_type",
+    "criteria_id",
+    "criteria_sha256",
+    "validator_contract_ref",
+    "decision_signature_projection",
+    "signature_algorithm",
+    "authority_id",
+    "authority_public_key_sha256",
+    "ed25519_verifier_build_profile_sha256",
+    "ed25519_verifier_binary_sha256",
+    "object_id",
+    "payload_sha256",
+    "content_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "object_type": {"const": "RoughtimeQualificationVerifierContract"},
+    "criteria_id": {"const": "FPP_ROUGHTIME_PRODUCTION_QUALIFICATION_V1"},
+    "criteria_sha256": {"const": "88cc910fdb7e573f3a84d860ad0cdc5fffc287db18678956c7e50dc52a07639e"},
+    "validator_contract_ref": {"$ref": "#/$defs/ref"},
+    "decision_signature_projection": {"const": "FPP_ROUGHTIME_QUALIFICATION_DECISION_V1"},
+    "signature_algorithm": {"const": "ED25519"},
+    "authority_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._:/-]+$",
+      "minLength": 1
+    },
+    "authority_public_key_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "ed25519_verifier_build_profile_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "ed25519_verifier_binary_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "object_id": {"type": "string", "pattern": "^[A-Za-z0-9._:/-]+$"},
+    "payload_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "ref": {
+      "type": "object",
+      "required": ["object_id", "content_sha256"],
+      "properties": {
+        "object_id": {"type": "string", "pattern": "^[A-Za-z0-9._:/-]+$"},
+        "content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      },
+      "additionalProperties": false
+    }
+  }
+}

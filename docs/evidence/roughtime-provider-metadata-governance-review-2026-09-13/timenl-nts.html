@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="icon" type="image/png" href="./favicon.ico">
+    <link rel="stylesheet" type="text/css" href="./style.css" />
+    <title>SIDN Labs TimeNL NTS server</title>
+</head>
+<body>
+
+<div class="header">
+    <div class="header-container">
+        <div class="logo">
+            <img src="./img/logo-white.svg" alt="logo">
+            <span>LABS</span>
+        </div>
+    </div>
+</div>
+
+<div class="bg-petrol"></div>
+
+<div class="container">
+    <div class="content">
+
+        <div class="content-top">
+            <div class="banner">
+              <svg width="72" height="72" viewBox="0 0 512 512">
+                <path class="icon" d="M256,0C114.837,0,0,114.843,0,256s114.837,256,256,256s256-114.843,256-256S397.163,0,256,0z M289.391,389.565
+                c0,18.442-14.949,33.391-33.391,33.391s-33.391-14.949-33.391-33.391V222.609c0-18.442,14.949-33.391,33.391-33.391
+                s33.391,14.949,33.391,33.391V389.565z M256,155.826c-18.442,0-33.391-14.949-33.391-33.391S237.558,89.044,256,89.044
+                s33.391,14.949,33.391,33.391S274.442,155.826,256,155.826z"/>
+              </svg>
+              <h1>TimeNL &mdash; Network Time Security (NTS)</h1>
+            </div>
+            <p class="intro">Our NTS-enabled unicast server pool (ntspool.time.nl) consists of four stratum&nbsp;1 servers:</p>
+            <table class="hero-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Primary reference clock</th>
+                  <th>Secondary reference clock</th>
+                  <th>Remark</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>ntppool1.time.nl</td>
+                  <td>Galileo+GPS</td>
+                  <td>DCF77+Rubidium holdover</td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>ntppool2.time.nl</td>
+                  <td>Galileo+GPS</td>
+                  <td>DCF77+Rubidium holdover</td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>ntppool3.time.nl</td>
+                  <td>Atomic clocks: UTC(VSL)</td>
+                  <td>Rubidium holdover</td>
+                  <td>pre-production</td>
+                </tr>
+                <tr>
+                  <td>ntppool4.time.nl</td>
+                  <td>Atomic clocks: UTC(VSL)</td>
+                  <td>Rubidium holdover</td>
+                  <td>pre-production</td>
+                </tr>
+              </tbody>
+            </table>
+        </div>
+
+        <div class="content-bottom">
+            <div class="text">
+
+                <h2>About NTS</h2>
+                <p>Read about NTS here:</p>
+                <ul>
+                    <li><a href="https://tools.ietf.org/html/rfc8915">IETF RFC8915</a></li>
+<!--                    <li><a href="https://blog.webernetz.net/network-time-security-new-ntp-authentication-mechanism/">Blog post by Martin Langer</a> on webernetz.net</li> -->
+                    <li><a href="https://www.netnod.se/blog/what-network-time-security-and-why-it-important">Blog post by Netnod</a></li>
+                    <li><a href="https://blog.cloudflare.com/announcing-cfnts/">Blog post by Cloudflare</a></li>
+                    <li><a href="https://hack.org/mc/blog/nts.html">Blog post by Michael Cardell Widerkrantz</a></li>
+                </ul>
+
+                <h2>Using our servers</h2>
+                <p>For production, use <i>ntppool1.time.nl</i> and <i>ntppool2.time.nl</i>.</p>
+                <p>You may want to add <i>ntppool3.time.nl</i> and <i>ntppool4.time.nl</i> for time derived from the UTC(VSL) atomic clocks.</p>
+                <p>Combined they can be configured with the 'pool' directive as <i>ntspool.time.nl</i>.</p>
+                <p>Or use <i>any.time.nl</i> for our BGP anycasted NTS stratum&nbsp;2 server.</p>
+
+                <p>The original pilot server <i>nts1.time.nl</i> is still available for experiments.</p>
+                <div class="callout-warn">
+                    &#x26A0;&nbsp; It's not recommended to use that server in a production environment!
+                </div>
+<!--
+                <b>Current running experiment:</b>
+                we have a wildcard certificate configured on nts.time.nl due to <a href="https://gitlab.com/NTPsec/ntpsec/-/issues/729">this issue</a>.<br>
+-->
+
+                <h2>Experimental servers</h2>
+<!--            The experimental NTS server (<i>nts1.time.nl</i>) currently runs ntpd: <a href="https://gitlab.com/NTPsec/ntpsec">ntpsec</a>1.2.3+58-g964e0011d. -->
+                <p>The experimental NTS server (<i>nts1.time.nl</i>) currently runs <i>Chrony 4.8-2ubuntu1</i> in a special configuration that is <b>NOT SUITABLE</b> for serious use.</p>
+
+                <p>On another NTS server, <i>ntpd-rs.sidnlabs.nl</i>, we currently run an experiment with
+                <a href="https://github.com/pendulum-project/ntpd-rs/releases/tag/v1.8.0">Version 1.8.0-1</a>,
+                an NTP/NTS server written in Rust, able <a href="https://docs.ntpd-rs.pendulum-project.org/guide/nts-pool/">to take part</a> in an <a href="https://datatracker.ietf.org/doc/draft-venhoek-nts-pool/">NTS pool</a> (yes, NTS, not NTP).
+                The one we run also has <a href="https://datatracker.ietf.org/doc/html/draft-ietf-ntp-ntpv5">NTPv5</a> enabled - more specifically, with
+                '<a href="https://datatracker.ietf.org/doc/draft-ietf-ntp-ntpv5/08/">draft-ietf-ntp-ntpv5-08</a>' in the Draft Identification Extension Field.</p>
+
+                <h2>Roughtime</h2>
+                <p>We also run an experiment with <a href="https://datatracker.ietf.org/doc/draft-ietf-ntp-roughtime/">roughtime</a>, currently with these settings:</p>
+<pre>
+{
+  "servers": [
+    {
+      "name": "TimeNL-Roughtime",
+      "version": "1",
+      "publicKeyType": "ed25519",
+      "publicKey": "v2CievhgKsxzlWPwIkYFUXeA51Akhkv5uhJCj1/kbiY=",
+      "addresses": [
+        {
+          "protocol": "udp",
+          "address": "rough.time.nl:2002"
+        }
+      ]
+    }
+  ]
+}
+</pre>
+
+<!--
+                Please note that this server implements 'draft-ietf-ntp-roughtime-12' correctly <b>only</b> when a client advertises that single version, but it silently drops any request whose VER tag contains more than one version number.
+                This is a known bug of the software we use: <a href="https://github.com/int08h/roughenough">https://github.com/int08h/roughenough</a>.<br>
+-->
+                <p>This server implements 'draft-ietf-ntp-roughtime-12' from <a href="https://github.com/tannerryan/roughtime">https://github.com/tannerryan/roughtime</a> v1.14.0.</p>
+                <p>Please note that when you use older versions of the client from <a href="https://github.com/int08h/roughenough/">https://github.com/int08h/roughenough/</a>, there may be a <a href="https://github.com/int08h/roughenough/pull/98/changes/161de07c8720034a459d98c278543140416cdbf7">compatibility issue</a> with the server we provide. This has meanwhile been <a href="https://github.com/int08h/roughenough/pull/98/">fixed</a>.</p>
+                <p>Please use this experimental service at your own risk, and make sure to add at least two <a href="https://github.com/cloudflare/roughtime/blob/master/ecosystem.md">other servers</a> to your server list for redundancy.</p>
+
+                <h2>SRV records</h2>
+                <p>We also run experiments with <a href="https://github.com/pendulum-project/nts-pool/blob/main/documentation/protocol/srv-pool.md">SRV records</a> for an <a href="https://sectime.org/">NTS Pool</a>. Please note that you require <a href="https://github.com/pendulum-project/chrony/releases/">adapted client software</a> to make use of them.</p>
+
+                <table class="data-table">
+                  <tbody>
+                    <tr>
+                      <td>TimeNL:</td>
+                      <td><code>ntspool.time.nl</code></td>
+                    </tr>
+                    <tr>
+                      <td>GeoDNS experiment with various NTS servers,<br>including those operated by others:</td>
+                      <td><code>[0123].srv.ntspool.nl</code></td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <p>You can check which geolocation is determined for you with: <code>dig +short TXT whoami.srv.ntspool.nl</code></p>
+
+                <h2>More information</h2>
+                <p>Visit <a href="https://time.nl/">time.nl</a> for further information about our TimeNL public service.</p>
+                <p>Or visit <a href="https://ntpinfo.sidnlabs.nl/">ntpinfo.sidnlabs.nl</a> for our experimental NTP checker.</p>
+
+                <hr>
+                
+                <small>Brought to you by <a href="https://www.sidnlabs.nl/">SIDN Labs</a> &ndash; &copy; <span>2026</span>, all rights reserved, no warranty, no liability.</small>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

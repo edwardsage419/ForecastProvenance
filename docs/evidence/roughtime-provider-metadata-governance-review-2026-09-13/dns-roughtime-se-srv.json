@@ -1,0 +1,1 @@
+{"Status":3,"TC":false,"RD":true,"RA":true,"AD":true,"CD":false,"Question":[{"name":"_roughtime._udp.roughtime.se","type":33}],"Authority":[{"name":"roughtime.se","type":6,"TTL":2560,"data":"ns1.loopiagroup.com. dnsadmin.loopiagroup.com. 1786882449 7200 2048 1048576 2560"}]}
