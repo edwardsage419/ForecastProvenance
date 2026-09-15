@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import socket
 from copy import deepcopy
 from datetime import datetime, timedelta, timezone
