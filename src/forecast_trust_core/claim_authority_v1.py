@@ -4,6 +4,7 @@ from typing import Mapping, Sequence
 
 from . import claim_authority_contract_gate_v1 as _gate
 from . import claim_authority_v1_legacy as _legacy
+from . import genesis_governance_authority_v1_hardening as _governance
 from .canonical import CanonicalizationError, validate_ref
 
 
@@ -28,6 +29,17 @@ _validate_dvr_contract = _gate.validate_dvr_contract
 _validate_strong_contract = _gate.validate_strong_contract
 _validate_strong_report = _gate.validate_strong_report
 _validate_manifest_acceptance_v2_contract = _gate.validate_manifest_acceptance_v2_contract
+
+_GOVERNANCE_SIGNATURE_INPUT_KEYS = frozenset(
+    {
+        "signature_evidence",
+        "bootstrap_root",
+        "governance_verifier_contract",
+        "ed25519_verifier_build_profile",
+        "ed25519_verifier_binary",
+        "expected_governance_verifier_contract_ref",
+    }
+)
 
 
 def validate_provider_admission_set_authoritatively(packages, **kwargs):
@@ -57,6 +69,52 @@ def _validate_bitcoin_inputs_for_recomputation(inputs: Mapping) -> None:
     gate_inputs = dict(inputs)
     gate_inputs.pop("persisted_strong_report", None)
     _gate.validate_bitcoin_inputs(gate_inputs)
+
+
+def _validate_genesis_governance_signature_inputs(
+    acceptance,
+    governance_signature_inputs,
+    *,
+    expected_validator_contract_ref,
+):
+    if not isinstance(governance_signature_inputs, Mapping):
+        raise ValueError("Genesis governance signature inputs are required")
+    actual_keys = frozenset(governance_signature_inputs)
+    if actual_keys != _GOVERNANCE_SIGNATURE_INPUT_KEYS:
+        raise ValueError(
+            "Genesis governance signature input field set mismatch; "
+            f"missing={sorted(_GOVERNANCE_SIGNATURE_INPUT_KEYS - actual_keys)} "
+            f"extra={sorted(actual_keys - _GOVERNANCE_SIGNATURE_INPUT_KEYS)}"
+        )
+    expected_contract_ref = governance_signature_inputs[
+        "expected_governance_verifier_contract_ref"
+    ]
+    try:
+        validate_ref(expected_contract_ref)
+        validate_ref(expected_validator_contract_ref)
+    except (CanonicalizationError, TypeError) as exc:
+        raise ValueError("Genesis governance verifier reference malformed") from exc
+    contract = governance_signature_inputs["governance_verifier_contract"]
+    contract_ref = _legacy._exact_ref(
+        contract,
+        object_type="GenesisGovernanceSignatureVerifierContract",
+    )
+    _legacy._require_ref_equal(
+        contract_ref,
+        expected_contract_ref,
+        "Genesis governance signature verifier contract",
+    )
+    return _governance.verify_manifest_acceptance_signature_authoritatively(
+        acceptance,
+        signature_evidence=governance_signature_inputs["signature_evidence"],
+        bootstrap_root=governance_signature_inputs["bootstrap_root"],
+        governance_verifier_contract=contract,
+        ed25519_verifier_build_profile=governance_signature_inputs[
+            "ed25519_verifier_build_profile"
+        ],
+        ed25519_verifier_binary=governance_signature_inputs["ed25519_verifier_binary"],
+        expected_validator_contract_ref=expected_validator_contract_ref,
+    )
 
 
 def recompute_external_existence_claim_authoritatively(subject, **kwargs):
@@ -97,10 +155,11 @@ def validate_final_genesis_acceptance_authoritatively(
     final_evidence_subject_ref,
     wall_clock_inputs,
     bitcoin_inputs,
+    governance_signature_inputs=None,
 ):
     # Preserve the pre-existing fail-closed ordering: wrong final subject,
     # evidence splicing and non-live readiness evidence are rejected before
-    # deeper object-contract validation.
+    # deeper object-contract and governance-signature validation.
     acceptance_ref = _legacy._exact_ref(acceptance, object_type="ManifestAcceptance")
     _legacy._require_ref_equal(final_evidence_subject_ref, acceptance_ref, "final evidence subject")
 
@@ -120,8 +179,31 @@ def validate_final_genesis_acceptance_authoritatively(
     _legacy._require_live_wall_inputs(wall_clock_inputs)
     _legacy._require_live_bitcoin_inputs(bitcoin_inputs)
     _gate.validate_manifest_acceptance_v2_contract(acceptance)
+    if acceptance.get("decision") != "ACCEPT":
+        raise ValueError("ManifestAcceptance decision must be ACCEPT for final Genesis acceptance")
+    if acceptance.get("blocking_finding_refs") != []:
+        raise ValueError("ManifestAcceptance blocking findings must be empty for final Genesis acceptance")
     _gate.validate_wall_inputs(wall_clock_inputs)
     _validate_bitcoin_inputs_for_recomputation(bitcoin_inputs)
+
+    validator_ref = wall_clock_inputs.get("validator_contract_ref")
+    bitcoin_validator_ref = bitcoin_inputs.get("validator_contract_ref")
+    try:
+        validate_ref(validator_ref)
+        validate_ref(bitcoin_validator_ref)
+    except (CanonicalizationError, TypeError) as exc:
+        raise ValueError("final acceptance ValidatorContract reference malformed") from exc
+    _legacy._require_ref_equal(
+        bitcoin_validator_ref,
+        validator_ref,
+        "final acceptance ValidatorContract",
+    )
+    _validate_genesis_governance_signature_inputs(
+        acceptance,
+        governance_signature_inputs,
+        expected_validator_contract_ref=validator_ref,
+    )
+
     _sync_legacy_dependencies()
     result = _legacy.validate_final_genesis_acceptance_authoritatively(
         acceptance,
@@ -297,12 +379,14 @@ def validate_persisted_final_acceptance_report_authoritatively(
     wall_clock_inputs,
     bitcoin_inputs,
     trusted_manifest_ref,
+    governance_signature_inputs=None,
 ):
     validation, claims, strong_report = validate_final_genesis_acceptance_authoritatively(
         acceptance,
         final_evidence_subject_ref=final_evidence_subject_ref,
         wall_clock_inputs=wall_clock_inputs,
         bitcoin_inputs=bitcoin_inputs,
+        governance_signature_inputs=governance_signature_inputs,
     )
     validator_ref = wall_clock_inputs["validator_contract_ref"]
     _legacy._require_ref_equal(
@@ -315,6 +399,7 @@ def validate_persisted_final_acceptance_report_authoritatively(
             "wall": wall_clock_inputs,
             "bitcoin": bitcoin_inputs,
             "strong_report": strong_report,
+            "governance_signature": governance_signature_inputs,
         }
     )
     recomputed = _legacy.build_validation_report_v2(
