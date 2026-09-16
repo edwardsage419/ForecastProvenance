@@ -34,6 +34,42 @@ def make_validator_contract():
     return sealed("ValidatorContract", "validator:test:v1", contract="synthetic")
 
 
+def dummy_ref(object_id: str, digit: str):
+    return {"object_id": object_id, "content_sha256": digit * 64}
+
+
+def minimal_external_bundle(
+    *,
+    subject_ref,
+    validator_ref,
+    object_id: str,
+    origin_class: str = "SYNTHETIC",
+    receipt_refs=None,
+):
+    receipts = list(receipt_refs or [dummy_ref(f"receipt:{object_id}:0", "1")])
+    profiles = [
+        dummy_ref(f"profile:{object_id}:{index}", digit)
+        for index, digit in enumerate(("2", "3", "4"), 1)
+    ]
+    packages = [
+        dummy_ref(f"state:{object_id}:{index}", digit)
+        for index, digit in enumerate(("5", "6", "7"), 1)
+    ]
+    return sealed(
+        "ExternalTimeEvidenceBundle",
+        object_id,
+        origin_class=origin_class,
+        prospective_eligible=False,
+        subject_ref=subject_ref,
+        receipt_quorum_deadline_utc=DEADLINE,
+        receipt_evidence_refs=receipts,
+        provider_profile_refs=profiles,
+        qualification_state_package_refs=packages,
+        quorum_policy_ref=dummy_ref(f"policy:{object_id}", "8"),
+        validator_contract_ref=validator_ref,
+    )
+
+
 def make_wall_fixture(receipt_provider_ids=("roughtime.se", "time.txryan.com")):
     subject = sealed("Subject", "subject:test:v1", value="x")
     validator = make_validator_contract()
@@ -252,18 +288,10 @@ def test_provider_state_admission_failure_blocks_existence(monkeypatch):
 def make_bitcoin_fixture(tmp_path: Path, *, verified=True):
     subject = sealed("Subject", "subject:bitcoin:v1", value="x")
     validator = make_validator_contract()
-    bundle = sealed(
-        "ExternalTimeEvidenceBundle",
-        "bundle:bitcoin:v1",
-        origin_class="SYNTHETIC",
-        prospective_eligible=False,
+    bundle = minimal_external_bundle(
         subject_ref=ref(subject),
-        receipt_quorum_deadline_utc=DEADLINE,
-        receipt_evidence_refs=[],
-        provider_profile_refs=[],
-        qualification_state_package_refs=[],
-        quorum_policy_ref=ref(sealed("PolicyDefinition", "policy:q:bitcoin:v1", value="q")),
-        validator_contract_ref=ref(validator),
+        validator_ref=ref(validator),
+        object_id="bundle:bitcoin:v1",
     )
     proof_bytes = b"synthetic-ots-proof"
     proof = sealed(
@@ -368,7 +396,11 @@ def test_failed_strong_bitcoin_verifier_produces_failed_durability(tmp_path):
 @pytest.mark.skipif(os.name == "nt", reason="synthetic executable fixture is POSIX")
 def test_wrong_ots_bundle_binding_rejected(tmp_path):
     subject, validator, bundle, proof, exe, contract = make_bitcoin_fixture(tmp_path, verified=True)
-    other = sealed("ExternalTimeEvidenceBundle", "bundle:other:v1", value="other")
+    other = minimal_external_bundle(
+        subject_ref=ref(subject),
+        validator_ref=ref(validator),
+        object_id="bundle:other:v1",
+    )
     bad = sealed(
         "OpenTimestampsProofArtifact", "proof:bad:v1", origin_class="SYNTHETIC",
         prospective_eligible=False, external_time_evidence_bundle_ref=ref(other),
@@ -465,10 +497,50 @@ def test_final_acceptance_rejects_wrong_subject_before_claim_consumption():
 def test_final_acceptance_rejects_evidence_splicing_between_bundles():
     acceptance = sealed("ManifestAcceptance", "acceptance:splice:v2", value="x")
     validator = make_validator_contract()
-    b1 = sealed("ExternalTimeEvidenceBundle", "bundle:splice1:v1", origin_class="LIVE_OPERATIONAL", prospective_eligible=False, validator_contract_ref=ref(validator))
-    b2 = sealed("ExternalTimeEvidenceBundle", "bundle:splice2:v1", origin_class="LIVE_OPERATIONAL", prospective_eligible=False, validator_contract_ref=ref(validator))
-    r1 = sealed("RoughtimeProductionReceiptEvidence", "receipt:splice:v1", origin_class="LIVE_OPERATIONAL", prospective_eligible=False)
-    p2 = sealed("OpenTimestampsProofArtifact", "proof:splice:v1", origin_class="LIVE_OPERATIONAL", prospective_eligible=False)
+    profile_ref = dummy_ref("profile:splice:v1", "9")
+    state_ref = dummy_ref("state:splice:v1", "a")
+    request = b"request"
+    response = b"response"
+    r1 = sealed(
+        "RoughtimeProductionReceiptEvidence",
+        "receipt:splice:v1",
+        origin_class="LIVE_OPERATIONAL",
+        prospective_eligible=False,
+        subject_ref=ref(acceptance),
+        frozen_deadline_utc=DEADLINE,
+        provider_id="roughtime.se",
+        provider_profile_ref=profile_ref,
+        qualification_state_package_ref=state_ref,
+        verifier_build_profile_sha256="b" * 64,
+        client_random_hex="c" * 64,
+        request_sha256=hashlib.sha256(request).hexdigest(),
+        request_base64=base64.b64encode(request).decode("ascii"),
+        response_sha256=hashlib.sha256(response).hexdigest(),
+        response_base64=base64.b64encode(response).decode("ascii"),
+    )
+    b1 = minimal_external_bundle(
+        subject_ref=ref(acceptance),
+        validator_ref=ref(validator),
+        object_id="bundle:splice1:v1",
+        origin_class="LIVE_OPERATIONAL",
+        receipt_refs=[ref(r1)],
+    )
+    b2 = minimal_external_bundle(
+        subject_ref=ref(acceptance),
+        validator_ref=ref(validator),
+        object_id="bundle:splice2:v1",
+        origin_class="LIVE_OPERATIONAL",
+    )
+    proof_bytes = b"proof"
+    p2 = sealed(
+        "OpenTimestampsProofArtifact",
+        "proof:splice:v1",
+        origin_class="LIVE_OPERATIONAL",
+        prospective_eligible=False,
+        external_time_evidence_bundle_ref=ref(b2),
+        proof_sha256=hashlib.sha256(proof_bytes).hexdigest(),
+        proof_base64=base64.b64encode(proof_bytes).decode("ascii"),
+    )
     with pytest.raises(ValueError, match="same exact ExternalTimeEvidenceBundle"):
         authority.validate_final_genesis_acceptance_authoritatively(
             acceptance, final_evidence_subject_ref=ref(acceptance),
@@ -486,9 +558,12 @@ def test_genesis_final_claim_mapping_marks_non_scientific_claims_not_applicable(
 
 def test_synthetic_evidence_cannot_enter_final_genesis_readiness():
     acceptance = sealed("ManifestAcceptance", "acceptance:synthetic:v2", value="x")
-    bundle = sealed(
-        "ExternalTimeEvidenceBundle", "bundle:synthetic-final:v1",
-        origin_class="SYNTHETIC", prospective_eligible=False,
+    validator = make_validator_contract()
+    bundle = minimal_external_bundle(
+        subject_ref=ref(acceptance),
+        validator_ref=ref(validator),
+        object_id="bundle:synthetic-final:v1",
+        origin_class="SYNTHETIC",
     )
     with pytest.raises(ValueError, match="LIVE_OPERATIONAL"):
         authority.validate_final_genesis_acceptance_authoritatively(
