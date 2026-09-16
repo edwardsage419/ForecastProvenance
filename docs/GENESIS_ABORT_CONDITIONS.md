@@ -1,7 +1,7 @@
 # Genesis Abort Conditions
 
 Version: 0.4 candidate
-Status: GEN_001 ARCHITECTURE COMPRESSION P5 CLAIM-AUTHORITY HARDENING
+Status: GEN_001 POST_P6_CORRECTNESS_REPAIR_PENDING_FRESH_REGRESSION
 
 Genesis readiness, final acceptance, and any later operation fail closed. Abort preserves evidence and stops progression to a stronger trust claim.
 
@@ -11,7 +11,7 @@ GEN_001 cannot exit while any selected required item in `GENESIS_READINESS_EVIDE
 
 Blocking examples include:
 
-1. any of the three frozen Roughtime providers lacks production qualification under the exact frozen criteria;
+1. any of the three frozen Roughtime providers lacks production qualification under the exact frozen criteria while the current v0.6 provider profile remains active;
 2. provider-state evidence cannot be reconstructed from a content-closed retained record set;
 3. a provider is `QUALIFICATION_EXPIRED`, `REQUALIFICATION_REQUIRED`, or otherwise non-qualified at a required historical deadline;
 4. exact final validator or qualification-verifier contract cannot be content bound;
@@ -20,8 +20,13 @@ Blocking examples include:
 7. strong OpenTimestamps/Bitcoin verification cannot be completed under the frozen verifier contract;
 8. any selected target lacks retained official first-release/parser evidence required for final readiness;
 9. candidate v0.6 dependency closure, predecessor retirement hash checks, or sealed-object validation fails;
-10. final adversarial review contains a blocking finding;
-11. a required minimum mechanism introduces an unapproved recurring paid dependency.
+10. a directly consumed production evidence object has an internally valid seal but violates its exact normative object contract;
+11. the current v3 attempt-all-three execution requirement remains unresolved at the production claim-authority boundary (`P7_F1`);
+12. the repaired source tree has not completed a fresh full P6 regression from zero on one exact final HEAD;
+13. final adversarial review contains a blocking finding;
+14. a required minimum mechanism introduces an unapproved recurring paid dependency.
+
+The historical P6 exact-head PASS remains retained history. It cannot close regression requirements for a later modified repair tree.
 
 ## Candidate construction abort conditions
 
@@ -34,7 +39,9 @@ Construction stops if:
 5. Genesis v1 reintroduces a scientific Human Review authority without an explicit successor design decision;
 6. EvaluationPolicy includes baseline delta, pairwise method comparison, aggregate predictive-skill claims, or probabilistic scoring without a distinct admitted method/class;
 7. dormant PublicRandomnessPolicy, FittedState, closed-model, stochastic, or externally audited attempt paths become Genesis blockers without an admitted method requiring them;
-8. TrustedManifest omits the exact three ProviderProfiles, matching QualificationDecisions, quorum policy, main ValidatorContract, qualification-verifier contract, or strong Bitcoin verifier contract required by the admitted Genesis v1 evidence path.
+8. TrustedManifest omits an exact dependency required by the final post-P7 Genesis profile.
+
+The post-P6 correctness repair must not be represented as a candidate-lineage change. Candidate bytes remain on the v0.6 lineage unless a later explicit successor policy decision requires a versioned patch.
 
 ## ManifestAcceptance abort conditions
 
@@ -61,9 +68,13 @@ A successor P2 claim or readiness decision is rejected if:
 5. a provider runtime input supplies `signature_verifier`, `expected_authority_id`, or `expected_authority_public_key` instead of the manifest-bound qualification-verifier path injecting them;
 6. the independently supplied qualification authority ID/public-key bytes differ from the values/hash frozen in the exact qualification verifier contract;
 7. the Ed25519 verifier build profile or executable hash differs from the manifest-bound qualification verifier contract;
-8. provider authority input keys, ProviderProfile provider IDs, or state-package provider IDs do not form the same exact three-provider set;
+8. provider authority input keys, ProviderProfile provider IDs, or state-package provider IDs do not form the same exact three-provider set under the current v0.6 profile;
 9. synthetic or retrospective evidence is used to satisfy a production readiness path requiring admitted operational evidence;
-10. a persisted ValidationReport or StrongBitcoinVerificationReport differs from deterministic recomputation.
+10. a persisted ValidationReport or StrongBitcoinVerificationReport differs from deterministic recomputation;
+11. any directly consumed `ExternalTimeEvidenceBundle`, `RoughtimeProductionReceiptEvidence`, `OpenTimestampsProofArtifact`, `DurabilityVerificationRecord`, or `StrongBitcoinVerifierContract` fails its exact normative contract even when its content seal is internally consistent;
+12. an evidence object contains an unexpected additional field where its normative schema forbids additional properties;
+13. an evidence object uses a wrong schema version, wrong object type, disallowed origin class, invalid `prospective_eligible` value, malformed reference, malformed deadline, invalid required cardinality, or invalid fixed verifier-contract value;
+14. production receipt admission depends on copied ProviderProfile fields that are outside the normative `RoughtimeProductionReceiptEvidence` contract rather than exact profile/state references and verifier identity binding.
 
 Historical low-level helper interfaces remain historical/non-authoritative and cannot close successor claim/readiness gates.
 
@@ -72,20 +83,21 @@ Historical low-level helper interfaces remain historical/non-authoritative and c
 Independent final validation fails when:
 
 1. final external evidence subject is not the exact signed ManifestAcceptance;
-2. authoritative recomputation of `EXTERNAL_EXISTENCE_BOUND_VERIFIED(ManifestAcceptance)` is not `VERIFIED`;
-3. authoritative recomputation of `BITCOIN_DURABILITY_VERIFIED(ManifestAcceptance)` is not `VERIFIED`;
-4. optional intermediate bootstrap or candidate-manifest anchors are substituted for missing final acceptance evidence;
+2. any temporal claim required by the final post-P7 governance profile cannot be authoritatively recomputed to its required state;
+3. authoritative recomputation of `BITCOIN_DURABILITY_VERIFIED(ManifestAcceptance)` is not `VERIFIED` when required by the final profile;
+4. optional intermediate bootstrap or candidate-manifest anchors are substituted for missing required final acceptance evidence;
 5. final evidence package or validator/verifier contract cannot be independently replayed;
 6. wall-clock and Bitcoin evidence do not bind the same exact ExternalTimeEvidenceBundle where the final acceptance path requires that common bundle;
-7. final validation depends on persisted claim/state values without re-deriving them from exact evidence.
+7. final validation depends on persisted claim/state values without re-deriving them from exact evidence;
+8. any final evidence object fails exact contract enforcement before cryptographic replay.
 
-For Genesis governance acceptance, `PRE_OUTCOME_DURABILITY_VERIFIED` and `CONFIRMATORY_PROSPECTIVE_ELIGIBLE` are `NOT_APPLICABLE`.
+Under the current v0.6 governance mapping, `PRE_OUTCOME_DURABILITY_VERIFIED` and `CONFIRMATORY_PROSPECTIVE_ELIGIBLE` remain `NOT_APPLICABLE` for ManifestAcceptance. P7 may later narrow the governance wall-clock dependency only through versioned policy semantics.
 
 Genesis authorization remains a separate explicit step after successful final validation.
 
 ## Provider admission abort conditions
 
-For every consequential deadline event after a separately authorized Genesis:
+For every consequential deadline event after a separately authorized Genesis under the current v0.6 profile:
 
 ```text
 as_of_utc = frozen_deadline_utc
@@ -103,11 +115,28 @@ The event fails the production-provider admission gate when:
 8. provider input identity closure differs from the exact manifest-admitted three-provider set;
 9. a key, endpoint, wire profile, verifier identity, use permission, independence fact, or other qualification-relevant state requires requalification and no new accepted qualification state exists.
 
+Provider independence/common-dependency evidence is retained through the qualification evidence, review and decision chain. ProviderProfile remains the frozen operational and cryptographic identity object.
+
 A provider outage does not lower qualification requirements and does not lower the receipt threshold.
+
+## Production wall-clock execution-accounting abort conditions
+
+Under current `policy:deadline-receipt-quorum:v3`, all three frozen providers are evaluated in frozen order and attempted when retry-eligible even after quorum is reached.
+
+A two-of-three set of qualifying production receipts proves the receipt quorum property. It does not by itself prove complete execution of all required v3 provider attempts.
+
+Until P7 resolves `P7_F1`, Genesis readiness must not claim that production wall-clock execution accounting is complete. Closure requires either:
+
+1. a minimal authoritative production event accounting path that binds every required provider attempt, failure/nonqualifying result and omission under v3; or
+2. a successor versioned policy that explicitly changes/removes the attempt-all-three requirement after adversarial review.
+
+`NON_FORECAST_REHEARSAL` reports cannot be promoted or relabeled as production evidence.
 
 ## Deadline-existence abort conditions
 
 `DEADLINE_EXISTENCE_VERIFIED` fails when the exact subject has a verified conservative wall-clock upper bound after its frozen deadline or the base existence verification fails.
+
+Before the existence claim can be verified, its production evidence bundle and every counted production receipt must satisfy their exact normative object contracts and cryptographic replay requirements.
 
 Missing/pending wall-clock evidence remains `UNRESOLVED` until deterministically decidable. Bitcoin durability never repairs a missed wall-clock deadline.
 
@@ -115,17 +144,30 @@ Missing/pending wall-clock evidence remains `UNRESOLVED` until deterministically
 
 `BITCOIN_DURABILITY_VERIFIED` fails when:
 
-1. OTS proof does not bind the exact ExternalTimeEvidenceBundle;
-2. the bundle does not bind the exact primary subject and frozen wall-clock evidence;
-3. strong Bitcoin verification fails or is not executed under the exact manifest-bound hash-pinned verifier contract;
-4. proof or verification bytes needed for replay are unavailable;
-5. a persisted strong-verification report is used instead of re-execution or differs from recomputation.
+1. the ExternalTimeEvidenceBundle fails its exact normative object contract;
+2. OTS proof fails its exact normative object contract;
+3. OTS proof does not bind the exact ExternalTimeEvidenceBundle;
+4. the bundle does not bind the exact primary subject and frozen evidence references required by the active profile;
+5. StrongBitcoinVerifierContract fails its exact normative object contract or differs from the manifest-bound contract;
+6. strong Bitcoin verification fails or is not executed under the exact manifest-bound hash-pinned verifier contract;
+7. proof or verification bytes needed for replay are unavailable;
+8. a persisted strong-verification report is used instead of re-execution or differs from recomputation.
+
+A hash-consistent sealed but contract-invalid bundle/proof/contract cannot produce a verified Bitcoin durability claim.
 
 Pending Bitcoin completion remains `UNRESOLVED` and does not rewrite a weaker verified deadline-existence claim.
 
 ## Pre-outcome durability abort conditions
 
-`PRE_OUTCOME_DURABILITY_VERIFIED` fails when Bitcoin durability is verified but the exact DurabilityVerificationRecord does not itself obtain verified deadline existence by the frozen outcome-information barrier.
+`PRE_OUTCOME_DURABILITY_VERIFIED` fails or cannot be promoted when:
+
+1. the exact DurabilityVerificationRecord fails its normative object contract;
+2. the DVR does not bind the exact primary subject;
+3. the DVR does not bind the exact ExternalTimeEvidenceBundle, OTS proof and recomputed strong-verification report;
+4. the DVR deadline claim is not for the exact DVR subject and the exact frozen outcome-information barrier;
+5. Bitcoin durability is verified but the exact DVR does not itself obtain verified deadline existence by that barrier.
+
+A sealed DVR with extra fields, wrong schema/object identity, invalid origin class, invalid `prospective_eligible`, malformed refs or malformed barrier can never create `PRE_OUTCOME_DURABILITY_VERIFIED = VERIFIED`.
 
 A post-outcome durability completion may remain valid historical durability evidence while failing the stronger pre-outcome claim.
 
@@ -142,7 +184,8 @@ A post-outcome durability completion may remain valid historical durability evid
 7. required Bitcoin durability failure;
 8. required pre-outcome durability failure;
 9. production-provider admission failure at the relevant frozen deadline;
-10. any required component claim was accepted from caller-supplied claim state rather than authoritative evidence recomputation.
+10. any required component claim was accepted from caller-supplied claim state rather than authoritative evidence recomputation;
+11. an applicable production wall-clock execution-accounting requirement is violated or remains unresolved under the active policy.
 
 If no required claim fails but at least one remains unresolved, eligibility remains `UNRESOLVED` rather than being silently classified as failed or verified.
 
@@ -167,10 +210,20 @@ Evaluation fails closed when:
 
 No Genesis readiness or operation may silently introduce a recurring paid dependency. Any new paid provider, API, hosted database, certificate, monitoring, or subscription requires separate cost/security review and explicit owner approval.
 
+The post-P6 correctness repair adds no external runtime service and no recurring paid dependency.
+
+## Regression abort conditions
+
+The repaired tree cannot inherit a PASS from the historical P6 execution.
+
+Once one exact final repair HEAD is selected, any source/schema/candidate/test change required to correct a correctness/security failure invalidates the in-progress regression. Repair the root cause and restart every mandatory P6 step from zero on the new exact HEAD.
+
+Passing subsets from different repair commits cannot be aggregated into a PASS.
+
 ## Abort record
 
-Every aborted candidate or later operation retains an immutable reasoned record sufficient to identify the stage, reason codes, and evidence refs. An abort record is administrative scientific history and never prospective forecast history.
+Every aborted candidate or later operation retains an immutable reasoned record sufficient to identify the stage, reason codes and evidence refs. An abort record is administrative scientific history and never prospective forecast history.
 
 ## Recovery rule
 
-The project never weakens a trust requirement solely to preserve a candidate, cycle, provider, target, schedule, or favorable evaluation result.
+The project never weakens a trust requirement solely to preserve a candidate, cycle, provider, target, schedule or favorable evaluation result.
