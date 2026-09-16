@@ -38,10 +38,11 @@ R6 requires the authoritative validator to reconstruct, from exact retained inpu
 6. the deterministic baseline output;
 7. the immutable IssuedForecast;
 8. complete cycle-manifest accounting;
-9. the required separated temporal/durability claims;
-10. the final confirmatory eligibility state.
+9. accepted-manifest and explicit-Genesis-authorization authority;
+10. the required separated temporal/durability claims;
+11. the final confirmatory eligibility state.
 
-Caller-supplied booleans, reason codes, precomputed `VERIFIED` states, or arbitrary required-slot refs are not authority.
+Caller-supplied booleans, reason codes, precomputed `VERIFIED` states, arbitrary required-slot refs, or a manifest self-asserted status are not authority.
 
 ## Dynamic machine objects
 
@@ -60,7 +61,7 @@ raw_sha256
 raw_artifact_ref
 ```
 
-The validator must receive the retained raw bytes separately, recompute SHA256, require equality with `raw_sha256`, validate the URL/host and HTTP result under the exact manifest-admitted SourceContract, and use `retrieved_at` only as project retrieval evidence. It must not convert retrieval time into a claim about an earlier historical availability time.
+The validator receives the retained raw bytes separately, recomputes SHA256, requires equality with `raw_sha256`, validates URL/host and HTTP result under the exact manifest-admitted SourceContract, and uses `retrieved_at` only as project retrieval evidence. It must not convert retrieval time into a claim about an earlier historical availability time.
 
 For initial Genesis operation, the preceding first-release baseline artifact is retrieved and retained before the forecast information cutoff. Therefore a successful project retrieval at or before cutoff is sufficient to establish that this exact retained artifact was available to the project by cutoff. A later retrieval cannot be backdated.
 
@@ -79,9 +80,7 @@ published_timezone
 parser_version
 ```
 
-The raw official schedule bytes are retained through `SourceArtifactEvidence`.
-
-The schedule parser must deterministically reproduce these parsed fields from those bytes. A caller-provided parsed release date/time is not authority.
+The raw official schedule bytes are retained through SourceArtifactEvidence. The schedule parser must deterministically reproduce these parsed fields from those bytes. A caller-provided parsed release date/time is not authority.
 
 ### TargetInstance
 
@@ -95,7 +94,7 @@ reference_period
 outcome_information_barrier
 ```
 
-The target definition and resolution rule must be admitted by the exact TrustedManifest. The reference period must equal the schedule snapshot reference period. The outcome-information barrier must be deterministically derived from the parsed official schedule time under the frozen `America/New_York` timezone rule and the applicable schedule policy.
+The target definition and resolution rule must be admitted by the exact TrustedManifest. The reference period must equal the schedule snapshot reference period. The outcome-information barrier must be deterministically derived from the parsed official schedule time under the frozen `America/New_York` timezone rule and applicable schedule policy.
 
 ### IssuanceCyclePlan
 
@@ -151,6 +150,7 @@ Initial Genesis values are constrained to:
 ```text
 method_ref = exact manifest-admitted baseline method ref
 output_schema = continuous_scalar_forecast_v1
+forecast_horizon = P7D
 selection_control_class = DETERMINISTIC_REPLAY
 forecast_cardinality = 1
 ```
@@ -180,8 +180,9 @@ Authority requires:
 - the exact source artifact evidence binds retained raw bytes;
 - project retrieval completed at or before `information_cutoff`;
 - the preceding target period is deterministically the immediately preceding period of the same target definition;
-- the target-specific parser rerun over the retained raw bytes reproduces `parsed_decimal_value`;
-- later revised artifacts are not substituted.
+- the target-specific parser rerun over retained raw bytes reproduces `parsed_decimal_value`;
+- later revised artifacts are not substituted;
+- the snapshot `information_cutoff` exactly equals the authoritative cycle-plan cutoff.
 
 ### ForecastRunAttempt
 
@@ -198,7 +199,7 @@ randomness_evidence_ref_or_none
 retrieval_log_ref_or_none
 terminal_status
 failure_code_or_none
-output_artifact_ref_or_none
+point_forecast_decimal_or_none
 attempt_sequence
 retry_of_or_none
 issuance_eligible
@@ -208,12 +209,15 @@ Genesis baseline constraints:
 
 - `runtime_configuration_ref_or_none = NONE` unless a separately frozen configuration object is later introduced;
 - `randomness_evidence_ref_or_none = NONE`;
-- retrieval authority is carried by the exact bound evidence snapshot/source artifact evidence, so no opaque external retrieval-log assertion may replace those bytes;
+- `retrieval_log_ref_or_none = NONE`; retained source evidence is authoritative;
 - attempt sequence begins at 1 and follows `policy:genesis-retry:v1`;
 - no more than two attempts;
-- retry is allowed only after a frozen retry-eligible failure;
+- retry is allowed only after an exact precommitted retry-eligible failure;
+- retry 2 binds the exact attempt-1 reference;
 - the first successful attempt is the only issuance-eligible success;
-- later successes cannot be cherry-picked.
+- no attempt may occur after the first success;
+- a successful attempt's `point_forecast_decimal_or_none` must equal deterministic baseline replay;
+- a failed attempt carries no issuable prediction.
 
 Local `started_at`/`ended_at` are operational metadata and are not part of this authoritative field set.
 
@@ -239,7 +243,7 @@ trusted_manifest_ref
 
 The forecast contains no prospective flag and no mutable trust state.
 
-For the deterministic baseline, authoritative replay must reproduce exactly `point_forecast_decimal` from the bound EvidenceSnapshot and retained source bytes. A stored replay boolean is insufficient.
+For the deterministic baseline, authoritative replay must reproduce exactly `point_forecast_decimal` from the bound EvidenceSnapshot and retained source bytes. The successful-attempt ref, policy refs, exact TrustedManifest ref, cycle plan, cutoff and forecast horizon must all agree. A stored replay boolean is insufficient.
 
 ### IssuanceCycleManifest
 
@@ -261,13 +265,13 @@ omission_code_or_none
 failure_code_or_none
 ```
 
-The row must contain the complete attempt chain for the slot. `ISSUED` requires exactly one forecast ref and the exact issuance-eligible successful attempt. Failed/omitted states remain visible and cannot be deleted from the denominator.
+The row must contain the complete attempt chain for the slot in exact attempt order. `ISSUED` requires the exact forecast ref and exact issuance-eligible successful attempt. Failed/omitted states remain visible and cannot be deleted from the denominator.
 
 The exact cycle manifest is the direct forecast-deadline wall-clock subject. An IssuedForecast inherits that deadline only through validated exact membership in the complete slot accounting.
 
 ## Manifest-derived authority
 
-A new lifecycle authority context must be derived from the exact sealed TrustedManifest rather than caller inputs. It must supply at least:
+Lifecycle authority is derived from the exact sealed TrustedManifest rather than caller inputs. The initial context supplies:
 
 ```text
 trusted_manifest_ref
@@ -281,39 +285,63 @@ omission_policy_ref
 correction_policy_ref
 ```
 
+For the compressed initial profile, the exact cardinalities are three targets, three resolution rules, one method, and six source contracts.
+
 The existing temporal/provider authority context remains unchanged. This avoids breaking historical P5 authority surfaces while adding a separate successor lifecycle authority root.
+
+A successful lifecycle-context derivation does **not** establish that the manifest has been accepted. Accepted-manifest authority remains external to the candidate graph and must be established under ManifestAcceptance v2, final independent validation and separate explicit Genesis authorization.
 
 ## Authoritative validation order
 
 Positive confirmatory authority must execute in this order:
 
 1. derive exact lifecycle authority refs from TrustedManifest;
-2. validate/replay retained schedule source artifact;
-3. derive ScheduleSnapshot and TargetInstance semantics;
-4. deterministically derive all cycle deadlines and the sole required slot;
-5. validate the exact externally precommitted IssuanceCyclePlan and recompute its temporal claims;
-6. validate/replay the retained preceding first-release source artifact;
-7. recompute the baseline EvidenceSnapshot parsed value and point-in-time eligibility;
-8. validate the complete attempt chain and first-success rule;
-9. deterministically replay the baseline prediction;
-10. validate the immutable IssuedForecast against the successful attempt, slot, plan, policies and replayed prediction;
-11. validate complete IssuanceCycleManifest accounting;
-12. recompute the cycle-manifest deadline/existence and durability claims from exact retained evidence;
-13. only if every required non-temporal check and required separated claim is authoritative and passing, derive `CONFIRMATORY_PROSPECTIVE_ELIGIBLE = VERIFIED`.
+2. validate manifest admission of target, resolution rule, method, source contracts and lifecycle policies;
+3. validate/replay retained schedule source artifact;
+4. derive ScheduleSnapshot and TargetInstance semantics;
+5. deterministically derive all cycle deadlines and the sole required slot;
+6. validate the exact externally precommitted IssuanceCyclePlan;
+7. validate/replay retained preceding first-release source artifact;
+8. recompute the baseline EvidenceSnapshot parsed value and point-in-time eligibility;
+9. validate the complete attempt chain and first-success rule;
+10. deterministically replay the baseline prediction;
+11. validate the immutable IssuedForecast against the successful attempt, slot, plan, policies and replayed prediction;
+12. validate complete IssuanceCycleManifest accounting;
+13. establish accepted-manifest/final-validation/explicit-Genesis-authorization authority without using manifest self-assertion or caller booleans;
+14. recompute plan and cycle-manifest deadline/existence and durability claims from exact retained evidence;
+15. only if every required non-temporal check and separated claim is authoritative and passing, derive `CONFIRMATORY_PROSPECTIVE_ELIGIBLE = VERIFIED`.
 
 Any missing authority input produces `UNRESOLVED` or the applicable fail-closed state. No caller-selected hard-invalidation list is accepted as authority.
 
 ## Implementation staging
 
-R6 is split into three implementation subgates:
+R6 is split into four implementation subgates:
 
 ```text
 R6-A = exact lifecycle object/profile gate
 R6-B = schedule/source/parser deterministic replay authority
-R6-C = high-level manifest-rooted confirmatory orchestration
+R6-C = TrustedManifest-rooted lifecycle dependency and cross-object authority
+R6-D = accepted-manifest + explicit-Genesis-authorization + temporal/durability integration and final confirmatory derivation
 ```
 
-The existing `FULL_TRUST_CORE_CHECK_AUTHORITY_NOT_IMPLEMENTED` downgrade remains in force until all three subgates pass focused regression, adversarial regression and fresh exact-head P6.
+Current implementation evidence:
+
+```text
+R6-A = REGRESSION_CONFIRMED
+exact_tested_head = 7b9747693408f2aabebe5a115e56e93c40d6447c
+focused = 13 passed
+full_repository_at_that_head = 428 passed, 188 subtests passed
+
+R6-B = REGRESSION_CONFIRMED
+exact_tested_head = 15c4cbaa53fe9c84b56293b5022510f28378a281
+focused_source_authority = 31 passed
+full_repository_at_that_head = 442 passed, 188 subtests passed
+
+R6-C = IMPLEMENTED_PENDING_EXACT_HEAD_REGRESSION
+R6-D = NOT IMPLEMENTED
+```
+
+The existing `FULL_TRUST_CORE_CHECK_AUTHORITY_NOT_IMPLEMENTED` downgrade remains in force until R6-C and R6-D pass focused regression, adversarial regression and fresh exact-head P6. No successful R6-A/B/C helper return alone authorizes a positive confirmatory claim.
 
 ## Candidate/version consequence
 
@@ -321,14 +349,15 @@ This profile does not itself add a new normative candidate object and therefore 
 
 If implementation reveals that a candidate policy must change, that change requires a successor candidate patch rather than silently altering v0.7 semantics.
 
-## Current blockers identified
+## Current blockers
 
-At the time this profile is written:
-
-- R6-A is not yet implemented;
-- deterministic production schedule parsing from retained official schedule bytes must be confirmed or implemented for R6-B;
-- deterministic baseline replay exists partially in `genesis_sources.py`, but must be connected to exact retained SourceArtifactEvidence and manifest-bound SourceContracts;
-- R6-C remains prohibited until R6-A and R6-B are authoritative.
+```text
+R6-C exact-head regression = PENDING
+R6-D accepted-manifest / Genesis-authorization / temporal integration = NOT IMPLEMENTED
+candidate v0.7 = CREATED / NOT FROZEN
+AUTHORITATIVE_CONFIRMATORY_VERIFIED = PROHIBITED
+GENESIS_READY = NO
+```
 
 ## Safety state
 
