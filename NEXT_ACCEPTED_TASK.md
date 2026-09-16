@@ -1,75 +1,102 @@
 # Next Accepted Task
 
-Task ID: GEN_001-AC-P7-DEPENDENCY-REEVALUATION
-State: PRE_GENESIS ARCHITECTURE COMPRESSION; P6 PASS; MINIMAL GENESIS V1 PROFILE REFROZEN AT V0.6; P7 NEXT; PROVIDER NETWORK REQUEST NOT AUTHORIZED
+Task ID: GEN_001-POST-P6-CORRECTNESS-REPAIR-REGRESSION
+State: PRE_GENESIS ARCHITECTURE COMPRESSION REPAIR; HISTORICAL P6 PASS PRESERVED; POST-P6 REPAIR IMPLEMENTED; FRESH P6 REQUIRED; P7 PAUSED; PROVIDER NETWORK REQUEST NOT AUTHORIZED
 
 ## Objective
 
-Reevaluate whether Roughtime production qualification remains a necessary Genesis v1 dependency under the re-frozen minimal Architecture Compression profile. P7 begins from the current v0.6 requirement and does not presume that the dependency will be retained or removed.
-
-P5 implementation repair completed and subsequently earned P6 exact-head regression PASS. The P6 execution contract below is retained as completed execution provenance.
-
-The completed P6 execution used exact HEAD `70dc89f187842d8dcc6ba428241aae614d520bd4`. Its closed retained evidence package is bound by `P6_EVIDENCE_MANIFEST.txt` SHA256 `a330a3952b55ce0f4415f25c5580ad2cdf53c05801e78f728239ab73caa8bb5d`.
-
-## Controlling records
+Complete and validate the post-P6 correctness repair recorded in:
 
 ```text
-docs/GEN_001_GENESIS_ANCHORING_RECONCILIATION_V1.md
-docs/GEN_001_TEMPORAL_CLAIM_SEPARATION_V1.md
-docs/GEN_001_GENESIS_V1_DEPENDENCY_COMPRESSION_V1.md
-docs/GEN_001_PROVIDER_QUALIFICATION_COMPLEXITY_FIREWALL_V1.md
-docs/GEN_001_ARCHITECTURE_COMPRESSION_P5_IMPLEMENTATION_REVIEW.md
-docs/GEN_001_ARCHITECTURE_COMPRESSION_P6_STATIC_REVIEW_AND_P5_HARDENING_2026_09_14.md
-docs/GEN_001_P6_FINDING_3_CLAIM_AUTHORITY_BOUNDARY_2026_09_14.md
+docs/GEN_001_POST_P6_CORRECTNESS_REPAIR_2026_09_16.md
 ```
 
-Historical Finding 3 status before P6 execution:
+The next accepted execution is a fresh complete offline P6 regression from zero on one exact final repair HEAD.
+
+P7 dependency reevaluation remains paused until that regression passes. No production qualification execution or provider request is part of this task.
+
+## Historical fact preservation
+
+The prior P6 execution remains retained historical provenance:
 
 ```text
-IMPLEMENTATION_REPAIRED_PENDING_REGRESSION
+historical P6 exact HEAD = 70dc89f187842d8dcc6ba428241aae614d520bd4
+historical P6 evidence manifest SHA256 = a330a3952b55ce0f4415f25c5580ad2cdf53c05801e78f728239ab73caa8bb5d
+historical result = PASS
 ```
 
-This retained value records the pre-execution state. Finding 3 was subsequently closed by the successful exact-head P6 regression.
+Post-P6 review found additional correctness gaps after that execution. The historical PASS is not regression evidence for the repaired source tree.
+
+No historical P6 artifact, result or candidate byte may be silently rewritten.
+
+## Current repaired surfaces
+
+The repair includes at minimum:
+
+```text
+src/forecast_trust_core/production_evidence_contracts_v1.py
+src/forecast_trust_core/production_receipt_admission_v1.py
+src/forecast_trust_core/claim_authority_v1.py
+tests/test_production_receipt_admission_v1.py
+tests/test_claim_authority_v1.py
+tests/test_production_evidence_contracts_v1.py
+```
+
+Control documentation is updated to preserve the distinction between the historical P6 result and the current repaired implementation.
+
+Candidate lineage remains v0.6 with 21 effective objects. Candidate bytes are not changed by this repair.
+
+## Open finding that is not closed by this repair
+
+```text
+P7_F1 = PRODUCTION_WALL_CLOCK_CLAIM_DOES_NOT_BIND_COMPLETE_FROZEN_PROVIDER_EXECUTION_ACCOUNTING
+status = OPEN
+```
+
+The current `policy:deadline-receipt-quorum:v3` attempt-all-three semantic must not be silently removed or reinterpreted.
+
+No `NON_FORECAST_REHEARSAL` execution report may be promoted to production evidence.
+
+A successor policy change or a new production execution-accounting authority requires later P7 design review after fresh P6 passes.
 
 ## Repository safety precheck
 
-Before running tests, dynamically establish:
+Before any test execution or further repair, dynamically establish:
 
 ```text
 repository = edwardsage419/ForecastProvenance
-branch remote = design/gen-001
+intended branch / checkout = exact repair tree under review
 PR #6 = Draft / open / unmerged
-remote design/gen-001 HEAD = exact intended P6 input SHA
-remote main ancestry = no unexpected divergence
+remote design/gen-001 history = no unexpected movement relative to the reviewed base
 ```
 
-Use a fresh clean validation checkout when practical. Checkout the exact commit in detached mode or otherwise prove that local HEAD equals the exact frozen P6 input SHA.
-
-Required local proof before execution:
+Required local proof:
 
 ```text
-git rev-parse HEAD == exact frozen P6 input SHA
+git rev-parse HEAD == exact intended repair HEAD
 git status --short == empty
 ```
 
-Unknown tracked modifications, unexpected commits, remote history movement, branch mismatch, or an inability to identify the exact tree requires a safety stop.
+Unknown tracked modifications, unexpected commits, remote history movement, branch mismatch, or inability to identify the exact tree requires a safety stop.
 
-Do not use `reset --hard`, rebase, merge, force push, or deletion of unknown files to manufacture a clean state.
+Do not use `reset --hard`, rebase, merge, force push or deletion of unknown files to manufacture a clean state.
 
-## P6 execution rule
+## Fresh P6 execution rule
 
-P6 is validation only. Do not modify Trust Core source, schemas, candidate bytes, tests or normative controls while accumulating a PASS result.
+P6 is validation only.
+
+Once the exact final repair HEAD is selected, do not modify Trust Core source, schemas, candidate bytes, tests or normative controls while accumulating a PASS result.
 
 If any correctness/security failure requires a code/schema/test correction:
 
 ```text
-P6 = FAILED / INVALIDATED
-return to P5 repair
+fresh P6 = FAILED / INVALIDATED
+repair root cause
 create a new exact HEAD
-restart all mandatory P6 execution from zero
+restart every mandatory P6 execution step from zero
 ```
 
-Passing subsets from an earlier HEAD cannot be combined with a later repaired HEAD.
+Passing subsets from an earlier repair HEAD cannot be combined with a later repaired HEAD.
 
 ## Required execution scope
 
@@ -90,40 +117,26 @@ Retain exact commands and exit codes.
 
 ### 2. Python compile/import checks
 
-Compile/import the complete Trust Core and Genesis helper surface required by the repository.
-
-At minimum include the new successor modules:
+Compile/import the complete Trust Core and Genesis helper surface, including:
 
 ```text
 forecast_trust_core.architecture_compression_v1
 forecast_trust_core.architecture_compression_v1_hardening
+forecast_trust_core.production_evidence_contracts_v1
+forecast_trust_core.production_receipt_admission_v1
 forecast_trust_core.claim_authority_v1
 forecast_trust_core.claim_authority_trust_root_v1
-forecast_trust_core.production_receipt_admission_v1
 ```
 
 Any syntax/import failure blocks P6.
 
 ### 3. JSON Schema Draft 2020-12 meta-validation
 
-Run `Draft202012Validator.check_schema` or the repository-equivalent check over every JSON Schema in `schemas/`, including the Architecture Compression additions:
+Run the repository-equivalent Draft 2020-12 schema validation over every schema in `schemas/`.
 
-```text
-manifest_acceptance_v2.schema.json
-validation_report_v2.schema.json
-roughtime_provider_qualification_state_package.schema.json
-roughtime_qualification_verifier_contract_v1.schema.json
-external_time_evidence_bundle_v1.schema.json
-roughtime_production_receipt_evidence_v1.schema.json
-open_timestamps_proof_artifact_v1.schema.json
-strong_bitcoin_verifier_contract_v1.schema.json
-strong_bitcoin_verification_report_v1.schema.json
-durability_verification_record_v1.schema.json
-```
+The repair must not alter historical schema bytes unless a separately identified schema defect requires a versioned repair. The current repair intentionally aligns implementation to existing normative schemas.
 
-Historical seven-schema meta-validation does not substitute for this fresh current-tree check.
-
-### 4. Candidate lineage and materialization regression
+### 4. Candidate lineage and historical regression
 
 Verify deterministic materialization of:
 
@@ -135,202 +148,151 @@ candidate_object_set_v0_2.json
 + candidate_patch_v0_6.json
 ```
 
-Required successor facts include:
+Required facts include:
 
 ```text
 effective object count = 21
-Acceptance v1 exact predecessor retired
-Evaluation v1 exact predecessor retired
-Human Review v1 exact predecessor retired
-Acceptance v2 sealed and active
-Evaluation v2 sealed and active
 historical v0.2-v0.5 bytes unchanged
+v0.6 exact predecessor retirements unchanged
+no new candidate object introduced by the post-P6 correctness repair
 ```
 
-### 5. Historical regression
+Run the historical Trust Core, source, rehearsal, qualification and verifier regressions required by the repository.
 
-Run historical candidate/object, Trust Core, source, rehearsal, qualification and verifier tests required by the repository.
+### 5. Exact production evidence contract regression
 
-Architecture Compression must not silently reinterpret historical contracts.
+Run focused coverage proving exact contract enforcement for:
 
-### 6. P1 acceptance regression
+```text
+ExternalTimeEvidenceBundle
+RoughtimeProductionReceiptEvidence
+OpenTimestampsProofArtifact
+DurabilityVerificationRecord
+StrongBitcoinVerifierContract
+```
+
+Required negatives include at least:
+
+```text
+sealed object with unexpected field
+wrong schema_version
+wrong object_type
+invalid origin_class
+invalid prospective_eligible value
+missing required field
+malformed reference
+invalid cardinality where specified
+```
+
+A hash-consistent sealed object that violates its normative object contract must fail closed before granting authoritative claim state.
+
+### 6. Production receipt admission regression
+
+Verify that a schema-conforming `RoughtimeProductionReceiptEvidence` can pass exact profile/state binding without copying ProviderProfile fields into the receipt.
+
+Verify rejection of:
+
+```text
+wrong provider_profile_ref
+wrong qualification_state_package_ref
+provider identity mismatch
+verifier build profile mismatch
+invalid production receipt contract
+provider profile with fallback permitted
+```
+
+### 7. Claim-authority regression
 
 Exercise at least:
 
 ```text
-noncircular ManifestAcceptance v2
-exact TrustedManifest binding
-exact BootstrapGovernanceRoot ref binding where applicable
-final evidence supplied after signing
-wrong final evidence subject rejected
-wall-clock and Bitcoin final evidence bind the same exact subject/bundle as required
-```
-
-Low-level caller-supplied final-state strings must not constitute the successor authoritative readiness path.
-
-### 7. P2 claim separation and claim-authority regression
-
-Run all focused claim tests, including:
-
-```text
 exact claim type/subject binding
-VERIFIED/FAILED/UNRESOLVED/NOT_APPLICABLE propagation
-timely existence with late durability
-pending Bitcoin durability
-missed deadline cannot be repaired by Bitcoin
-wrong subject or evidence refs
+exact evidence-object contract before authority
+wall-clock strict Roughtime replay
+wrong/spliced evidence refs
 raw bound/state-string injection rejected
-persisted ValidationReport cannot authorize itself
-exact persisted/recomputed report equality accepted
+persisted ValidationReport equality
 synthetic evidence cannot satisfy production readiness
+schema-invalid sealed Bitcoin bundle cannot produce VERIFIED durability
+schema-invalid sealed DVR cannot produce VERIFIED pre-outcome durability
 ```
 
-Required focused files include:
+### 8. Provider qualification firewall and signature authority regression
+
+Verify the existing content-closed provider-state reconstruction and exact qualification authority path, including:
 
 ```text
-tests/test_architecture_compression_p5.py
-tests/test_architecture_compression_p5_hardening.py
-tests/test_claim_authority_v1.py
-tests/test_claim_authority_trust_root_v1.py
-tests/test_claim_authority_qualification_root_v1.py
-```
-
-### 8. P4 provider qualification firewall regression
-
-Verify:
-
-```text
-content-closed state-store collection
 omitted metadata/requalification event fails closed
 self-asserted qualification state rejected
-exact historical as_of recomputation
-exact ProviderProfile/QualificationDecision binding
-three-provider admitted-pool rule
-no outage threshold reduction
-wrong/stale/requalified provider state rejected
-production receipt/profile admission binding
-```
-
-### 9. Qualification signature-authority regression
-
-Specifically execute the newly added authority-substitution tests:
-
-```text
-caller-injected signature_verifier rejected
-caller-injected expected authority fields rejected
+three-provider admitted-pool rule remains unchanged
+caller signature_verifier rejected
+caller authority substitution rejected
 wrong independent authority public key rejected
-substituted qualification verifier contract rejected
-qualification verifier contract binding a different main ValidatorContract rejected
-wrong Ed25519 build-profile/binary identity rejected
-extra/missing provider authority input rejected
-state-package provider identities must match the exact admitted ProviderProfile set
-exact binding constructs the pinned verifier internally
+wrong Ed25519 build profile/binary rejected
 ```
 
-The accepted public key is verification-only input. The Genesis private key must never be accessed or supplied.
+No qualification criteria may be weakened to obtain PASS.
+
+### 9. Roughtime execution/verifier regression
+
+Run existing offline execution-orchestrator and strict-verifier regression suites.
+
+No live provider request is authorized.
+
+The historical rehearsal classification remains `NON_FORECAST_REHEARSAL` and `prospective_eligible=false`.
 
 ### 10. Bitcoin durability regression
 
-Verify the strong Bitcoin authority boundary with synthetic/local fixtures:
+Verify the exact strong Bitcoin verifier contract and hash-pinned local executable path with synthetic/local fixtures.
+
+No live OpenTimestamps submission or Bitcoin network anchoring action is required by this regression.
+
+### 11. Full repository pytest and synthetic adversarial suite
+
+Run the complete repository pytest suite and the complete synthetic adversarial suite, not only focused tests.
+
+Record pass/fail/skip counts and exit codes.
+
+### 12. Final tree review
+
+Run at minimum:
 
 ```text
-exact StrongBitcoinVerifierContract binding
-hash-pinned local executable
-exact ExternalTimeEvidenceBundle bytes
-exact OTS proof bytes
-wrong/spliced bundle or proof rejected
-failed strong verification rejected
-persisted strong report mismatch rejected
-Bitcoin header time not used as civil-time deadline evidence
+git diff --check
 ```
 
-No live Bitcoin anchoring action is required by this P6 regression.
-
-### 11. Full pytest
-
-Run the complete repository pytest suite, not only focused files.
-
-Record:
+Review the exact diff for:
 
 ```text
-command
-exit code
-total passed
-failed
-skipped/xfailed if any
-warnings relevant to correctness
+accidental scope expansion
+historical semantic rewrite
+Genesis boundary changes
+provider qualification state changes
+private-key references
+live network authorization
+weakened fail-closed behavior
+new unnecessary dependencies
+new recurring paid dependencies
 ```
 
-Any unexpected skip of a mandatory security test blocks PASS until classified.
+## Stop conditions
 
-### 12. Synthetic adversarial suite
+Immediately stop the related operation if:
 
-Run the complete synthetic adversarial suite/registry. Explicitly preserve attacks found during P6 static review:
+1. repository/branch/HEAD/working-tree safety cannot be established;
+2. a test reveals a correctness/security defect;
+3. the repair would require weakening an existing frozen criterion;
+4. a repair would cross the Genesis boundary;
+5. the Genesis private key would be accessed or required;
+6. live provider traffic would be required;
+7. production qualification state would change;
+8. an unexpected Git history or remote state appears.
 
-```text
-cross-subject claim substitution
-self-asserted provider qualification state
-omitted requalification event
-caller-supplied final VERIFIED state
-verifier plus expected-ref simultaneous substitution
-runtime signature-callback substitution
-authority-key substitution
-synthetic/live evidence confusion
-wall-clock/Bitcoin evidence splicing
-forged persisted ValidationReport
-extra unbound provider/evidence input
-```
+## Completion condition
 
-## P6 PASS conditions
+P7 may resume only after one exact final repair HEAD completes the full fresh P6 regression with no blocking correctness/security finding.
 
-P6 may be marked PASS only if all mandatory execution categories above complete successfully against the same exact frozen HEAD and no unresolved correctness/security blocker remains.
-
-A final P6 report must bind at minimum:
-
-```text
-exact HEAD
-exact commands
-relevant environment versions
-schema meta-validation result
-focused regression result
-full pytest result
-synthetic adversarial result
-failure/skip accounting
-report SHA256/content identity
-```
-
-Only after that report is independently checked may project control advance to P7.
-
-## P7 boundary
-
-The P6 gate is satisfied. P7 is now the active accepted task.
-
-A P6 PASS does not automatically resume production qualification. P7 only reevaluates whether continuing Roughtime production qualification is actually required by the refrozen minimal Genesis profile.
-
-## Retained qualification state
-
-```text
-PRODUCTION_QUALIFICATION_CRITERIA = FROZEN_V1
-criteria_id = FPP_ROUGHTIME_PRODUCTION_QUALIFICATION_V1
-criteria_sha256 = 88cc910fdb7e573f3a84d860ad0cdc5fffc287db18678956c7e50dc52a07639e
-production-qualified provider count = 0
-PRODUCTION_QUALIFIED = NO
-PRODUCTION_QUALIFICATION_EXECUTION = NOT_READY
-ACTIVE_MAINLINE = P7_DEPENDENCY_REEVALUATION
-```
-
-P7 does not authorize provider qualification execution and cannot create a QualificationDecision or production ProviderProfile.
-
-## Network boundary
-
-```text
-network_authorized = false
-Roughtime provider requests authorized by this task = 0
-RFC3161 requests authorized by this task = 0
-production qualification requests authorized by this task = 0
-```
-
-Ordinary Git/GitHub repository access needed to obtain the exact validation checkout is development infrastructure access and does not authorize any protocol-provider request.
+A fresh P6 PASS does not itself authorize Genesis, provider qualification execution, provider requests, Forecast Ledger creation or prospective forecasting.
 
 ## Safety state
 
@@ -341,10 +303,13 @@ Forecast Ledger = NOT CREATED
 prospective forecast count = 0
 production-qualified provider count = 0
 PRODUCTION_QUALIFIED = NO
+PRODUCTION_QUALIFICATION_EXECUTION = NOT_READY
 production forecasting = PROHIBITED
 network_authorized = false
-P6_PASS = YES
-P7 = NEXT
+Roughtime provider requests authorized = 0
+RFC3161 requests authorized = 0
+production qualification requests authorized = 0
+P7 = PAUSED_PENDING_FRESH_P6
 ```
 
-The Genesis Ed25519 private key must not be accessed, read, copied, displayed, uploaded, transmitted, logged, referenced or processed.
+The Genesis Ed25519 private key must remain outside repository, GitHub, CI, ChatGPT, Codex, logs, prompts, fixtures and third-party systems.
