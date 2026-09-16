@@ -80,105 +80,114 @@ The exact owner-generated Ed25519 public key is inserted into BootstrapGovernanc
 
 The private key never enters GitHub, CI, repository fixtures, rehearsal bundles, or ChatGPT-managed artifacts.
 
-### G2 Externally evidence bootstrap governance
+Retain the exact BootstrapGovernanceRoot bytes and SHA256 independently of the candidate manifest graph so independent validation can receive the root as an external trust input.
 
-Create a GenesisGovernanceEnvelope containing the bootstrap root and acceptance policy references.
+Standalone external anchoring of the BootstrapGovernanceRoot is optional audit evidence and is not a Genesis readiness requirement.
 
-Obtain FPP_TIME_EVIDENCE_V1 deadline receipt quorum and OTS Bitcoin durability evidence for the envelope.
+### G2 Freeze external provider and verifier profiles
 
-This step is non-forecast governance evidence.
-
-### G3 Freeze external provider and verifier profiles
-
-Only successful retained rehearsals can produce qualifying ProviderProfile or verifier-profile candidates.
+Only successful retained rehearsals and qualification evidence admitted by the frozen provider-qualification criteria can produce production ProviderProfile and QualificationDecision dependencies.
 
 A dated provider website snapshot is insufficient.
 
-Each accepted profile binds the exact provider identity, signer or root key material, policy semantics, time-bound calculation, verifier version, and retained rehearsal evidence required by the protocol.
+Each accepted profile binds the exact provider identity, signer or root key material, policy semantics, time-bound calculation, verifier version, and retained evidence required by the protocol.
 
-### G4 Freeze source-adapter evidence
+### G3 Freeze source-adapter evidence
 
 Retain the three selected retrospective official first-release byte fixtures, raw SHA256 values, retrieval metadata, and successful adapter reports.
 
 These are permanently retrospective and never become forecast history.
 
-### G5 Freeze exact validator contract
+### G4 Freeze exact validator contract
 
 Run the complete test suite under the final candidate code, retain the final test report, and build the exact ValidatorContract using the final candidate commit.
 
-### G6 Freeze candidate Genesis TrustedManifest
+### G5 Freeze candidate Genesis TrustedManifest
 
-The manifest references only already frozen normative objects, the externally evidenced bootstrap root, qualifying provider/verifier profiles, exact source and adapter contracts, and exact ValidatorContract.
+The manifest references only already frozen normative objects, the exact BootstrapGovernanceRoot reference, qualifying provider and verifier dependencies, exact source and adapter contracts, and exact ValidatorContract.
 
 Any missing required dependency blocks construction.
 
-### G7 Externally evidence candidate manifest
+Standalone external anchoring of the candidate TrustedManifest is optional audit evidence. It cannot substitute for final external evidence over the signed ManifestAcceptance.
 
-Obtain FPP_TIME_EVIDENCE_V1 evidence for the exact candidate manifest hash.
-
-### G8 Run Genesis validation suite
+### G6 Run Genesis validation suite
 
 Run the frozen Trust Core tests, Genesis-specific adversarial suite, schema verification, dependency closure, candidate inventory reproducibility, provider-profile verification, source-fixture checks, and manifest reproducibility checks.
 
 All required reports are content addressed.
 
-### G9 Resolve findings
+### G7 Resolve findings
 
 Every blocking finding must be resolved or Genesis is aborted.
 
-A correction to a substantive manifest dependency creates a new candidate and restarts all affected downstream evidence.
+A correction to a substantive manifest dependency creates a new candidate and invalidates downstream acceptance material that bound the prior candidate.
 
-### G10 Create ManifestAcceptance
+### G8 Create ManifestAcceptance v2
 
-ManifestAcceptance binds the exact candidate manifest, bootstrap root, manifest time evidence, validation reports, rehearsal reports, and empty blocking-finding set.
+ManifestAcceptance v2 binds the exact candidate TrustedManifest, exact BootstrapGovernanceRoot, exact AcceptancePolicy, required validation-report references, authority reference, decision, reason codes, blocking findings, and signature reference.
 
-The owner signs the canonical acceptance payload using the bootstrap Ed25519 key.
+It does not contain a required reference to external evidence that can exist only after the acceptance object is signed.
 
-### G11 Externally evidence ManifestAcceptance
+The owner signs the canonical acceptance payload using the bootstrap Ed25519 key outside repository and remote systems.
 
-Obtain FPP_TIME_EVIDENCE_V1 evidence for the exact signed acceptance record.
+### G9 Create final external evidence
 
-### G12 Genesis acceptance gate
+Create FPP_TIME_EVIDENCE_V1 wall-clock evidence over the exact signed ManifestAcceptance and retain the exact ExternalTimeEvidenceBundle.
 
-An independent validation run verifies:
+Create OpenTimestamps proof material over that same exact evidence bundle and complete strong Bitcoin verification under the frozen verifier contract.
+
+The final evidence package is supplied separately to independent final validation.
+
+### G10 Independent final Genesis validation
+
+An independent validation run verifies at least:
 
 ```text
-bootstrap root valid
-candidate manifest valid
-manifest time evidence valid
-provider and verifier profiles valid
+bootstrap root independently supplied and valid
+candidate TrustedManifest valid
+provider and verifier dependencies valid
 source fixture and adapter reports valid
-exact validator binding valid
-all required reports valid
+exact ValidatorContract binding valid
+all required validation reports valid
 owner signature valid
-acceptance time evidence valid
+final evidence subject is the exact signed ManifestAcceptance
+EXTERNAL_EXISTENCE_BOUND_VERIFIED == VERIFIED
+BITCOIN_DURABILITY_VERIFIED == VERIFIED
 blocking findings empty
 ```
 
-Only after G12 passes may a separate explicit decision change repository state to `GENESIS_ACCEPTED`.
+Standalone bootstrap-root or candidate-manifest anchors may be retained for audit. They cannot close a missing final ManifestAcceptance evidence requirement.
 
-### G13 First issuance cycle
+Successful final validation does not itself create Genesis.
 
-The first IssuanceCyclePlan must be derived from the already accepted IssuanceSchedulePolicy and must have an execution window strictly later than Genesis acceptance.
+### G11 Separate explicit Genesis authorization
+
+Only after every required readiness condition closes and independent final validation succeeds may the owner separately and explicitly authorize Genesis.
+
+No design document, test result, signed ManifestAcceptance, external evidence artifact, or successful final validation substitutes for that authorization.
+
+### G12 First issuance cycle
+
+The first IssuanceCyclePlan must be derived from the already accepted IssuanceSchedulePolicy and must have an execution window strictly later than the separate explicit Genesis authorization.
 
 No pre-Genesis output can be imported into that cycle.
 
 ## Abort and restart semantics
 
-A changed candidate TrustedManifest after external evidence is obtained is a new candidate and requires new time evidence and a new acceptance record.
+A changed candidate TrustedManifest after ManifestAcceptance has been signed invalidates that acceptance and requires a new acceptance record plus new final external evidence.
 
-A changed bootstrap public key creates a new BootstrapGovernanceRoot version and restarts from G1.
+A changed BootstrapGovernanceRoot after downstream objects bind it creates a new bootstrap version and requires regeneration of affected downstream acceptance material.
 
-A changed ProviderProfile after G3 requires revalidation of every downstream object that references it.
+A changed ProviderProfile, QualificationDecision, or verifier dependency requires revalidation of every downstream object that references it.
 
-A changed source adapter or ValidatorContract after G5 requires a new candidate manifest.
+A changed source adapter or ValidatorContract after G4 requires a new candidate manifest.
 
-A failed rehearsal cannot be omitted from the Genesis review record when it materially informs provider eligibility or an abort condition.
+A failed rehearsal or qualification attempt cannot be omitted from the retained review history when it materially informs provider eligibility or an abort condition.
 
 A failed or aborted Genesis attempt never becomes native prospective history.
 
 ## Genesis identity
 
-The term `Genesis` is reserved for the first accepted protocol and ledger state.
+The term `Genesis` is reserved for the first accepted protocol and ledger state created only after successful final validation and separate explicit Genesis authorization.
 
 Design branches, rehearsal commits, candidate objects, test fixtures, and failed acceptance attempts must not use tags or labels that imply Genesis acceptance.
