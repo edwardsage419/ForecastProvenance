@@ -334,7 +334,7 @@ def recompute_external_existence_claim_authoritatively(
             external_existence_claim=base,
             frozen_deadline=claim_deadline_utc,
         )
-        return WallClockRecomputation(base, deadline_claim, _exact_ref(bundle) if verify_sealed_object(bundle) else subject_ref)
+        return WallClockRecomputation(base, deadline_claim, subject_ref)
 
 
 def _validate_bitcoin_verifier_contract(
