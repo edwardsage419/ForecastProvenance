@@ -130,6 +130,7 @@ def test_blocking_finding_fails_before_governance_crypto(monkeypatch):
 def trusted_manifest_fixture():
     validator = sealed("ValidatorContract", "validator:manifest-governance:v1", value="validator")
     quorum = sealed("PolicyDefinition", "policy:quorum:manifest-governance:v1", value="quorum")
+    rule = sealed("PolicyDefinition", "policy:genesis-acceptance:binding:v2", value="rule")
     qualification_verifier = sealed(
         "RoughtimeQualificationVerifierContract",
         "validator:qualification:manifest-governance:v1",
@@ -158,6 +159,7 @@ def trusted_manifest_fixture():
         "manifest:governance-binding:v1",
         manifest_sequence=1,
         validator_contract_ref=ref(validator),
+        acceptance_rule_ref=ref(rule),
         deadline_receipt_quorum_policy_ref=ref(quorum),
         provider_profile_refs=sorted((ref(item) for item in profiles), key=lambda item: (item["object_id"], item["content_sha256"])),
         qualification_decision_refs=sorted((ref(item) for item in decisions), key=lambda item: (item["object_id"], item["content_sha256"])),
@@ -166,7 +168,6 @@ def trusted_manifest_fixture():
         genesis_governance_signature_verifier_contract_ref=ref(governance_verifier),
     )
     root = sealed("BootstrapGovernanceRoot", "bootstrap:governance-binding:v1", value="root")
-    rule = sealed("PolicyDefinition", "policy:genesis-acceptance:binding:v2", value="rule")
     report = sealed("ValidationReport", "validation:governance-binding:v1", value="report")
     signature = sealed("GenesisGovernanceSignature", "signature:governance-binding:v1", value="sig")
     acceptance = sealed(
@@ -205,6 +206,37 @@ def test_manifest_bound_governance_verifier_contract_cannot_be_substituted(monke
             signature_evidence=signature,
             bootstrap_root=root,
             governance_verifier_contract=substitute,
+            ed25519_verifier_build_profile={"profile_sha256": "a" * 64, "binary_sha256": "b" * 64},
+            ed25519_verifier_binary=Path("/synthetic/fpp-ed25519-verify"),
+        )
+
+
+def test_manifest_acceptance_rule_must_match_trusted_manifest(monkeypatch):
+    manifest, acceptance, governance_verifier, root, signature, _validator = trusted_manifest_fixture()
+    other_rule = sealed("PolicyDefinition", "policy:other-acceptance-rule:v2", value="other")
+    acceptance_payload = {
+        key: value
+        for key, value in acceptance.items()
+        if key not in {"object_type", "object_id", "payload_sha256", "content_sha256", "acceptance_rule_ref"}
+    }
+    broken_acceptance = seal_object(
+        acceptance_payload | {"acceptance_rule_ref": ref(other_rule)},
+        object_type="ManifestAcceptance",
+        stable_context="wrong-manifest-acceptance-rule",
+        semantic_id="acceptance:wrong-manifest-rule:v2",
+    )
+    monkeypatch.setattr(
+        final_authority._governance,
+        "validate_governance_signature_verifier_contract",
+        lambda *args, **kwargs: pytest.fail("rule mismatch must fail before governance verifier validation"),
+    )
+    with pytest.raises(ValueError, match="acceptance rule differs from TrustedManifest"):
+        final_authority.bind_genesis_governance_signature_inputs_to_manifest(
+            manifest,
+            broken_acceptance,
+            signature_evidence=signature,
+            bootstrap_root=root,
+            governance_verifier_contract=governance_verifier,
             ed25519_verifier_build_profile={"profile_sha256": "a" * 64, "binary_sha256": "b" * 64},
             ed25519_verifier_binary=Path("/synthetic/fpp-ed25519-verify"),
         )
