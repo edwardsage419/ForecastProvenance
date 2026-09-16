@@ -174,21 +174,15 @@ def validate_bundle_contract(
     if bundle.get("prospective_eligible") is not False:
         _fail("ExternalTimeEvidenceBundle.prospective_eligible must be false")
     _ref(bundle.get("subject_ref"), "ExternalTimeEvidenceBundle.subject_ref")
-    synthetic_fixture = allow_synthetic_fixture_cardinality and origin == "SYNTHETIC"
-    if synthetic_fixture:
-        _ref_array_unbounded(
-            bundle.get("receipt_evidence_refs"),
-            "ExternalTimeEvidenceBundle.receipt_evidence_refs",
-        )
-        _ref_array_unbounded(
-            bundle.get("provider_profile_refs"),
-            "ExternalTimeEvidenceBundle.provider_profile_refs",
-        )
-        _ref_array_unbounded(
-            bundle.get("qualification_state_package_refs"),
-            "ExternalTimeEvidenceBundle.qualification_state_package_refs",
-        )
-    else:
+
+    synthetic_empty_fixture = (
+        allow_synthetic_fixture_cardinality
+        and origin == "SYNTHETIC"
+        and bundle.get("receipt_evidence_refs") == []
+        and bundle.get("provider_profile_refs") == []
+        and bundle.get("qualification_state_package_refs") == []
+    )
+    if not synthetic_empty_fixture:
         _ref_array(
             bundle.get("receipt_evidence_refs"),
             "ExternalTimeEvidenceBundle.receipt_evidence_refs",
@@ -207,6 +201,7 @@ def validate_bundle_contract(
             minimum=3,
             maximum=3,
         )
+
     _ref(bundle.get("quorum_policy_ref"), "ExternalTimeEvidenceBundle.quorum_policy_ref")
     _ref(bundle.get("validator_contract_ref"), "ExternalTimeEvidenceBundle.validator_contract_ref")
     require_utc_timestamp(bundle.get("receipt_quorum_deadline_utc"))
