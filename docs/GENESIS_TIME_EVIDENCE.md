@@ -160,16 +160,17 @@ Bitcoin block header time is not interpreted as a second level issuance timestam
 
 ## Durability completion rule
 
-After the OTS proof becomes complete and passes strong Bitcoin verification, create an immutable DurabilityVerificationRecord containing:
+After the OTS proof becomes complete and passes strong Bitcoin verification, create an immutable DurabilityVerificationRecord containing exactly the binding fields required by `durability_verification_record_v1.schema.json`:
 
 ```text
+primary_subject_ref
 external_time_evidence_bundle_ref
 ots_proof_ref
-bitcoin_block_height
-bitcoin_block_hash
-bitcoin_header_ref
 strong_verification_report_ref
+outcome_information_barrier
 ```
+
+Bitcoin block height, block hash, header digest, node version and verification result belong to the exact bound `StrongBitcoinVerificationReport`; they are not duplicated into the DurabilityVerificationRecord.
 
 The exact DurabilityVerificationRecord must itself obtain DEADLINE_RECEIPT_QUORUM_V3 with:
 
