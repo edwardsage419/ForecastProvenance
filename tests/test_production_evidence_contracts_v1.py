@@ -6,19 +6,37 @@ import forecast_trust_core.claim_authority_v1 as authority
 from forecast_trust_core.canonical import seal_object
 from forecast_trust_core.production_evidence_contracts_v1 import (
     validate_durability_verification_record_contract,
+    validate_external_time_evidence_bundle_contract,
     validate_open_timestamps_proof_artifact_contract,
+    validate_roughtime_production_receipt_contract,
     validate_strong_bitcoin_verifier_contract,
 )
 
 
 DEADLINE = "2026-09-20T00:00:00Z"
 PROVIDERS = ("roughtime.se", "time.txryan.com", "TimeNL-Roughtime")
+DERIVED_FIELDS = {"object_type", "object_id", "payload_sha256", "content_sha256"}
 
 
 def sealed(kind, object_id, **payload):
     return seal_object(
         {"schema_version": "1.0", **payload},
         object_type=kind,
+        stable_context="production-evidence-contract-test",
+        semantic_id=object_id,
+    )
+
+
+def reseal(obj, *, object_id, object_type=None, omit=(), **overrides):
+    payload = {
+        key: value
+        for key, value in obj.items()
+        if key not in DERIVED_FIELDS and key not in set(omit)
+    }
+    payload.update(overrides)
+    return seal_object(
+        payload,
+        object_type=object_type or obj["object_type"],
         stable_context="production-evidence-contract-test",
         semantic_id=object_id,
     )
@@ -68,6 +86,107 @@ def full_bundle(*, subject_ref, validator_ref, receipt_refs, profile_refs, state
     if extra:
         payload.update(extra)
     return sealed("ExternalTimeEvidenceBundle", "bundle:contract-test:v1", **payload)
+
+
+def bundle_fixture():
+    subject = sealed("Subject", "subject:bundle-contract:v1", value="x")
+    validator = sealed("ValidatorContract", "validator:bundle-contract:v1", value="v")
+    bundle = full_bundle(
+        subject_ref=ref(subject),
+        validator_ref=ref(validator),
+        receipt_refs=[dummy_ref("receipt:bundle-contract:v1", "1")],
+        profile_refs=[
+            dummy_ref(f"profile:bundle-contract:{index}", digit)
+            for index, digit in enumerate(("2", "3", "4"), 1)
+        ],
+        state_refs=[
+            dummy_ref(f"state:bundle-contract:{index}", digit)
+            for index, digit in enumerate(("5", "6", "7"), 1)
+        ],
+    )
+    return subject, validator, bundle
+
+
+def test_exact_bundle_contract_accepts_schema_conforming_object():
+    _subject, _validator, bundle = bundle_fixture()
+    validate_external_time_evidence_bundle_contract(bundle)
+
+
+def test_bundle_wrong_schema_version_rejected_even_when_resealed():
+    _subject, _validator, bundle = bundle_fixture()
+    bad = reseal(bundle, object_id="bundle:wrong-schema:v1", schema_version="2.0")
+    with pytest.raises(ValueError, match="schema_version"):
+        validate_external_time_evidence_bundle_contract(bad)
+
+
+def test_bundle_wrong_object_type_rejected_even_when_resealed():
+    _subject, _validator, bundle = bundle_fixture()
+    bad = reseal(
+        bundle,
+        object_id="bundle:wrong-type:v1",
+        object_type="WrongExternalTimeEvidenceBundle",
+    )
+    with pytest.raises(ValueError, match="object_type"):
+        validate_external_time_evidence_bundle_contract(bad)
+
+
+def test_bundle_missing_required_field_rejected_even_when_resealed():
+    _subject, _validator, bundle = bundle_fixture()
+    bad = reseal(
+        bundle,
+        object_id="bundle:missing-validator:v1",
+        omit=("validator_contract_ref",),
+    )
+    with pytest.raises(ValueError, match="fields invalid"):
+        validate_external_time_evidence_bundle_contract(bad)
+
+
+def test_bundle_malformed_reference_rejected_even_when_resealed():
+    _subject, _validator, bundle = bundle_fixture()
+    bad = reseal(
+        bundle,
+        object_id="bundle:malformed-ref:v1",
+        subject_ref={"object_id": "subject:bad:v1", "content_sha256": "bad"},
+    )
+    with pytest.raises(ValueError, match="reference invalid"):
+        validate_external_time_evidence_bundle_contract(bad)
+
+
+def test_bundle_wrong_provider_cardinality_rejected_even_when_resealed():
+    _subject, _validator, bundle = bundle_fixture()
+    bad = reseal(
+        bundle,
+        object_id="bundle:wrong-cardinality:v1",
+        provider_profile_refs=bundle["provider_profile_refs"][:2],
+    )
+    with pytest.raises(ValueError, match="between 3 and 3"):
+        validate_external_time_evidence_bundle_contract(bad)
+
+
+def test_wall_authority_returns_failed_for_contract_invalid_bundle():
+    subject, validator, bundle = bundle_fixture()
+    bad = reseal(
+        bundle,
+        object_id="bundle:wall-invalid:v1",
+        unexpected_field="sealed-but-outside-schema",
+    )
+    result = authority.recompute_external_existence_claim_authoritatively(
+        subject,
+        bundle=bad,
+        receipt_evidence=[],
+        provider_profiles=[],
+        qualification_state_packages=[],
+        provider_authority_inputs={},
+        quorum_policy_ref=bundle["quorum_policy_ref"],
+        qualification_verifier_contract_ref=dummy_ref("validator:qualification:v1", "f"),
+        validator_contract_ref=ref(validator),
+        expected_validator_contract_ref=ref(validator),
+        roughtime_verifier_binary=Path("/not/reached"),
+        roughtime_verifier_build_profile={"profile_sha256": "a" * 64},
+        claim_deadline_utc=DEADLINE,
+    )
+    assert result.external_existence_claim["state"] == "FAILED"
+    assert result.deadline_existence_claim["state"] == "FAILED"
 
 
 def test_sealed_receipt_with_schema_extra_field_cannot_verify_wall_claim():
@@ -120,6 +239,17 @@ def test_sealed_receipt_with_schema_extra_field_cannot_verify_wall_claim():
         claim_deadline_utc=DEADLINE,
     )
     assert result.external_existence_claim["state"] == "FAILED"
+
+
+def test_receipt_wrong_schema_version_rejected_even_when_resealed():
+    receipt = full_receipt(
+        subject_ref=dummy_ref("subject:receipt-schema:v1", "1"),
+        profile_ref=dummy_ref("profile:receipt-schema:v1", "2"),
+        state_ref=dummy_ref("state:receipt-schema:v1", "3"),
+    )
+    bad = reseal(receipt, object_id="receipt:wrong-schema:v1", schema_version="2.0")
+    with pytest.raises(ValueError, match="schema_version"):
+        validate_roughtime_production_receipt_contract(bad)
 
 
 def test_sealed_schema_invalid_bundle_cannot_enter_bitcoin_authority():
@@ -218,6 +348,22 @@ def test_dvr_prospective_eligible_true_is_rejected():
         outcome_information_barrier=DEADLINE,
     )
     with pytest.raises(ValueError, match="prospective_eligible"):
+        validate_durability_verification_record_contract(record)
+
+
+def test_dvr_malformed_primary_subject_ref_is_rejected():
+    record = sealed(
+        "DurabilityVerificationRecord",
+        "dvr:bad-ref:v1",
+        origin_class="SYNTHETIC",
+        prospective_eligible=False,
+        primary_subject_ref={"object_id": "subject:dvr:v1", "content_sha256": "bad"},
+        external_time_evidence_bundle_ref=dummy_ref("bundle:dvr:v1", "2"),
+        ots_proof_ref=dummy_ref("proof:dvr:v1", "3"),
+        strong_verification_report_ref=dummy_ref("report:dvr:v1", "4"),
+        outcome_information_barrier=DEADLINE,
+    )
+    with pytest.raises(ValueError, match="reference invalid"):
         validate_durability_verification_record_contract(record)
 
 
