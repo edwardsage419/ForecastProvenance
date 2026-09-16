@@ -71,18 +71,58 @@ otherwise invalid normative object shape
 
 The repair adds an explicit exact object contract gate in front of authoritative claim entry points while preserving the prior claim derivation implementation behind that gate.
 
-Objects covered by the repair include at minimum:
+Objects covered by the repair now include:
 
 ```text
 ExternalTimeEvidenceBundle
 RoughtimeProductionReceiptEvidence
+RoughtimeProviderQualificationStatePackage
 OpenTimestampsProofArtifact
 DurabilityVerificationRecord
 StrongBitcoinVerifierContract
-persisted StrongBitcoinVerificationReport when supplied
+StrongBitcoinVerificationReport
+ManifestAcceptance V2
 ```
 
 The gate is intentionally narrow. It does not introduce a runtime dependency on the JSON Schema package and does not change historical object interpretation.
+
+### R2.a Qualification state package exact-contract gap
+
+The provider admission firewall already recomputed qualification state from retained authoritative inputs and rejected self-asserted state. However, the state package object itself could still be hash-sealed while carrying fields outside its normative `additionalProperties=false` schema.
+
+The repair therefore validates the exact `RoughtimeProviderQualificationStatePackage` contract before the existing authoritative state recomputation. This does not make the package's stored `qualification_state` authoritative; recomputation remains mandatory.
+
+### R2.b ManifestAcceptance V2 exact-contract gap
+
+The final Genesis authority path previously required a sealed `ManifestAcceptance` object of the correct object type, but that alone did not enforce the normative V2 contract. In particular, the final path must reject a hash-consistent acceptance object with the wrong schema version or unexpected fields.
+
+The repair requires the exact `ManifestAcceptance V2` contract for any object that reaches final Genesis authority. Existing earlier rejection classes remain ordered before that check where appropriate: wrong final subject, wall/Bitcoin evidence splicing, and non-live readiness evidence still fail closed before deeper final-object validation.
+
+### R2.c Strong Bitcoin verification report postcondition
+
+The strong Bitcoin verifier inputs are not the only authority boundary. The deterministic `StrongBitcoinVerificationReport` produced by the accepted verifier path is also validated against its exact object contract before its result can be returned through the repaired authoritative path. A supplied persisted strong report is checked before use as well.
+
+### R2.d Confirmatory aggregation must not bypass the gate
+
+The pre-repair confirmatory helper could validate high-level component inputs and then delegate to an implementation that internally invoked the ungated recomputation functions. The repaired public confirmatory path recomputes each wall-clock, Bitcoin, and pre-outcome component through the gated public authoritative functions before strict claim aggregation.
+
+This closes an internal bypass without changing the claim vocabulary or eligibility semantics.
+
+### Synthetic Bitcoin-only fixture compatibility boundary
+
+Historical low-level tests contain a `SYNTHETIC`, `prospective_eligible=false` Bitcoin-only fixture whose `ExternalTimeEvidenceBundle` keeps the normative field names but does not populate the production Roughtime receipt/profile/state-package cardinalities.
+
+The repair temporarily permits this cardinality relaxation only inside the low-level Bitcoin input gate when all of the following are true:
+
+```text
+origin_class = SYNTHETIC
+prospective_eligible = false
+caller is the Bitcoin-only authority input validator
+```
+
+The same object does not pass strict wall-clock bundle validation. `LIVE_OPERATIONAL` evidence never receives this exception. Final Genesis readiness and confirmatory prospective eligibility already require LIVE evidence, so this compatibility path cannot create a production or prospective claim.
+
+This is a test-harness compatibility boundary, not a production protocol rule. The preferred later cleanup is to normalize the old synthetic Bitcoin fixture and remove the exception after fresh regression confirms that no historical test intent depends on it.
 
 ## Finding R3: DurabilityVerificationRecord authority boundary incomplete
 
@@ -105,7 +145,7 @@ outcome_information_barrier canonical UTC
 valid object seal
 ```
 
-Exact cross-object equality remains enforced by the existing underlying derivation implementation after the contract gate.
+Exact cross-object equality remains enforced by the retained derivation implementation after the contract gate.
 
 A sealed but contract-invalid DVR must fail before it can contribute to a verified pre-outcome claim.
 
@@ -159,9 +199,9 @@ No new production execution object is introduced in this repair solely to make t
 
 ## Repair implementation strategy
 
-To minimize implementation risk, the pre-repair `claim_authority_v1.py` implementation is retained byte-for-byte as an internal implementation module on the repair branch. The public `claim_authority_v1.py` surface becomes a thin exact-contract gate that delegates to that retained implementation only after authority inputs pass the new contract checks.
+To minimize implementation risk, the pre-repair `claim_authority_v1.py` implementation is retained byte-for-byte as an internal implementation module on the repair branch. Its blob identity remains available for direct comparison with the original implementation.
 
-This preserves the previous claim algorithms and gives review a direct byte-for-byte comparison point.
+The public `claim_authority_v1.py` surface is a thin authority wrapper that performs exact contract checks and then delegates to the retained implementation. Public TrustedManifest-facing authority code imports these public entry points rather than the retained implementation module directly.
 
 This organization is a repair-branch implementation technique, not a new governance layer or new Trust Core claim type.
 
