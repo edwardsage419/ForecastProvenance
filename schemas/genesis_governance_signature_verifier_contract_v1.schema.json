@@ -27,13 +27,7 @@
     "ed25519_verifier_build_profile_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "ed25519_verifier_binary_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "allowed_signature_projections": {
-      "type": "array",
-      "minItems": 1,
-      "maxItems": 2,
-      "uniqueItems": true,
-      "items": {
-        "enum": ["FPP_GENESIS_AUTHORIZATION_V1", "FPP_MANIFEST_ACCEPTANCE_V2"]
-      }
+      "const": ["FPP_GENESIS_AUTHORIZATION_V1", "FPP_MANIFEST_ACCEPTANCE_V2"]
     },
     "object_id": {"type": "string", "pattern": "^[A-Za-z0-9._:/-]+$"},
     "payload_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
