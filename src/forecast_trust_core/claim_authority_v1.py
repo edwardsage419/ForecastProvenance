@@ -52,6 +52,7 @@ def validate_cycle_plan_authoritatively(
     required_schedule_policy_ref,
     wall_clock_inputs,
 ):
+    _legacy._require_live_wall_inputs(wall_clock_inputs)
     _gate.validate_wall_inputs(wall_clock_inputs)
     _sync_legacy_dependencies()
     return _legacy.validate_cycle_plan_authoritatively(
@@ -69,8 +70,9 @@ def validate_final_genesis_acceptance_authoritatively(
     wall_clock_inputs,
     bitcoin_inputs,
 ):
-    # Preserve the pre-existing fail-closed ordering: wrong final subject and
-    # evidence splicing are rejected before deeper object-contract validation.
+    # Preserve the pre-existing fail-closed ordering: wrong final subject,
+    # evidence splicing and non-live readiness evidence are rejected before
+    # deeper object-contract validation.
     acceptance_ref = _legacy._exact_ref(acceptance, object_type="ManifestAcceptance")
     _legacy._require_ref_equal(final_evidence_subject_ref, acceptance_ref, "final evidence subject")
 
@@ -87,6 +89,8 @@ def validate_final_genesis_acceptance_authoritatively(
                 "final acceptance wall-clock and Bitcoin evidence must use the same exact ExternalTimeEvidenceBundle"
             )
 
+    _legacy._require_live_wall_inputs(wall_clock_inputs)
+    _legacy._require_live_bitcoin_inputs(bitcoin_inputs)
     _gate.validate_wall_inputs(wall_clock_inputs)
     _gate.validate_bitcoin_inputs(bitcoin_inputs)
     _sync_legacy_dependencies()
@@ -184,15 +188,24 @@ def derive_confirmatory_eligibility_from_evidence(
 
         authority_inputs = spec.get("authority_inputs")
         if kind in {"wall_clock_deadline", "external_existence"}:
+            _legacy._require_live_wall_inputs(authority_inputs)
             _gate.validate_wall_inputs(authority_inputs)
         elif kind == "bitcoin_durability":
+            _legacy._require_live_bitcoin_inputs(authority_inputs)
             _gate.validate_bitcoin_inputs(authority_inputs)
         elif kind == "pre_outcome_durability":
             if not isinstance(authority_inputs, Mapping):
                 raise ValueError("pre-outcome authority inputs must be a mapping")
-            _gate.validate_bitcoin_inputs(authority_inputs.get("bitcoin_inputs"))
-            _gate.validate_dvr_contract(authority_inputs.get("durability_record"))
-            _gate.validate_wall_inputs(authority_inputs.get("durability_record_wall_clock_inputs"))
+            bitcoin_inputs = authority_inputs.get("bitcoin_inputs")
+            dvr = authority_inputs.get("durability_record")
+            dvr_wall_inputs = authority_inputs.get("durability_record_wall_clock_inputs")
+            _legacy._require_live_bitcoin_inputs(bitcoin_inputs)
+            if not isinstance(dvr, Mapping) or dvr.get("origin_class") != "LIVE_OPERATIONAL":
+                raise ValueError("production eligibility requires LIVE_OPERATIONAL DurabilityVerificationRecord")
+            _legacy._require_live_wall_inputs(dvr_wall_inputs)
+            _gate.validate_bitcoin_inputs(bitcoin_inputs)
+            _gate.validate_dvr_contract(dvr)
+            _gate.validate_wall_inputs(dvr_wall_inputs)
 
     _sync_legacy_dependencies()
     return _legacy.derive_confirmatory_eligibility_from_evidence(
@@ -212,6 +225,8 @@ def validate_persisted_final_acceptance_report_authoritatively(
     bitcoin_inputs,
     trusted_manifest_ref,
 ):
+    _legacy._require_live_wall_inputs(wall_clock_inputs)
+    _legacy._require_live_bitcoin_inputs(bitcoin_inputs)
     _gate.validate_wall_inputs(wall_clock_inputs)
     _gate.validate_bitcoin_inputs(bitcoin_inputs)
     _sync_legacy_dependencies()
@@ -234,6 +249,7 @@ def validate_persisted_cycle_plan_report_authoritatively(
     wall_clock_inputs,
     trusted_manifest_ref,
 ):
+    _legacy._require_live_wall_inputs(wall_clock_inputs)
     _gate.validate_wall_inputs(wall_clock_inputs)
     _sync_legacy_dependencies()
     return _legacy.validate_persisted_cycle_plan_report_authoritatively(
