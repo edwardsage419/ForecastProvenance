@@ -33,12 +33,27 @@ from .canonical import (
     verify_sealed_object,
 )
 from .core import Validation, aggregate, validate_cycle_plan
+from .production_evidence_contracts_v1 import (
+    validate_durability_verification_record_contract,
+    validate_external_time_evidence_bundle_contract,
+    validate_open_timestamps_proof_artifact_contract,
+    validate_roughtime_production_receipt_contract,
+    validate_strong_bitcoin_verifier_contract,
+)
 from ._verified_executable import PinnedExecutable
 
 
 HEX64 = frozenset("0123456789abcdef")
 ORIGIN_CLASSES = frozenset({"SYNTHETIC", "RETROSPECTIVE", "LIVE_OPERATIONAL"})
 BITCOIN_VERIFIER_PROTOCOL = "FPP_STRONG_BITCOIN_VERIFIER_V1"
+
+PRODUCTION_EVIDENCE_CONTRACT_VALIDATORS = {
+    "ExternalTimeEvidenceBundle": validate_external_time_evidence_bundle_contract,
+    "RoughtimeProductionReceiptEvidence": validate_roughtime_production_receipt_contract,
+    "OpenTimestampsProofArtifact": validate_open_timestamps_proof_artifact_contract,
+    "DurabilityVerificationRecord": validate_durability_verification_record_contract,
+    "StrongBitcoinVerifierContract": validate_strong_bitcoin_verifier_contract,
+}
 
 
 @dataclass(frozen=True)
@@ -57,6 +72,11 @@ class BitcoinRecomputation:
 
 
 def _exact_ref(obj: Mapping[str, Any], *, object_type: str | None = None) -> dict[str, str]:
+    declared_type = obj.get("object_type") if isinstance(obj, Mapping) else None
+    contract_type = object_type or declared_type
+    contract_validator = PRODUCTION_EVIDENCE_CONTRACT_VALIDATORS.get(str(contract_type))
+    if contract_validator is not None:
+        contract_validator(obj)
     if not verify_sealed_object(obj):
         raise ValueError("authoritative input must be a valid sealed object")
     if object_type is not None and obj.get("object_type") != object_type:
