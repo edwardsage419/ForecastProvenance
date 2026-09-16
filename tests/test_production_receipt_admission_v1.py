@@ -167,6 +167,84 @@ class ProductionReceiptAdmissionTests(unittest.TestCase):
         )
         self.assertFalse(result.valid)
 
+    def test_profile_that_permits_fallback_fails(self):
+        profile, decision, state, receipt = fixture()
+        bad_profile = sealed(
+            "RoughtimeProductionProviderProfile",
+            "profile:fallback:v1",
+            provider_id="roughtime.se",
+            verifier_build_profile_sha256="0" * 64,
+            no_fallback=False,
+        )
+        bad_decision = sealed(
+            "RoughtimeQualificationDecision",
+            "decision:fallback:v1",
+            signed_payload={
+                "provider_id": "roughtime.se",
+                "provider_profile_ref": ref(bad_profile),
+            },
+        )
+        bad_state = sealed(
+            "RoughtimeProviderQualificationStatePackage",
+            "state:fallback:v1",
+            provider_id="roughtime.se",
+            provider_profile_ref=ref(bad_profile),
+            qualification_decision_ref=ref(bad_decision),
+            qualification_state="PRODUCTION_QUALIFIED",
+        )
+        bad_receipt = sealed(
+            "RoughtimeProductionReceiptEvidence",
+            "receipt:fallback:v1",
+            **{
+                key: value
+                for key, value in receipt.items()
+                if key not in {
+                    "schema_version",
+                    "object_type",
+                    "object_id",
+                    "payload_sha256",
+                    "content_sha256",
+                    "provider_profile_ref",
+                    "qualification_state_package_ref",
+                }
+            },
+            provider_profile_ref=ref(bad_profile),
+            qualification_state_package_ref=ref(bad_state),
+        )
+        result = validate_production_receipt_profile_binding(
+            bad_receipt,
+            provider_profile=bad_profile,
+            qualification_decision=bad_decision,
+            qualification_state_package=bad_state,
+        )
+        self.assertFalse(result.valid)
+        self.assertIn(
+            "PROVIDER_PROFILE_FALLBACK_NOT_PROHIBITED",
+            {check.reason_code for check in result.checks},
+        )
+
+    def test_wrong_decision_object_type_fails_closed(self):
+        profile, _decision, state, receipt = fixture()
+        wrong = sealed(
+            "NotAQualificationDecision",
+            "decision:wrong-type:v1",
+            signed_payload={
+                "provider_id": "roughtime.se",
+                "provider_profile_ref": ref(profile),
+            },
+        )
+        result = validate_production_receipt_profile_binding(
+            receipt,
+            provider_profile=profile,
+            qualification_decision=wrong,
+            qualification_state_package=state,
+        )
+        self.assertFalse(result.valid)
+        self.assertIn(
+            "INVALID_QUALIFICATION_DECISION",
+            {check.reason_code for check in result.checks},
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
