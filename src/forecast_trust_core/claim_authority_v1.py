@@ -194,8 +194,14 @@ def derive_confirmatory_eligibility_from_evidence(
     required_claim_requirements,
     hard_invalidation_reason_codes=(),
 ):
-    # Recompute every component through the gated public authority functions.
-    # Caller-supplied claims are never accepted.
+    # The current evidence authority can recompute temporal/durability claims,
+    # but it does not yet reconstruct the complete non-temporal Trust Core check
+    # set (cycle/slot accounting, attempt/retry/first-success, point-in-time
+    # cutoff, selection control, and related structural requirements) from raw
+    # evidence. Caller-supplied invalidation codes therefore cannot be authority.
+    if hard_invalidation_reason_codes:
+        raise ValueError("caller-supplied hard invalidation authority prohibited")
+
     forecast_ref = _legacy._exact_ref(forecast)
     claims = []
     for spec in component_specs:
@@ -270,9 +276,16 @@ def derive_confirmatory_eligibility_from_evidence(
         forecast_ref,
         required_claims=claims,
         required_claim_requirements=required_claim_requirements,
-        hard_invalidation_reason_codes=hard_invalidation_reason_codes,
+        hard_invalidation_reason_codes=(),
         applicable=True,
     )
+    if eligibility.get("state") == "VERIFIED":
+        eligibility = _legacy._claim(
+            "CONFIRMATORY_PROSPECTIVE_ELIGIBLE",
+            forecast_ref,
+            "UNRESOLVED",
+            reason_codes=("FULL_TRUST_CORE_CHECK_AUTHORITY_NOT_IMPLEMENTED",),
+        )
     return eligibility, tuple(claims)
 
 
