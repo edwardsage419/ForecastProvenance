@@ -3,7 +3,13 @@ from __future__ import annotations
 import base64
 from typing import Any, Mapping, Sequence
 
-from .canonical import CanonicalizationError, require_utc_timestamp, validate_ref, verify_sealed_object
+from .canonical import (
+    CanonicalizationError,
+    require_ascii_token,
+    require_utc_timestamp,
+    validate_ref,
+    verify_sealed_object,
+)
 
 
 BUNDLE_KEYS = frozenset({
@@ -52,6 +58,13 @@ STRONG_REPORT_BASE_KEYS = frozenset({
     "proof_sha256", "verification_mode", "bitcoin_header_time_role", "verified",
     "object_id", "payload_sha256", "content_sha256",
 })
+MANIFEST_ACCEPTANCE_V2_KEYS = frozenset({
+    "schema_version", "object_type", "candidate_manifest_ref",
+    "bootstrap_governance_root_ref", "acceptance_rule_ref",
+    "required_validation_report_refs", "authority_ref", "decision",
+    "reason_codes", "blocking_finding_refs", "signature_ref",
+    "object_id", "payload_sha256", "content_sha256",
+})
 LIVE_OR_SYNTHETIC = frozenset({"SYNTHETIC", "LIVE_OPERATIONAL"})
 BUNDLE_ORIGINS = frozenset({"SYNTHETIC", "RETROSPECTIVE", "LIVE_OPERATIONAL"})
 PROVIDER_IDS = frozenset({"roughtime.se", "time.txryan.com", "TimeNL-Roughtime"})
@@ -89,14 +102,20 @@ def _canonical_base64(value: Any, field: str) -> bytes:
     return raw
 
 
-def _exact_sealed(obj: Mapping[str, Any], *, object_type: str, keys: frozenset[str]) -> None:
+def _exact_sealed(
+    obj: Mapping[str, Any],
+    *,
+    object_type: str,
+    keys: frozenset[str],
+    schema_version: str = "1.0",
+) -> None:
     if not isinstance(obj, Mapping):
         _fail(f"{object_type} must be an object")
     if frozenset(obj) != keys:
         _fail(f"{object_type} field set mismatch")
     if not verify_sealed_object(obj):
         _fail(f"{object_type} seal invalid")
-    if obj.get("schema_version") != "1.0":
+    if obj.get("schema_version") != schema_version:
         _fail(f"{object_type} schema_version mismatch")
     if obj.get("object_type") != object_type:
         _fail(f"{object_type} object_type mismatch")
@@ -131,6 +150,16 @@ def _ref_array_unbounded(value: Any, field: str) -> None:
         if pair in seen:
             _fail(f"{field} contains duplicate references")
         seen.add(pair)
+
+
+def _token_array(value: Any, field: str) -> None:
+    if not isinstance(value, list):
+        _fail(f"{field} must be an array")
+    for index, item in enumerate(value):
+        try:
+            require_ascii_token(item, f"{field}[{index}]")
+        except (CanonicalizationError, TypeError) as exc:
+            raise ValueError(f"authoritative object contract violation: {field}[{index}] invalid") from exc
 
 
 def validate_bundle_contract(
@@ -320,6 +349,36 @@ def validate_strong_report(report: Mapping[str, Any]) -> None:
             _fail("StrongBitcoinVerificationReport node_version invalid")
     elif not isinstance(report.get("reason_code"), str) or not report["reason_code"]:
         _fail("StrongBitcoinVerificationReport reason_code invalid")
+
+
+def validate_manifest_acceptance_v2_contract(acceptance: Mapping[str, Any]) -> None:
+    _exact_sealed(
+        acceptance,
+        object_type="ManifestAcceptance",
+        keys=MANIFEST_ACCEPTANCE_V2_KEYS,
+        schema_version="2.0",
+    )
+    for field in (
+        "candidate_manifest_ref",
+        "bootstrap_governance_root_ref",
+        "acceptance_rule_ref",
+        "authority_ref",
+        "signature_ref",
+    ):
+        _ref(acceptance.get(field), f"ManifestAcceptance.{field}")
+    reports = acceptance.get("required_validation_report_refs")
+    if not isinstance(reports, list) or not reports:
+        _fail("ManifestAcceptance.required_validation_report_refs must be non-empty")
+    for index, report_ref in enumerate(reports):
+        _ref(report_ref, f"ManifestAcceptance.required_validation_report_refs[{index}]")
+    blocking = acceptance.get("blocking_finding_refs")
+    if not isinstance(blocking, list):
+        _fail("ManifestAcceptance.blocking_finding_refs must be an array")
+    for index, finding_ref in enumerate(blocking):
+        _ref(finding_ref, f"ManifestAcceptance.blocking_finding_refs[{index}]")
+    _token_array(acceptance.get("reason_codes"), "ManifestAcceptance.reason_codes")
+    if acceptance.get("decision") not in {"ACCEPT", "REJECT"}:
+        _fail("ManifestAcceptance decision invalid")
 
 
 def validate_wall_inputs(inputs: Mapping[str, Any]) -> None:
