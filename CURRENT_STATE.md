@@ -1,17 +1,19 @@
 # Current State
 
-Date: 2026-09-14
+Date: 2026-09-16
 Project: Forecast Provenance Project
-State: PRE_GENESIS_ARCHITECTURE_COMPRESSION
+State: PRE_GENESIS_CORRECTNESS_REPAIR
 
 ```text
-branch = design/gen-001
-architecture_compression_basis_commit = 9790e323a519558b92b7d6c1324b3bd847cfacfe
+repository = edwardsage419/ForecastProvenance
+base branch = design/gen-001
+repair branch = repair/p7-authority-contracts
+repair basis = aa453268e4420dff6ea5ba3208e286d158f52e32
 ```
 
-The commit containing this file is identified from Git metadata and is not self-embedded. Dynamic branch HEAD, PR mergeability and local execution state must be rechecked when needed.
+Dynamic branch heads, PR state, working tree state and network/provider state must always be rechecked before consequential action.
 
-## Architecture Compression sequence
+## Architecture Compression status
 
 ```text
 P0  project-control transition                                      COMPLETE
@@ -19,32 +21,46 @@ P1  Genesis final-acceptance anchoring reconciliation               COMPLETE
 P2  temporal/durability claim separation                            COMPLETE
 P3  Genesis v1 dependency/review/evaluation compression             COMPLETE
 P4  provider-qualification complexity firewall                      COMPLETE_HARDENED
-P5  consolidated versioned implementation of P1-P4                  COMPLETE_WITH_CLAIM_AUTHORITY_HARDENING
-P6  complete offline regression and synthetic adversarial suite     PASS / CLOSED_ON_EXACT_HEAD
-P7  reconsider need for Roughtime production qualification          NEXT
+P5  consolidated versioned implementation of P1-P4                  REOPENED_FOR_POST_P6_CORRECTNESS_REPAIR
+P6  historical exact-head regression                               PASS_HISTORICAL / FRESH_RERUN_REQUIRED_AFTER_REPAIR
+P7  Roughtime dependency reevaluation                               PAUSED_FOR_REPAIR
 P8  separate final pre-Genesis high-level review                    PENDING
 P9  separate explicit Genesis authorization                         PENDING
 ```
 
-P6 restarted from zero on the exact final repaired HEAD after project-control synchronization. No result from any earlier HEAD was carried forward. P6 subsequently passed and P7 is now the active stage.
-
-## Controlling records
+The active repair record is:
 
 ```text
-docs/GEN_001_GENESIS_ANCHORING_RECONCILIATION_V1.md
-docs/GEN_001_TEMPORAL_CLAIM_SEPARATION_V1.md
-docs/GEN_001_GENESIS_V1_DEPENDENCY_COMPRESSION_V1.md
-docs/GEN_001_PROVIDER_QUALIFICATION_COMPLEXITY_FIREWALL_V1.md
-docs/GEN_001_ARCHITECTURE_COMPRESSION_P5_IMPLEMENTATION_REVIEW.md
-docs/GEN_001_ARCHITECTURE_COMPRESSION_P6_STATIC_REVIEW_AND_P5_HARDENING_2026_09_14.md
-docs/GEN_001_P6_FINDING_3_CLAIM_AUTHORITY_BOUNDARY_2026_09_14.md
+docs/GEN_001_P7_POST_P6_REPAIR_FINDINGS_2026_09_16.md
 ```
 
-Finding 3 received its implementation repair and was subsequently closed by successful P6 execution on the final exact HEAD.
+## Historical P6 fact
+
+The previous P6 execution remains a true historical result:
+
+```text
+P6 exact execution HEAD = 70dc89f187842d8dcc6ba428241aae614d520bd4
+P6 evidence manifest SHA256 = a330a3952b55ce0f4415f25c5580ad2cdf53c05801e78f728239ab73caa8bb5d
+HISTORICAL_P6_EXECUTION_RESULT = PASS
+```
+
+Later static review found correctness/authority-boundary gaps that were not covered by that execution. The historical PASS is not validation evidence for modified repair source.
+
+## Current repair findings
+
+```text
+R1 production receipt admission/schema mismatch                     REPAIR_IMPLEMENTED_PENDING_REGRESSION
+R2 sealed-but-contract-invalid authority inputs                     REPAIR_IMPLEMENTED_PENDING_REGRESSION
+R3 DurabilityVerificationRecord authority contract incomplete       REPAIR_IMPLEMENTED_PENDING_REGRESSION
+R4 provider independence evidence authority-location inconsistency  DESIGN_CLARIFIED_PENDING_REGRESSION
+P7_F1 production attempt completeness not bound to wall authority   OPEN_BLOCKER
+```
+
+`P7_F1` remains open intentionally. The current v3 attempt-all-three semantics are not silently removed. No rehearsal report is promoted to production evidence. A successor policy decision is required before that semantic may change.
 
 ## Effective candidate
 
-Current effective candidate lineage remains:
+Historical candidate lineage remains unchanged:
 
 ```text
 candidate_object_set_v0_2.json
@@ -56,259 +72,81 @@ candidate_object_set_v0_2.json
 
 Effective object count remains 21.
 
-`candidate_patch_v0_6.json` retires by exact predecessor hash:
+No candidate v0.7 has been created by this repair.
+
+The repair changes implementation/test/control surfaces only. It does not reinterpret historical candidate bytes.
+
+## Claim authority repair boundary
+
+The repair preserves the pre-repair `claim_authority_v1.py` implementation byte-for-byte as an internal implementation module and places a thin exact-object-contract gate at the public successor authority surface.
+
+The gate rejects authoritative inputs that are internally hash-consistent but violate the exact object contract, including relevant cases of:
 
 ```text
-policy:genesis-acceptance:v1
-policy:genesis-evaluation:v1
-policy:genesis-human-review:v1
+wrong schema version
+wrong object type
+unexpected fields
+wrong origin class
+wrong prospective_eligible value
+malformed references
+invalid cardinality for required evidence/reference sets
+invalid fixed protocol fields
 ```
 
-and adds:
+The retained implementation still performs cross-object binding, Roughtime replay, provider admission, Bitcoin verifier execution and derived-claim logic after the contract gate passes.
+
+Production receipt admission now follows the normative reference-based receipt schema rather than requiring copied ProviderProfile fields.
+
+## Provider independence authority location
+
+For the current successor architecture:
 
 ```text
-policy:genesis-acceptance:v2
-policy:genesis-evaluation:v2
+ProviderProfile = frozen operational/cryptographic provider identity
+Qualification evidence/review = retained independence/common-dependency basis
+QualificationDecision = accepted decision binding profile/review under frozen criteria
+QualificationStatePackage = historical as_of admissibility reconstruction
 ```
 
-Historical v0.2 through v0.5 candidate bytes remain unchanged. Claim-authority hardening did not change candidate bytes or candidate lineage.
+ProviderProfile is not expanded merely to duplicate independence evidence already controlled by the qualification authority chain.
 
-## P1 state
+## Regression requirement
 
-ManifestAcceptance v2 remains noncircular. Final external evidence is created after signing, supplied separately to independent final validation, and must bind the exact signed ManifestAcceptance.
+The repair is not accepted until a fresh clean exact-head offline regression passes.
 
-The historical/low-level `validate_final_genesis_acceptance` helper remains non-authoritative because it accepts derived state values. The successor authoritative path wraps it only after independently recomputing the exact wall-clock and Bitcoin claims from retained evidence under the TrustedManifest-bound contracts.
-
-Separate explicit Genesis authorization remains mandatory after successful independent final validation.
-
-## P2 state and claim authority
-
-The claim vocabulary remains:
-
-```text
-EXTERNAL_EXISTENCE_BOUND_VERIFIED
-DEADLINE_EXISTENCE_VERIFIED
-BITCOIN_DURABILITY_VERIFIED
-PRE_OUTCOME_DURABILITY_VERIFIED
-CONFIRMATORY_PROSPECTIVE_ELIGIBLE
-```
-
-with states:
-
-```text
-VERIFIED
-FAILED
-UNRESOLVED
-NOT_APPLICABLE
-```
-
-P6 Finding 1 was repaired by exact lower-claim type/subject binding.
-
-P6 Finding 3 was repaired at implementation level by the successor authority chain:
-
-```text
-exact sealed TrustedManifest
-+ independently supplied accepted bootstrap/governance authority public-key bytes where required
-+ exact retained evidence
-+ exact frozen policies/provider state
-+ exact ValidatorContract and supporting verifier contracts
-→ deterministic verifier execution
-→ deterministic P2 claims
-→ deterministic ValidationReport v2
-→ exact persisted/recomputed equality where applicable
-→ stronger claim/readiness decision
-```
-
-Authoritative implementation surfaces include:
-
-```text
-src/forecast_trust_core/claim_authority_v1.py
-src/forecast_trust_core/claim_authority_trust_root_v1.py
-```
-
-Wall-clock authority replays exact retained Roughtime request/response evidence through the strict verifier, reconstructs exact provider admission at the frozen deadline and derives the conservative quorum upper bound.
-
-Bitcoin durability executes the exact hash-pinned local verifier over exact ExternalTimeEvidenceBundle and OTS proof bytes. Persisted strong-verification reports are audit outputs only.
-
-Final-acceptance, cycle-plan, pre-outcome and confirmatory successor paths derive their temporal claims from evidence rather than caller-supplied claim mappings or `VERIFIED` strings.
-
-Production readiness wrappers require the admitted operational evidence class. Synthetic fixtures remain non-prospective test material and cannot close readiness.
-
-## P3 state
-
-Genesis v1 does not instantiate scientific Human Review authority. Official ambiguity remains `REVIEW_REQUIRED` or `UNRESOLVED` without operator value selection.
-
-Minimum normative numerical evaluation remains:
-
-```text
-resolved_outcome
-forecast_value
-absolute_error
-squared_error
-```
-
-Cohort reporting preserves at least:
-
-```text
-expected
-issued
-failed
-omitted
-ineligible
-unresolved
-withdrawn
-```
-
-Deferred randomness, FittedState, stochastic/closed-model, multi-method and leaderboard surfaces remain outside Genesis v1 readiness.
-
-## P4 state and authority hardening
-
-TrustedManifest provider/claim authority boundary includes:
-
-```text
-deadline_receipt_quorum_policy_ref
-provider_profile_refs
-qualification_decision_refs
-qualification_verifier_contract_ref
-validator_contract_ref
-strong_bitcoin_verifier_contract_ref
-```
-
-For each consequential deadline event:
-
-```text
-as_of_utc = frozen_deadline_utc
-```
-
-All three manifest-admitted providers must be authoritatively `PRODUCTION_QUALIFIED` before receipt quorum can operate as two-of-three.
-
-P6 Finding 2 was repaired by fail-closed state-store collection, exact metadata/requalification closure, deterministic `derive_authoritative_qualification_state`, and exact state/report equality.
-
-A final P5 static adversarial pass found and repaired a related authority-substitution path: provider-state reconstruction previously accepted a runtime `signature_verifier` callback and authority fields. The successor trust-root adapter now prohibits those caller inputs and internally constructs `PinnedEd25519Verifier` from the exact manifest-bound `RoughtimeQualificationVerifierContract`.
-
-The qualification verifier contract binds:
-
-```text
-frozen criteria ID/hash
-main ValidatorContract ref
-QualificationDecision signature projection
-ED25519 signature algorithm
-accepted authority ID/public-key SHA256
-qualified Ed25519 verifier build-profile SHA256
-qualified Ed25519 verifier binary SHA256
-```
-
-For Genesis, accepted authority public-key bytes remain an independent input from the BootstrapGovernanceRoot/governance context and must match the manifest-bound contract hash. The private key is never an input.
-
-The provider runtime input key set, ProviderProfile IDs and state-package provider IDs must form the same exact three-provider set. Extra or substituted authority inputs fail closed.
-
-## Successor implementation surfaces
-
-Current Architecture Compression successor surfaces include:
-
-```text
-src/forecast_trust_core/architecture_compression_v1.py
-src/forecast_trust_core/architecture_compression_v1_hardening.py
-src/forecast_trust_core/production_receipt_admission_v1.py
-src/forecast_trust_core/claim_authority_v1.py
-src/forecast_trust_core/claim_authority_trust_root_v1.py
-schemas/manifest_acceptance_v2.schema.json
-schemas/validation_report_v2.schema.json
-schemas/roughtime_provider_qualification_state_package.schema.json
-schemas/roughtime_qualification_verifier_contract_v1.schema.json
-schemas/external_time_evidence_bundle_v1.schema.json
-schemas/roughtime_production_receipt_evidence_v1.schema.json
-schemas/open_timestamps_proof_artifact_v1.schema.json
-schemas/strong_bitcoin_verifier_contract_v1.schema.json
-schemas/strong_bitcoin_verification_report_v1.schema.json
-schemas/durability_verification_record_v1.schema.json
-tests/test_architecture_compression_p5.py
-tests/test_architecture_compression_p5_hardening.py
-tests/test_claim_authority_v1.py
-tests/test_claim_authority_trust_root_v1.py
-tests/test_claim_authority_qualification_root_v1.py
-tests/test_genesis_candidate_patch_v06.py
-tests/test_production_receipt_admission_v1.py
-```
-
-Historical validators remain available under their historical contracts and do not acquire successor authority semantics.
-
-## P6 execution status
-
-P6 previously began against pre-repair P5 HEAD:
-
-```text
-c95a79425eb68e48893f9143eec002344829d3a6
-```
-
-Static review found three blocking correctness classes before a complete regression could be accepted:
-
-1. lower-claim type/subject substitution;
-2. self-asserted qualification state without mandatory authoritative recomputation;
-3. incomplete evidence-to-claim authority boundary, later including runtime signature-verifier/authority substitution.
-
-All three received repository-level repairs and were subsequently closed by the successful exact-head P6 regression.
-
-Current disposition:
-
-```text
-P6_STATIC_FINDINGS = CLOSED_BY_EXACT_HEAD_REGRESSION
-P6_FULL_REGRESSION = PASS_ON_EXACT_HEAD
-P6_PASS = YES
-P6_RESTART_REQUIRED = NO
-P7 = NEXT
-```
-
-The earlier sandbox/network diagnostic detour is not a project security finding. The completed P6 execution was bound to the final exact HEAD. The historical location of any old checkout is irrelevant.
-
-Any consequential source/schema/candidate modification after the P6 input HEAD is frozen invalidates prior execution evidence and requires a fresh P6 run from zero.
-
-## P6 required execution scope
-
-The completed P6 execution covered at minimum the following scope against the exact final repaired HEAD:
+At minimum rerun:
 
 ```text
 Python compile/import checks
 Draft 2020-12 JSON Schema meta-validation
-historical candidate/object regression
-v0.6 successor materialization and retirement regression
-P1 noncircular ManifestAcceptance tests
-P2 claim separation and claim-authority tests
-P4 qualification firewall/state closure tests
-qualification signature-authority substitution tests
-production receipt/profile admission tests
-strong Bitcoin verifier contract tests
-full repository pytest
+production receipt admission tests
+claim authority tests
+exact-contract adversarial tests
+provider qualification/firewall tests
+Roughtime strict verifier tests
+Architecture Compression focused tests
+complete repository pytest
 synthetic adversarial suite
+git diff --check
 ```
 
-Any correctness/security failure returns the project to P5 repair. Standards are not lowered to obtain PASS.
+Any new correctness/security failure returns the work to repair. Standards must not be weakened to obtain PASS.
 
-## Implementation alignment
+## Readiness state
+
+Until fresh regression closes the repair:
 
 ```text
-P1_ANCHORING_RECONCILIATION = COMPLETE_IMPLEMENTED
-P2_TEMPORAL_CLAIM_SEPARATION = COMPLETE_IMPLEMENTED
-P3_DEPENDENCY_COMPRESSION = COMPLETE
-P4_PROVIDER_QUALIFICATION_COMPLEXITY_FIREWALL = COMPLETE_HARDENED
-P5_VERSIONED_IMPLEMENTATION = COMPLETE_WITH_CLAIM_AUTHORITY_HARDENING
-CURRENT_EFFECTIVE_CANDIDATE = V0_6
-CURRENT_EFFECTIVE_OBJECT_COUNT = 21
-CURRENT_V0_6_CANDIDATE_DESIGN_ALIGNED = YES
-CURRENT_SUCCESSOR_LOW_LEVEL_CLAIM_HELPERS = NON_AUTHORITATIVE
-CURRENT_FINAL_GENESIS_AUTHORITY_PATH_IMPLEMENTED = YES
-CURRENT_CYCLE_PLAN_SUCCESSOR_CLAIM_INPUT_ALIGNED = YES
-CURRENT_VALIDATION_REPORT_CLAIM_AUTHORITY_CLOSED = YES
-CURRENT_PROVIDER_ADMISSION_FIREWALL_ALIGNED = YES
-CURRENT_QUALIFICATION_SIGNATURE_AUTHORITY_PINNED = YES
-CURRENT_READINESS_MATRIX_ALIGNED = YES
-CURRENT_ABORT_CONDITIONS_ALIGNED = YES
-P5_CLAIM_AUTHORITY_REPAIR_REQUIRED = NO
-P6_REGRESSION_REQUIRED = NO
+CURRENT_V0_6_CANDIDATE_DESIGN_ALIGNED = NOT_ESTABLISHED_PENDING_REPAIR_REGRESSION
+CURRENT_VALIDATION_REPORT_CLAIM_AUTHORITY_CLOSED = NOT_ESTABLISHED_PENDING_REPAIR_REGRESSION
+CURRENT_PROVIDER_ADMISSION_FIREWALL_ALIGNED = NOT_ESTABLISHED_PENDING_REPAIR_REGRESSION
+P5_CLAIM_AUTHORITY_REPAIR_REQUIRED = YES
+P6_REGRESSION_REQUIRED = YES
+P7_FINAL_DECISION = NOT_REACHED
 GENESIS_READY = NO
 ```
 
-## Retained production qualification state
+## Production qualification state
 
 ```text
 PRODUCTION_QUALIFICATION_CRITERIA = FROZEN_V1
@@ -317,14 +155,17 @@ criteria_sha256 = 88cc910fdb7e573f3a84d860ad0cdc5fffc287db18678956c7e50dc52a0763
 production-qualified provider count = 0
 PRODUCTION_QUALIFIED = NO
 PRODUCTION_QUALIFICATION_EXECUTION = NOT_READY
-ACTIVE_MAINLINE = P7_DEPENDENCY_REEVALUATION
 ```
 
-Historical provider rehearsal evidence remains `NON_FORECAST_REHEARSAL` with `prospective_eligible=false`.
+No qualification criterion has been weakened by this repair.
 
 ## Repository and PR control
 
-PR #6 must remain Draft, open, and unmerged unless separately authorized. No force push, rebase or history rewrite is authorized.
+PR #6 must remain Draft, open and unmerged unless separately authorized.
+
+No force push, rebase, merge or history rewrite is authorized.
+
+The repair branch must not be merged into `design/gen-001` until the repair diff and fresh regression have been reviewed.
 
 ## Network boundary
 
@@ -335,9 +176,9 @@ RFC3161 requests authorized = 0
 production qualification requests authorized = 0
 ```
 
-P6 repository/test access is ordinary development network use and does not authorize protocol-provider traffic.
+Offline repository/test access does not authorize protocol-provider traffic.
 
-## Safety state
+## Genesis safety state
 
 ```text
 Genesis = NOT STARTED
