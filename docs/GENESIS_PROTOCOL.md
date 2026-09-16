@@ -36,18 +36,20 @@ It is not a software release milestone and is not inferred from repository age, 
 
 1. Freeze candidate normative and target objects.
 2. Generate owner controlled Ed25519 bootstrap key outside the repository and insert only its public key into BootstrapGovernanceRoot.
-3. Externally evidence the GenesisGovernanceEnvelope containing bootstrap root and acceptance policy.
-4. Freeze candidate Genesis manifest.
-5. Externally evidence the exact candidate manifest.
-6. Run the frozen Trust Core suite and Genesis specific adversarial suite.
-7. Run non forecast wall-clock provider rehearsals.
-8. Run a non forecast OpenTimestamps stamp, upgrade, and strong Bitcoin verification using an owner controlled Bitcoin Core node.
-9. Resolve every blocking readiness finding.
-10. Create and owner-sign ManifestAcceptance for the exact candidate manifest.
-11. Externally evidence the exact signed ManifestAcceptance.
-12. Run an independent final Genesis validation over the bootstrap root, manifest, reports, signatures, and time evidence.
-13. Record a Genesis acceptance decision only if every gate passes.
-14. Only after acceptance may the first deterministic IssuanceCyclePlan be constructed for a future execution window.
+3. Freeze the exact BootstrapGovernanceRoot and retain its bytes and SHA256 independently of the candidate manifest graph.
+4. Freeze external provider and verifier profiles required by the admitted Genesis v1 evidence path.
+5. Freeze the exact ValidatorContract from the final candidate code and retained validation report.
+6. Freeze the candidate Genesis TrustedManifest.
+7. Run the frozen Trust Core suite, Genesis specific adversarial suite, schema checks, dependency closure, provider-profile verification, source-fixture checks, and manifest reproducibility checks.
+8. Resolve every blocking readiness finding.
+9. Create and owner-sign ManifestAcceptance v2 for the exact candidate TrustedManifest and exact BootstrapGovernanceRoot.
+10. Create final external wall-clock evidence over the exact signed ManifestAcceptance.
+11. Create and strongly verify Bitcoin durability evidence over the exact final evidence bundle.
+12. Run an independent final Genesis validation over the independently supplied BootstrapGovernanceRoot, exact TrustedManifest, required reports, owner signature, final external existence evidence, and Bitcoin durability evidence.
+13. Only after every readiness gate passes may the owner issue a separate explicit Genesis authorization.
+14. Only after that authorization may the first deterministic IssuanceCyclePlan be constructed for a future execution window.
+
+Standalone external anchors for the BootstrapGovernanceRoot or candidate TrustedManifest may be retained as optional audit evidence. They are not mandatory readiness gates and cannot substitute for final external evidence over the exact signed ManifestAcceptance.
 
 ## Initial target policy
 
@@ -86,9 +88,9 @@ Early-release risk fails closed under the frozen policy.
 
 ## Genesis state transition
 
-The repository may transition from `TRUST_CORE_BUILD` to `GENESIS_ACCEPTED` only through an accepted ManifestAcceptance and final validation record.
+The repository may transition from `TRUST_CORE_BUILD` to `GENESIS_ACCEPTED` only through an accepted ManifestAcceptance, successful independent final validation, and separate explicit Genesis authorization.
 
-A design document, pull request merge, rehearsal success, or project-owner statement by itself cannot create Genesis.
+A design document, pull request merge, rehearsal success, successful final validation, or repository state change by itself cannot create Genesis.
 
 ## Contamination prohibition
 
