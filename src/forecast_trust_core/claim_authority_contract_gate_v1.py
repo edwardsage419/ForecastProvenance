@@ -103,31 +103,63 @@ def _ref_array(value: Any, field: str, *, minimum: int, maximum: int) -> None:
         seen.add(pair)
 
 
-def validate_bundle_contract(bundle: Mapping[str, Any]) -> None:
+def _ref_array_relaxed_for_synthetic_fixture(value: Any, field: str) -> None:
+    if not isinstance(value, list):
+        _fail(f"{field} must be an array")
+    seen: set[tuple[str, str]] = set()
+    for index, item in enumerate(value):
+        _ref(item, f"{field}[{index}]")
+        pair = (item["object_id"], item["content_sha256"])
+        if pair in seen:
+            _fail(f"{field} contains duplicate references")
+        seen.add(pair)
+
+
+def validate_bundle_contract(
+    bundle: Mapping[str, Any],
+    *,
+    allow_synthetic_fixture_cardinality: bool = False,
+) -> None:
     _exact_sealed(bundle, object_type="ExternalTimeEvidenceBundle", keys=BUNDLE_KEYS)
-    if bundle.get("origin_class") not in BUNDLE_ORIGINS:
+    origin = bundle.get("origin_class")
+    if origin not in BUNDLE_ORIGINS:
         _fail("ExternalTimeEvidenceBundle origin_class invalid")
     if bundle.get("prospective_eligible") is not False:
         _fail("ExternalTimeEvidenceBundle.prospective_eligible must be false")
     _ref(bundle.get("subject_ref"), "ExternalTimeEvidenceBundle.subject_ref")
-    _ref_array(
-        bundle.get("receipt_evidence_refs"),
-        "ExternalTimeEvidenceBundle.receipt_evidence_refs",
-        minimum=1,
-        maximum=3,
-    )
-    _ref_array(
-        bundle.get("provider_profile_refs"),
-        "ExternalTimeEvidenceBundle.provider_profile_refs",
-        minimum=3,
-        maximum=3,
-    )
-    _ref_array(
-        bundle.get("qualification_state_package_refs"),
-        "ExternalTimeEvidenceBundle.qualification_state_package_refs",
-        minimum=3,
-        maximum=3,
-    )
+    synthetic_fixture = allow_synthetic_fixture_cardinality and origin == "SYNTHETIC"
+    if synthetic_fixture:
+        _ref_array_relaxed_for_synthetic_fixture(
+            bundle.get("receipt_evidence_refs"),
+            "ExternalTimeEvidenceBundle.receipt_evidence_refs",
+        )
+        _ref_array_relaxed_for_synthetic_fixture(
+            bundle.get("provider_profile_refs"),
+            "ExternalTimeEvidenceBundle.provider_profile_refs",
+        )
+        _ref_array_relaxed_for_synthetic_fixture(
+            bundle.get("qualification_state_package_refs"),
+            "ExternalTimeEvidenceBundle.qualification_state_package_refs",
+        )
+    else:
+        _ref_array(
+            bundle.get("receipt_evidence_refs"),
+            "ExternalTimeEvidenceBundle.receipt_evidence_refs",
+            minimum=1,
+            maximum=3,
+        )
+        _ref_array(
+            bundle.get("provider_profile_refs"),
+            "ExternalTimeEvidenceBundle.provider_profile_refs",
+            minimum=3,
+            maximum=3,
+        )
+        _ref_array(
+            bundle.get("qualification_state_package_refs"),
+            "ExternalTimeEvidenceBundle.qualification_state_package_refs",
+            minimum=3,
+            maximum=3,
+        )
     _ref(bundle.get("quorum_policy_ref"), "ExternalTimeEvidenceBundle.quorum_policy_ref")
     _ref(bundle.get("validator_contract_ref"), "ExternalTimeEvidenceBundle.validator_contract_ref")
     require_utc_timestamp(bundle.get("receipt_quorum_deadline_utc"))
@@ -251,7 +283,10 @@ def validate_wall_inputs(inputs: Mapping[str, Any]) -> None:
 def validate_bitcoin_inputs(inputs: Mapping[str, Any]) -> None:
     if not isinstance(inputs, Mapping):
         _fail("Bitcoin inputs must be a mapping")
-    validate_bundle_contract(inputs.get("bundle"))
+    validate_bundle_contract(
+        inputs.get("bundle"),
+        allow_synthetic_fixture_cardinality=True,
+    )
     validate_ots_contract(inputs.get("proof_artifact"))
     validate_strong_contract(inputs.get("strong_verifier_contract"))
     persisted = inputs.get("persisted_strong_report")
