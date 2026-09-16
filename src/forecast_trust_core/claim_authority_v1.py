@@ -165,7 +165,10 @@ def derive_confirmatory_eligibility_from_evidence(
     required_claim_requirements,
     hard_invalidation_reason_codes=(),
 ):
-    # Preserve subject-substitution rejection before authority-input validation.
+    # Recompute every component through the gated public authority functions.
+    # Caller-supplied claims are never accepted.
+    forecast_ref = _legacy._exact_ref(forecast)
+    claims = []
     for spec in component_specs:
         if not isinstance(spec, Mapping):
             raise ValueError("component spec must be a mapping")
@@ -176,24 +179,47 @@ def derive_confirmatory_eligibility_from_evidence(
         except (CanonicalizationError, TypeError) as exc:
             raise ValueError("component required_subject_ref malformed") from exc
         subject = spec.get("subject")
-        if kind in {"wall_clock_deadline", "bitcoin_durability", "pre_outcome_durability", "external_existence"}:
-            if _legacy._exact_ref(subject) != dict(required_subject_ref):
-                if kind == "wall_clock_deadline":
-                    raise ValueError("wall-clock component subject substitution")
-                if kind == "bitcoin_durability":
-                    raise ValueError("Bitcoin component subject substitution")
-                if kind == "pre_outcome_durability":
-                    raise ValueError("pre-outcome component subject substitution")
-                raise ValueError("external-existence component subject substitution")
+        if kind not in {
+            "wall_clock_deadline",
+            "bitcoin_durability",
+            "pre_outcome_durability",
+            "external_existence",
+        }:
+            raise ValueError("unknown authoritative component kind")
+        if _legacy._exact_ref(subject) != dict(required_subject_ref):
+            if kind == "wall_clock_deadline":
+                raise ValueError("wall-clock component subject substitution")
+            if kind == "bitcoin_durability":
+                raise ValueError("Bitcoin component subject substitution")
+            if kind == "pre_outcome_durability":
+                raise ValueError("pre-outcome component subject substitution")
+            raise ValueError("external-existence component subject substitution")
 
         authority_inputs = spec.get("authority_inputs")
         if kind in {"wall_clock_deadline", "external_existence"}:
             _legacy._require_live_wall_inputs(authority_inputs)
-            _gate.validate_wall_inputs(authority_inputs)
+            wall = recompute_external_existence_claim_authoritatively(
+                subject,
+                claim_deadline_utc=(
+                    spec.get("claim_deadline_utc")
+                    if kind == "wall_clock_deadline"
+                    else None
+                ),
+                **dict(authority_inputs),
+            )
+            claims.append(
+                wall.deadline_existence_claim
+                if kind == "wall_clock_deadline"
+                else wall.external_existence_claim
+            )
         elif kind == "bitcoin_durability":
             _legacy._require_live_bitcoin_inputs(authority_inputs)
-            _gate.validate_bitcoin_inputs(authority_inputs)
-        elif kind == "pre_outcome_durability":
+            bitcoin = recompute_bitcoin_durability_claim_authoritatively(
+                subject,
+                **dict(authority_inputs),
+            )
+            claims.append(bitcoin.bitcoin_durability_claim)
+        else:
             if not isinstance(authority_inputs, Mapping):
                 raise ValueError("pre-outcome authority inputs must be a mapping")
             bitcoin_inputs = authority_inputs.get("bitcoin_inputs")
@@ -203,17 +229,22 @@ def derive_confirmatory_eligibility_from_evidence(
             if not isinstance(dvr, Mapping) or dvr.get("origin_class") != "LIVE_OPERATIONAL":
                 raise ValueError("production eligibility requires LIVE_OPERATIONAL DurabilityVerificationRecord")
             _legacy._require_live_wall_inputs(dvr_wall_inputs)
-            _gate.validate_bitcoin_inputs(bitcoin_inputs)
-            _gate.validate_dvr_contract(dvr)
-            _gate.validate_wall_inputs(dvr_wall_inputs)
+            pre, _bitcoin, _wall = recompute_pre_outcome_durability_authoritatively(
+                subject,
+                bitcoin_inputs=bitcoin_inputs,
+                durability_record=dvr,
+                durability_record_wall_clock_inputs=dvr_wall_inputs,
+            )
+            claims.append(pre)
 
-    _sync_legacy_dependencies()
-    return _legacy.derive_confirmatory_eligibility_from_evidence(
-        forecast,
-        component_specs=component_specs,
+    eligibility = _legacy.derive_confirmatory_eligibility_strict(
+        forecast_ref,
+        required_claims=claims,
         required_claim_requirements=required_claim_requirements,
         hard_invalidation_reason_codes=hard_invalidation_reason_codes,
+        applicable=True,
     )
+    return eligibility, tuple(claims)
 
 
 def validate_persisted_final_acceptance_report_authoritatively(
