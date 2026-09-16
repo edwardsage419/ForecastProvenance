@@ -20,6 +20,14 @@ RECEIPT_KEYS = frozenset({
     "client_random_hex", "request_sha256", "request_base64", "response_sha256",
     "response_base64", "object_id", "payload_sha256", "content_sha256",
 })
+STATE_PACKAGE_KEYS = frozenset({
+    "schema_version", "object_type", "provider_id", "as_of_utc",
+    "provider_profile_ref", "qualification_decision_ref",
+    "qualification_evidence_manifest_sha256", "qualification_verifier_contract_ref",
+    "metadata_review_refs", "requalification_event_refs",
+    "qualification_state_report_sha256", "qualification_state",
+    "object_id", "payload_sha256", "content_sha256",
+})
 OTS_KEYS = frozenset({
     "schema_version", "object_type", "origin_class", "prospective_eligible",
     "external_time_evidence_bundle_ref", "proof_sha256", "proof_base64",
@@ -46,6 +54,16 @@ STRONG_REPORT_BASE_KEYS = frozenset({
 })
 LIVE_OR_SYNTHETIC = frozenset({"SYNTHETIC", "LIVE_OPERATIONAL"})
 BUNDLE_ORIGINS = frozenset({"SYNTHETIC", "RETROSPECTIVE", "LIVE_OPERATIONAL"})
+PROVIDER_IDS = frozenset({"roughtime.se", "time.txryan.com", "TimeNL-Roughtime"})
+QUALIFICATION_STATES = frozenset({
+    "UNREVIEWED",
+    "REHEARSAL_VERIFIED",
+    "QUALIFICATION_REVIEW_READY",
+    "QUALIFICATION_BLOCKED",
+    "PRODUCTION_QUALIFIED",
+    "QUALIFICATION_EXPIRED",
+    "REQUALIFICATION_REQUIRED",
+})
 HEX64 = frozenset("0123456789abcdef")
 
 
@@ -103,7 +121,7 @@ def _ref_array(value: Any, field: str, *, minimum: int, maximum: int) -> None:
         seen.add(pair)
 
 
-def _ref_array_relaxed_for_synthetic_fixture(value: Any, field: str) -> None:
+def _ref_array_unbounded(value: Any, field: str) -> None:
     if not isinstance(value, list):
         _fail(f"{field} must be an array")
     seen: set[tuple[str, str]] = set()
@@ -129,15 +147,15 @@ def validate_bundle_contract(
     _ref(bundle.get("subject_ref"), "ExternalTimeEvidenceBundle.subject_ref")
     synthetic_fixture = allow_synthetic_fixture_cardinality and origin == "SYNTHETIC"
     if synthetic_fixture:
-        _ref_array_relaxed_for_synthetic_fixture(
+        _ref_array_unbounded(
             bundle.get("receipt_evidence_refs"),
             "ExternalTimeEvidenceBundle.receipt_evidence_refs",
         )
-        _ref_array_relaxed_for_synthetic_fixture(
+        _ref_array_unbounded(
             bundle.get("provider_profile_refs"),
             "ExternalTimeEvidenceBundle.provider_profile_refs",
         )
-        _ref_array_relaxed_for_synthetic_fixture(
+        _ref_array_unbounded(
             bundle.get("qualification_state_package_refs"),
             "ExternalTimeEvidenceBundle.qualification_state_package_refs",
         )
@@ -175,12 +193,47 @@ def validate_receipt_contract(receipt: Mapping[str, Any]) -> None:
     _ref(receipt.get("provider_profile_ref"), "RoughtimeProductionReceiptEvidence.provider_profile_ref")
     _ref(receipt.get("qualification_state_package_ref"), "RoughtimeProductionReceiptEvidence.qualification_state_package_ref")
     require_utc_timestamp(receipt.get("frozen_deadline_utc"))
-    if receipt.get("provider_id") not in {"roughtime.se", "time.txryan.com", "TimeNL-Roughtime"}:
+    if receipt.get("provider_id") not in PROVIDER_IDS:
         _fail("RoughtimeProductionReceiptEvidence provider_id invalid")
     for field in ("verifier_build_profile_sha256", "client_random_hex", "request_sha256", "response_sha256"):
         _hex64(receipt.get(field), field)
     _canonical_base64(receipt.get("request_base64"), "request_base64")
     _canonical_base64(receipt.get("response_base64"), "response_base64")
+
+
+def validate_qualification_state_package_contract(package: Mapping[str, Any]) -> None:
+    _exact_sealed(
+        package,
+        object_type="RoughtimeProviderQualificationStatePackage",
+        keys=STATE_PACKAGE_KEYS,
+    )
+    if package.get("provider_id") not in PROVIDER_IDS:
+        _fail("RoughtimeProviderQualificationStatePackage provider_id invalid")
+    require_utc_timestamp(package.get("as_of_utc"))
+    _ref(package.get("provider_profile_ref"), "RoughtimeProviderQualificationStatePackage.provider_profile_ref")
+    _ref(package.get("qualification_decision_ref"), "RoughtimeProviderQualificationStatePackage.qualification_decision_ref")
+    _hex64(
+        package.get("qualification_evidence_manifest_sha256"),
+        "qualification_evidence_manifest_sha256",
+    )
+    _ref(
+        package.get("qualification_verifier_contract_ref"),
+        "RoughtimeProviderQualificationStatePackage.qualification_verifier_contract_ref",
+    )
+    _ref_array_unbounded(
+        package.get("metadata_review_refs"),
+        "RoughtimeProviderQualificationStatePackage.metadata_review_refs",
+    )
+    _ref_array_unbounded(
+        package.get("requalification_event_refs"),
+        "RoughtimeProviderQualificationStatePackage.requalification_event_refs",
+    )
+    _hex64(
+        package.get("qualification_state_report_sha256"),
+        "qualification_state_report_sha256",
+    )
+    if package.get("qualification_state") not in QUALIFICATION_STATES:
+        _fail("RoughtimeProviderQualificationStatePackage qualification_state invalid")
 
 
 def validate_ots_contract(proof: Mapping[str, Any]) -> None:
