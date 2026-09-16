@@ -59,8 +59,9 @@ Repair:
 5. Provider identity and verifier-build-profile identity must agree across the bound objects.
 6. ProviderProfile `no_fallback=true` remains required.
 7. Profile fields are not redundantly copied into the receipt.
+8. The bound Profile, Decision and StatePackage must at least be correctly typed sealed v1 objects before their refs can satisfy the binding helper.
 
-Regression coverage now constructs a schema-conforming production receipt and includes wrong exact-ref, extra-field and verifier-build mismatch negatives.
+Regression coverage now constructs a schema-conforming production receipt and includes wrong exact-ref, extra-field, verifier-build mismatch, fallback-enabled profile and wrong-object-type negatives.
 
 ## Finding F3: sealed evidence could bypass the exact normative object contract
 
@@ -82,6 +83,8 @@ The checks enforce the exact field set, schema/object identity, allowed origin c
 
 `claim_authority_v1._exact_ref()` dispatches these exact contract checks at the authority choke point before granting a content reference authority. Existing cryptographic replay and exact-reference checks remain in place after contract validation.
 
+A static follow-up found that the wall-clock FAILED path could re-enter `_exact_ref(bundle)` after the first contract failure and re-raise instead of returning a deterministic failed claim. That secondary path was removed: contract-invalid wall evidence now remains fail-closed as `FAILED` without a second authority attempt.
+
 This is intentionally a small in-repository contract layer and adds no runtime JSON Schema dependency or external service dependency.
 
 ## Finding F4: DurabilityVerificationRecord contract was incomplete at authority boundary
@@ -101,6 +104,24 @@ The implemented qualification model instead places the independence/common-depen
 The minimal repair keeps ProviderProfile focused on frozen operational and cryptographic identity and corrects the prose to identify the qualification evidence/review/decision chain as the authority for independence evidence.
 
 No ProviderProfile schema expansion is introduced.
+
+## Finding F6: DurabilityVerificationRecord prose listed non-schema fields
+
+`GENESIS_TIME_EVIDENCE.md` previously described the DurabilityVerificationRecord as directly containing Bitcoin block height, block hash and a header reference.
+
+The normative `durability_verification_record_v1.schema.json` instead binds:
+
+```text
+primary_subject_ref
+external_time_evidence_bundle_ref
+ots_proof_ref
+strong_verification_report_ref
+outcome_information_barrier
+```
+
+Bitcoin block height, block hash, header digest, node version and verification result belong to the exact bound `StrongBitcoinVerificationReport`. The prose is corrected to match that object model and avoid duplicate Bitcoin fields in the DVR.
+
+No schema or candidate-object bytes are changed.
 
 ## Files changed by this repair
 
