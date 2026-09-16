@@ -156,8 +156,6 @@ def _require_sealed_exact(
     if not isinstance(value, Mapping):
         raise ValueError(f"{label} must be an object")
     _require_exact_keys(value, expected_keys, label)
-    if not verify_sealed_object(value):
-        raise ValueError(f"{label} seal invalid")
     if value.get("schema_version") != "1.0":
         raise ValueError(f"{label} schema_version mismatch")
     if value.get("object_type") != object_type:
@@ -168,6 +166,8 @@ def _require_sealed_exact(
     require_ascii_token(object_id, f"{label}.object_id")
     _require_hex64(value["payload_sha256"], f"{label}.payload_sha256")
     _require_hex64(value["content_sha256"], f"{label}.content_sha256")
+    if not verify_sealed_object(value):
+        raise ValueError(f"{label} seal invalid")
 
 
 def validate_external_time_evidence_bundle_contract(bundle: Mapping[str, Any]) -> None:
