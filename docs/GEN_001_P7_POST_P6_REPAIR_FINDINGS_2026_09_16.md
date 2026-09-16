@@ -100,27 +100,32 @@ The repair requires the exact `ManifestAcceptance V2` contract for any object th
 
 ### R2.c Strong Bitcoin verification report postcondition
 
-The strong Bitcoin verifier inputs are not the only authority boundary. The deterministic `StrongBitcoinVerificationReport` produced by the accepted verifier path is also validated against its exact object contract before its result can be returned through the repaired authoritative path. A supplied persisted strong report is checked before use as well.
+The strong Bitcoin verifier inputs are not the only authority boundary. The deterministic `StrongBitcoinVerificationReport` produced by the accepted verifier path is validated against its exact object contract before its result can be returned through the repaired authoritative path.
+
+A caller-supplied persisted strong report remains an equality-only audit input. The authoritative report is freshly recomputed and contract-validated first; the retained implementation then rejects any persisted report that is not exactly equal to that recomputed output. The persisted copy is not an independent source of authority.
 
 ### R2.d Confirmatory aggregation must not bypass the gate
 
 The pre-repair confirmatory helper could validate high-level component inputs and then delegate to an implementation that internally invoked the ungated recomputation functions. The repaired public confirmatory path recomputes each wall-clock, Bitcoin, and pre-outcome component through the gated public authoritative functions before strict claim aggregation.
 
-This closes an internal bypass without changing the claim vocabulary or eligibility semantics.
+Persisted final-acceptance and cycle-plan report wrappers are likewise rebuilt through the public gated authority paths before exact report equality is checked, rather than recursively invoking an ungated legacy authority entry point.
 
 ### Synthetic Bitcoin-only fixture compatibility boundary
 
-Historical low-level tests contain a `SYNTHETIC`, `prospective_eligible=false` Bitcoin-only fixture whose `ExternalTimeEvidenceBundle` keeps the normative field names but does not populate the production Roughtime receipt/profile/state-package cardinalities.
+Historical low-level tests contain one `SYNTHETIC`, `prospective_eligible=false` Bitcoin-only fixture whose `ExternalTimeEvidenceBundle` keeps the normative field names but uses empty Roughtime receipt/profile/state-package reference arrays.
 
-The repair temporarily permits this cardinality relaxation only inside the low-level Bitcoin input gate when all of the following are true:
+The repair temporarily permits only that exact cardinality exception inside the low-level Bitcoin input gate when all of the following hold:
 
 ```text
 origin_class = SYNTHETIC
 prospective_eligible = false
+receipt_evidence_refs = []
+provider_profile_refs = []
+qualification_state_package_refs = []
 caller is the Bitcoin-only authority input validator
 ```
 
-The same object does not pass strict wall-clock bundle validation. `LIVE_OPERATIONAL` evidence never receives this exception. Final Genesis readiness and confirmatory prospective eligibility already require LIVE evidence, so this compatibility path cannot create a production or prospective claim.
+Any other non-normative cardinality remains rejected. The same empty-array object does not pass strict wall-clock bundle validation. `LIVE_OPERATIONAL` evidence never receives this exception. Final Genesis readiness and confirmatory prospective eligibility require LIVE evidence, so this compatibility path cannot create a production or prospective claim.
 
 This is a test-harness compatibility boundary, not a production protocol rule. The preferred later cleanup is to normalize the old synthetic Bitcoin fixture and remove the exception after fresh regression confirms that no historical test intent depends on it.
 
@@ -197,6 +202,32 @@ No `NON_FORECAST_REHEARSAL` report may be reused as production evidence.
 
 No new production execution object is introduced in this repair solely to make the blocker disappear. P7 must first decide whether the attempt-all-three rule remains necessary for the minimal Genesis v1 policy. If retained, the successor production evidence design must bind complete attempt accounting. If removed, removal requires a versioned successor policy and must not reinterpret v3.
 
+## Finding R6: confirmatory eligibility lacked full non-temporal Trust Core authority
+
+P2 requires `CONFIRMATORY_PROSPECTIVE_ELIGIBLE` to derive from the full applicable claim/check set, including non-temporal Trust Core conditions such as deterministic cycle/slot accounting, attempt/retry/first-success behavior, point-in-time cutoff, selection control, manifest membership and other hard invalidations.
+
+The post-P6 implementation reconstructed temporal and durability component claims from raw evidence, but the final authoritative helper still accepted `hard_invalidation_reason_codes` from the caller and had no authoritative raw-evidence reconstruction of the complete non-temporal check set. With an empty caller list, an otherwise complete temporal component set could therefore be promoted to `VERIFIED` without independently proving the complete P2 check set.
+
+This is a claim-authority defect, not a new P2 requirement.
+
+The minimal repair is fail closed:
+
+1. caller-supplied hard invalidation authority is prohibited;
+2. temporal and durability components continue to be independently recomputed through the repaired authority gates;
+3. existing component failures remain failures and unresolved components remain unresolved;
+4. if the currently implemented component set would otherwise aggregate to `CONFIRMATORY_PROSPECTIVE_ELIGIBLE = VERIFIED`, the authoritative successor path returns `UNRESOLVED` with reason `FULL_TRUST_CORE_CHECK_AUTHORITY_NOT_IMPLEMENTED`;
+5. the historical low-level claim aggregation helper remains available under its historical contract but is not an authoritative successor eligibility source.
+
+A future implementation may close this blocker by deterministically reconstructing the complete Genesis v1 Trust Core check set from exact retained raw evidence under the accepted ValidatorContract. That work must not be simulated by another caller-supplied boolean, status string or opaque validation object.
+
+Until such authority exists and fresh regression passes:
+
+```text
+AUTHORITATIVE_CONFIRMATORY_VERIFIED = PROHIBITED
+```
+
+This conservative state is compatible with the project being pre-Genesis and prevents an incomplete implementation from creating a false confirmatory cohort.
+
 ## Repair implementation strategy
 
 To minimize implementation risk, the pre-repair `claim_authority_v1.py` implementation is retained byte-for-byte as an internal implementation module on the repair branch. Its blob identity remains available for direct comparison with the original implementation.
@@ -236,6 +267,8 @@ Until a fresh exact-head regression closes the repairs:
 ```text
 P7 = PAUSED_FOR_REPAIR
 P7_FINAL_DECISION = NOT_REACHED
+P7_F1 = OPEN_BLOCKER
+AUTHORITATIVE_CONFIRMATORY_VERIFIED = PROHIBITED
 candidate v0.7 = NOT CREATED
 v0.6 historical candidate bytes = UNCHANGED
 PRODUCTION_QUALIFIED = NO
