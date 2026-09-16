@@ -27,6 +27,7 @@ _validate_ots_contract = _gate.validate_ots_contract
 _validate_dvr_contract = _gate.validate_dvr_contract
 _validate_strong_contract = _gate.validate_strong_contract
 _validate_strong_report = _gate.validate_strong_report
+_validate_manifest_acceptance_v2_contract = _gate.validate_manifest_acceptance_v2_contract
 
 
 def validate_provider_admission_set_authoritatively(packages, **kwargs):
@@ -105,6 +106,7 @@ def validate_final_genesis_acceptance_authoritatively(
 
     _legacy._require_live_wall_inputs(wall_clock_inputs)
     _legacy._require_live_bitcoin_inputs(bitcoin_inputs)
+    _gate.validate_manifest_acceptance_v2_contract(acceptance)
     _gate.validate_wall_inputs(wall_clock_inputs)
     _gate.validate_bitcoin_inputs(bitcoin_inputs)
     _sync_legacy_dependencies()
@@ -272,6 +274,7 @@ def validate_persisted_final_acceptance_report_authoritatively(
 ):
     _legacy._require_live_wall_inputs(wall_clock_inputs)
     _legacy._require_live_bitcoin_inputs(bitcoin_inputs)
+    _gate.validate_manifest_acceptance_v2_contract(acceptance)
     _gate.validate_wall_inputs(wall_clock_inputs)
     _gate.validate_bitcoin_inputs(bitcoin_inputs)
     _sync_legacy_dependencies()
