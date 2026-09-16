@@ -21,7 +21,7 @@
   "properties": {
     "schema_version": {"const": "1.0"},
     "object_type": {"const": "BootstrapGovernanceRoot"},
-    "project_id": {"type": "string", "pattern": "^[A-Za-z0-9._:/-]+$", "minLength": 1},
+    "project_id": {"const": "forecast-provenance-project"},
     "authority_id": {"type": "string", "pattern": "^[A-Za-z0-9._:/-]+$", "minLength": 1},
     "authority_key_type": {"const": "ED25519"},
     "authority_public_key_base64": {"type": "string", "pattern": "^[A-Za-z0-9+/]{43}=$"},
