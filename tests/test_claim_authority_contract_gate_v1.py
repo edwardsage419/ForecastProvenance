@@ -3,6 +3,7 @@ from pathlib import Path
 import pytest
 
 import forecast_trust_core.claim_authority_v1 as authority
+import forecast_trust_core.claim_authority_contract_gate_v1 as contract_gate
 from forecast_trust_core.canonical import seal_object
 
 
@@ -78,14 +79,45 @@ def valid_strong_contract():
     )
 
 
-def reseal_with_extra(obj, object_id, **extra):
+def valid_strong_report():
+    subject, bundle, validator = valid_bundle()
+    proof = valid_proof(bundle)
+    contract = valid_strong_contract()
+    report = sealed(
+        "StrongBitcoinVerificationReport",
+        "strong-report:gate:v1",
+        origin_class="SYNTHETIC",
+        prospective_eligible=False,
+        subject_ref=ref(subject),
+        external_time_evidence_bundle_ref=ref(bundle),
+        ots_proof_ref=ref(proof),
+        strong_verifier_contract_ref=ref(contract),
+        validator_contract_ref=ref(validator),
+        bundle_sha256="3" * 64,
+        proof_sha256="4" * 64,
+        verification_mode="OWNER_CONTROLLED_BITCOIN_CORE",
+        bitcoin_header_time_role="DURABILITY_ONLY_NOT_CIVIL_TIME_BOUND",
+        verified=True,
+        bitcoin_block_height=123,
+        bitcoin_block_hash="5" * 64,
+        bitcoin_header_sha256="6" * 64,
+        node_version="synthetic-node",
+    )
+    return report
+
+
+def reseal(obj, object_id, **updates):
     payload = {
         key: value
         for key, value in obj.items()
         if key not in {"schema_version", "object_type", "object_id", "payload_sha256", "content_sha256"}
     }
-    payload.update(extra)
+    payload.update(updates)
     return sealed(obj["object_type"], object_id, **payload)
+
+
+def reseal_with_extra(obj, object_id, **extra):
+    return reseal(obj, object_id, **extra)
 
 
 def test_sealed_bundle_with_extra_field_is_rejected_before_bitcoin_execution():
@@ -104,6 +136,49 @@ def test_sealed_bundle_with_extra_field_is_rejected_before_bitcoin_execution():
             expected_validator_contract_ref=ref(validator),
             expected_strong_verifier_contract_ref=ref(contract),
         )
+
+
+def test_live_bitcoin_bundle_cannot_use_synthetic_fixture_cardinality_exception():
+    _subject, bundle, _validator = valid_bundle(origin_class="LIVE_OPERATIONAL")
+    bad_bundle = reseal(
+        bundle,
+        "bundle:live-empty:gate:v1",
+        receipt_evidence_refs=[],
+        provider_profile_refs=[],
+        qualification_state_package_refs=[],
+    )
+    proof = valid_proof(bad_bundle)
+    contract = valid_strong_contract()
+    with pytest.raises(ValueError, match="cardinality invalid"):
+        contract_gate.validate_bitcoin_inputs(
+            {
+                "bundle": bad_bundle,
+                "proof_artifact": proof,
+                "strong_verifier_contract": contract,
+            }
+        )
+
+
+def test_synthetic_bitcoin_only_fixture_cardinality_exception_is_not_wall_clock_authority():
+    _subject, bundle, _validator = valid_bundle(origin_class="SYNTHETIC")
+    synthetic_bundle = reseal(
+        bundle,
+        "bundle:synthetic-empty:gate:v1",
+        receipt_evidence_refs=[],
+        provider_profile_refs=[],
+        qualification_state_package_refs=[],
+    )
+    proof = valid_proof(synthetic_bundle)
+    contract = valid_strong_contract()
+    contract_gate.validate_bitcoin_inputs(
+        {
+            "bundle": synthetic_bundle,
+            "proof_artifact": proof,
+            "strong_verifier_contract": contract,
+        }
+    )
+    with pytest.raises(ValueError, match="cardinality invalid"):
+        authority._validate_bundle_contract(synthetic_bundle)
 
 
 def test_production_receipt_rejects_retrospective_origin_even_with_valid_seal():
@@ -183,3 +258,25 @@ def test_strong_verifier_contract_rejects_unexpected_fields():
     bad = reseal_with_extra(contract, "strong-contract:extra:gate:v1", unexpected="forbidden")
     with pytest.raises(ValueError, match="field set mismatch"):
         authority._validate_strong_contract(bad)
+
+
+def test_strong_verification_report_exact_success_contract_is_accepted():
+    authority._validate_strong_report(valid_strong_report())
+
+
+def test_strong_verification_report_rejects_unexpected_fields():
+    report = valid_strong_report()
+    bad = reseal_with_extra(report, "strong-report:extra:gate:v1", unexpected="forbidden")
+    with pytest.raises(ValueError, match="field set mismatch"):
+        authority._validate_strong_report(bad)
+
+
+def test_strong_verification_report_rejects_prospective_eligible_true():
+    report = valid_strong_report()
+    bad = reseal(
+        report,
+        "strong-report:prospective:gate:v1",
+        prospective_eligible=True,
+    )
+    with pytest.raises(ValueError, match="prospective_eligible must be false"):
+        authority._validate_strong_report(bad)
