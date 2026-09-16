@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://forecastprovenance.org/schemas/genesis_governance_signature_verifier_contract_v1.schema.json",
+  "title": "Genesis Governance Signature Verifier Contract V1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "object_type",
+    "validator_contract_ref",
+    "signature_algorithm",
+    "authority_id",
+    "authority_public_key_sha256",
+    "ed25519_verifier_build_profile_sha256",
+    "ed25519_verifier_binary_sha256",
+    "allowed_signature_projections",
+    "object_id",
+    "payload_sha256",
+    "content_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "object_type": {"const": "GenesisGovernanceSignatureVerifierContract"},
+    "validator_contract_ref": {"$ref": "#/$defs/ref"},
+    "signature_algorithm": {"const": "ED25519"},
+    "authority_id": {"type": "string", "pattern": "^[A-Za-z0-9._:/-]+$", "minLength": 1},
+    "authority_public_key_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "ed25519_verifier_build_profile_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "ed25519_verifier_binary_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "allowed_signature_projections": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 2,
+      "uniqueItems": true,
+      "items": {
+        "enum": ["FPP_GENESIS_AUTHORIZATION_V1", "FPP_MANIFEST_ACCEPTANCE_V2"]
+      }
+    },
+    "object_id": {"type": "string", "pattern": "^[A-Za-z0-9._:/-]+$"},
+    "payload_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "ref": {
+      "type": "object",
+      "required": ["object_id", "content_sha256"],
+      "properties": {
+        "object_id": {"type": "string", "pattern": "^[A-Za-z0-9._:/-]+$"},
+        "content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      },
+      "additionalProperties": false
+    }
+  }
+}
