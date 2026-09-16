@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Mapping
+from typing import Mapping, Sequence
 
 from . import claim_authority_contract_gate_v1 as _gate
 from . import claim_authority_v1_legacy as _legacy
@@ -14,13 +14,27 @@ for _name, _value in vars(_legacy).items():
         globals()[_name] = _value
 
 
+# Keep direct handles to the pre-repair implementations before dependency seams
+# are synchronized for focused tests.
+_PROVIDER_ADMISSION_IMPL = _legacy.validate_provider_admission_set_authoritatively
+
+
 # Expose the narrow contract validators for focused adversarial regression.
 _validate_bundle_contract = _gate.validate_bundle_contract
 _validate_receipt_contract = _gate.validate_receipt_contract
+_validate_qualification_state_package_contract = _gate.validate_qualification_state_package_contract
 _validate_ots_contract = _gate.validate_ots_contract
 _validate_dvr_contract = _gate.validate_dvr_contract
 _validate_strong_contract = _gate.validate_strong_contract
 _validate_strong_report = _gate.validate_strong_report
+
+
+def validate_provider_admission_set_authoritatively(packages, **kwargs):
+    if not isinstance(packages, Sequence) or isinstance(packages, (str, bytes, bytearray)):
+        raise ValueError("qualification state packages must be a sequence")
+    for package in packages:
+        _gate.validate_qualification_state_package_contract(package)
+    return _PROVIDER_ADMISSION_IMPL(packages, **kwargs)
 
 
 def _sync_legacy_dependencies() -> None:
