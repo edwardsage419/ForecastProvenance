@@ -2,33 +2,10 @@ from __future__ import annotations
 
 from typing import Any, Mapping
 
-from .canonical import CanonicalizationError, validate_ref, verify_sealed_object
+from .canonical import verify_sealed_object
+from .claim_authority_contract_gate_v1 import validate_receipt_contract
 from .core import Validation, aggregate
 from ._checks import check as _check
-
-
-RECEIPT_KEYS = frozenset(
-    {
-        "schema_version",
-        "object_type",
-        "origin_class",
-        "prospective_eligible",
-        "subject_ref",
-        "frozen_deadline_utc",
-        "provider_id",
-        "provider_profile_ref",
-        "qualification_state_package_ref",
-        "verifier_build_profile_sha256",
-        "client_random_hex",
-        "request_sha256",
-        "request_base64",
-        "response_sha256",
-        "response_base64",
-        "object_id",
-        "payload_sha256",
-        "content_sha256",
-    }
-)
 
 
 def _exact_ref(obj: Mapping[str, Any]) -> dict[str, str]:
@@ -41,23 +18,9 @@ def _exact_ref(obj: Mapping[str, Any]) -> dict[str, str]:
 
 
 def _receipt_contract_valid(receipt: Mapping[str, Any]) -> bool:
-    if not isinstance(receipt, Mapping) or set(receipt) != RECEIPT_KEYS:
-        return False
-    if not verify_sealed_object(receipt):
-        return False
-    if receipt.get("schema_version") != "1.0":
-        return False
-    if receipt.get("object_type") != "RoughtimeProductionReceiptEvidence":
-        return False
-    if receipt.get("origin_class") not in {"SYNTHETIC", "LIVE_OPERATIONAL"}:
-        return False
-    if receipt.get("prospective_eligible") is not False:
-        return False
     try:
-        validate_ref(receipt.get("subject_ref"))
-        validate_ref(receipt.get("provider_profile_ref"))
-        validate_ref(receipt.get("qualification_state_package_ref"))
-    except (CanonicalizationError, TypeError):
+        validate_receipt_contract(receipt)
+    except (TypeError, ValueError):
         return False
     return True
 
