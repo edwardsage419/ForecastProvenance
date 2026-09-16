@@ -20,6 +20,7 @@ _validate_receipt_contract = _gate.validate_receipt_contract
 _validate_ots_contract = _gate.validate_ots_contract
 _validate_dvr_contract = _gate.validate_dvr_contract
 _validate_strong_contract = _gate.validate_strong_contract
+_validate_strong_report = _gate.validate_strong_report
 
 
 def _sync_legacy_dependencies() -> None:
@@ -39,7 +40,9 @@ def recompute_external_existence_claim_authoritatively(subject, **kwargs):
 def recompute_bitcoin_durability_claim_authoritatively(subject, **kwargs):
     _gate.validate_bitcoin_inputs(kwargs)
     _sync_legacy_dependencies()
-    return _legacy.recompute_bitcoin_durability_claim_authoritatively(subject, **kwargs)
+    result = _legacy.recompute_bitcoin_durability_claim_authoritatively(subject, **kwargs)
+    _gate.validate_strong_report(result.strong_verification_report)
+    return result
 
 
 def validate_cycle_plan_authoritatively(
@@ -87,12 +90,14 @@ def validate_final_genesis_acceptance_authoritatively(
     _gate.validate_wall_inputs(wall_clock_inputs)
     _gate.validate_bitcoin_inputs(bitcoin_inputs)
     _sync_legacy_dependencies()
-    return _legacy.validate_final_genesis_acceptance_authoritatively(
+    result = _legacy.validate_final_genesis_acceptance_authoritatively(
         acceptance,
         final_evidence_subject_ref=final_evidence_subject_ref,
         wall_clock_inputs=wall_clock_inputs,
         bitcoin_inputs=bitcoin_inputs,
     )
+    _gate.validate_strong_report(result[2])
+    return result
 
 
 def recompute_pre_outcome_durability_authoritatively(
