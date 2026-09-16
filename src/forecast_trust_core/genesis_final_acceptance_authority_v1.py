@@ -19,17 +19,19 @@ def _exact_ref(obj: Mapping[str, Any], *, object_type: str | None = None) -> dic
     return {"object_id": obj["object_id"], "content_sha256": obj["content_sha256"]}
 
 
-def _required_manifest_governance_verifier_ref(
-    trusted_manifest: Mapping[str, Any],
-) -> dict[str, str]:
-    value = trusted_manifest.get(GOVERNANCE_VERIFIER_REF_FIELD)
+def _required_manifest_ref(trusted_manifest: Mapping[str, Any], field: str) -> dict[str, str]:
+    value = trusted_manifest.get(field)
     try:
         validate_ref(value)
     except (CanonicalizationError, TypeError) as exc:
-        raise ValueError(
-            f"TrustedManifest {GOVERNANCE_VERIFIER_REF_FIELD} is missing or malformed"
-        ) from exc
+        raise ValueError(f"TrustedManifest {field} is missing or malformed") from exc
     return dict(value)
+
+
+def _required_manifest_governance_verifier_ref(
+    trusted_manifest: Mapping[str, Any],
+) -> dict[str, str]:
+    return _required_manifest_ref(trusted_manifest, GOVERNANCE_VERIFIER_REF_FIELD)
 
 
 def bind_genesis_governance_signature_inputs_to_manifest(
@@ -47,6 +49,15 @@ def bind_genesis_governance_signature_inputs_to_manifest(
     if acceptance.get("candidate_manifest_ref") != manifest_ref:
         raise ValueError(
             "ManifestAcceptance does not bind the exact TrustedManifest authority root"
+        )
+
+    manifest_acceptance_rule_ref = _required_manifest_ref(
+        trusted_manifest,
+        "acceptance_rule_ref",
+    )
+    if acceptance.get("acceptance_rule_ref") != manifest_acceptance_rule_ref:
+        raise ValueError(
+            "ManifestAcceptance acceptance rule differs from TrustedManifest"
         )
 
     expected_contract_ref = _required_manifest_governance_verifier_ref(trusted_manifest)
