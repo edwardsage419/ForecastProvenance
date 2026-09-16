@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://forecastprovenance.org/schemas/bootstrap_governance_root_v1.schema.json",
+  "title": "Bootstrap Governance Root V1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "object_type",
+    "project_id",
+    "authority_id",
+    "authority_key_type",
+    "authority_public_key_base64",
+    "acceptance_rule_ref",
+    "canonicalization_scheme",
+    "hash_algorithm",
+    "bootstrap_version",
+    "object_id",
+    "payload_sha256",
+    "content_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "object_type": {"const": "BootstrapGovernanceRoot"},
+    "project_id": {"type": "string", "pattern": "^[A-Za-z0-9._:/-]+$", "minLength": 1},
+    "authority_id": {"type": "string", "pattern": "^[A-Za-z0-9._:/-]+$", "minLength": 1},
+    "authority_key_type": {"const": "ED25519"},
+    "authority_public_key_base64": {"type": "string", "pattern": "^[A-Za-z0-9+/]{43}=$"},
+    "acceptance_rule_ref": {"$ref": "#/$defs/ref"},
+    "canonicalization_scheme": {"const": "FPP_JCS_1"},
+    "hash_algorithm": {"const": "SHA-256"},
+    "bootstrap_version": {"const": 1},
+    "object_id": {"type": "string", "pattern": "^[A-Za-z0-9._:/-]+$"},
+    "payload_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "ref": {
+      "type": "object",
+      "required": ["object_id", "content_sha256"],
+      "properties": {
+        "object_id": {"type": "string", "pattern": "^[A-Za-z0-9._:/-]+$"},
+        "content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      },
+      "additionalProperties": false
+    }
+  }
+}
