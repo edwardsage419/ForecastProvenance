@@ -63,7 +63,7 @@ Different endpoints or signing keys controlled by the same operational authority
 
 Shared hosting, HSM, software, network, or upstream time suppliers do not automatically merge provider groups. They become an independence blocker only when retained evidence shows shared timestamp issuance control, shared signing key control, common operational trust authority, or another control dependency that defeats the independent group assumption.
 
-The final ProviderProfiles must record the reviewed independence basis.
+The reviewed independence basis is retained in the qualification evidence package and `RoughtimeQualificationReview`, including the `INDEPENDENCE` and `COMMON_DEPENDENCY` criteria, and is transitively bound into the accepted QualificationDecision. ProviderProfile remains the frozen operational and cryptographic identity object and does not duplicate that review evidence.
 
 ## Roughtime receipt profile
 
