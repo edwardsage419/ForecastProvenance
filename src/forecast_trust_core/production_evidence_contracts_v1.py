@@ -162,7 +162,10 @@ def _require_sealed_exact(
         raise ValueError(f"{label} schema_version mismatch")
     if value.get("object_type") != object_type:
         raise ValueError(f"{label} object_type mismatch")
-    require_ascii_token(str(value["object_id"]), f"{label}.object_id")
+    object_id = value["object_id"]
+    if not isinstance(object_id, str):
+        raise ValueError(f"{label}.object_id must be a string")
+    require_ascii_token(object_id, f"{label}.object_id")
     _require_hex64(value["payload_sha256"], f"{label}.payload_sha256")
     _require_hex64(value["content_sha256"], f"{label}.content_sha256")
 
