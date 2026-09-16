@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://forecastprovenance.org/schemas/genesis_governance_signature_v1.schema.json",
+  "title": "Genesis Governance Signature V1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "object_type",
+    "signature_projection",
+    "signed_payload",
+    "signed_payload_sha256",
+    "signature_algorithm",
+    "authority_signature_base64",
+    "object_id",
+    "payload_sha256",
+    "content_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "object_type": {"const": "GenesisGovernanceSignature"},
+    "signature_projection": {
+      "enum": ["FPP_GENESIS_AUTHORIZATION_V1", "FPP_MANIFEST_ACCEPTANCE_V2"]
+    },
+    "signed_payload": {"type": "object", "minProperties": 1},
+    "signed_payload_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "signature_algorithm": {"const": "ED25519"},
+    "authority_signature_base64": {"type": "string", "minLength": 1},
+    "object_id": {"type": "string", "pattern": "^[A-Za-z0-9._:/-]+$"},
+    "payload_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "additionalProperties": false
+}
