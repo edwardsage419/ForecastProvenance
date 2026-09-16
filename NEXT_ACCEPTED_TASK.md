@@ -1,15 +1,15 @@
 # Next Accepted Task
 
-Task ID: GEN_001-AC-P6-RESTART
-State: PRE_GENESIS ARCHITECTURE COMPRESSION; P6 FULL OFFLINE REGRESSION NEXT; PROVIDER NETWORK REQUEST NOT AUTHORIZED
+Task ID: GEN_001-AC-P7-DEPENDENCY-REEVALUATION
+State: PRE_GENESIS ARCHITECTURE COMPRESSION; P6 PASS; MINIMAL GENESIS V1 PROFILE REFROZEN AT V0.6; P7 NEXT; PROVIDER NETWORK REQUEST NOT AUTHORIZED
 
 ## Objective
 
-Restart P6 from zero against the exact final P5 claim-authority-hardened HEAD and determine whether the compressed Genesis v1 implementation passes complete offline regression and synthetic adversarial execution.
+Reevaluate whether Roughtime production qualification remains a necessary Genesis v1 dependency under the re-frozen minimal Architecture Compression profile. P7 begins from the current v0.6 requirement and does not presume that the dependency will be retained or removed.
 
-P5 implementation repair is complete at repository level but has not yet earned a regression PASS. P6 is the gate that tests the repair.
+P5 implementation repair completed and subsequently earned P6 exact-head regression PASS. The P6 execution contract below is retained as completed execution provenance.
 
-The P6 input commit is the exact `design/gen-001` HEAD containing this project-control transition after all P5 code/schema/docs changes. Resolve that SHA from Git/GitHub immediately before creating the validation checkout; do not self-embed or infer it from an earlier message.
+The completed P6 execution used exact HEAD `70dc89f187842d8dcc6ba428241aae614d520bd4`. Its closed retained evidence package is bound by `P6_EVIDENCE_MANIFEST.txt` SHA256 `a330a3952b55ce0f4415f25c5580ad2cdf53c05801e78f728239ab73caa8bb5d`.
 
 ## Controlling records
 
@@ -23,13 +23,13 @@ docs/GEN_001_ARCHITECTURE_COMPRESSION_P6_STATIC_REVIEW_AND_P5_HARDENING_2026_09_
 docs/GEN_001_P6_FINDING_3_CLAIM_AUTHORITY_BOUNDARY_2026_09_14.md
 ```
 
-Finding 3 status before execution:
+Historical Finding 3 status before P6 execution:
 
 ```text
 IMPLEMENTATION_REPAIRED_PENDING_REGRESSION
 ```
 
-It does not become closed until this P6 execution passes.
+This retained value records the pre-execution state. Finding 3 was subsequently closed by the successful exact-head P6 regression.
 
 ## Repository safety precheck
 
@@ -303,7 +303,7 @@ Only after that report is independently checked may project control advance to P
 
 ## P7 boundary
 
-P7 remains prohibited until P6 PASS.
+The P6 gate is satisfied. P7 is now the active accepted task.
 
 A P6 PASS does not automatically resume production qualification. P7 only reevaluates whether continuing Roughtime production qualification is actually required by the refrozen minimal Genesis profile.
 
@@ -316,10 +316,10 @@ criteria_sha256 = 88cc910fdb7e573f3a84d860ad0cdc5fffc287db18678956c7e50dc52a0763
 production-qualified provider count = 0
 PRODUCTION_QUALIFIED = NO
 PRODUCTION_QUALIFICATION_EXECUTION = NOT_READY
-ACTIVE_MAINLINE = PAUSED
+ACTIVE_MAINLINE = P7_DEPENDENCY_REEVALUATION
 ```
 
-P6 does not execute provider qualification and cannot create a QualificationDecision or production ProviderProfile.
+P7 does not authorize provider qualification execution and cannot create a QualificationDecision or production ProviderProfile.
 
 ## Network boundary
 
@@ -343,8 +343,8 @@ production-qualified provider count = 0
 PRODUCTION_QUALIFIED = NO
 production forecasting = PROHIBITED
 network_authorized = false
-P6_PASS = NO
-P7 = PROHIBITED_UNTIL_P6_PASS
+P6_PASS = YES
+P7 = NEXT
 ```
 
 The Genesis Ed25519 private key must not be accessed, read, copied, displayed, uploaded, transmitted, logged, referenced or processed.

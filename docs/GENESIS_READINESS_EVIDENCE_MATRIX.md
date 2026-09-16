@@ -16,10 +16,10 @@ This matrix is the authoritative GEN_001 readiness checklist. Closure requires r
 
 ```text
 P1 Genesis anchoring reconciliation = IMPLEMENTED_IN_SUCCESSOR_CANDIDATE_AND_VALIDATOR
-P2 temporal claim separation = AUTHORITATIVE_RECOMPUTATION_IMPLEMENTED_PENDING_P6_REGRESSION
+P2 temporal claim separation = AUTHORITATIVE_RECOMPUTATION_IMPLEMENTED_P6_VERIFIED
 P3 dependency/review/evaluation compression = IMPLEMENTED_IN_CANDIDATE_V0_6
 P4 provider-qualification firewall = IMPLEMENTED_AS_VERSIONED_SUPPORTING_BOUNDARY
-P5 claim-authority hardening = IMPLEMENTED_PENDING_P6_REGRESSION
+P5 claim-authority hardening = IMPLEMENTED_P6_VERIFIED
 current effective candidate = v0.6
 current effective object count = 21
 Genesis ready = NO
@@ -32,8 +32,8 @@ Historical v0.2 through v0.5 candidate semantics remain unchanged.
 | ID | Readiness item | Current status | Required closing evidence |
 | --- | --- | --- | --- |
 | GR001 | Trust Core normative contract | CLOSED_REPOSITORY | Historical FTC_001 plus Architecture Compression successor contracts |
-| GR002 | Trust Core synthetic adversarial execution | CLOSED_REPOSITORY | Historical ADV suite retained; P6 must execute the consolidated suite on the final exact HEAD |
-| GR003 | Separated time/durability claims | CLOSED_REPOSITORY | P2 claim vector plus authoritative evidence-to-claim recomputation and persisted-report equality path; P6 execution still required |
+| GR002 | Trust Core synthetic adversarial execution | CLOSED_REPOSITORY | Historical ADV suite retained; consolidated suite passed on final exact P6 HEAD |
+| GR003 | Separated time/durability claims | CLOSED_REPOSITORY | P2 claim vector plus authoritative evidence-to-claim recomputation and persisted-report equality path; verified by final exact-head P6 execution |
 | GR004 | Deadline receipt quorum rule | CLOSED_REPOSITORY | `policy:deadline-receipt-quorum:v3`; two-of-three, outage never lowers threshold |
 | GR005 | Roughtime provider: roughtime.se | PRODUCTION_QUALIFICATION_REQUIRED | Frozen criteria, complete evidence package, review, decision, sealed ProviderProfile |
 | GR006 | Roughtime provider: time.txryan.com | PRODUCTION_QUALIFICATION_REQUIRED | Same standard as GR005 |

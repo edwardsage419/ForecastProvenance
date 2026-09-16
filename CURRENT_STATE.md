@@ -16,17 +16,17 @@ The commit containing this file is identified from Git metadata and is not self-
 ```text
 P0  project-control transition                                      COMPLETE
 P1  Genesis final-acceptance anchoring reconciliation               COMPLETE
-P2  temporal/durability claim separation                            COMPLETE_DESIGN / IMPLEMENTATION_REPAIRED_PENDING_REGRESSION
+P2  temporal/durability claim separation                            COMPLETE
 P3  Genesis v1 dependency/review/evaluation compression             COMPLETE
-P4  provider-qualification complexity firewall                      COMPLETE_HARDENED_PENDING_REGRESSION
-P5  consolidated versioned implementation of P1-P4                  COMPLETE_WITH_CLAIM_AUTHORITY_HARDENING_PENDING_REGRESSION
-P6  complete offline regression and synthetic adversarial suite     NEXT / RESTART_REQUIRED_ON_FINAL_EXACT_HEAD
-P7  reconsider need for Roughtime production qualification          PENDING / PROHIBITED_UNTIL_P6_PASS
+P4  provider-qualification complexity firewall                      COMPLETE_HARDENED
+P5  consolidated versioned implementation of P1-P4                  COMPLETE_WITH_CLAIM_AUTHORITY_HARDENING
+P6  complete offline regression and synthetic adversarial suite     PASS / CLOSED_ON_EXACT_HEAD
+P7  reconsider need for Roughtime production qualification          NEXT
 P8  separate final pre-Genesis high-level review                    PENDING
 P9  separate explicit Genesis authorization                         PENDING
 ```
 
-P6 must start from zero on the exact final P5 HEAD after project-control synchronization. No result from any earlier HEAD carries forward. P7 cannot begin until P6 passes.
+P6 restarted from zero on the exact final repaired HEAD after project-control synchronization. No result from any earlier HEAD was carried forward. P6 subsequently passed and P7 is now the active stage.
 
 ## Controlling records
 
@@ -40,7 +40,7 @@ docs/GEN_001_ARCHITECTURE_COMPRESSION_P6_STATIC_REVIEW_AND_P5_HARDENING_2026_09_
 docs/GEN_001_P6_FINDING_3_CLAIM_AUTHORITY_BOUNDARY_2026_09_14.md
 ```
 
-Finding 3 is now implementation-repaired but remains open at the regression gate until P6 executes successfully on the final exact HEAD.
+Finding 3 received its implementation repair and was subsequently closed by successful P6 execution on the final exact HEAD.
 
 ## Effective candidate
 
@@ -247,25 +247,25 @@ Static review found three blocking correctness classes before a complete regress
 2. self-asserted qualification state without mandatory authoritative recomputation;
 3. incomplete evidence-to-claim authority boundary, later including runtime signature-verifier/authority substitution.
 
-All three have repository-level repairs committed. None of those repairs has yet received a complete final-head P6 execution result.
+All three received repository-level repairs and were subsequently closed by the successful exact-head P6 regression.
 
 Current disposition:
 
 ```text
-P6_STATIC_FINDINGS = REPAIRED_PENDING_REGRESSION
-P6_FULL_REGRESSION = NOT_EXECUTED_ON_FINAL_REPAIRED_HEAD
-P6_PASS = NO
-P6_RESTART_REQUIRED = YES
-P7 = PROHIBITED
+P6_STATIC_FINDINGS = CLOSED_BY_EXACT_HEAD_REGRESSION
+P6_FULL_REGRESSION = PASS_ON_EXACT_HEAD
+P6_PASS = YES
+P6_RESTART_REQUIRED = NO
+P7 = NEXT
 ```
 
-The earlier sandbox/network diagnostic detour is not a project security finding. P6 may use a fresh clean validation checkout of the final exact remote HEAD. The historical location of any old checkout is irrelevant.
+The earlier sandbox/network diagnostic detour is not a project security finding. The completed P6 execution was bound to the final exact HEAD. The historical location of any old checkout is irrelevant.
 
 Any consequential source/schema/candidate modification after the P6 input HEAD is frozen invalidates prior execution evidence and requires a fresh P6 run from zero.
 
 ## P6 required execution scope
 
-At minimum P6 must execute against the exact final repaired HEAD:
+The completed P6 execution covered at minimum the following scope against the exact final repaired HEAD:
 
 ```text
 Python compile/import checks
@@ -287,24 +287,24 @@ Any correctness/security failure returns the project to P5 repair. Standards are
 ## Implementation alignment
 
 ```text
-P1_ANCHORING_RECONCILIATION = COMPLETE_IMPLEMENTED_PENDING_REGRESSION
-P2_TEMPORAL_CLAIM_SEPARATION = COMPLETE_IMPLEMENTED_PENDING_REGRESSION
+P1_ANCHORING_RECONCILIATION = COMPLETE_IMPLEMENTED
+P2_TEMPORAL_CLAIM_SEPARATION = COMPLETE_IMPLEMENTED
 P3_DEPENDENCY_COMPRESSION = COMPLETE
-P4_PROVIDER_QUALIFICATION_COMPLEXITY_FIREWALL = COMPLETE_HARDENED_PENDING_REGRESSION
-P5_VERSIONED_IMPLEMENTATION = COMPLETE_WITH_CLAIM_AUTHORITY_HARDENING_PENDING_REGRESSION
+P4_PROVIDER_QUALIFICATION_COMPLEXITY_FIREWALL = COMPLETE_HARDENED
+P5_VERSIONED_IMPLEMENTATION = COMPLETE_WITH_CLAIM_AUTHORITY_HARDENING
 CURRENT_EFFECTIVE_CANDIDATE = V0_6
 CURRENT_EFFECTIVE_OBJECT_COUNT = 21
 CURRENT_V0_6_CANDIDATE_DESIGN_ALIGNED = YES
 CURRENT_SUCCESSOR_LOW_LEVEL_CLAIM_HELPERS = NON_AUTHORITATIVE
-CURRENT_FINAL_GENESIS_AUTHORITY_PATH_IMPLEMENTED = YES_PENDING_REGRESSION
-CURRENT_CYCLE_PLAN_SUCCESSOR_CLAIM_INPUT_ALIGNED = YES_PENDING_REGRESSION
-CURRENT_VALIDATION_REPORT_CLAIM_AUTHORITY_CLOSED = YES_PENDING_REGRESSION
-CURRENT_PROVIDER_ADMISSION_FIREWALL_ALIGNED = YES_PENDING_REGRESSION
-CURRENT_QUALIFICATION_SIGNATURE_AUTHORITY_PINNED = YES_PENDING_REGRESSION
-CURRENT_READINESS_MATRIX_ALIGNED = YES_PENDING_REGRESSION
-CURRENT_ABORT_CONDITIONS_ALIGNED = YES_PENDING_REGRESSION
-P5_CLAIM_AUTHORITY_REPAIR_REQUIRED = NO_IMPLEMENTATION_REPAIR_PENDING_REGRESSION
-P6_REGRESSION_REQUIRED = YES
+CURRENT_FINAL_GENESIS_AUTHORITY_PATH_IMPLEMENTED = YES
+CURRENT_CYCLE_PLAN_SUCCESSOR_CLAIM_INPUT_ALIGNED = YES
+CURRENT_VALIDATION_REPORT_CLAIM_AUTHORITY_CLOSED = YES
+CURRENT_PROVIDER_ADMISSION_FIREWALL_ALIGNED = YES
+CURRENT_QUALIFICATION_SIGNATURE_AUTHORITY_PINNED = YES
+CURRENT_READINESS_MATRIX_ALIGNED = YES
+CURRENT_ABORT_CONDITIONS_ALIGNED = YES
+P5_CLAIM_AUTHORITY_REPAIR_REQUIRED = NO
+P6_REGRESSION_REQUIRED = NO
 GENESIS_READY = NO
 ```
 
@@ -317,7 +317,7 @@ criteria_sha256 = 88cc910fdb7e573f3a84d860ad0cdc5fffc287db18678956c7e50dc52a0763
 production-qualified provider count = 0
 PRODUCTION_QUALIFIED = NO
 PRODUCTION_QUALIFICATION_EXECUTION = NOT_READY
-ACTIVE_MAINLINE = PAUSED
+ACTIVE_MAINLINE = P7_DEPENDENCY_REEVALUATION
 ```
 
 Historical provider rehearsal evidence remains `NON_FORECAST_REHEARSAL` with `prospective_eligible=false`.
