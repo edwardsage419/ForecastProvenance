@@ -46,6 +46,19 @@ def _sync_legacy_dependencies() -> None:
     ]
 
 
+def _validate_bitcoin_inputs_for_recomputation(inputs: Mapping) -> None:
+    # Persisted strong reports are equality-only audit inputs. The authoritative
+    # report is freshly recomputed, exact-contract validated, and then compared
+    # by the retained implementation. Removing the persisted copy from the
+    # pre-input gate preserves the historical mismatch rejection ordering while
+    # keeping the recomputed report contract authoritative.
+    if not isinstance(inputs, Mapping):
+        raise ValueError("Bitcoin inputs must be a mapping")
+    gate_inputs = dict(inputs)
+    gate_inputs.pop("persisted_strong_report", None)
+    _gate.validate_bitcoin_inputs(gate_inputs)
+
+
 def recompute_external_existence_claim_authoritatively(subject, **kwargs):
     _gate.validate_wall_inputs(kwargs)
     _sync_legacy_dependencies()
@@ -53,7 +66,7 @@ def recompute_external_existence_claim_authoritatively(subject, **kwargs):
 
 
 def recompute_bitcoin_durability_claim_authoritatively(subject, **kwargs):
-    _gate.validate_bitcoin_inputs(kwargs)
+    _validate_bitcoin_inputs_for_recomputation(kwargs)
     _sync_legacy_dependencies()
     result = _legacy.recompute_bitcoin_durability_claim_authoritatively(subject, **kwargs)
     _gate.validate_strong_report(result.strong_verification_report)
@@ -108,7 +121,7 @@ def validate_final_genesis_acceptance_authoritatively(
     _legacy._require_live_bitcoin_inputs(bitcoin_inputs)
     _gate.validate_manifest_acceptance_v2_contract(acceptance)
     _gate.validate_wall_inputs(wall_clock_inputs)
-    _gate.validate_bitcoin_inputs(bitcoin_inputs)
+    _validate_bitcoin_inputs_for_recomputation(bitcoin_inputs)
     _sync_legacy_dependencies()
     result = _legacy.validate_final_genesis_acceptance_authoritatively(
         acceptance,
@@ -272,20 +285,37 @@ def validate_persisted_final_acceptance_report_authoritatively(
     bitcoin_inputs,
     trusted_manifest_ref,
 ):
-    _legacy._require_live_wall_inputs(wall_clock_inputs)
-    _legacy._require_live_bitcoin_inputs(bitcoin_inputs)
-    _gate.validate_manifest_acceptance_v2_contract(acceptance)
-    _gate.validate_wall_inputs(wall_clock_inputs)
-    _gate.validate_bitcoin_inputs(bitcoin_inputs)
-    _sync_legacy_dependencies()
-    return _legacy.validate_persisted_final_acceptance_report_authoritatively(
-        persisted_report,
+    validation, claims, strong_report = validate_final_genesis_acceptance_authoritatively(
         acceptance,
         final_evidence_subject_ref=final_evidence_subject_ref,
         wall_clock_inputs=wall_clock_inputs,
         bitcoin_inputs=bitcoin_inputs,
-        trusted_manifest_ref=trusted_manifest_ref,
     )
+    validator_ref = wall_clock_inputs["validator_contract_ref"]
+    _legacy._require_ref_equal(
+        bitcoin_inputs["validator_contract_ref"],
+        validator_ref,
+        "final report ValidatorContract",
+    )
+    dependencies = _legacy._collect_authority_dependency_refs(
+        {
+            "wall": wall_clock_inputs,
+            "bitcoin": bitcoin_inputs,
+            "strong_report": strong_report,
+        }
+    )
+    recomputed = _legacy.build_validation_report_v2(
+        acceptance,
+        validator_contract_ref=validator_ref,
+        trusted_manifest_ref=trusted_manifest_ref,
+        dependency_refs=dependencies,
+        validation=validation,
+        derived_claims=claims,
+    )
+    return _legacy.compare_persisted_validation_report_to_recomputed(
+        persisted_report,
+        recomputed,
+    ), recomputed
 
 
 def validate_persisted_cycle_plan_report_authoritatively(
@@ -297,14 +327,28 @@ def validate_persisted_cycle_plan_report_authoritatively(
     wall_clock_inputs,
     trusted_manifest_ref,
 ):
-    _legacy._require_live_wall_inputs(wall_clock_inputs)
-    _gate.validate_wall_inputs(wall_clock_inputs)
-    _sync_legacy_dependencies()
-    return _legacy.validate_persisted_cycle_plan_report_authoritatively(
-        persisted_report,
+    validation, wall = validate_cycle_plan_authoritatively(
         plan,
         required_slots=required_slots,
         required_schedule_policy_ref=required_schedule_policy_ref,
         wall_clock_inputs=wall_clock_inputs,
-        trusted_manifest_ref=trusted_manifest_ref,
     )
+    dependencies = _legacy._collect_authority_dependency_refs(
+        {
+            "wall": wall_clock_inputs,
+            "schedule_policy_ref": required_schedule_policy_ref,
+            "required_slots": required_slots,
+        }
+    )
+    recomputed = _legacy.build_validation_report_v2(
+        plan,
+        validator_contract_ref=wall_clock_inputs["validator_contract_ref"],
+        trusted_manifest_ref=trusted_manifest_ref,
+        dependency_refs=dependencies,
+        validation=validation,
+        derived_claims=(wall.external_existence_claim, wall.deadline_existence_claim),
+    )
+    return _legacy.compare_persisted_validation_report_to_recomputed(
+        persisted_report,
+        recomputed,
+    ), recomputed
