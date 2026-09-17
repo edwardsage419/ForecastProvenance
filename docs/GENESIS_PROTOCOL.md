@@ -94,6 +94,6 @@ A design document, pull request merge, rehearsal success, successful final valid
 
 ## Contamination prohibition
 
-Synthetic fixtures, retrospective experiments, rehearsal artifacts, failed Genesis candidates, and Psychohistory artifacts are permanently excluded from native prospective Genesis history.
+Synthetic fixtures, retrospective experiments, rehearsal artifacts, failed Genesis candidates, and external or predecessor artifacts are permanently excluded from native prospective Genesis history.
 
 No forecast output produced before Genesis acceptance can be copied into the first prospective cycle.

@@ -57,4 +57,4 @@ The architecture prefers local deterministic execution, Git tracked authoritativ
 
 ## Predecessor relationship
 
-Methodology was partly derived from lessons developed in Psychohistory. That relationship is provenance only. It grants no native evidentiary status to Psychohistory artifacts inside this project.
+Methodological influences external to this repository grant no external artifact native evidentiary status inside this project.

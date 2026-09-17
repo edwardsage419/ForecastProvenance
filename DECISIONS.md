@@ -14,7 +14,7 @@ Reason: the name describes the durable asset directly, remains model neutral, an
 
 Status: ACCEPTED
 
-Psychohistory is archived predecessor provenance. GKG, historical phases, frozen samples, old research state, old schemas, and old current state are excluded from native project evidence.
+External or predecessor artifacts, historical phases, frozen samples, prior research state, prior schemas, and prior project state are excluded from native project evidence.
 
 ## D003 First phase
 
