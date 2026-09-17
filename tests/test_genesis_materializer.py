@@ -15,6 +15,8 @@ BASE = ROOT / "genesis" / "candidate" / "objects" / "candidate_object_set_v0_2.j
 PATCH_V3 = ROOT / "genesis" / "candidate" / "objects" / "candidate_patch_v0_3.json"
 PATCH_V4 = ROOT / "genesis" / "candidate" / "objects" / "candidate_patch_v0_4.json"
 PATCH_V5 = ROOT / "genesis" / "candidate" / "objects" / "candidate_patch_v0_5.json"
+PATCH_V6 = ROOT / "genesis" / "candidate" / "objects" / "candidate_patch_v0_6.json"
+PATCH_V7 = ROOT / "genesis" / "candidate" / "objects" / "candidate_patch_v0_7.json"
 
 
 def run_materializer(*extra):
@@ -38,24 +40,27 @@ class GenesisMaterializerTests(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr)
             inventory = json.loads(output.read_text(encoding="utf-8"))
 
-        self.assertEqual(inventory["candidate_version"], "0.5")
-        self.assertEqual(inventory["object_count"], 22)
+        self.assertEqual(inventory["candidate_version"], "0.7")
+        self.assertEqual(inventory["object_count"], 21)
         self.assertIs(inventory["prospective_eligible"], False)
         self.assertEqual(inventory["base_file"], "candidate_object_set_v0_2.json")
-        self.assertEqual(inventory["patch_file"], "candidate_patch_v0_5.json")
+        self.assertEqual(inventory["patch_file"], "candidate_patch_v0_7.json")
         self.assertEqual(
             inventory["patch_chain"],
             [
                 "candidate_patch_v0_3.json",
                 "candidate_patch_v0_4.json",
                 "candidate_patch_v0_5.json",
+                "candidate_patch_v0_6.json",
+                "candidate_patch_v0_7.json",
             ],
         )
         ids = [obj["object_id"] for obj in inventory["objects"]]
         self.assertEqual(ids, sorted(ids))
-        self.assertIn("policy:deadline-receipt-quorum:v3", ids)
+        self.assertIn("policy:deadline-receipt-quorum:v4", ids)
         self.assertNotIn("policy:deadline-receipt-quorum:v1", ids)
         self.assertNotIn("policy:deadline-receipt-quorum:v2", ids)
+        self.assertNotIn("policy:deadline-receipt-quorum:v3", ids)
         core = {key: value for key, value in inventory.items() if key != "inventory_sha256"}
         self.assertEqual(inventory["inventory_sha256"], sha256_hex(canonical_json(core)))
 
@@ -66,17 +71,25 @@ class GenesisMaterializerTests(unittest.TestCase):
         self.assertEqual(second.returncode, 0, second.stderr)
         self.assertEqual(first.stdout, second.stdout)
 
-    def test_v5_retirement_hash_mismatch_fails_closed(self):
+    def test_historical_v06_still_materializes_unchanged_when_explicitly_selected(self):
+        result = run_materializer("--patch", str(PATCH_V6))
+        self.assertEqual(result.returncode, 0, result.stderr)
+        inventory = json.loads(result.stdout)
+        self.assertEqual(inventory["candidate_version"], "0.6")
+        self.assertEqual(inventory["object_count"], 21)
+        ids = [obj["object_id"] for obj in inventory["objects"]]
+        self.assertIn("policy:deadline-receipt-quorum:v3", ids)
+        self.assertNotIn("policy:deadline-receipt-quorum:v4", ids)
+
+    def test_v7_retirement_hash_mismatch_fails_closed(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             tmp = Path(tmpdir)
-            patch_v3 = tmp / PATCH_V3.name
-            patch_v4 = tmp / PATCH_V4.name
-            patch_v5 = tmp / PATCH_V5.name
-            patch_v3.write_text(PATCH_V3.read_text(encoding="utf-8"), encoding="utf-8")
-            patch_v4.write_text(PATCH_V4.read_text(encoding="utf-8"), encoding="utf-8")
-            tampered = json.loads(PATCH_V5.read_text(encoding="utf-8"))
+            source_patches = (PATCH_V3, PATCH_V4, PATCH_V5, PATCH_V6, PATCH_V7)
+            for source in source_patches:
+                (tmp / source.name).write_text(source.read_text(encoding="utf-8"), encoding="utf-8")
+            tampered = json.loads((tmp / PATCH_V7.name).read_text(encoding="utf-8"))
             tampered["retire_objects"][0]["retires_content_sha256"] = "0" * 64
-            patch_v5.write_text(
+            (tmp / PATCH_V7.name).write_text(
                 json.dumps(tampered, indent=2, sort_keys=True) + "\n",
                 encoding="utf-8",
             )
@@ -84,7 +97,7 @@ class GenesisMaterializerTests(unittest.TestCase):
                 "--base",
                 str(BASE),
                 "--patch",
-                str(patch_v5),
+                str(tmp / PATCH_V7.name),
             )
         self.assertEqual(result.returncode, 2)
         self.assertIn("retirement predecessor hash mismatch", result.stderr)
