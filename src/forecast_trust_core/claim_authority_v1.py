@@ -1,0 +1,449 @@
+from __future__ import annotations
+
+from typing import Mapping, Sequence
+
+from . import claim_authority_contract_gate_v1 as _gate
+from . import claim_authority_v1_legacy as _legacy
+from .canonical import CanonicalizationError, validate_ref
+
+
+# Re-export the historical implementation surface. Selected authoritative entry
+# points below add exact object-contract checks before delegating.
+for _name, _value in vars(_legacy).items():
+    if not _name.startswith("__"):
+        globals()[_name] = _value
+
+
+# Keep direct handles to the pre-repair implementations before dependency seams
+# are synchronized for focused tests.
+_PROVIDER_ADMISSION_IMPL = _legacy.validate_provider_admission_set_authoritatively
+
+
+# Expose the narrow contract validators for focused adversarial regression.
+_validate_bundle_contract = _gate.validate_bundle_contract
+_validate_receipt_contract = _gate.validate_receipt_contract
+_validate_qualification_state_package_contract = _gate.validate_qualification_state_package_contract
+_validate_ots_contract = _gate.validate_ots_contract
+_validate_dvr_contract = _gate.validate_dvr_contract
+_validate_strong_contract = _gate.validate_strong_contract
+_validate_strong_report = _gate.validate_strong_report
+_validate_manifest_acceptance_v2_contract = _gate.validate_manifest_acceptance_v2_contract
+
+_GENESIS_V1_COMPONENT_CLAIM_TYPES = {
+    "wall_clock_deadline": "DEADLINE_EXISTENCE_VERIFIED",
+    "bitcoin_durability": "BITCOIN_DURABILITY_VERIFIED",
+    "pre_outcome_durability": "PRE_OUTCOME_DURABILITY_VERIFIED",
+    "external_existence": "EXTERNAL_EXISTENCE_BOUND_VERIFIED",
+}
+
+
+def _prepare_genesis_v1_component_specs(
+    component_specs: Sequence[Mapping],
+    required_claim_requirements,
+) -> tuple[tuple[Mapping, ...], tuple[Mapping, ...]]:
+    if not isinstance(component_specs, Sequence) or isinstance(
+        component_specs, (str, bytes, bytearray)
+    ):
+        raise ValueError("component_specs must be a sequence")
+
+    normalized_specs: list[Mapping] = []
+    requirements: list[dict[str, object]] = []
+    seen_kinds: set[str] = set()
+    for spec in component_specs:
+        if not isinstance(spec, Mapping):
+            raise ValueError("component spec must be a mapping")
+        kind = spec.get("kind")
+        if kind not in _GENESIS_V1_COMPONENT_CLAIM_TYPES:
+            raise ValueError("unknown authoritative component kind")
+        if kind in seen_kinds:
+            raise ValueError("duplicate Genesis v1 authoritative component kind")
+
+        required_subject_ref = spec.get("required_subject_ref")
+        try:
+            validate_ref(required_subject_ref)
+        except (CanonicalizationError, TypeError) as exc:
+            raise ValueError("component required_subject_ref malformed") from exc
+        subject = spec.get("subject")
+        if _legacy._exact_ref(subject) != dict(required_subject_ref):
+            labels = {
+                "wall_clock_deadline": "wall-clock",
+                "bitcoin_durability": "Bitcoin",
+                "pre_outcome_durability": "pre-outcome",
+                "external_existence": "external-existence",
+            }
+            raise ValueError(f"{labels[kind]} component subject substitution")
+
+        seen_kinds.add(kind)
+        normalized_specs.append(spec)
+        requirements.append(
+            {
+                "claim_type": _GENESIS_V1_COMPONENT_CLAIM_TYPES[kind],
+                "subject_ref": dict(required_subject_ref),
+            }
+        )
+
+    if seen_kinds != set(_GENESIS_V1_COMPONENT_CLAIM_TYPES):
+        raise ValueError("Genesis v1 authoritative component set incomplete")
+
+    requirements.sort(
+        key=lambda item: (
+            str(item["claim_type"]),
+            item["subject_ref"]["object_id"],
+            item["subject_ref"]["content_sha256"],
+        )
+    )
+    derived = tuple(requirements)
+
+    if required_claim_requirements is not None:
+        if not isinstance(required_claim_requirements, Sequence) or isinstance(
+            required_claim_requirements, (str, bytes, bytearray)
+        ):
+            raise ValueError("required_claim_requirements must be a sequence")
+        caller: list[dict[str, object]] = []
+        for requirement in required_claim_requirements:
+            if not isinstance(requirement, Mapping) or set(requirement) != {
+                "claim_type",
+                "subject_ref",
+            }:
+                raise ValueError("caller-supplied required claim authority prohibited")
+            try:
+                validate_ref(requirement["subject_ref"])
+            except (CanonicalizationError, TypeError, KeyError) as exc:
+                raise ValueError(
+                    "caller-supplied required claim authority prohibited"
+                ) from exc
+            caller.append(
+                {
+                    "claim_type": requirement["claim_type"],
+                    "subject_ref": dict(requirement["subject_ref"]),
+                }
+            )
+        caller.sort(
+            key=lambda item: (
+                str(item["claim_type"]),
+                item["subject_ref"]["object_id"],
+                item["subject_ref"]["content_sha256"],
+            )
+        )
+        if tuple(caller) != derived:
+            raise ValueError("caller-supplied required claim authority prohibited")
+
+    return tuple(normalized_specs), derived
+
+
+def validate_provider_admission_set_authoritatively(packages, **kwargs):
+    if not isinstance(packages, Sequence) or isinstance(packages, (str, bytes, bytearray)):
+        raise ValueError("qualification state packages must be a sequence")
+    for package in packages:
+        _gate.validate_qualification_state_package_contract(package)
+    return _PROVIDER_ADMISSION_IMPL(packages, **kwargs)
+
+
+def _sync_legacy_dependencies() -> None:
+    # Preserve existing dependency-injection seams used by focused tests.
+    _legacy.QualifiedVerifierBackend = globals()["QualifiedVerifierBackend"]
+    _legacy.validate_provider_admission_set_authoritatively = globals()[
+        "validate_provider_admission_set_authoritatively"
+    ]
+
+
+def _validate_bitcoin_inputs_for_recomputation(inputs: Mapping) -> None:
+    # Persisted strong reports are equality-only audit inputs. The authoritative
+    # report is freshly recomputed, exact-contract validated, and then compared
+    # by the retained implementation. Removing the persisted copy from the
+    # pre-input gate preserves the historical mismatch rejection ordering while
+    # keeping the recomputed report contract authoritative.
+    if not isinstance(inputs, Mapping):
+        raise ValueError("Bitcoin inputs must be a mapping")
+    gate_inputs = dict(inputs)
+    gate_inputs.pop("persisted_strong_report", None)
+    _gate.validate_bitcoin_inputs(gate_inputs)
+
+
+def recompute_external_existence_claim_authoritatively(subject, **kwargs):
+    _gate.validate_wall_inputs(kwargs)
+    _sync_legacy_dependencies()
+    return _legacy.recompute_external_existence_claim_authoritatively(subject, **kwargs)
+
+
+def recompute_bitcoin_durability_claim_authoritatively(subject, **kwargs):
+    _validate_bitcoin_inputs_for_recomputation(kwargs)
+    _sync_legacy_dependencies()
+    result = _legacy.recompute_bitcoin_durability_claim_authoritatively(subject, **kwargs)
+    _gate.validate_strong_report(result.strong_verification_report)
+    return result
+
+
+def validate_cycle_plan_authoritatively(
+    plan,
+    *,
+    required_slots,
+    required_schedule_policy_ref,
+    wall_clock_inputs,
+):
+    _legacy._require_live_wall_inputs(wall_clock_inputs)
+    _gate.validate_wall_inputs(wall_clock_inputs)
+    _sync_legacy_dependencies()
+    return _legacy.validate_cycle_plan_authoritatively(
+        plan,
+        required_slots=required_slots,
+        required_schedule_policy_ref=required_schedule_policy_ref,
+        wall_clock_inputs=wall_clock_inputs,
+    )
+
+
+def validate_final_genesis_acceptance_authoritatively(
+    acceptance,
+    *,
+    final_evidence_subject_ref,
+    wall_clock_inputs,
+    bitcoin_inputs,
+):
+    # Preserve the pre-existing fail-closed ordering: wrong final subject,
+    # evidence splicing and non-live readiness evidence are rejected before
+    # deeper object-contract validation.
+    acceptance_ref = _legacy._exact_ref(acceptance, object_type="ManifestAcceptance")
+    _legacy._require_ref_equal(final_evidence_subject_ref, acceptance_ref, "final evidence subject")
+
+    wall_bundle = wall_clock_inputs.get("bundle") if isinstance(wall_clock_inputs, Mapping) else None
+    bitcoin_bundle = bitcoin_inputs.get("bundle") if isinstance(bitcoin_inputs, Mapping) else None
+    if wall_bundle is not None and bitcoin_bundle is not None:
+        try:
+            wall_ref = _legacy._exact_ref(wall_bundle, object_type="ExternalTimeEvidenceBundle")
+            bitcoin_ref = _legacy._exact_ref(bitcoin_bundle, object_type="ExternalTimeEvidenceBundle")
+        except (TypeError, ValueError):
+            wall_ref = bitcoin_ref = None
+        if wall_ref is not None and bitcoin_ref is not None and wall_ref != bitcoin_ref:
+            raise ValueError(
+                "final acceptance wall-clock and Bitcoin evidence must use the same exact ExternalTimeEvidenceBundle"
+            )
+
+    _legacy._require_live_wall_inputs(wall_clock_inputs)
+    _legacy._require_live_bitcoin_inputs(bitcoin_inputs)
+    _gate.validate_manifest_acceptance_v2_contract(acceptance)
+    _gate.validate_wall_inputs(wall_clock_inputs)
+    _validate_bitcoin_inputs_for_recomputation(bitcoin_inputs)
+    _sync_legacy_dependencies()
+    result = _legacy.validate_final_genesis_acceptance_authoritatively(
+        acceptance,
+        final_evidence_subject_ref=final_evidence_subject_ref,
+        wall_clock_inputs=wall_clock_inputs,
+        bitcoin_inputs=bitcoin_inputs,
+    )
+    _gate.validate_strong_report(result[2])
+    return result
+
+
+def recompute_pre_outcome_durability_authoritatively(
+    primary_subject,
+    *,
+    bitcoin_inputs,
+    durability_record,
+    durability_record_wall_clock_inputs,
+):
+    # Keep the public recomputation seams injectable while enforcing the DVR
+    # contract before the derived pre-outcome claim is constructed.
+    primary_ref = _legacy._exact_ref(primary_subject)
+    _gate.validate_dvr_contract(durability_record)
+    dvr_ref = _legacy._exact_ref(durability_record, object_type="DurabilityVerificationRecord")
+
+    bitcoin_fn = globals()["recompute_bitcoin_durability_claim_authoritatively"]
+    wall_fn = globals()["recompute_external_existence_claim_authoritatively"]
+    bitcoin = bitcoin_fn(primary_subject, **dict(bitcoin_inputs))
+
+    _legacy._require_ref_equal(
+        durability_record.get("primary_subject_ref"),
+        primary_ref,
+        "DVR primary subject",
+    )
+    _legacy._require_ref_equal(
+        durability_record.get("external_time_evidence_bundle_ref"),
+        bitcoin.evidence_bundle_ref,
+        "DVR primary external-time bundle",
+    )
+    _legacy._require_ref_equal(
+        durability_record.get("ots_proof_ref"),
+        bitcoin.proof_artifact_ref,
+        "DVR OTS proof",
+    )
+    _legacy._require_ref_equal(
+        durability_record.get("strong_verification_report_ref"),
+        _legacy._exact_ref(bitcoin.strong_verification_report),
+        "DVR strong verification report",
+    )
+    barrier = durability_record.get("outcome_information_barrier")
+    wall = wall_fn(
+        durability_record,
+        claim_deadline_utc=str(barrier),
+        **dict(durability_record_wall_clock_inputs),
+    )
+    claim = _legacy.derive_pre_outcome_durability_claim_strict(
+        primary_ref,
+        bitcoin_durability_claim=bitcoin.bitcoin_durability_claim,
+        durability_record_deadline_claim=wall.deadline_existence_claim,
+        durability_record_subject_ref=dvr_ref,
+        durability_record_bound_subject_ref=durability_record.get("primary_subject_ref"),
+        applicable=True,
+    )
+    return claim, bitcoin, wall
+
+
+def derive_confirmatory_eligibility_from_evidence(
+    forecast,
+    *,
+    component_specs,
+    required_claim_requirements,
+    hard_invalidation_reason_codes=(),
+):
+    # The current evidence authority can recompute temporal/durability claims,
+    # but it does not yet reconstruct the complete non-temporal Trust Core check
+    # set (cycle/slot accounting, attempt/retry/first-success, point-in-time
+    # cutoff, selection control, and related structural requirements) from raw
+    # evidence. Caller-supplied invalidation codes therefore cannot be authority.
+    if hard_invalidation_reason_codes:
+        raise ValueError("caller-supplied hard invalidation authority prohibited")
+
+    forecast_ref = _legacy._exact_ref(forecast)
+    normalized_specs, derived_requirements = _prepare_genesis_v1_component_specs(
+        component_specs,
+        required_claim_requirements,
+    )
+    claims = []
+    for spec in normalized_specs:
+        kind = spec["kind"]
+        subject = spec["subject"]
+        authority_inputs = spec.get("authority_inputs")
+        if kind in {"wall_clock_deadline", "external_existence"}:
+            _legacy._require_live_wall_inputs(authority_inputs)
+            wall = recompute_external_existence_claim_authoritatively(
+                subject,
+                claim_deadline_utc=(
+                    spec.get("claim_deadline_utc")
+                    if kind == "wall_clock_deadline"
+                    else None
+                ),
+                **dict(authority_inputs),
+            )
+            claims.append(
+                wall.deadline_existence_claim
+                if kind == "wall_clock_deadline"
+                else wall.external_existence_claim
+            )
+        elif kind == "bitcoin_durability":
+            _legacy._require_live_bitcoin_inputs(authority_inputs)
+            bitcoin = recompute_bitcoin_durability_claim_authoritatively(
+                subject,
+                **dict(authority_inputs),
+            )
+            claims.append(bitcoin.bitcoin_durability_claim)
+        else:
+            if not isinstance(authority_inputs, Mapping):
+                raise ValueError("pre-outcome authority inputs must be a mapping")
+            bitcoin_inputs = authority_inputs.get("bitcoin_inputs")
+            dvr = authority_inputs.get("durability_record")
+            dvr_wall_inputs = authority_inputs.get("durability_record_wall_clock_inputs")
+            _legacy._require_live_bitcoin_inputs(bitcoin_inputs)
+            if not isinstance(dvr, Mapping) or dvr.get("origin_class") != "LIVE_OPERATIONAL":
+                raise ValueError("production eligibility requires LIVE_OPERATIONAL DurabilityVerificationRecord")
+            _legacy._require_live_wall_inputs(dvr_wall_inputs)
+            pre, _bitcoin, _wall = recompute_pre_outcome_durability_authoritatively(
+                subject,
+                bitcoin_inputs=bitcoin_inputs,
+                durability_record=dvr,
+                durability_record_wall_clock_inputs=dvr_wall_inputs,
+            )
+            claims.append(pre)
+
+    eligibility = _legacy.derive_confirmatory_eligibility_strict(
+        forecast_ref,
+        required_claims=claims,
+        required_claim_requirements=derived_requirements,
+        hard_invalidation_reason_codes=(),
+        applicable=True,
+    )
+    if eligibility.get("state") == "VERIFIED":
+        eligibility = _legacy._claim(
+            "CONFIRMATORY_PROSPECTIVE_ELIGIBLE",
+            forecast_ref,
+            "UNRESOLVED",
+            reason_codes=("FULL_TRUST_CORE_CHECK_AUTHORITY_NOT_IMPLEMENTED",),
+        )
+    return eligibility, tuple(claims)
+
+
+def validate_persisted_final_acceptance_report_authoritatively(
+    persisted_report,
+    acceptance,
+    *,
+    final_evidence_subject_ref,
+    wall_clock_inputs,
+    bitcoin_inputs,
+    trusted_manifest_ref,
+):
+    validation, claims, strong_report = validate_final_genesis_acceptance_authoritatively(
+        acceptance,
+        final_evidence_subject_ref=final_evidence_subject_ref,
+        wall_clock_inputs=wall_clock_inputs,
+        bitcoin_inputs=bitcoin_inputs,
+    )
+    validator_ref = wall_clock_inputs["validator_contract_ref"]
+    _legacy._require_ref_equal(
+        bitcoin_inputs["validator_contract_ref"],
+        validator_ref,
+        "final report ValidatorContract",
+    )
+    dependencies = _legacy._collect_authority_dependency_refs(
+        {
+            "wall": wall_clock_inputs,
+            "bitcoin": bitcoin_inputs,
+            "strong_report": strong_report,
+        }
+    )
+    recomputed = _legacy.build_validation_report_v2(
+        acceptance,
+        validator_contract_ref=validator_ref,
+        trusted_manifest_ref=trusted_manifest_ref,
+        dependency_refs=dependencies,
+        validation=validation,
+        derived_claims=claims,
+    )
+    return _legacy.compare_persisted_validation_report_to_recomputed(
+        persisted_report,
+        recomputed,
+    ), recomputed
+
+
+def validate_persisted_cycle_plan_report_authoritatively(
+    persisted_report,
+    plan,
+    *,
+    required_slots,
+    required_schedule_policy_ref,
+    wall_clock_inputs,
+    trusted_manifest_ref,
+):
+    validation, wall = validate_cycle_plan_authoritatively(
+        plan,
+        required_slots=required_slots,
+        required_schedule_policy_ref=required_schedule_policy_ref,
+        wall_clock_inputs=wall_clock_inputs,
+    )
+    dependencies = _legacy._collect_authority_dependency_refs(
+        {
+            "wall": wall_clock_inputs,
+            "schedule_policy_ref": required_schedule_policy_ref,
+            "required_slots": required_slots,
+        }
+    )
+    recomputed = _legacy.build_validation_report_v2(
+        plan,
+        validator_contract_ref=wall_clock_inputs["validator_contract_ref"],
+        trusted_manifest_ref=trusted_manifest_ref,
+        dependency_refs=dependencies,
+        validation=validation,
+        derived_claims=(wall.external_existence_claim, wall.deadline_existence_claim),
+    )
+    return _legacy.compare_persisted_validation_report_to_recomputed(
+        persisted_report,
+        recomputed,
+    ), recomputed

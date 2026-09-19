@@ -8,7 +8,7 @@ Its primary question is:
 
 Which forecasts deserve trust, based on what was actually knowable, committed, resolved, and measured at the relevant time?
 
-The project begins with zero native forecast history. Psychohistory is an archived predecessor and methodology provenance source. Psychohistory datasets, GKG artifacts, historical phases, frozen samples, old research conclusions, and old project state are not native evidence of this project.
+The project begins with zero native forecast history. External or predecessor datasets, historical artifacts, prior research conclusions, and prior project state are not native evidence of this project.
 
 Forecast Trust Core normative design version 0.4 has completed three adversarial design review passes and is frozen for synthetic implementation.
 

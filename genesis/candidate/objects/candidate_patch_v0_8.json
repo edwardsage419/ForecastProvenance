@@ -1,0 +1,56 @@
+{
+  "add_objects": [
+    {
+      "advance_rule": "omit_or_fail_closed_if_earlier_disclosure_threatens_eligibility",
+      "ambiguous_or_nonexistent_local_time_rule": "FAIL_CLOSED",
+      "calendar_subtraction_rule": "subtract_local_calendar_days_preserving_local_wall_clock_fields_then_convert_result_to_utc",
+      "change_policy": "new_policy_version_if_scientific_or_identity_derivation_behavior_changes",
+      "content_sha256": "ffeeadf78744612a06184ab65cbbf779b0a66b04f5fbcd67ba36ef218b6712dd",
+      "delay_rule": "never_move_frozen_outcome_information_barrier_later_after_plan",
+      "durability_completion_offset_elapsed_hours": 0,
+      "execution_window_close_offset_calendar_days": 6,
+      "execution_window_open_offset_calendar_days": 7,
+      "expected_slot_rule": "exactly_one_slot_per_accepted_target_method_pair",
+      "external_proof_offset_elapsed_hours": 24,
+      "forecast_slot_identity_rule": "recompute_with_seal_object_without_semantic_id",
+      "forecast_slot_object_type": "ForecastSlot",
+      "forecast_slot_stable_context_template": "genesis-forecast-slot:{target_instance_object_id}:{method_object_id}",
+      "information_cutoff_offset_calendar_days": 7,
+      "minimum_external_proof_margin_hours": 24,
+      "minimum_forecast_horizon_days": 7,
+      "missing_schedule_rule": "omit_target_instance_before_outputs",
+      "normative_timezone": "America/New_York",
+      "object_id": "policy:genesis-issuance-schedule:v2",
+      "object_role": "NORMATIVE",
+      "object_type": "PolicyDefinition",
+      "payload_sha256": "af044d07ddd379a48a028a5d603420f00c88a3cc1c6a89bb879973037c6b886b",
+      "plan_commitment_offset_calendar_days": 8,
+      "policy_type": "ISSUANCE_SCHEDULE",
+      "relative_timing_basis": "LOCAL_CALENDAR_ARITHMETIC_THEN_UTC",
+      "schedule_snapshot_rule": "content_addressed_official_artifact_before_cycle_plan",
+      "schema_version": "1.0",
+      "scope": "GENESIS_V1_INITIAL_TARGETS",
+      "target_instance_identity_rule": "recompute_with_seal_object_without_semantic_id",
+      "target_instance_object_type": "TargetInstance",
+      "target_instance_stable_context_template": "genesis-target-instance:{target_object_id}:{reference_period}",
+      "timezone_database_binding_rule": "schedule_derivation_evidence_must_bind_exact_iana_tzdb_version",
+      "timezone_rule": "IANA_ZONE_FROM_TARGET_SCHEDULE_CONTRACT"
+    }
+  ],
+  "base_object_set": "candidate_object_set_v0_2.json",
+  "candidate_version": "0.8",
+  "change_summary": "Version the Genesis v1 issuance schedule after R6 authority review: freeze DST-safe local-calendar timing semantics and deterministic TargetInstance/ForecastSlot identity derivation so mandatory slot reconstruction does not depend on caller-selected objects.",
+  "effective_object_count": 21,
+  "predecessor_patch": "candidate_patch_v0_7.json",
+  "prospective_eligible": false,
+  "replace_objects": [],
+  "retire_objects": [
+    {
+      "object_id": "policy:genesis-issuance-schedule:v1",
+      "reason": "superseded_by_v2_r6_dst_and_identity_derivation_clarification",
+      "retires_content_sha256": "9aecdef69cd59fbe8b804691fa04569e043751a7d997e83e374153118b755edf"
+    }
+  ],
+  "schema_version": "1.0",
+  "status": "GEN_001_CANDIDATE_ONLY"
+}

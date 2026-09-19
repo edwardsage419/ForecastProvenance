@@ -1,0 +1,7 @@
+genesis/rehearsal/reports/*.json text eol=lf
+genesis/rehearsal/reviewed_semantic_assertions/*.json text eol=lf
+scripts/genesis/roughtime_strict_verifier/pinned/roughtime/protocol/*.go -text
+scripts/genesis/ed25519_verify/go.mod text eol=lf
+scripts/genesis/ed25519_verify/*.go text eol=lf
+docs/GEN_001_ROUGHTIME_PRODUCTION_QUALIFICATION_CRITERIA_V1.md text eol=lf
+docs/evidence/roughtime-provider-metadata-governance-review-2026-09-13/** -text

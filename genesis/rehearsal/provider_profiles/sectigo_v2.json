@@ -1,0 +1,16 @@
+{
+  "captured_utc": "2026-09-11T07:27:51Z",
+  "classification": "NON_FORECAST_REHEARSAL",
+  "evidence_files": {
+    "independent_tsa_certificate": "sectigo_v2/independent_tsa_certificate.pem",
+    "request": "sectigo_v2/request.tsq",
+    "response": "sectigo_v2/response.tsr",
+    "subject": "subject.txt",
+    "tool_versions": "sectigo_v2/tool_versions.txt",
+    "trust_anchor": "sectigo_v2/trust_anchor.pem"
+  },
+  "prospective_eligible": false,
+  "provider_id": "sectigo_rfc3161",
+  "provider_policy_evidence_source": "UNAVAILABLE",
+  "trust_anchor_source": "UNAVAILABLE"
+}

@@ -1,0 +1,99 @@
+{
+  "add_objects": [
+    {
+      "authority_requirement": "BOOTSTRAP_ED25519_SIGNATURE",
+      "blocking_findings_rule": "MUST_BE_EMPTY_FOR_ACCEPT",
+      "bootstrap_root_source": "EXTERNAL_TO_CANDIDATE_MANIFEST_GRAPH",
+      "candidate_subject_type": "TrustedManifest",
+      "change_policy": "new_policy_version_if_acceptance_security_semantics_change",
+      "content_sha256": "06de25eed339186b66f23285f065f2a4c8efd8cee5504cbdc362b2988f656dcb",
+      "decision_values": [
+        "ACCEPT",
+        "REJECT"
+      ],
+      "final_external_evidence_required": true,
+      "final_external_evidence_role": "EXTERNAL_FINAL_VALIDATION_INPUT",
+      "final_external_evidence_subject": "SIGNED_MANIFEST_ACCEPTANCE",
+      "first_execution_rule": "STRICTLY_AFTER_FINAL_VALIDATION_AND_EXPLICIT_GENESIS_AUTHORIZATION",
+      "intermediate_anchor_rule": "OPTIONAL_AUDIT_ONLY",
+      "object_id": "policy:genesis-acceptance:v2",
+      "object_role": "NORMATIVE",
+      "object_type": "PolicyDefinition",
+      "payload_sha256": "f503481405ee3e774190e5b69d30b04fc68baf0e01d1cac16309e8392a82c8b1",
+      "policy_type": "ACCEPTANCE",
+      "predecessor_binding_rule": "GENESIS_HAS_NO_PREDECESSOR_MANIFEST",
+      "required_validation_reports": [
+        "TRUST_CORE_TEST_REPORT",
+        "GENESIS_ADVERSARIAL_REPORT",
+        "PROVIDER_REHEARSAL_REPORT",
+        "OTS_BITCOIN_STRONG_VERIFICATION_REPORT",
+        "TARGET_SOURCE_PARSER_REPORT"
+      ],
+      "schema_version": "1.0",
+      "scope": "GENESIS_INITIAL_MANIFEST"
+    },
+    {
+      "aggregation_rule": "NONE_FOR_GENESIS_V1",
+      "baseline_comparison_rule": "DEFER_UNTIL_DISTINCT_SECOND_METHOD",
+      "change_policy": "new_policy_version_if_metric_cohort_or_reporting_behavior_changes",
+      "cohort_rule": "derive_from_expected_slots_and_immutable_lifecycle",
+      "content_sha256": "4764f1db782803a5b9ca6de77f19a7119d57e5c1fb3db01eaa8ade3248b622ce",
+      "denominator_classes": [
+        "expected",
+        "failed",
+        "ineligible",
+        "issued",
+        "omitted",
+        "unresolved",
+        "withdrawn"
+      ],
+      "method_comparison_rule": "DEFER_UNTIL_DISTINCT_SECOND_METHOD",
+      "metrics": [
+        "absolute_error",
+        "squared_error"
+      ],
+      "normative_output_fields": [
+        "absolute_error",
+        "forecast_value",
+        "resolved_outcome",
+        "squared_error"
+      ],
+      "object_id": "policy:genesis-evaluation:v2",
+      "object_role": "NORMATIVE",
+      "object_type": "PolicyDefinition",
+      "payload_sha256": "b45f00da408d2da3dc9fa17820ad90c92fb10be298c4bd2326bfec46c539a6fe",
+      "policy_type": "EVALUATION",
+      "probabilistic_scoring_rule": "NOT_APPLICABLE_TO_GENESIS_V1_POINT_FORECASTS",
+      "schema_version": "1.0",
+      "scope": "GENESIS_V1_CONTINUOUS_SCALAR",
+      "temporal_claim_reporting_rule": "SEPARATE_P2_CLAIM_VECTOR_REQUIRED",
+      "withdrawal_rule": "issued_forecast_remains_in_cohort"
+    }
+  ],
+  "base_object_set": "candidate_object_set_v0_2.json",
+  "candidate_version": "0.6",
+  "change_summary": "Implement Architecture Compression P1-P4: version Genesis acceptance and evaluation policies, retire scientific human review from the Genesis v1 effective profile, preserve historical candidate objects unchanged, and hand off temporal/provider-admission implementation to aligned validators and schemas.",
+  "effective_object_count": 21,
+  "predecessor_patch": "candidate_patch_v0_5.json",
+  "prospective_eligible": false,
+  "replace_objects": [],
+  "retire_objects": [
+    {
+      "object_id": "policy:genesis-acceptance:v1",
+      "reason": "superseded_by_non_circular_final_acceptance_policy_v2",
+      "retires_content_sha256": "82eea102d91b7258039716101c5bc7658de1cb99ef42982d44780b622a6e60fd"
+    },
+    {
+      "object_id": "policy:genesis-evaluation:v1",
+      "reason": "superseded_by_minimal_genesis_v1_evaluation_policy_v2",
+      "retires_content_sha256": "37743b52bd8a38ea7ae1fe5a4ef230c07797deb05030c5bf0fcfe7a998dc3d3e"
+    },
+    {
+      "object_id": "policy:genesis-human-review:v1",
+      "reason": "compressed_genesis_v1_uses_deterministic_review_required_or_unresolved_without_value_selection",
+      "retires_content_sha256": "3205098b37d4eef44dfd1f327bae4d9fcdbf64fa87a939ac84c4200b8a3b8e19"
+    }
+  ],
+  "schema_version": "1.0",
+  "status": "GEN_001_CANDIDATE_ONLY"
+}
