@@ -1,9 +1,11 @@
 # Genesis Issuance Schedule Policy
 
-Version: 0.2 candidate
+Version: 0.3 successor candidate
 Status: GEN_001 REVIEW CANDIDATE
 
-Policy ID: `policy:genesis-issuance-schedule:v1`
+Policy ID: `policy:genesis-issuance-schedule:v2`
+
+Version 2 supersedes v1 for successor candidate v0.8. Historical v1 bytes remain immutable and continue to govern any history created under v1.
 
 ## Purpose
 
@@ -64,16 +66,22 @@ If the local time is ambiguous or nonexistent under the frozen time-zone rules, 
 
 ## Deterministic relative timing
 
-For outcome information barrier `B`, Genesis version 1 derives:
+Let the official schedule supply a local release datetime `L` in the target schedule contract's IANA zone, currently `America/New_York`. The schedule derivation evidence binds the exact IANA time-zone database version used.
+
+For offsets expressed in calendar days, subtraction is performed on `L` in the local calendar while preserving the local wall-clock fields. The resulting local datetime is then resolved under the same bound IANA rules and converted to canonical UTC. Ambiguous or nonexistent resulting local times fail closed.
+
+Let `B` be the UTC instant obtained from `L`. Genesis version 1 derives:
 
 ```text
-plan_commitment_deadline = B - 8 calendar days
-information_cutoff = B - 7 calendar days
-execution_window_open = B - 7 calendar days
-execution_window_close = B - 6 calendar days
-external_proof_deadline = B - 24 hours
+plan_commitment_deadline = local_calendar(L - 8 days) -> UTC
+information_cutoff = local_calendar(L - 7 days) -> UTC
+execution_window_open = local_calendar(L - 7 days) -> UTC
+execution_window_close = local_calendar(L - 6 days) -> UTC
+external_proof_deadline = B - 24 elapsed hours
 durability_completion_deadline = B
 ```
+
+Calendar-day offsets therefore preserve the official local release clock across daylight-saving transitions. The 24-hour external-proof margin is an elapsed duration from the UTC barrier, not a local-calendar subtraction.
 
 The plan must obtain valid FPP_TIME_EVIDENCE_V1 deadline quorum by `plan_commitment_deadline`.
 
@@ -92,6 +100,24 @@ For one target release instance, the expected slot set is the deterministic sort
 3. are eligible for confirmatory use under the frozen selection-control policy.
 
 Operators cannot remove an inconvenient method or add an unaccepted method after outputs are known.
+
+### Deterministic runtime object identity
+
+Genesis v1 recomputes runtime identities with the project `seal_object` algorithm and does not accept caller-selected semantic IDs.
+
+TargetInstance stable context:
+
+```text
+genesis-target-instance:{target_object_id}:{reference_period}
+```
+
+ForecastSlot stable context:
+
+```text
+genesis-forecast-slot:{target_instance_object_id}:{method_object_id}
+```
+
+The validator reconstructs the canonical runtime payload, calls `seal_object` without a semantic ID override, and requires the resulting full object reference to equal the reference present in the cycle plan.
 
 ## Cycle-plan precommitment
 

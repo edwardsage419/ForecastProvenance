@@ -17,6 +17,7 @@ PATCH_V4 = ROOT / "genesis" / "candidate" / "objects" / "candidate_patch_v0_4.js
 PATCH_V5 = ROOT / "genesis" / "candidate" / "objects" / "candidate_patch_v0_5.json"
 PATCH_V6 = ROOT / "genesis" / "candidate" / "objects" / "candidate_patch_v0_6.json"
 PATCH_V7 = ROOT / "genesis" / "candidate" / "objects" / "candidate_patch_v0_7.json"
+PATCH_V8 = ROOT / "genesis" / "candidate" / "objects" / "candidate_patch_v0_8.json"
 
 
 def run_materializer(*extra):
@@ -40,11 +41,11 @@ class GenesisMaterializerTests(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr)
             inventory = json.loads(output.read_text(encoding="utf-8"))
 
-        self.assertEqual(inventory["candidate_version"], "0.7")
+        self.assertEqual(inventory["candidate_version"], "0.8")
         self.assertEqual(inventory["object_count"], 21)
         self.assertIs(inventory["prospective_eligible"], False)
         self.assertEqual(inventory["base_file"], "candidate_object_set_v0_2.json")
-        self.assertEqual(inventory["patch_file"], "candidate_patch_v0_7.json")
+        self.assertEqual(inventory["patch_file"], "candidate_patch_v0_8.json")
         self.assertEqual(
             inventory["patch_chain"],
             [
@@ -53,6 +54,7 @@ class GenesisMaterializerTests(unittest.TestCase):
                 "candidate_patch_v0_5.json",
                 "candidate_patch_v0_6.json",
                 "candidate_patch_v0_7.json",
+                "candidate_patch_v0_8.json",
             ],
         )
         ids = [obj["object_id"] for obj in inventory["objects"]]
@@ -61,6 +63,8 @@ class GenesisMaterializerTests(unittest.TestCase):
         self.assertNotIn("policy:deadline-receipt-quorum:v1", ids)
         self.assertNotIn("policy:deadline-receipt-quorum:v2", ids)
         self.assertNotIn("policy:deadline-receipt-quorum:v3", ids)
+        self.assertIn("policy:genesis-issuance-schedule:v2", ids)
+        self.assertNotIn("policy:genesis-issuance-schedule:v1", ids)
         core = {key: value for key, value in inventory.items() if key != "inventory_sha256"}
         self.assertEqual(inventory["inventory_sha256"], sha256_hex(canonical_json(core)))
 
@@ -80,6 +84,16 @@ class GenesisMaterializerTests(unittest.TestCase):
         ids = [obj["object_id"] for obj in inventory["objects"]]
         self.assertIn("policy:deadline-receipt-quorum:v3", ids)
         self.assertNotIn("policy:deadline-receipt-quorum:v4", ids)
+
+    def test_historical_v07_still_materializes_unchanged_when_explicitly_selected(self):
+        result = run_materializer("--patch", str(PATCH_V7))
+        self.assertEqual(result.returncode, 0, result.stderr)
+        inventory = json.loads(result.stdout)
+        self.assertEqual(inventory["candidate_version"], "0.7")
+        self.assertEqual(inventory["object_count"], 21)
+        ids = [obj["object_id"] for obj in inventory["objects"]]
+        self.assertIn("policy:genesis-issuance-schedule:v1", ids)
+        self.assertNotIn("policy:genesis-issuance-schedule:v2", ids)
 
     def test_v7_retirement_hash_mismatch_fails_closed(self):
         with tempfile.TemporaryDirectory() as tmpdir:
