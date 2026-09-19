@@ -48,7 +48,7 @@
     {
       "object_id": "policy:genesis-issuance-schedule:v1",
       "reason": "superseded_by_v2_r6_dst_and_identity_derivation_clarification",
-      "retires_content_sha256": "2368ea196bcb611b6f5ae9bde3a5d4a1ec0a2c6ca943e7e54d7255d2aa2ea476"
+      "retires_content_sha256": "9aecdef69cd59fbe8b804691fa04569e043751a7d997e83e374153118b755edf"
     }
   ],
   "schema_version": "1.0",
