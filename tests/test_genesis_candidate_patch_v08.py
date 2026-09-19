@@ -64,7 +64,7 @@ class GenesisCandidatePatchV08Tests(unittest.TestCase):
         self.assertEqual(retirement["object_id"], "policy:genesis-issuance-schedule:v1")
         self.assertEqual(
             retirement["retires_content_sha256"],
-            "efb42e0838b2d17a8c99d408bf56718298f12823f1a70da0bbd4bd8d7fbc2a27",
+            "2368ea196bcb611b6f5ae9bde3a5d4a1ec0a2c6ca943e7e54d7255d2aa2ea476",
         )
         self.assertNotIn("policy:genesis-issuance-schedule:v1", self.index)
         self.assertIn("policy:genesis-issuance-schedule:v2", self.index)
