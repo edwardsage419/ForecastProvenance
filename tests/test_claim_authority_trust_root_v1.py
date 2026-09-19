@@ -24,6 +24,23 @@ def manifest_fixture():
     quorum = sealed("PolicyDefinition", "policy:quorum:trust-root:v1", value="quorum")
     qualification_verifier = sealed("ValidatorContract", "validator:qualification:trust-root:v1", value="qualification")
     strong_bitcoin = sealed("StrongBitcoinVerifierContract", "validator:bitcoin:trust-root:v1", value="bitcoin")
+    targets = [
+        sealed("TargetDefinition", f"target:t{index}:v1", value=f"target-{index}")
+        for index in range(3)
+    ]
+    resolutions = [
+        sealed("ResolutionRule", f"resolution:r{index}:v1", value=f"resolution-{index}")
+        for index in range(3)
+    ]
+    methods = [sealed("ForecastMethod", "method:m0:v1", value="method")]
+    sources = [
+        sealed("SourceContract", f"source:s{index}:v1", value=f"source-{index}")
+        for index in range(6)
+    ]
+    schedule = sealed("PolicyDefinition", "policy:schedule:trust-root:v2", value="schedule")
+    retry = sealed("PolicyDefinition", "policy:retry:trust-root:v1", value="retry")
+    omission = sealed("PolicyDefinition", "policy:omission:trust-root:v1", value="omission")
+    correction = sealed("PolicyDefinition", "policy:correction:trust-root:v1", value="correction")
     profiles = [
         sealed("RoughtimeProductionProviderProfile", f"profile:p{index}:v1", provider_id=f"p{index}")
         for index in range(3)
@@ -36,6 +53,14 @@ def manifest_fixture():
         "TrustedManifest",
         "manifest:trust-root:v1",
         manifest_sequence=1,
+        target_refs=sorted((ref(item) for item in targets), key=lambda item: (item["object_id"], item["content_sha256"])),
+        resolution_rule_refs=sorted((ref(item) for item in resolutions), key=lambda item: (item["object_id"], item["content_sha256"])),
+        method_refs=sorted((ref(item) for item in methods), key=lambda item: (item["object_id"], item["content_sha256"])),
+        source_contract_refs=sorted((ref(item) for item in sources), key=lambda item: (item["object_id"], item["content_sha256"])),
+        issuance_schedule_policy_ref=ref(schedule),
+        retry_policy_ref=ref(retry),
+        omission_policy_ref=ref(omission),
+        correction_policy_ref=ref(correction),
         validator_contract_ref=ref(validator),
         deadline_receipt_quorum_policy_ref=ref(quorum),
         provider_profile_refs=sorted((ref(item) for item in profiles), key=lambda item: (item["object_id"], item["content_sha256"])),
@@ -49,6 +74,14 @@ def manifest_fixture():
         "quorum": quorum,
         "qualification_verifier": qualification_verifier,
         "strong_bitcoin": strong_bitcoin,
+        "targets": targets,
+        "resolutions": resolutions,
+        "methods": methods,
+        "sources": sources,
+        "schedule": schedule,
+        "retry": retry,
+        "omission": omission,
+        "correction": correction,
         "profiles": profiles,
         "decisions": decisions,
     }
@@ -69,11 +102,35 @@ def state_packages(fx):
 def test_manifest_authority_context_extracts_exact_roots():
     fx = manifest_fixture()
     context = trust_root.derive_trusted_manifest_authority_context(fx["manifest"])
+    assert list(context.target_refs) == fx["manifest"]["target_refs"]
+    assert list(context.resolution_rule_refs) == fx["manifest"]["resolution_rule_refs"]
+    assert list(context.method_refs) == fx["manifest"]["method_refs"]
+    assert list(context.source_contract_refs) == fx["manifest"]["source_contract_refs"]
+    assert context.issuance_schedule_policy_ref == ref(fx["schedule"])
+    assert context.retry_policy_ref == ref(fx["retry"])
+    assert context.omission_policy_ref == ref(fx["omission"])
+    assert context.correction_policy_ref == ref(fx["correction"])
     assert context.validator_contract_ref == ref(fx["validator"])
     assert context.deadline_receipt_quorum_policy_ref == ref(fx["quorum"])
     assert context.strong_bitcoin_verifier_contract_ref == ref(fx["strong_bitcoin"])
     assert list(context.provider_profile_refs) == fx["manifest"]["provider_profile_refs"]
     assert list(context.qualification_decision_refs) == fx["manifest"]["qualification_decision_refs"]
+
+
+def test_manifest_missing_scientific_root_fails_closed():
+    fx = manifest_fixture()
+    payload = {
+        key: value for key, value in fx["manifest"].items()
+        if key not in {"object_type", "object_id", "payload_sha256", "content_sha256", "method_refs"}
+    }
+    broken = seal_object(
+        payload,
+        object_type="TrustedManifest",
+        stable_context="missing-method-root",
+        semantic_id="manifest:missing-method-root:v1",
+    )
+    with pytest.raises(ValueError, match="method_refs"):
+        trust_root.derive_trusted_manifest_authority_context(broken)
 
 
 def test_manifest_missing_strong_bitcoin_verifier_ref_fails_closed():
@@ -188,13 +245,18 @@ def test_manifest_acceptance_must_bind_same_trusted_manifest_before_final_eviden
     other_manifest = sealed(
         "TrustedManifest",
         "manifest:other:v1",
-        manifest_sequence=1,
-        validator_contract_ref=ref(fx["validator"]),
-        deadline_receipt_quorum_policy_ref=ref(fx["quorum"]),
-        provider_profile_refs=fx["manifest"]["provider_profile_refs"],
-        qualification_decision_refs=fx["manifest"]["qualification_decision_refs"],
-        qualification_verifier_contract_ref=ref(fx["qualification_verifier"]),
-        strong_bitcoin_verifier_contract_ref=ref(fx["strong_bitcoin"]),
+        **{
+            key: value
+            for key, value in fx["manifest"].items()
+            if key
+            not in {
+                "schema_version",
+                "object_type",
+                "object_id",
+                "payload_sha256",
+                "content_sha256",
+            }
+        },
     )
     acceptance = sealed(
         "ManifestAcceptance",

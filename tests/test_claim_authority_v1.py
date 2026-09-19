@@ -573,3 +573,64 @@ def test_historical_cycle_plan_raw_bound_contract_remains_available():
         required_slots=[], required_schedule_policy_ref=ref(schedule),
     )
     assert result.valid
+
+
+def test_confirmatory_empty_component_set_cannot_define_empty_requirement_set():
+    forecast = sealed("IssuedForecast", "forecast:empty-components:v1", value="1")
+    with pytest.raises(ValueError, match="component set incomplete"):
+        authority.derive_confirmatory_eligibility_from_evidence(
+            forecast,
+            component_specs=[],
+            required_claim_requirements=[],
+        )
+
+
+def test_genesis_v1_required_claim_set_is_derived_from_component_subjects():
+    subjects = {
+        kind: sealed("Subject", f"subject:{kind}:v1", value=kind)
+        for kind in authority._GENESIS_V1_COMPONENT_CLAIM_TYPES
+    }
+    specs = [
+        {
+            "kind": kind,
+            "subject": subject,
+            "required_subject_ref": ref(subject),
+            "authority_inputs": {},
+        }
+        for kind, subject in subjects.items()
+    ]
+    _normalized, derived = authority._prepare_genesis_v1_component_specs(specs, None)
+    assert {
+        (item["claim_type"], item["subject_ref"]["object_id"])
+        for item in derived
+    } == {
+        (
+            authority._GENESIS_V1_COMPONENT_CLAIM_TYPES[kind],
+            ref(subject)["object_id"],
+        )
+        for kind, subject in subjects.items()
+    }
+
+
+def test_caller_cannot_substitute_genesis_v1_required_claim_requirement():
+    subjects = {
+        kind: sealed("Subject", f"subject:caller-{kind}:v1", value=kind)
+        for kind in authority._GENESIS_V1_COMPONENT_CLAIM_TYPES
+    }
+    specs = [
+        {
+            "kind": kind,
+            "subject": subject,
+            "required_subject_ref": ref(subject),
+            "authority_inputs": {},
+        }
+        for kind, subject in subjects.items()
+    ]
+    malicious = [
+        {
+            "claim_type": "DEADLINE_EXISTENCE_VERIFIED",
+            "subject_ref": ref(subjects["bitcoin_durability"]),
+        }
+    ]
+    with pytest.raises(ValueError, match="caller-supplied required claim authority prohibited"):
+        authority._prepare_genesis_v1_component_specs(specs, malicious)

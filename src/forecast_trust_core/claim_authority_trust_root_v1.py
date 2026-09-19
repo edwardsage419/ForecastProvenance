@@ -73,6 +73,14 @@ QUALIFICATION_VERIFIER_CONTRACT_KEYS = frozenset(
 @dataclass(frozen=True)
 class TrustedManifestAuthorityContext:
     trusted_manifest_ref: Mapping[str, str]
+    target_refs: tuple[Mapping[str, str], ...]
+    resolution_rule_refs: tuple[Mapping[str, str], ...]
+    method_refs: tuple[Mapping[str, str], ...]
+    source_contract_refs: tuple[Mapping[str, str], ...]
+    issuance_schedule_policy_ref: Mapping[str, str]
+    retry_policy_ref: Mapping[str, str]
+    omission_policy_ref: Mapping[str, str]
+    correction_policy_ref: Mapping[str, str]
     validator_contract_ref: Mapping[str, str]
     deadline_receipt_quorum_policy_ref: Mapping[str, str]
     provider_profile_refs: tuple[Mapping[str, str], ...]
@@ -128,6 +136,20 @@ def derive_trusted_manifest_authority_context(
         raise ValueError("TrustedManifest may not self-assert acceptance status")
     return TrustedManifestAuthorityContext(
         trusted_manifest_ref=manifest_ref,
+        target_refs=_required_ref_set(trusted_manifest, "target_refs", exact_count=3),
+        resolution_rule_refs=_required_ref_set(
+            trusted_manifest, "resolution_rule_refs", exact_count=3
+        ),
+        method_refs=_required_ref_set(trusted_manifest, "method_refs", exact_count=1),
+        source_contract_refs=_required_ref_set(
+            trusted_manifest, "source_contract_refs", exact_count=6
+        ),
+        issuance_schedule_policy_ref=_required_ref(
+            trusted_manifest, "issuance_schedule_policy_ref"
+        ),
+        retry_policy_ref=_required_ref(trusted_manifest, "retry_policy_ref"),
+        omission_policy_ref=_required_ref(trusted_manifest, "omission_policy_ref"),
+        correction_policy_ref=_required_ref(trusted_manifest, "correction_policy_ref"),
         validator_contract_ref=_required_ref(trusted_manifest, "validator_contract_ref"),
         deadline_receipt_quorum_policy_ref=_required_ref(
             trusted_manifest, "deadline_receipt_quorum_policy_ref"
