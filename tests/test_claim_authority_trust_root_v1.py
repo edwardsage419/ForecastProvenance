@@ -37,10 +37,16 @@ def manifest_fixture():
         sealed("SourceContract", f"source:s{index}:v1", value=f"source-{index}")
         for index in range(6)
     ]
-    schedule = sealed("PolicyDefinition", "policy:schedule:trust-root:v2", value="schedule")
+    schedule = sealed(
+        "PolicyDefinition",
+        "policy:schedule:trust-root:v2",
+        value="schedule",
+        canonical_runtime_contract_version="GENESIS_RUNTIME_CONTRACT_V1",
+    )
     retry = sealed("PolicyDefinition", "policy:retry:trust-root:v1", value="retry")
     omission = sealed("PolicyDefinition", "policy:omission:trust-root:v1", value="omission")
     correction = sealed("PolicyDefinition", "policy:correction:trust-root:v1", value="correction")
+    evaluation = sealed("PolicyDefinition", "policy:evaluation:trust-root:v2", value="evaluation")
     profiles = [
         sealed("RoughtimeProductionProviderProfile", f"profile:p{index}:v1", provider_id=f"p{index}")
         for index in range(3)
@@ -61,6 +67,7 @@ def manifest_fixture():
         retry_policy_ref=ref(retry),
         omission_policy_ref=ref(omission),
         correction_policy_ref=ref(correction),
+        evaluation_policy_ref=ref(evaluation),
         validator_contract_ref=ref(validator),
         deadline_receipt_quorum_policy_ref=ref(quorum),
         provider_profile_refs=sorted((ref(item) for item in profiles), key=lambda item: (item["object_id"], item["content_sha256"])),
@@ -82,6 +89,7 @@ def manifest_fixture():
         "retry": retry,
         "omission": omission,
         "correction": correction,
+        "evaluation": evaluation,
         "profiles": profiles,
         "decisions": decisions,
     }
@@ -101,7 +109,9 @@ def state_packages(fx):
 
 def test_manifest_authority_context_extracts_exact_roots():
     fx = manifest_fixture()
-    context = trust_root.derive_trusted_manifest_authority_context(fx["manifest"])
+    context = trust_root.derive_genesis_runtime_v1_authority_context(
+        fx["manifest"], fx["schedule"]
+    )
     assert list(context.target_refs) == fx["manifest"]["target_refs"]
     assert list(context.resolution_rule_refs) == fx["manifest"]["resolution_rule_refs"]
     assert list(context.method_refs) == fx["manifest"]["method_refs"]
@@ -110,6 +120,7 @@ def test_manifest_authority_context_extracts_exact_roots():
     assert context.retry_policy_ref == ref(fx["retry"])
     assert context.omission_policy_ref == ref(fx["omission"])
     assert context.correction_policy_ref == ref(fx["correction"])
+    assert context.evaluation_policy_ref == ref(fx["evaluation"])
     assert context.validator_contract_ref == ref(fx["validator"])
     assert context.deadline_receipt_quorum_policy_ref == ref(fx["quorum"])
     assert context.strong_bitcoin_verifier_contract_ref == ref(fx["strong_bitcoin"])
@@ -130,7 +141,155 @@ def test_manifest_missing_scientific_root_fails_closed():
         semantic_id="manifest:missing-method-root:v1",
     )
     with pytest.raises(ValueError, match="method_refs"):
-        trust_root.derive_trusted_manifest_authority_context(broken)
+        trust_root.derive_genesis_runtime_v1_authority_context(
+            broken, fx["schedule"]
+        )
+
+
+def test_manifest_missing_evaluation_policy_ref_fails_closed():
+    fx = manifest_fixture()
+    payload = {
+        key: value for key, value in fx["manifest"].items()
+        if key
+        not in {
+            "object_type",
+            "object_id",
+            "payload_sha256",
+            "content_sha256",
+            "evaluation_policy_ref",
+        }
+    }
+    broken = seal_object(
+        payload,
+        object_type="TrustedManifest",
+        stable_context="missing-evaluation-root",
+        semantic_id="manifest:missing-evaluation-root:v1",
+    )
+    with pytest.raises(ValueError, match="evaluation_policy_ref"):
+        trust_root.derive_genesis_runtime_v1_authority_context(
+            broken, fx["schedule"]
+        )
+
+
+def test_manifest_malformed_evaluation_policy_ref_fails_closed():
+    fx = manifest_fixture()
+    payload = {
+        key: value for key, value in fx["manifest"].items()
+        if key not in {"object_type", "object_id", "payload_sha256", "content_sha256"}
+    }
+    payload["evaluation_policy_ref"] = {"object_id": fx["evaluation"]["object_id"]}
+    broken = seal_object(
+        payload,
+        object_type="TrustedManifest",
+        stable_context="malformed-evaluation-root",
+        semantic_id="manifest:malformed-evaluation-root:v1",
+    )
+    with pytest.raises(ValueError, match="evaluation_policy_ref"):
+        trust_root.derive_genesis_runtime_v1_authority_context(
+            broken, fx["schedule"]
+        )
+
+
+def test_manifest_evaluation_policy_ref_is_extracted_as_exact_value():
+    fx = manifest_fixture()
+    context = trust_root.derive_genesis_runtime_v1_authority_context(
+        fx["manifest"], fx["schedule"]
+    )
+    assert context.evaluation_policy_ref == fx["manifest"]["evaluation_policy_ref"]
+
+
+def test_genesis_runtime_confirmatory_requires_complete_authoritative_components():
+    fx = manifest_fixture()
+    forecast = sealed("IssuedForecast", "forecast:genesis-runtime:v1", value="forecast")
+    with pytest.raises(ValueError, match="Genesis v1 authoritative component set incomplete"):
+        trust_root.derive_confirmatory_eligibility_from_genesis_runtime_v1(
+            fx["manifest"],
+            fx["schedule"],
+            forecast,
+            component_specs=[],
+            required_claim_requirements=[],
+        )
+
+
+@pytest.mark.parametrize(
+    "runtime_contract_version", [None, "CALLER_SELECTED_RUNTIME_V1"]
+)
+def test_cycle_plan_wrapper_executes_frozen_historical_validation(
+    monkeypatch, runtime_contract_version
+):
+    fx = manifest_fixture()
+    schedule_fields = {"value": "historical-schedule"}
+    if runtime_contract_version is not None:
+        schedule_fields["canonical_runtime_contract_version"] = runtime_contract_version
+    schedule = sealed(
+        "PolicyDefinition", "policy:schedule:historical:v1", **schedule_fields
+    )
+    manifest_payload = {
+        key: value
+        for key, value in fx["manifest"].items()
+        if key not in {"object_type", "object_id", "payload_sha256", "content_sha256"}
+    }
+    manifest_payload["issuance_schedule_policy_ref"] = ref(schedule)
+    manifest = seal_object(
+        manifest_payload,
+        object_type="TrustedManifest",
+        stable_context="claim-authority-trust-root-test",
+        semantic_id=fx["manifest"]["object_id"],
+    )
+    plan = sealed(
+        "IssuanceCyclePlan",
+        "plan:historical-wrapper:v1",
+        plan_commitment_deadline="2026-09-10T00:00:00Z",
+        execution_window_open="2026-09-11T00:00:00Z",
+        execution_window_close="2026-09-12T00:00:00Z",
+        schedule_policy_ref=ref(schedule),
+    )
+    required_slots = [ref(fx["targets"][0])]
+    wall_clock_inputs = {"historical": "inputs"}
+    bound_wall_clock_inputs = {"manifest": "bound"}
+    expected = (object(), object())
+    calls = []
+
+    def fake_bind(manifest, inputs, **kwargs):
+        calls.append(("bind", manifest, inputs, kwargs))
+        return bound_wall_clock_inputs
+
+    def fake_validate(candidate, **kwargs):
+        calls.append(("validate", candidate, kwargs))
+        return expected
+
+    monkeypatch.setattr(trust_root, "bind_wall_clock_inputs_to_manifest", fake_bind)
+    monkeypatch.setattr(trust_root, "validate_cycle_plan_authoritatively", fake_validate)
+
+    result = trust_root.validate_cycle_plan_from_trusted_manifest(
+        manifest,
+        plan,
+        required_slots=required_slots,
+        required_schedule_policy_ref=ref(schedule),
+        wall_clock_inputs=wall_clock_inputs,
+    )
+
+    assert result is expected
+    assert calls == [
+        (
+            "bind",
+            manifest,
+            wall_clock_inputs,
+            {
+                "qualification_authority_id": None,
+                "qualification_authority_public_key": None,
+            },
+        ),
+        (
+            "validate",
+            plan,
+            {
+                "required_slots": required_slots,
+                "required_schedule_policy_ref": ref(schedule),
+                "wall_clock_inputs": bound_wall_clock_inputs,
+            },
+        ),
+    ]
 
 
 def test_manifest_missing_strong_bitcoin_verifier_ref_fails_closed():

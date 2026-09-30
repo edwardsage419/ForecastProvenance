@@ -1,0 +1,8 @@
+{
+  "authority_scope": "PRE_GENESIS_CANDIDATE_SELECTION_ONLY",
+  "base_file": "objects/candidate_object_set_v0_2.json",
+  "effective_candidate_version": "0.6",
+  "patch_file": "objects/candidate_patch_v0_6.json",
+  "prospective_eligible": false,
+  "schema_version": "1.0"
+}

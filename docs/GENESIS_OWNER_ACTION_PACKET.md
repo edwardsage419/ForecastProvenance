@@ -155,10 +155,11 @@ Every resulting report must remain `prospective_eligible=false`.
 
 ```bash
 PYTHONPATH=src python3 scripts/genesis/materialize_candidate.py \
-  --output ~/fpp-genesis-rehearsal/effective_candidate_inventory_v0_5.json
+  --effective \
+  --output ~/fpp-genesis-rehearsal/effective_candidate_inventory_v0_6.json
 ```
 
-This validates the v0.2 base plus the v0.3, v0.4, and v0.5 patch chain and emits the deterministic 22 object inventory.
+This validates the v0.2 base plus the v0.3, v0.4, v0.5, and v0.6 patch chain and emits the deterministic 21 object inventory.
 
 ## G. Final repository test and validator binding
 

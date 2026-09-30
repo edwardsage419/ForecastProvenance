@@ -4,6 +4,22 @@ These JSON Schema files are interoperability descriptions. Python validators rem
 
 No schema in this directory authorizes prospective issuance, production qualification execution, Genesis, or Forecast Ledger creation. The concrete Genesis AnchorScheme and BootstrapGovernanceRoot remain uninstantiated.
 
+## Genesis v1 runtime-contract schemas
+
+Successor candidate v0.9 adds closed structural schemas for `TargetInstance`, `ForecastSlot`, `ScheduleDerivationEvidence`, `IssuanceCyclePlan`, and `IssuanceCycleManifest`:
+
+```text
+target_instance_v1.schema.json
+forecast_slot_v1.schema.json
+schedule_derivation_evidence_v1.schema.json
+issuance_cycle_plan_v1.schema.json
+issuance_cycle_manifest_v1.schema.json
+```
+
+The historical `issuance_cycle_plan.schema.json` remains unchanged as the v0.4 interoperability schema. The versioned v1 schemas reject unknown fields and nulls, require exact full references, and express structural uniqueness/cardinality. Executable ordering, timestamp relationships, stable-context reconstruction, exact-seal equality, and schedule-evidence authority cross-binding live in `src/forecast_trust_core/genesis_contracts_v1.py`.
+
+These schemas and validators freeze prerequisites only. They do not reconstruct the mandatory cycle universe or establish positive confirmatory eligibility.
+
 ## RFC 3161 rehearsal schemas
 
 `rfc3161_qualification_rehearsal_report.schema.json` describes the sealed output of the non-forecast RFC 3161 qualification rehearsal checker. Its closed status vocabulary is `REHEARSAL_VERIFIED`, `REHEARSAL_INCOMPLETE`, and `REHEARSAL_FAILED`; production qualification is intentionally not representable.

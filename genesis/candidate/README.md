@@ -6,6 +6,12 @@ This directory contains candidate normative objects prepared for Genesis readine
 
 ## Current effective candidate lineage
 
+`candidate_lineage_authority.json` is the machine-readable pre-Genesis selection declaration. It binds the effective candidate version to the exact base and patch files without authorizing Genesis or prospective forecasting. Resolve that declaration with:
+
+```text
+PYTHONPATH=src python3 scripts/genesis/materialize_candidate.py --effective
+```
+
 The current effective candidate is constructed from:
 
 ```text
@@ -62,6 +68,18 @@ squared_error
 Baseline delta, pairwise method comparison, aggregate predictive-skill claims, probabilistic scoring, significance claims, and leaderboard semantics remain deferred until a distinct second method or forecast class is admitted by a successor manifest.
 
 The AcceptancePolicy v2 requires final external evidence over the exact signed ManifestAcceptance as a separate final-validation input. Intermediate bootstrap or candidate-manifest anchors are optional audit evidence and cannot substitute for the final acceptance evidence.
+
+## Later successor candidates
+
+The current effective candidate remains v0.6. Later candidate patches are immutable successor proposals and do not become effective merely because the materializer can inspect them:
+
+```text
+v0.7 -> policy:deadline-receipt-quorum:v4
+v0.8 -> policy:genesis-issuance-schedule:v2
+v0.9 -> policy:genesis-issuance-schedule:v3
+```
+
+Candidate v0.9 binds directly to `candidate_patch_v0_8.json`, retires schedule policy v2 by exact content hash, and adds the sealed v3 policy that binds the exact Genesis runtime-contract schema hashes and deterministic identity rules. It remains `GEN_001_CANDIDATE_ONLY`, `prospective_eligible = false`, accepted = NO, and effective = NO. Explicit `--patch` materialization of v0.6, v0.7, v0.8, and v0.9 remains supported for verification and does not confer effective authority.
 
 ## Initial method set
 

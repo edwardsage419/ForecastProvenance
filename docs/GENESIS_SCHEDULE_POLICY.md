@@ -1,11 +1,11 @@
 # Genesis Issuance Schedule Policy
 
-Version: 0.3 successor candidate
+Version: 0.4 successor candidate
 Status: GEN_001 REVIEW CANDIDATE
 
-Policy ID: `policy:genesis-issuance-schedule:v2`
+Policy ID: `policy:genesis-issuance-schedule:v3`
 
-Version 2 supersedes v1 for successor candidate v0.8. Historical v1 bytes remain immutable and continue to govern any history created under v1.
+Version 3 supersedes v2 for successor candidate v0.9. Historical v1 and v2 bytes remain immutable and continue to govern any history created under those versions. Candidate v0.9 is not accepted or effective and remains non-prospective.
 
 ## Purpose
 
@@ -119,13 +119,211 @@ genesis-forecast-slot:{target_instance_object_id}:{method_object_id}
 
 The validator reconstructs the canonical runtime payload, calls `seal_object` without a semantic ID override, and requires the resulting full object reference to equal the reference present in the cycle plan.
 
+## Genesis runtime contract v1
+
+Schedule policy v3 binds the exact file SHA256 values of these closed Draft 2020-12 schemas:
+
+```text
+target_instance_v1.schema.json
+forecast_slot_v1.schema.json
+schedule_derivation_evidence_v1.schema.json
+issuance_cycle_plan_v1.schema.json
+issuance_cycle_manifest_v1.schema.json
+```
+
+For each object below, `schema_version = "1.0"`; every listed payload field is required and non-null; there are no optional or nullable payload fields. This is an object-specific decision, not a general claim that every project schema prohibits null. No pre-existing normative null meaning is changed. Unknown fields are rejected.
+
+References contain exactly `object_id` and `content_sha256`. Set-like reference arrays are sorted by `object_id`, then `content_sha256`, and duplicates are rejected. Normative UTC timestamps use `YYYY-MM-DDTHH:MM:SSZ`. Published local schedule dates and times use `YYYY-MM-DD` and `HH:MM:SS` and are meaningful only with the exact bound IANA zone and tzdb artifact.
+
+The payload supplied to `seal_object` is exactly the required field set listed below, excluding only the derived `object_type`, `object_id`, `payload_sha256`, and `content_sha256`. Runtime objects are sealed without `semantic_id`. Authoritative validation reconstructs the object using the frozen stable context and requires equality of the complete `{object_id, content_sha256}` reference. A caller-selected semantic ID or stable context is never equivalent authority.
+
+### ScheduleDerivationEvidence
+
+Exact object type: `ScheduleDerivationEvidence`.
+
+Required payload fields:
+
+```text
+schema_version
+trusted_manifest_ref
+issuance_schedule_policy_ref
+target_ref
+schedule_source_ref
+schedule_artifact_ref
+schedule_artifact_sha256
+parser_id
+parser_version
+iana_tzdb_version
+tzdb_artifact_ref
+retrieved_at
+parsed_release_identifier
+reference_period
+published_local_date
+published_local_time
+published_timezone
+authoritative_release_time
+plan_commitment_deadline
+information_cutoff
+execution_window_open
+execution_window_close
+external_proof_deadline
+durability_completion_deadline
+resolution_deadline
+```
+
+Stable context:
+
+```text
+genesis-schedule-derivation:{target_object_id}:{reference_period}:{schedule_artifact_sha256}
+```
+
+The evidence is supporting evidence, not an authority root. It must be reconstructed exactly and cross-bound to the exact TrustedManifest, its issuance-schedule policy, an admitted TargetDefinition, that target's admitted schedule SourceContract, the retained exact schedule artifact, the policy-selected `GENESIS_SCHEDULE_PARSER_V1`, and the retained exact tzdb artifact/version. Later R6 validation must replay parsing and calendar/time derivation; a sealed evidence object's assertions do not prove themselves.
+
+### TargetInstance
+
+Exact object type: `TargetInstance`.
+
+Required payload fields:
+
+```text
+schema_version
+trusted_manifest_ref
+issuance_schedule_policy_ref
+target_ref
+schedule_source_ref
+measurement_source_ref
+schedule_derivation_evidence_ref
+reference_period
+release_identifier
+outcome_information_barrier
+information_cutoff
+resolution_deadline
+```
+
+Stable context:
+
+```text
+genesis-target-instance:{target_object_id}:{reference_period}
+```
+
+The source refs must equal the schedule and measurement refs in the exact manifest-admitted TargetDefinition. The time and release fields must equal the exact replayed ScheduleDerivationEvidence outputs.
+
+### ForecastSlot
+
+Exact object type: `ForecastSlot`.
+
+Required payload fields:
+
+```text
+schema_version
+trusted_manifest_ref
+issuance_schedule_policy_ref
+target_instance_ref
+schedule_derivation_evidence_ref
+method_ref
+source_contract_refs
+information_cutoff
+output_schema
+selection_control_class
+forecast_cardinality
+```
+
+Genesis v1 freezes exactly two sorted unique SourceContract refs, `output_schema = continuous_scalar_forecast_v1`, `selection_control_class = DETERMINISTIC_REPLAY`, and `forecast_cardinality = 1`.
+
+Stable context:
+
+```text
+genesis-forecast-slot:{target_instance_object_id}:{method_object_id}
+```
+
+The method and both source contracts must be admitted by the exact TrustedManifest; the method must admit the exact target; and the cutoff and schedule-evidence refs must match the reconstructed TargetInstance cycle.
+
+### IssuanceCyclePlan
+
+Exact object type: `IssuanceCyclePlan`.
+
+Required payload fields:
+
+```text
+schema_version
+trusted_manifest_ref
+schedule_policy_ref
+schedule_derivation_evidence_ref
+target_instance_ref
+method_refs
+information_cutoff
+plan_commitment_deadline
+execution_window_open
+execution_window_close
+external_proof_deadline
+durability_completion_deadline
+expected_slots
+retry_policy_ref
+omission_policy_ref
+```
+
+`method_refs` and `expected_slots` are non-empty sorted unique exact-ref arrays. The singular TargetInstance follows the frozen one-release-instance-per-cycle model. The schedule, target, method, slot, retry, and omission values are derived from exact manifest-bound authority; caller-provided `required_schedule_policy_ref` or `required_slots` is not authority.
+
+Stable context:
+
+```text
+genesis-issuance-cycle-plan:{target_instance_object_id}
+```
+
+### IssuanceCycleManifest
+
+Exact object type: `IssuanceCycleManifest`.
+
+Required payload fields:
+
+```text
+schema_version
+trusted_manifest_ref
+cycle_plan_ref
+retry_policy_ref
+omission_policy_ref
+correction_policy_ref
+evaluation_policy_ref
+slot_accounting
+```
+
+`slot_accounting` is sorted by exact `slot_ref`; every mandatory plan slot appears exactly once and duplicates are rejected. Every row requires:
+
+```text
+slot_ref
+issuance_outcome
+eligibility_state
+withdrawal_state
+attempt_refs
+issued_forecast_refs
+failure_record_refs
+omission_evidence_refs
+ineligibility_evidence_refs
+unresolved_evidence_refs
+withdrawal_refs
+correction_refs
+```
+
+All row ref arrays are present even when empty, sorted, and duplicate-free. `issuance_outcome` distinguishes `EXPECTED`, `ISSUED`, `FAILED`, and `OMITTED`. `eligibility_state` separately distinguishes `NOT_YET_DETERMINED`, `ELIGIBLE`, `INELIGIBLE`, `UNRESOLVED`, and `NOT_APPLICABLE`. `withdrawal_state` separately distinguishes `ACTIVE` and `WITHDRAWN`.
+
+An issued row retains at least one attempt and exactly one original issued forecast. A failed row retains attempts and failure records. An omitted row retains omission evidence. Ineligibility and unresolved states retain their respective evidence. Withdrawal requires additive withdrawal refs and does not remove the original forecast or attempts. Corrections are additive refs on an issued row and never replace the original forecast, slot, attempts, or accounting history.
+
+Stable context:
+
+```text
+genesis-issuance-cycle-manifest:{cycle_plan_object_id}
+```
+
+This orthogonal accounting preserves the expected denominator plus issued, failed, omitted, ineligible, unresolved, and withdrawn classifications while retaining correction history. Evaluation aggregation remains outside this contract-freeze patch.
+
 ## Cycle-plan precommitment
 
 The cycle plan binds:
 
 ```text
+trusted_manifest_ref
 schedule_policy_ref
-schedule_snapshot_ref
+schedule_derivation_evidence_ref
 target_instance_ref
 method_refs
 information_cutoff

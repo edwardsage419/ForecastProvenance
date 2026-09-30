@@ -1,6 +1,6 @@
 import pytest
 
-import forecast_trust_core.claim_authority_v1 as authority
+import forecast_trust_core.claim_authority_contract_gate_v1 as contract_gate
 from forecast_trust_core.canonical import seal_object
 
 
@@ -48,7 +48,7 @@ def sealed_acceptance(schema_version="2.0", object_id="acceptance:contract:v2", 
 
 
 def test_manifest_acceptance_v2_exact_contract_is_accepted():
-    authority._validate_manifest_acceptance_v2_contract(sealed_acceptance())
+    contract_gate.validate_manifest_acceptance_v2_contract(sealed_acceptance())
 
 
 def test_manifest_acceptance_schema_v1_is_rejected_even_with_valid_seal():
@@ -57,7 +57,7 @@ def test_manifest_acceptance_schema_v1_is_rejected_even_with_valid_seal():
         object_id="acceptance:schema-v1:contract:v2",
     )
     with pytest.raises(ValueError, match="schema_version mismatch"):
-        authority._validate_manifest_acceptance_v2_contract(bad)
+        contract_gate.validate_manifest_acceptance_v2_contract(bad)
 
 
 def test_manifest_acceptance_additional_property_is_rejected():
@@ -66,7 +66,7 @@ def test_manifest_acceptance_additional_property_is_rejected():
         unexpected="forbidden",
     )
     with pytest.raises(ValueError, match="field set mismatch"):
-        authority._validate_manifest_acceptance_v2_contract(bad)
+        contract_gate.validate_manifest_acceptance_v2_contract(bad)
 
 
 def test_manifest_acceptance_requires_nonempty_validation_report_set():
@@ -79,4 +79,4 @@ def test_manifest_acceptance_requires_nonempty_validation_report_set():
         semantic_id="acceptance:no-reports:contract:v2",
     )
     with pytest.raises(ValueError, match="must be non-empty"):
-        authority._validate_manifest_acceptance_v2_contract(bad)
+        contract_gate.validate_manifest_acceptance_v2_contract(bad)

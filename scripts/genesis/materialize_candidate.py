@@ -11,8 +11,17 @@ from forecast_trust_core.canonical import canonical_json, sha256_hex, verify_sea
 
 
 ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_BASE = ROOT / "genesis" / "candidate" / "objects" / "candidate_object_set_v0_2.json"
-DEFAULT_PATCH = ROOT / "genesis" / "candidate" / "objects" / "candidate_patch_v0_8.json"
+CANDIDATE_DIR = ROOT / "genesis" / "candidate"
+DEFAULT_BASE = CANDIDATE_DIR / "objects" / "candidate_object_set_v0_2.json"
+AUTHORITY_DECLARATION = CANDIDATE_DIR / "candidate_lineage_authority.json"
+AUTHORITY_FIELDS = {
+    "schema_version",
+    "authority_scope",
+    "effective_candidate_version",
+    "base_file",
+    "patch_file",
+    "prospective_eligible",
+}
 
 
 def full_refs(value: Any):
@@ -58,7 +67,63 @@ def _load_patch_chain(base_path: Path, patch_path: Path) -> list[tuple[Path, dic
     return load_one(patch_path)
 
 
-def load_effective_candidate(base_path: Path, patch_path: Path) -> dict[str, Any]:
+def _resolve_authority_file(candidate_dir: Path, value: Any) -> Path:
+    if not isinstance(value, str) or not value:
+        raise ValueError("authority file paths must be non-empty strings")
+    relative = Path(value)
+    if relative.is_absolute() or len(relative.parts) != 2 or relative.parts[0] != "objects":
+        raise ValueError(f"unsafe authority path: {value}")
+    resolved = (candidate_dir / relative).resolve()
+    try:
+        resolved.relative_to(candidate_dir.resolve())
+    except ValueError as exc:
+        raise ValueError(f"unsafe authority path: {value}") from exc
+    if not resolved.is_file():
+        raise ValueError(f"authority file missing: {value}")
+    return resolved
+
+
+def resolve_candidate_authority(authority_path: Path) -> tuple[Path, Path]:
+    if not authority_path.is_file():
+        raise ValueError(f"authority declaration missing: {authority_path}")
+    try:
+        declaration = json.loads(authority_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ValueError(f"malformed authority declaration: {authority_path}") from exc
+    if not isinstance(declaration, dict) or set(declaration) != AUTHORITY_FIELDS:
+        raise ValueError("malformed authority declaration fields")
+    if declaration["schema_version"] != "1.0":
+        raise ValueError("unsupported authority declaration schema_version")
+    if declaration["authority_scope"] != "PRE_GENESIS_CANDIDATE_SELECTION_ONLY":
+        raise ValueError("invalid authority declaration scope")
+    if declaration["prospective_eligible"] is not False:
+        raise ValueError("authority declaration must remain non-prospective")
+    version = declaration["effective_candidate_version"]
+    if not isinstance(version, str) or not version:
+        raise ValueError("effective_candidate_version must be a non-empty string")
+
+    candidate_dir = authority_path.parent
+    base_path = _resolve_authority_file(candidate_dir, declaration["base_file"])
+    patch_path = _resolve_authority_file(candidate_dir, declaration["patch_file"])
+    try:
+        patch = json.loads(patch_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ValueError(f"malformed authority patch: {patch_path.name}") from exc
+    if not isinstance(patch, dict):
+        raise ValueError(f"malformed authority patch: {patch_path.name}")
+    if patch.get("candidate_version") != version:
+        raise ValueError("authority candidate version mismatch")
+    if patch.get("base_object_set") != base_path.name:
+        raise ValueError("authority patch base mismatch")
+    return base_path, patch_path
+
+
+def materialize_candidate_inventory(
+    base_path: Path,
+    patch_path: Path,
+    *,
+    effective: bool = False,
+) -> dict[str, Any]:
     base = json.loads(base_path.read_text(encoding="utf-8"))
     patch_chain = _load_patch_chain(base_path, patch_path)
 
@@ -133,6 +198,7 @@ def load_effective_candidate(base_path: Path, patch_path: Path) -> dict[str, Any
         "base_file": base_path.name,
         "patch_file": final_patch_path.name,
         "patch_chain": [path.name for path, _ in patch_chain],
+        "effective": effective,
         "prospective_eligible": False,
         "object_count": len(ordered),
         "objects": [
@@ -151,15 +217,34 @@ def load_effective_candidate(base_path: Path, patch_path: Path) -> dict[str, Any
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Materialize the effective non-prospective Genesis candidate inventory."
+        description="Materialize a non-prospective Genesis candidate inventory."
     )
-    parser.add_argument("--base", type=Path, default=DEFAULT_BASE)
-    parser.add_argument("--patch", type=Path, default=DEFAULT_PATCH)
+    selection = parser.add_mutually_exclusive_group(required=True)
+    selection.add_argument(
+        "--effective",
+        action="store_true",
+        help="resolve the effective candidate from candidate_lineage_authority.json",
+    )
+    selection.add_argument("--patch", type=Path, help="materialize exactly this candidate patch")
+    parser.add_argument("--base", type=Path)
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
 
     try:
-        inventory = load_effective_candidate(args.base, args.patch)
+        if args.effective:
+            if args.base is not None:
+                raise ValueError("--base cannot override --effective authority")
+            base_path, patch_path = resolve_candidate_authority(AUTHORITY_DECLARATION)
+            effective = True
+        else:
+            base_path = args.base or DEFAULT_BASE
+            patch_path = args.patch
+            effective = False
+        inventory = materialize_candidate_inventory(
+            base_path,
+            patch_path,
+            effective=effective,
+        )
     except Exception as exc:
         print(f"candidate materialization failed: {exc}", file=sys.stderr)
         return 2

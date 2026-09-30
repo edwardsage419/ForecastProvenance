@@ -235,8 +235,9 @@ This step is local and non-prospective. It does not create a Genesis manifest.
 
 ```bash
 PYTHONPATH=src python3 scripts/genesis/materialize_candidate.py \
-  --output ~/fpp-genesis-rehearsal/effective_candidate_inventory_v0_3.json
-sha256sum ~/fpp-genesis-rehearsal/effective_candidate_inventory_v0_3.json
+  --effective \
+  --output ~/fpp-genesis-rehearsal/effective_candidate_inventory_v0_6.json
+sha256sum ~/fpp-genesis-rehearsal/effective_candidate_inventory_v0_6.json
 ```
 
 The materializer validates base and patch lineage, object seals, predecessor hashes, effective object count, and full dependency closure before emitting the deterministic inventory.

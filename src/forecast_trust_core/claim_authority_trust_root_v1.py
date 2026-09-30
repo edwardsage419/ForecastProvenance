@@ -16,6 +16,7 @@ from .canonical import CanonicalizationError, sorted_refs, validate_ref, verify_
 from .claim_authority_v1 import (
     BitcoinRecomputation,
     WallClockRecomputation,
+    _prepare_genesis_v1_component_specs,
     derive_confirmatory_eligibility_from_evidence,
     recompute_bitcoin_durability_claim_authoritatively,
     recompute_external_existence_claim_authoritatively,
@@ -73,6 +74,16 @@ QUALIFICATION_VERIFIER_CONTRACT_KEYS = frozenset(
 @dataclass(frozen=True)
 class TrustedManifestAuthorityContext:
     trusted_manifest_ref: Mapping[str, str]
+    validator_contract_ref: Mapping[str, str]
+    deadline_receipt_quorum_policy_ref: Mapping[str, str]
+    provider_profile_refs: tuple[Mapping[str, str], ...]
+    qualification_decision_refs: tuple[Mapping[str, str], ...]
+    qualification_verifier_contract_ref: Mapping[str, str]
+    strong_bitcoin_verifier_contract_ref: Mapping[str, str]
+
+
+@dataclass(frozen=True)
+class GenesisRuntimeV1AuthorityContext(TrustedManifestAuthorityContext):
     target_refs: tuple[Mapping[str, str], ...]
     resolution_rule_refs: tuple[Mapping[str, str], ...]
     method_refs: tuple[Mapping[str, str], ...]
@@ -81,12 +92,7 @@ class TrustedManifestAuthorityContext:
     retry_policy_ref: Mapping[str, str]
     omission_policy_ref: Mapping[str, str]
     correction_policy_ref: Mapping[str, str]
-    validator_contract_ref: Mapping[str, str]
-    deadline_receipt_quorum_policy_ref: Mapping[str, str]
-    provider_profile_refs: tuple[Mapping[str, str], ...]
-    qualification_decision_refs: tuple[Mapping[str, str], ...]
-    qualification_verifier_contract_ref: Mapping[str, str]
-    strong_bitcoin_verifier_contract_ref: Mapping[str, str]
+    evaluation_policy_ref: Mapping[str, str]
 
 
 def _exact_ref(obj: Mapping[str, Any], *, object_type: str | None = None) -> dict[str, str]:
@@ -130,26 +136,12 @@ def _required_ref_set(
 def derive_trusted_manifest_authority_context(
     trusted_manifest: Mapping[str, Any],
 ) -> TrustedManifestAuthorityContext:
-    """Extract the only admissible claim-authority roots from an exact sealed TrustedManifest."""
+    """Extract frozen historical claim-authority roots from a sealed TrustedManifest."""
     manifest_ref = _exact_ref(trusted_manifest, object_type="TrustedManifest")
     if "status" in trusted_manifest:
         raise ValueError("TrustedManifest may not self-assert acceptance status")
     return TrustedManifestAuthorityContext(
         trusted_manifest_ref=manifest_ref,
-        target_refs=_required_ref_set(trusted_manifest, "target_refs", exact_count=3),
-        resolution_rule_refs=_required_ref_set(
-            trusted_manifest, "resolution_rule_refs", exact_count=3
-        ),
-        method_refs=_required_ref_set(trusted_manifest, "method_refs", exact_count=1),
-        source_contract_refs=_required_ref_set(
-            trusted_manifest, "source_contract_refs", exact_count=6
-        ),
-        issuance_schedule_policy_ref=_required_ref(
-            trusted_manifest, "issuance_schedule_policy_ref"
-        ),
-        retry_policy_ref=_required_ref(trusted_manifest, "retry_policy_ref"),
-        omission_policy_ref=_required_ref(trusted_manifest, "omission_policy_ref"),
-        correction_policy_ref=_required_ref(trusted_manifest, "correction_policy_ref"),
         validator_contract_ref=_required_ref(trusted_manifest, "validator_contract_ref"),
         deadline_receipt_quorum_policy_ref=_required_ref(
             trusted_manifest, "deadline_receipt_quorum_policy_ref"
@@ -166,6 +158,55 @@ def derive_trusted_manifest_authority_context(
         strong_bitcoin_verifier_contract_ref=_required_ref(
             trusted_manifest, "strong_bitcoin_verifier_contract_ref"
         ),
+    )
+
+
+def derive_genesis_runtime_v1_authority_context(
+    trusted_manifest: Mapping[str, Any],
+    schedule_policy: Mapping[str, Any],
+) -> GenesisRuntimeV1AuthorityContext:
+    """Select Genesis runtime v1 only from the exact manifest-bound schedule policy."""
+    historical = derive_trusted_manifest_authority_context(trusted_manifest)
+    schedule_policy_ref = _exact_ref(schedule_policy, object_type="PolicyDefinition")
+    manifest_schedule_policy_ref = _required_ref(
+        trusted_manifest, "issuance_schedule_policy_ref"
+    )
+    if schedule_policy_ref != manifest_schedule_policy_ref:
+        raise ValueError("schedule policy differs from TrustedManifest authority")
+    if (
+        schedule_policy.get("canonical_runtime_contract_version")
+        != "GENESIS_RUNTIME_CONTRACT_V1"
+    ):
+        raise ValueError(
+            "authority-bound schedule policy must select GENESIS_RUNTIME_CONTRACT_V1"
+        )
+    return GenesisRuntimeV1AuthorityContext(
+        trusted_manifest_ref=historical.trusted_manifest_ref,
+        validator_contract_ref=historical.validator_contract_ref,
+        deadline_receipt_quorum_policy_ref=(
+            historical.deadline_receipt_quorum_policy_ref
+        ),
+        provider_profile_refs=historical.provider_profile_refs,
+        qualification_decision_refs=historical.qualification_decision_refs,
+        qualification_verifier_contract_ref=(
+            historical.qualification_verifier_contract_ref
+        ),
+        strong_bitcoin_verifier_contract_ref=(
+            historical.strong_bitcoin_verifier_contract_ref
+        ),
+        target_refs=_required_ref_set(trusted_manifest, "target_refs", exact_count=3),
+        resolution_rule_refs=_required_ref_set(
+            trusted_manifest, "resolution_rule_refs", exact_count=3
+        ),
+        method_refs=_required_ref_set(trusted_manifest, "method_refs", exact_count=1),
+        source_contract_refs=_required_ref_set(
+            trusted_manifest, "source_contract_refs", exact_count=6
+        ),
+        issuance_schedule_policy_ref=manifest_schedule_policy_ref,
+        retry_policy_ref=_required_ref(trusted_manifest, "retry_policy_ref"),
+        omission_policy_ref=_required_ref(trusted_manifest, "omission_policy_ref"),
+        correction_policy_ref=_required_ref(trusted_manifest, "correction_policy_ref"),
+        evaluation_policy_ref=_required_ref(trusted_manifest, "evaluation_policy_ref"),
     )
 
 
@@ -562,6 +603,34 @@ def recompute_pre_outcome_durability_from_trusted_manifest(
         bitcoin_inputs=bitcoin,
         durability_record=durability_record,
         durability_record_wall_clock_inputs=wall,
+    )
+
+
+def derive_confirmatory_eligibility_from_genesis_runtime_v1(
+    trusted_manifest: Mapping[str, Any],
+    schedule_policy: Mapping[str, Any],
+    forecast: Mapping[str, Any],
+    *,
+    component_specs: Sequence[Mapping[str, Any]],
+    required_claim_requirements: Sequence[Mapping[str, Any]],
+    qualification_authority_id: str | None = None,
+    qualification_authority_public_key: bytes | None = None,
+    hard_invalidation_reason_codes: Sequence[str] = (),
+):
+    derive_genesis_runtime_v1_authority_context(
+        trusted_manifest, schedule_policy
+    )
+    normalized_specs, derived_requirements = _prepare_genesis_v1_component_specs(
+        component_specs, required_claim_requirements
+    )
+    return derive_confirmatory_eligibility_from_trusted_manifest(
+        trusted_manifest,
+        forecast,
+        component_specs=normalized_specs,
+        required_claim_requirements=derived_requirements,
+        qualification_authority_id=qualification_authority_id,
+        qualification_authority_public_key=qualification_authority_public_key,
+        hard_invalidation_reason_codes=hard_invalidation_reason_codes,
     )
 
 

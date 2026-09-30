@@ -259,7 +259,10 @@ Forecast Trust Core should consume a small adapter result equivalent to:
 provider_profile_ref
 qualification_decision_ref
 qualification_verifier_contract_ref
-qualification_state_package_sha256
+qualification_state_package_ref = {
+  object_id,
+  content_sha256
+}
 as_of_utc
 qualification_state
 ```

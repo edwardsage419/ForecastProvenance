@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "fpp:target-instance:v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "object_type", "trusted_manifest_ref",
+    "issuance_schedule_policy_ref", "target_ref", "schedule_source_ref",
+    "measurement_source_ref", "schedule_derivation_evidence_ref",
+    "reference_period", "release_identifier", "outcome_information_barrier",
+    "information_cutoff", "resolution_deadline", "object_id", "payload_sha256",
+    "content_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "object_type": {"const": "TargetInstance"},
+    "trusted_manifest_ref": {"$ref": "#/$defs/ref"},
+    "issuance_schedule_policy_ref": {"$ref": "#/$defs/ref"},
+    "target_ref": {"$ref": "#/$defs/ref"},
+    "schedule_source_ref": {"$ref": "#/$defs/ref"},
+    "measurement_source_ref": {"$ref": "#/$defs/ref"},
+    "schedule_derivation_evidence_ref": {"$ref": "#/$defs/ref"},
+    "reference_period": {"$ref": "#/$defs/token"},
+    "release_identifier": {"$ref": "#/$defs/token"},
+    "outcome_information_barrier": {"$ref": "#/$defs/utc"},
+    "information_cutoff": {"$ref": "#/$defs/utc"},
+    "resolution_deadline": {"$ref": "#/$defs/utc"},
+    "object_id": {"$ref": "#/$defs/token"},
+    "payload_sha256": {"$ref": "#/$defs/sha256"},
+    "content_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "token": {"type": "string", "pattern": "^[A-Za-z0-9._:/-]+$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "utc": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"},
+    "ref": {
+      "type": "object", "additionalProperties": false,
+      "required": ["object_id", "content_sha256"],
+      "properties": {
+        "object_id": {"$ref": "#/$defs/token"},
+        "content_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}

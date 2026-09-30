@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://forecastprovenance.org/schemas/qualification_validation_invocation_v1.schema.json",
+  "title": "Qualification Validation Invocation V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "object_type",
+    "qualification_validation_contract_ref",
+    "qualification_state_package_ref",
+    "qualification_state_package_serialized_sha256",
+    "object_id",
+    "payload_sha256",
+    "content_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "object_type": {"const": "QualificationValidationInvocation"},
+    "qualification_validation_contract_ref": {"$ref": "#/$defs/ref"},
+    "qualification_state_package_ref": {"$ref": "#/$defs/ref"},
+    "qualification_state_package_serialized_sha256": {"$ref": "#/$defs/sha256"},
+    "object_id": {"type": "string", "pattern": "^qualificationvalidationinvocation:v1:[0-9a-f]{12}$"},
+    "payload_sha256": {"$ref": "#/$defs/sha256"},
+    "content_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["object_id", "content_sha256"],
+      "properties": {
+        "object_id": {"type": "string", "pattern": "^[A-Za-z0-9._:/-]+$"},
+        "content_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}

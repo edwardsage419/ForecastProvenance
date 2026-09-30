@@ -14,15 +14,18 @@ The current base candidate lineage is materialized deterministically from:
 ```text
 genesis/candidate/objects/candidate_object_set_v0_2.json
 genesis/candidate/objects/candidate_patch_v0_3.json
+genesis/candidate/objects/candidate_patch_v0_4.json
+genesis/candidate/objects/candidate_patch_v0_5.json
+genesis/candidate/objects/candidate_patch_v0_6.json
 ```
 
 The effective inventory is produced with:
 
 ```text
-PYTHONPATH=src python3 scripts/genesis/materialize_candidate.py
+PYTHONPATH=src python3 scripts/genesis/materialize_candidate.py --effective
 ```
 
-The inventory itself is non-prospective review evidence. It is not the TrustedManifest.
+The `--effective` mode resolves `genesis/candidate/candidate_lineage_authority.json`; it does not infer authority from the newest patch. The inventory itself is non-prospective review evidence. It is not the TrustedManifest.
 
 ## Required manifest dependency classes
 

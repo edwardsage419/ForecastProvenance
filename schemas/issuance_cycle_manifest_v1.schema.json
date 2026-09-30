@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "fpp:issuance-cycle-manifest:v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "object_type", "trusted_manifest_ref", "cycle_plan_ref", "retry_policy_ref", "omission_policy_ref", "correction_policy_ref", "evaluation_policy_ref", "slot_accounting", "object_id", "payload_sha256", "content_sha256"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "object_type": {"const": "IssuanceCycleManifest"},
+    "trusted_manifest_ref": {"$ref": "#/$defs/ref"},
+    "cycle_plan_ref": {"$ref": "#/$defs/ref"},
+    "retry_policy_ref": {"$ref": "#/$defs/ref"},
+    "omission_policy_ref": {"$ref": "#/$defs/ref"},
+    "correction_policy_ref": {"$ref": "#/$defs/ref"},
+    "evaluation_policy_ref": {"$ref": "#/$defs/ref"},
+    "slot_accounting": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/accounting_row"}},
+    "object_id": {"$ref": "#/$defs/token"},
+    "payload_sha256": {"$ref": "#/$defs/sha256"},
+    "content_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "token": {"type": "string", "pattern": "^[A-Za-z0-9._:/-]+$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "ref": {"type": "object", "additionalProperties": false, "required": ["object_id", "content_sha256"], "properties": {"object_id": {"$ref": "#/$defs/token"}, "content_sha256": {"$ref": "#/$defs/sha256"}}},
+    "ref_array": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/ref"}},
+    "accounting_row": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["slot_ref", "issuance_outcome", "eligibility_state", "withdrawal_state", "attempt_refs", "issued_forecast_refs", "failure_record_refs", "omission_evidence_refs", "ineligibility_evidence_refs", "unresolved_evidence_refs", "withdrawal_refs", "correction_refs"],
+      "properties": {
+        "slot_ref": {"$ref": "#/$defs/ref"},
+        "issuance_outcome": {"enum": ["EXPECTED", "ISSUED", "FAILED", "OMITTED"]},
+        "eligibility_state": {"enum": ["NOT_YET_DETERMINED", "ELIGIBLE", "INELIGIBLE", "UNRESOLVED", "NOT_APPLICABLE"]},
+        "withdrawal_state": {"enum": ["ACTIVE", "WITHDRAWN"]},
+        "attempt_refs": {"$ref": "#/$defs/ref_array"},
+        "issued_forecast_refs": {"$ref": "#/$defs/ref_array"},
+        "failure_record_refs": {"$ref": "#/$defs/ref_array"},
+        "omission_evidence_refs": {"$ref": "#/$defs/ref_array"},
+        "ineligibility_evidence_refs": {"$ref": "#/$defs/ref_array"},
+        "unresolved_evidence_refs": {"$ref": "#/$defs/ref_array"},
+        "withdrawal_refs": {"$ref": "#/$defs/ref_array"},
+        "correction_refs": {"$ref": "#/$defs/ref_array"}
+      },
+      "allOf": [
+        {"if": {"properties": {"issuance_outcome": {"const": "EXPECTED"}}}, "then": {"properties": {"eligibility_state": {"const": "NOT_YET_DETERMINED"}, "withdrawal_state": {"const": "ACTIVE"}, "attempt_refs": {"maxItems": 0}, "issued_forecast_refs": {"maxItems": 0}, "failure_record_refs": {"maxItems": 0}, "omission_evidence_refs": {"maxItems": 0}, "ineligibility_evidence_refs": {"maxItems": 0}, "unresolved_evidence_refs": {"maxItems": 0}, "withdrawal_refs": {"maxItems": 0}, "correction_refs": {"maxItems": 0}}}},
+        {"if": {"properties": {"issuance_outcome": {"const": "ISSUED"}}}, "then": {"properties": {"attempt_refs": {"minItems": 1}, "issued_forecast_refs": {"minItems": 1, "maxItems": 1}, "omission_evidence_refs": {"maxItems": 0}, "eligibility_state": {"enum": ["NOT_YET_DETERMINED", "ELIGIBLE", "INELIGIBLE", "UNRESOLVED"]}}}},
+        {"if": {"properties": {"issuance_outcome": {"const": "FAILED"}}}, "then": {"properties": {"eligibility_state": {"const": "NOT_APPLICABLE"}, "withdrawal_state": {"const": "ACTIVE"}, "attempt_refs": {"minItems": 1}, "issued_forecast_refs": {"maxItems": 0}, "failure_record_refs": {"minItems": 1}, "omission_evidence_refs": {"maxItems": 0}, "ineligibility_evidence_refs": {"maxItems": 0}, "unresolved_evidence_refs": {"maxItems": 0}, "withdrawal_refs": {"maxItems": 0}, "correction_refs": {"maxItems": 0}}}},
+        {"if": {"properties": {"issuance_outcome": {"const": "OMITTED"}}}, "then": {"properties": {"eligibility_state": {"const": "NOT_APPLICABLE"}, "withdrawal_state": {"const": "ACTIVE"}, "issued_forecast_refs": {"maxItems": 0}, "omission_evidence_refs": {"minItems": 1}, "ineligibility_evidence_refs": {"maxItems": 0}, "unresolved_evidence_refs": {"maxItems": 0}, "withdrawal_refs": {"maxItems": 0}, "correction_refs": {"maxItems": 0}}}},
+        {"if": {"properties": {"eligibility_state": {"const": "INELIGIBLE"}}}, "then": {"properties": {"ineligibility_evidence_refs": {"minItems": 1}, "unresolved_evidence_refs": {"maxItems": 0}}}},
+        {"if": {"properties": {"eligibility_state": {"const": "UNRESOLVED"}}}, "then": {"properties": {"unresolved_evidence_refs": {"minItems": 1}, "ineligibility_evidence_refs": {"maxItems": 0}}}},
+        {"if": {"properties": {"withdrawal_state": {"const": "WITHDRAWN"}}}, "then": {"properties": {"issuance_outcome": {"const": "ISSUED"}, "withdrawal_refs": {"minItems": 1}}}, "else": {"properties": {"withdrawal_refs": {"maxItems": 0}}}}
+      ]
+    }
+  }
+}

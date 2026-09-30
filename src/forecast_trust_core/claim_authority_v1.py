@@ -19,16 +19,6 @@ for _name, _value in vars(_legacy).items():
 _PROVIDER_ADMISSION_IMPL = _legacy.validate_provider_admission_set_authoritatively
 
 
-# Expose the narrow contract validators for focused adversarial regression.
-_validate_bundle_contract = _gate.validate_bundle_contract
-_validate_receipt_contract = _gate.validate_receipt_contract
-_validate_qualification_state_package_contract = _gate.validate_qualification_state_package_contract
-_validate_ots_contract = _gate.validate_ots_contract
-_validate_dvr_contract = _gate.validate_dvr_contract
-_validate_strong_contract = _gate.validate_strong_contract
-_validate_strong_report = _gate.validate_strong_report
-_validate_manifest_acceptance_v2_contract = _gate.validate_manifest_acceptance_v2_contract
-
 _GENESIS_V1_COMPONENT_CLAIM_TYPES = {
     "wall_clock_deadline": "DEADLINE_EXISTENCE_VERIFIED",
     "bitcoin_durability": "BITCOIN_DURABILITY_VERIFIED",
@@ -304,14 +294,33 @@ def derive_confirmatory_eligibility_from_evidence(
         raise ValueError("caller-supplied hard invalidation authority prohibited")
 
     forecast_ref = _legacy._exact_ref(forecast)
-    normalized_specs, derived_requirements = _prepare_genesis_v1_component_specs(
-        component_specs,
-        required_claim_requirements,
-    )
+    if not isinstance(component_specs, Sequence) or isinstance(
+        component_specs, (str, bytes, bytearray)
+    ):
+        raise ValueError("component_specs must be a sequence")
+    normalized_specs = tuple(component_specs)
+    if any(not isinstance(spec, Mapping) for spec in normalized_specs):
+        raise ValueError("component spec must be a mapping")
+    derived_requirements = required_claim_requirements
     claims = []
     for spec in normalized_specs:
-        kind = spec["kind"]
-        subject = spec["subject"]
+        kind = spec.get("kind")
+        if kind not in _GENESIS_V1_COMPONENT_CLAIM_TYPES:
+            raise ValueError("unknown authoritative component kind")
+        subject = spec.get("subject")
+        required_subject_ref = spec.get("required_subject_ref")
+        try:
+            validate_ref(required_subject_ref)
+        except (CanonicalizationError, TypeError) as exc:
+            raise ValueError("component required_subject_ref malformed") from exc
+        if _legacy._exact_ref(subject) != dict(required_subject_ref):
+            labels = {
+                "wall_clock_deadline": "wall-clock",
+                "bitcoin_durability": "Bitcoin",
+                "pre_outcome_durability": "pre-outcome",
+                "external_existence": "external-existence",
+            }
+            raise ValueError(f"{labels[kind]} component subject substitution")
         authority_inputs = spec.get("authority_inputs")
         if kind in {"wall_clock_deadline", "external_existence"}:
             _legacy._require_live_wall_inputs(authority_inputs)

@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://forecastprovenance.org/schemas/runtime_profile_v1.schema.json",
+  "title": "Runtime Profile V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "object_type", "schema_version", "runtime_profile_version",
+    "runtime_identity", "execution_engine", "dependency_environment",
+    "platform_constraints", "deterministic_settings",
+    "object_id", "payload_sha256", "content_sha256"
+  ],
+  "properties": {
+    "object_type": {"const": "RuntimeProfile"},
+    "schema_version": {"const": "1.0"},
+    "runtime_profile_version": {"$ref": "#/$defs/token"},
+    "runtime_identity": {"$ref": "#/$defs/runtime_identity"},
+    "execution_engine": {"$ref": "#/$defs/execution_engine"},
+    "dependency_environment": {"$ref": "#/$defs/dependency_environment"},
+    "platform_constraints": {"$ref": "#/$defs/ordered_tokens"},
+    "deterministic_settings": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": {"$ref": "#/$defs/deterministic_setting"}
+    },
+    "object_id": {"$ref": "#/$defs/object_id"},
+    "payload_sha256": {"$ref": "#/$defs/sha256"},
+    "content_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "object_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$"},
+    "token": {"type": "string", "minLength": 1, "pattern": "^[^\\r\\n]+$"},
+    "exact_ref": {
+      "type": "object", "additionalProperties": false,
+      "required": ["object_id", "content_sha256"],
+      "properties": {
+        "object_id": {"$ref": "#/$defs/object_id"},
+        "content_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "ordered_tokens": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": {"$ref": "#/$defs/token"}
+    },
+    "runtime_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["runtime_name", "runtime_version"],
+      "properties": {
+        "runtime_name": {"$ref": "#/$defs/token"},
+        "runtime_version": {"$ref": "#/$defs/token"}
+      }
+    },
+    "execution_engine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["engine_id", "executable_sha256"],
+      "properties": {
+        "engine_id": {"$ref": "#/$defs/token"},
+        "executable_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "dependency_environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dependency_lock_ref", "environment_variables"],
+      "properties": {
+        "dependency_lock_ref": {"$ref": "#/$defs/exact_ref"},
+        "environment_variables": {
+          "type": "array", "uniqueItems": true,
+          "items": {"$ref": "#/$defs/environment_variable"}
+        }
+      }
+    },
+    "environment_variable": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "value"],
+      "properties": {
+        "name": {"$ref": "#/$defs/token"},
+        "value": {"$ref": "#/$defs/token"}
+      }
+    },
+    "deterministic_setting": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["setting_id", "value"],
+      "properties": {
+        "setting_id": {"$ref": "#/$defs/token"},
+        "value": {"type": ["string", "number", "boolean"]}
+      }
+    }
+  }
+}

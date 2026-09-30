@@ -575,14 +575,16 @@ def test_historical_cycle_plan_raw_bound_contract_remains_available():
     assert result.valid
 
 
-def test_confirmatory_empty_component_set_cannot_define_empty_requirement_set():
+def test_historical_confirmatory_empty_component_set_fails_closed_unresolved():
     forecast = sealed("IssuedForecast", "forecast:empty-components:v1", value="1")
-    with pytest.raises(ValueError, match="component set incomplete"):
-        authority.derive_confirmatory_eligibility_from_evidence(
-            forecast,
-            component_specs=[],
-            required_claim_requirements=[],
-        )
+    eligibility, claims = authority.derive_confirmatory_eligibility_from_evidence(
+        forecast,
+        component_specs=[],
+        required_claim_requirements=[],
+    )
+    assert claims == ()
+    assert eligibility["state"] == "UNRESOLVED"
+    assert "FULL_TRUST_CORE_CHECK_AUTHORITY_NOT_IMPLEMENTED" in eligibility["reason_codes"]
 
 
 def test_genesis_v1_required_claim_set_is_derived_from_component_subjects():

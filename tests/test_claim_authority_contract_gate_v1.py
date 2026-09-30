@@ -178,7 +178,7 @@ def test_synthetic_bitcoin_only_fixture_cardinality_exception_is_not_wall_clock_
         }
     )
     with pytest.raises(ValueError, match="cardinality invalid"):
-        authority._validate_bundle_contract(synthetic_bundle)
+        contract_gate.validate_bundle_contract(synthetic_bundle)
 
 
 def test_production_receipt_rejects_retrospective_origin_even_with_valid_seal():
@@ -203,7 +203,7 @@ def test_production_receipt_rejects_retrospective_origin_even_with_valid_seal():
         response_base64="cmVzcG9uc2U=",
     )
     with pytest.raises(ValueError, match="origin_class invalid"):
-        authority._validate_receipt_contract(receipt)
+        contract_gate.validate_receipt_contract(receipt)
 
 
 def test_ots_proof_rejects_additional_properties_even_with_valid_seal():
@@ -211,7 +211,7 @@ def test_ots_proof_rejects_additional_properties_even_with_valid_seal():
     proof = valid_proof(bundle)
     bad = reseal_with_extra(proof, "proof:extra:gate:v1", unexpected="forbidden")
     with pytest.raises(ValueError, match="field set mismatch"):
-        authority._validate_ots_contract(bad)
+        contract_gate.validate_ots_contract(bad)
 
 
 def test_dvr_rejects_additional_properties_even_with_valid_seal():
@@ -231,7 +231,7 @@ def test_dvr_rejects_additional_properties_even_with_valid_seal():
     )
     bad = reseal_with_extra(dvr, "dvr:extra:gate:v1", unexpected="forbidden")
     with pytest.raises(ValueError, match="field set mismatch"):
-        authority._validate_dvr_contract(bad)
+        contract_gate.validate_dvr_contract(bad)
 
 
 def test_dvr_rejects_prospective_eligible_true_even_with_valid_seal():
@@ -250,25 +250,25 @@ def test_dvr_rejects_prospective_eligible_true_even_with_valid_seal():
         outcome_information_barrier=DEADLINE,
     )
     with pytest.raises(ValueError, match="prospective_eligible must be false"):
-        authority._validate_dvr_contract(dvr)
+        contract_gate.validate_dvr_contract(dvr)
 
 
 def test_strong_verifier_contract_rejects_unexpected_fields():
     contract = valid_strong_contract()
     bad = reseal_with_extra(contract, "strong-contract:extra:gate:v1", unexpected="forbidden")
     with pytest.raises(ValueError, match="field set mismatch"):
-        authority._validate_strong_contract(bad)
+        contract_gate.validate_strong_contract(bad)
 
 
 def test_strong_verification_report_exact_success_contract_is_accepted():
-    authority._validate_strong_report(valid_strong_report())
+    contract_gate.validate_strong_report(valid_strong_report())
 
 
 def test_strong_verification_report_rejects_unexpected_fields():
     report = valid_strong_report()
     bad = reseal_with_extra(report, "strong-report:extra:gate:v1", unexpected="forbidden")
     with pytest.raises(ValueError, match="field set mismatch"):
-        authority._validate_strong_report(bad)
+        contract_gate.validate_strong_report(bad)
 
 
 def test_strong_verification_report_rejects_prospective_eligible_true():
@@ -279,4 +279,4 @@ def test_strong_verification_report_rejects_prospective_eligible_true():
         prospective_eligible=True,
     )
     with pytest.raises(ValueError, match="prospective_eligible must be false"):
-        authority._validate_strong_report(bad)
+        contract_gate.validate_strong_report(bad)

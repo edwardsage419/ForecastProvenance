@@ -1,5 +1,6 @@
 import pytest
 
+import forecast_trust_core.claim_authority_contract_gate_v1 as contract_gate
 import forecast_trust_core.claim_authority_v1 as authority
 from forecast_trust_core.canonical import seal_object
 
@@ -53,14 +54,14 @@ def reseal_with_extra(obj, object_id):
 
 def test_exact_qualification_state_package_contract_is_accepted():
     package, _profile, _decision, _verifier = valid_state_package()
-    authority._validate_qualification_state_package_contract(package)
+    contract_gate.validate_qualification_state_package_contract(package)
 
 
 def test_extra_field_in_sealed_qualification_state_package_is_rejected():
     package, _profile, _decision, _verifier = valid_state_package()
     bad = reseal_with_extra(package, "state-package:extra:v1")
     with pytest.raises(ValueError, match="field set mismatch"):
-        authority._validate_qualification_state_package_contract(bad)
+        contract_gate.validate_qualification_state_package_contract(bad)
 
 
 def test_public_provider_admission_rejects_contract_invalid_package_before_recomputation():
@@ -91,4 +92,4 @@ def test_invalid_provider_id_in_sealed_state_package_is_rejected():
         **payload,
     )
     with pytest.raises(ValueError, match="provider_id invalid"):
-        authority._validate_qualification_state_package_contract(bad)
+        contract_gate.validate_qualification_state_package_contract(bad)
