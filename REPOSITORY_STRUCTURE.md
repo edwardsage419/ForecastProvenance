@@ -60,6 +60,6 @@ Synthetic fixtures must carry `origin_class = SYNTHETIC` and cannot assert prosp
 
 Do not create authoritative prospective forecast, outcome, evaluation, or failure corpus trees yet.
 
-Do not add a production database, hosted API, frontend, live model service, GKG module, or Psychohistory data migration.
+Do not add a production database, hosted API, frontend, live model service, or external project data migration.
 
 The authoritative prospective record structure will be created only after the separate Genesis gate passes.

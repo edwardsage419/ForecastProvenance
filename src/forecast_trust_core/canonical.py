@@ -14,7 +14,7 @@ class CanonicalizationError(ValueError):
     pass
 
 def require_ascii_token(value: str, field: str = "token") -> str:
-    if not value or not value.isascii() or not ASCII_TOKEN.fullmatch(value):
+    if not isinstance(value, str) or not value or not value.isascii() or not ASCII_TOKEN.fullmatch(value):
         raise CanonicalizationError(f"{field} must be a non-empty ASCII machine token")
     return value
 
@@ -104,7 +104,36 @@ def verify_sealed_object(obj: Mapping[str, Any]) -> bool:
     except CanonicalizationError: return False
     return expected_content == obj["content_sha256"] and expected_payload == obj["payload_sha256"]
 
-def parse_json_strict(text: str) -> Any:
+_UNICODE_BOMS = (
+    b"\x00\x00\xfe\xff",  # UTF-32 big endian
+    b"\xff\xfe\x00\x00",  # UTF-32 little endian
+    b"\xef\xbb\xbf",      # UTF-8
+    b"\xfe\xff",          # UTF-16 big endian
+    b"\xff\xfe",          # UTF-16 little endian
+)
+
+
+def decode_utf8_json(raw: bytes) -> str:
+    if not isinstance(raw, bytes):
+        raise CanonicalizationError("JSON input must be bytes")
+    if raw.startswith(_UNICODE_BOMS):
+        raise CanonicalizationError("JSON input must not contain a Unicode BOM")
+    try:
+        return raw.decode("utf-8", errors="strict")
+    except UnicodeDecodeError as exc:
+        raise CanonicalizationError("JSON input must be strict UTF-8") from exc
+
+
+def parse_json_strict(source: str | bytes | bytearray) -> Any:
+    if isinstance(source, (bytes, bytearray)):
+        text = decode_utf8_json(bytes(source))
+    elif isinstance(source, str):
+        if source.startswith("\ufeff"):
+            raise CanonicalizationError("JSON input must not contain a Unicode BOM")
+        text = source
+    else:
+        raise CanonicalizationError("JSON input must be text or bytes")
+
     def pairs_hook(pairs):
         out = {}
         for key, value in pairs:
@@ -112,7 +141,27 @@ def parse_json_strict(text: str) -> Any:
             out[key] = value
         return out
     def bad_constant(value): raise CanonicalizationError(f"non-standard JSON constant: {value}")
-    try: value = json.loads(text, object_pairs_hook=pairs_hook, parse_constant=bad_constant)
+    def parse_integer(value):
+        if value == "-0":
+            raise CanonicalizationError("lexical negative zero is prohibited")
+        integer = int(value)
+        if abs(integer) > MAX_SAFE_INTEGER:
+            raise CanonicalizationError("integer outside interoperable range")
+        return integer
+    def parse_float(value):
+        raise CanonicalizationError(f"JSON floating point prohibited: {value}")
+    try:
+        value = json.loads(
+            text,
+            object_pairs_hook=pairs_hook,
+            parse_constant=bad_constant,
+            parse_int=parse_integer,
+            parse_float=parse_float,
+        )
     except CanonicalizationError: raise
-    except (json.JSONDecodeError, ValueError) as exc: raise CanonicalizationError("invalid JSON") from exc
-    _validate_tree(value); return value
+    except (json.JSONDecodeError, RecursionError, ValueError) as exc: raise CanonicalizationError("invalid JSON") from exc
+    try:
+        _validate_tree(value)
+    except RecursionError as exc:
+        raise CanonicalizationError("JSON nesting exceeds the supported depth") from exc
+    return value

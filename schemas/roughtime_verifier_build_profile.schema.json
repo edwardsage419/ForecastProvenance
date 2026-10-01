@@ -1,0 +1,40 @@
+{
+  "$defs": {"digest": {"pattern": "^[0-9a-f]{64}$", "type": "string"}},
+  "$id": "https://forecastprovenance.org/schemas/roughtime_verifier_build_profile.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": "1.2"},
+    "upstream_repository": {"const": "github.com/tannerryan/roughtime"},
+    "upstream_tag": {"const": "v1.27.0"},
+    "upstream_commit": {"const": "56b346a16cd7e8317bb0d24f1ec15549cf93a4c9"},
+    "upstream_tag_object_sha": {"const": "e1ae332e5920429b11ec4f10a7dda399ebeb6df8"},
+    "upstream_tag_signature_verified": {"const": true},
+    "go_version": {"type": "string", "pattern": "^go1\\.27\\.[0-9]+$"},
+    "goos": {"type": "string", "minLength": 1, "pattern": "^\\S+$"},
+    "goarch": {"type": "string", "minLength": 1, "pattern": "^\\S+$"},
+    "go_toolchain_tree_sha256": {"$ref": "#/$defs/digest"},
+    "go_toolchain_distribution_source": {"type": "string", "minLength": 1, "pattern": "^[^\\r\\n]+$"},
+    "go_toolchain_distribution_sha256": {"$ref": "#/$defs/digest"},
+    "go_toolchain_carrier_sha256": {"$ref": "#/$defs/digest"},
+    "cgo_enabled": {"const": false},
+    "dependency_lock_sha256": {"$ref": "#/$defs/digest"},
+    "wrapper_source_tree_sha256": {"$ref": "#/$defs/digest"},
+    "upstream_source_tree_sha256": {"$ref": "#/$defs/digest"},
+    "verifier_source_bundle_sha256": {"$ref": "#/$defs/digest"},
+    "build_command": {"const": "go build -trimpath -buildvcs=false -ldflags=-buildid= -o fpp-roughtime-strict ."},
+    "binary_sha256": {"$ref": "#/$defs/digest"},
+    "fixture_report_sha256": {"$ref": "#/$defs/digest"},
+    "profile_sha256": {"$ref": "#/$defs/digest"}
+  },
+  "required": [
+    "schema_version", "upstream_repository", "upstream_tag", "upstream_commit",
+    "upstream_tag_object_sha", "upstream_tag_signature_verified", "go_version", "goos", "goarch",
+    "go_toolchain_tree_sha256", "go_toolchain_distribution_source", "go_toolchain_distribution_sha256",
+    "go_toolchain_carrier_sha256", "cgo_enabled", "dependency_lock_sha256",
+    "wrapper_source_tree_sha256", "upstream_source_tree_sha256", "verifier_source_bundle_sha256",
+    "build_command", "binary_sha256", "fixture_report_sha256", "profile_sha256"
+  ],
+  "title": "Roughtime Verifier Build Profile",
+  "type": "object"
+}

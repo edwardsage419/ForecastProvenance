@@ -1,0 +1,20 @@
+{
+  "accuracy_review_disposition": "TOKEN_ACCURACY_ACCEPTED",
+  "classification": "REVIEWED_RFC3161_QUALIFICATION_SEMANTICS",
+  "content_sha256": "25d4639026032fa1ae17eea6382a40cd096539f52f6d91b07529d615e0dc2c92",
+  "evidence_locator": "Sectigo eIDAS TSPPS v1.1.4: page 13 sections 5.1-5.2 (one-second UTC accuracy and best-practices-ts-policy OID 0.4.0.2023.1.1 applicability); page 15 section 6.2.2 (accuracy under +/-1 second to UTC); page 35 sections 8.1-8.2 (qualified-token semantics and qualified TSA endpoint); page 38 Annex B (token Accuracy 0x01 seconds).",
+  "object_id": "rfc3161reviewedsemanticassertion:sectigo_qualified_rfc3161:0241065569d8",
+  "object_type": "RFC3161ReviewedSemanticAssertion",
+  "observed_token_accuracy": "0x01 seconds, unspecified millis, unspecified micros",
+  "payload_sha256": "0241065569d894944ce471257bf20b11aa7892d2dff1cce231175a102f7146f5",
+  "policy_review_disposition": "DOCUMENTED_APPLICABLE",
+  "prospective_eligible": false,
+  "provider_id": "sectigo_qualified_rfc3161",
+  "provider_policy_sha256": "6d721d8ca07976bd4b331cd25f8d3c07cbef25874172702612bc08c737dca2ae",
+  "review_authority": "GEN_001_INDEPENDENT_QUALIFICATION_REVIEW",
+  "review_basis": "Independent review of the retained current Sectigo eIDAS TSPPS, the observed token policy OID, and observed token Accuracy.",
+  "reviewed_at": "2026-09-11T10:23:36Z",
+  "reviewer_id": "independent-review:gen001-sectigo-qualified-v1",
+  "schema_version": "1.1",
+  "token_policy_oid": "0.4.0.2023.1.1"
+}

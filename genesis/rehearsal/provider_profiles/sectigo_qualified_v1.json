@@ -1,0 +1,21 @@
+{
+  "captured_utc": "2026-09-11T10:01:43Z",
+  "classification": "NON_FORECAST_REHEARSAL",
+  "crl_source": "independently retained Sectigo Qualified Time Stamping CA R35 signer CRL",
+  "evidence_files": {
+    "crl": "SectigoQualifiedTimeStampingCAR35.pem.crl",
+    "independent_tsa_certificate": "signer_from_crtsh_retry.crt",
+    "provider_policy": "Sectigo_eIDAS_TSPPS_v1.1.4.pdf",
+    "request": "request.tsq",
+    "response": "response.tsr",
+    "reviewed_semantic_assertion": "sectigo_qualified_v1_reviewed_semantics.json",
+    "subject": "subject.txt",
+    "tool_versions": "tool_versions.txt",
+    "trust_anchor": "SectigoQualifiedTimeStampingRootR45.pem",
+    "untrusted_chain": "SectigoQualifiedTimeStampingCAR35.pem"
+  },
+  "prospective_eligible": false,
+  "provider_id": "sectigo_qualified_rfc3161",
+  "provider_policy_evidence_source": "retained Sectigo eIDAS TSPPS v1.1.4 from the official Sectigo legal repository",
+  "trust_anchor_source": "independently retained Sectigo Qualified Time Stamping Root R45 certificate"
+}

@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "fpp:schedule-derivation-evidence:v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "object_type", "trusted_manifest_ref",
+    "issuance_schedule_policy_ref", "target_ref", "schedule_source_ref",
+    "schedule_artifact_ref", "schedule_artifact_sha256", "parser_id",
+    "parser_version", "iana_tzdb_version", "tzdb_artifact_ref", "retrieved_at",
+    "parsed_release_identifier", "reference_period", "published_local_date",
+    "published_local_time", "published_timezone", "authoritative_release_time",
+    "plan_commitment_deadline", "information_cutoff", "execution_window_open",
+    "execution_window_close", "external_proof_deadline",
+    "durability_completion_deadline", "resolution_deadline", "object_id",
+    "payload_sha256", "content_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "object_type": {"const": "ScheduleDerivationEvidence"},
+    "trusted_manifest_ref": {"$ref": "#/$defs/ref"},
+    "issuance_schedule_policy_ref": {"$ref": "#/$defs/ref"},
+    "target_ref": {"$ref": "#/$defs/ref"},
+    "schedule_source_ref": {"$ref": "#/$defs/ref"},
+    "schedule_artifact_ref": {"$ref": "#/$defs/ref"},
+    "schedule_artifact_sha256": {"$ref": "#/$defs/sha256"},
+    "parser_id": {"const": "GENESIS_SCHEDULE_PARSER_V1"},
+    "parser_version": {"$ref": "#/$defs/token"},
+    "iana_tzdb_version": {"$ref": "#/$defs/token"},
+    "tzdb_artifact_ref": {"$ref": "#/$defs/ref"},
+    "retrieved_at": {"$ref": "#/$defs/utc"},
+    "parsed_release_identifier": {"$ref": "#/$defs/token"},
+    "reference_period": {"$ref": "#/$defs/token"},
+    "published_local_date": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+    "published_local_time": {"type": "string", "pattern": "^[0-9]{2}:[0-9]{2}:[0-9]{2}$"},
+    "published_timezone": {"const": "America/New_York"},
+    "authoritative_release_time": {"$ref": "#/$defs/utc"},
+    "plan_commitment_deadline": {"$ref": "#/$defs/utc"},
+    "information_cutoff": {"$ref": "#/$defs/utc"},
+    "execution_window_open": {"$ref": "#/$defs/utc"},
+    "execution_window_close": {"$ref": "#/$defs/utc"},
+    "external_proof_deadline": {"$ref": "#/$defs/utc"},
+    "durability_completion_deadline": {"$ref": "#/$defs/utc"},
+    "resolution_deadline": {"$ref": "#/$defs/utc"},
+    "object_id": {"$ref": "#/$defs/token"},
+    "payload_sha256": {"$ref": "#/$defs/sha256"},
+    "content_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "token": {"type": "string", "pattern": "^[A-Za-z0-9._:/-]+$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "utc": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"},
+    "ref": {
+      "type": "object", "additionalProperties": false,
+      "required": ["object_id", "content_sha256"],
+      "properties": {
+        "object_id": {"$ref": "#/$defs/token"},
+        "content_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}

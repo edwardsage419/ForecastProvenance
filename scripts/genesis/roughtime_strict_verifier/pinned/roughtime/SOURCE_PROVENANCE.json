@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.0",
+  "object_type": "PinnedRoughtimeProtocolSource",
+  "upstream_repository": "github.com/tannerryan/roughtime",
+  "upstream_tag": "v1.27.0",
+  "upstream_commit": "56b346a16cd7e8317bb0d24f1ec15549cf93a4c9",
+  "upstream_tag_object_sha": "e1ae332e5920429b11ec4f10a7dda399ebeb6df8",
+  "upstream_tag_signature_verified": true,
+  "source_scope": "protocol package compile inputs only",
+  "files": [
+    {
+      "path": "protocol/cert.go",
+      "git_blob_sha1": "c7f7d64dabb7bae9fa2b7478f5eb10d8a3471155"
+    },
+    {
+      "path": "protocol/codec.go",
+      "git_blob_sha1": "17c809b57eb7cdc77c2be75a1b41d92b916073ec"
+    },
+    {
+      "path": "protocol/merkle.go",
+      "git_blob_sha1": "48c8801e96aef887329fb4242b68319c459183bf"
+    },
+    {
+      "path": "protocol/protocol.go",
+      "git_blob_sha1": "af6cc8c49c23737ab465e4fc046c5beb43d17530"
+    },
+    {
+      "path": "protocol/reply.go",
+      "git_blob_sha1": "b483703a296108d193d8f516c8e39aabe8cbbc7f"
+    },
+    {
+      "path": "protocol/request.go",
+      "git_blob_sha1": "a102848033b3ec30589fc9c40ac91b41c54206db"
+    },
+    {
+      "path": "protocol/signature.go",
+      "git_blob_sha1": "430c0ee4a53758d7519b6d244355f9fe810a8f6e"
+    },
+    {
+      "path": "protocol/tags.go",
+      "git_blob_sha1": "2ec2fa9560bc095e3b540a5478604874abb50cec"
+    },
+    {
+      "path": "protocol/timestamp.go",
+      "git_blob_sha1": "0e6cbe3100a02b80b0f24f8b930f8164808f51ec"
+    },
+    {
+      "path": "protocol/verify.go",
+      "git_blob_sha1": "913d1361ef065e1e2be1d61f16bc1bea678d0778"
+    },
+    {
+      "path": "protocol/version.go",
+      "git_blob_sha1": "0a6a57b1a186c147b20f0cd6ba9d26bac7bf6952"
+    },
+    {
+      "path": "protocol/wiregroup.go",
+      "git_blob_sha1": "bfafd0171e87a09f6cce4d53c01c29660b896ca6"
+    }
+  ]
+}

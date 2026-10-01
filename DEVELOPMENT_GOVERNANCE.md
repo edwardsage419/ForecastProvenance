@@ -59,7 +59,7 @@ A known failure blocks Genesis until disposition is documented.
 
 ## Evidence admission
 
-Psychohistory material can enter a future experiment only through the same explicit evidence admission process used for any external source. Original provenance must be preserved. Imported predecessor evidence never acquires native historical status by location in the repository.
+External or predecessor material can enter a future experiment only through the explicit evidence admission process applicable to external sources. Original provenance must be preserved. Imported evidence never acquires native historical status by location in the repository.
 
 ## Correction governance
 
@@ -77,4 +77,4 @@ Prefer stable standard library functionality and small open source dependencies.
 
 ## Repository governance
 
-The Psychohistory repository is read only predecessor provenance for this project. New development occurs only in the successor repository.
+New development occurs only in this repository. External or predecessor repositories do not acquire project authority or native evidentiary status.

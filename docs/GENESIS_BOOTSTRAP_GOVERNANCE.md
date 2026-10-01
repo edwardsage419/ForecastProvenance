@@ -33,13 +33,15 @@ Genesis manifest acceptance receives these independent inputs:
 ```text
 bootstrap_governance_root
 candidate_manifest
-manifest_anchor_evidence
 manifest_acceptance
 required_validation_reports
+final_external_evidence
 dependency_store
 ```
 
 The candidate manifest cannot modify, replace, or self select the bootstrap root.
+
+The exact BootstrapGovernanceRoot is supplied independently to validation and remains outside the candidate manifest authority graph even when the TrustedManifest binds its exact reference.
 
 ## Authority semantics
 
@@ -49,16 +51,18 @@ The initial authority key may be controlled by the project owner under the zero 
 
 ## External retention
 
-Before Genesis acceptance, the exact bootstrap root bytes and their SHA256 must be retained independently of the candidate manifest. Genesis Protocol must externally anchor the bootstrap root or a containing Genesis governance manifest before it is relied on for prospective trust.
+Before Genesis acceptance, the exact bootstrap root bytes and their SHA256 must be retained independently of the candidate manifest for the life of the project.
+
+A standalone external anchor over the BootstrapGovernanceRoot or a containing governance envelope may be retained as optional audit evidence. It is not a mandatory Genesis readiness gate and cannot substitute for final external evidence over the exact signed ManifestAcceptance.
 
 ## Separation of claims
 
-External anchoring proves content existence by a conservative external time bound.
+Final external anchoring over the exact signed ManifestAcceptance establishes the externally verified existence and durability claims required by the Genesis acceptance path under the frozen time evidence policy.
 
 A valid authority signature or equivalent accepted governance proof establishes project approval under the bootstrap rule.
 
-Neither claim substitutes for the other.
+The independently supplied BootstrapGovernanceRoot establishes which authority and acceptance rule are trusted. The final external evidence establishes the required existence and durability facts for the signed acceptance. Each claim is validated under its own frozen contract.
 
 ## Genesis blocker
 
-The contract interface can freeze during FTC_001. Genuine Genesis remains prohibited until the exact authority key, acceptance rule, bootstrap bytes, and external proof are instantiated and independently verified.
+The contract interface can freeze during FTC_001. Genuine Genesis remains prohibited until the exact authority key, acceptance rule, bootstrap bytes, signed ManifestAcceptance, required final external evidence, and independent final validation are instantiated and verified, followed by separate explicit Genesis authorization.

@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://forecastprovenance.org/schemas/roughtime_qualification_review.schema.json",
+  "title": "Roughtime Independent Production Qualification Review",
+  "type": "object",
+  "required": [
+    "schema_version", "object_type", "criteria_id", "criteria_sha256", "provider_id",
+    "provider_profile_ref", "evidence_manifest_sha256", "execution_report_sha256",
+    "verifier_build_profile_sha256", "verifier_binary_sha256", "metadata_review_ref",
+    "executor_id", "reviewer_id", "review_basis_sha256", "criteria_checks",
+    "evidence_complete", "deterministic_validation_passed", "strict_replay_passed",
+    "blocking_findings", "review_result", "reviewed_at", "object_id", "payload_sha256", "content_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "object_type": {"const": "RoughtimeQualificationReview"},
+    "criteria_id": {"const": "FPP_ROUGHTIME_PRODUCTION_QUALIFICATION_V1"},
+    "criteria_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "provider_id": {"enum": ["roughtime.se", "time.txryan.com", "TimeNL-Roughtime"]},
+    "provider_profile_ref": {
+      "type": "object",
+      "required": ["object_id", "content_sha256"],
+      "properties": {
+        "object_id": {"type": "string", "pattern": "^[A-Za-z0-9._:/-]+$"},
+        "content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      },
+      "additionalProperties": false
+    },
+    "evidence_manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "execution_report_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "verifier_build_profile_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "verifier_binary_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "metadata_review_ref": {
+      "type": "object",
+      "required": ["object_id", "content_sha256"],
+      "properties": {
+        "object_id": {"type": "string", "pattern": "^[A-Za-z0-9._:/-]+$"},
+        "content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      },
+      "additionalProperties": false
+    },
+    "executor_id": {"type": "string", "pattern": ".*\\S.*"},
+    "reviewer_id": {"type": "string", "pattern": ".*\\S.*"},
+    "review_basis_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "criteria_checks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["criterion_id", "disposition", "evidence_sha256s", "reason_codes"],
+        "properties": {
+          "criterion_id": {"type": "string", "pattern": "^[A-Za-z0-9._:/-]+$"},
+          "disposition": {"enum": ["PASS", "FAIL", "NOT_APPLICABLE"]},
+          "evidence_sha256s": {
+            "type": "array",
+            "items": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+          },
+          "reason_codes": {
+            "type": "array",
+            "items": {"type": "string", "pattern": "^[A-Za-z0-9._:/-]+$"}
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "evidence_complete": {"type": "boolean"},
+    "deterministic_validation_passed": {"type": "boolean"},
+    "strict_replay_passed": {"type": "boolean"},
+    "blocking_findings": {
+      "type": "array",
+      "items": {"type": "string", "pattern": "^[A-Za-z0-9._:/-]+$"}
+    },
+    "review_result": {"enum": ["PASS", "BLOCK"]},
+    "reviewed_at": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"},
+    "object_id": {"type": "string", "pattern": "^[A-Za-z0-9._:/-]+$"},
+    "payload_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "additionalProperties": false
+}

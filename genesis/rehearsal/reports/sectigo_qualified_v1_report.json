@@ -1,0 +1,144 @@
+{
+  "accuracy_semantics_documented": true,
+  "captured_utc": "2026-09-11T10:01:43Z",
+  "certificate_chain_verification": {
+    "detail": "OpenSSL certificate verification succeeded",
+    "verified": true
+  },
+  "certificate_requested": true,
+  "checker_tool_version": "OpenSSL 3.5.7 9 Jun 2026 (Library: OpenSSL 3.5.7 9 Jun 2026)",
+  "checker_version": "1.3",
+  "classification": "NON_FORECAST_REHEARSAL",
+  "content_sha256": "d5018c09eb37298f5c1d2ae7e3dcc1e18a2b756278c07006440a9cddf8ee8f9e",
+  "crl_evidence": {
+    "available": true,
+    "certificate_revocation_check": {
+      "detail": "CRL check and capture window verified",
+      "verified": true
+    },
+    "chain_revocation_verification": {
+      "detail": "OpenSSL certificate verification succeeded",
+      "verified": true
+    },
+    "crl_issuer_matches_signer_issuer": true,
+    "issuer": "C=ES, O=Sectigo (Europe) SL, CN=Sectigo Qualified Time Stamping CA R35",
+    "last_update": "2026-09-10T23:07:27Z",
+    "next_update": "2026-09-17T23:07:27Z",
+    "selected_crl_issuer_certificate_sha256_der": "cd0a3e00a1bdae3a159fa9e3d70f8e664f560fdce16357cbe440ed0b0d88244f",
+    "selected_crl_issuer_certificate_subject": "C=ES, O=Sectigo (Europe) SL, CN=Sectigo Qualified Time Stamping CA R35",
+    "sha256": "c55afa7eb05f4194a9e86ce1cbec1d48d88be6052efad643d3be99cff3bda89b",
+    "signature_verification": {
+      "detail": "OpenSSL CRL signature verification succeeded",
+      "verified": true
+    },
+    "signer_issuer_subject": "C=ES, O=Sectigo (Europe) SL, CN=Sectigo Qualified Time Stamping CA R35",
+    "source": "independently retained Sectigo Qualified Time Stamping CA R35 signer CRL",
+    "verification_scope": "TSA_SIGNER_ONLY"
+  },
+  "embedded_certificate_inventory": [
+    {
+      "extended_key_usage": [
+        "Time Stamping"
+      ],
+      "extended_key_usage_critical": false,
+      "issuer": "C=ES, O=Sectigo (Europe) SL, CN=Sectigo Qualified Time Stamping Root R45",
+      "not_after": "2035-10-04T23:59:59Z",
+      "not_before": "2020-10-05T00:00:00Z",
+      "role": "EMBEDDED_CHAIN",
+      "serial": "0CDA8301D3F3280E71CDB028A352C65B",
+      "sha256_der": "cd0a3e00a1bdae3a159fa9e3d70f8e664f560fdce16357cbe440ed0b0d88244f",
+      "subject": "C=ES, O=Sectigo (Europe) SL, CN=Sectigo Qualified Time Stamping CA R35"
+    },
+    {
+      "extended_key_usage": [
+        "Time Stamping"
+      ],
+      "extended_key_usage_critical": true,
+      "issuer": "C=ES, O=Sectigo (Europe) SL, CN=Sectigo Qualified Time Stamping CA R35",
+      "not_after": "2034-08-02T23:59:59Z",
+      "not_before": "2023-05-03T00:00:00Z",
+      "role": "TSA_SIGNER",
+      "serial": "660A98F14E15B2EC83C59581BED2E038",
+      "sha256_der": "4ffc3bcb2da5c1623a5e98714df0c4e9ca622db07cb0eb6b2083388a0602029d",
+      "subject": "C=ES, O=Sectigo (Europe) SL, CN=Sectigo Qualified Time Stamping Signer #3"
+    }
+  ],
+  "final_rehearsal_status": "REHEARSAL_VERIFIED",
+  "independent_tsa_certificate_matches_embedded": true,
+  "independent_tsa_certificate_sha256_der": "4ffc3bcb2da5c1623a5e98714df0c4e9ca622db07cb0eb6b2083388a0602029d",
+  "message_imprint": "3837b8ce2e012a913cbdab6f7e52bdc045013bdc4acfbc88abc99cee149275c6",
+  "message_imprint_algorithm": "sha256",
+  "message_imprint_matches_subject": true,
+  "nonce_equal": true,
+  "object_id": "rfc3161qualificationrehearsalreport:sectigo_qualified_rfc3161:428483f58bfa",
+  "object_type": "RFC3161QualificationRehearsalReport",
+  "payload_sha256": "428483f58bfad4247c09499d7ae3930ea3543d1444ed2b7aa89f0fd0b4474346",
+  "policy_semantics_documented": true,
+  "prospective_eligible": false,
+  "provider_id": "sectigo_qualified_rfc3161",
+  "provider_policy_evidence_source": "retained Sectigo eIDAS TSPPS v1.1.4 from the official Sectigo legal repository",
+  "raw_evidence_sha256": {
+    "crl": "c55afa7eb05f4194a9e86ce1cbec1d48d88be6052efad643d3be99cff3bda89b",
+    "independent_tsa_certificate": "e44f4b8726fdb27c8462fdb5142308094b19f798de2f8b33dfa324ced85d1bfe",
+    "provider_policy": "6d721d8ca07976bd4b331cd25f8d3c07cbef25874172702612bc08c737dca2ae",
+    "request": "4a9646234789d4c42c4fe5752b435f421c0c0dba8d6d6cbadf9070d4a79de544",
+    "response": "63ed7c29f1f00630e221c895283451b1c8c67ac554c03d98a6782fbe4a51f8fe",
+    "reviewed_semantic_assertion": "f9a2abaf1b2486f229e04496fa1045a6536e1da3cb75652ec29ea92d4ae20c45",
+    "subject": "3837b8ce2e012a913cbdab6f7e52bdc045013bdc4acfbc88abc99cee149275c6",
+    "tool_versions": "3780f5717dd5bacf74a48a8c72f153fe4b13ce4f005e6642c6b85835a0768e69",
+    "trust_anchor": "fd0f21a71934498d84e7630a39a52d51d36dd6523b710362d88cbf075985b645",
+    "untrusted_chain": "f5fac46e8c5b1a955ad0ceca9c1da3567a9549ddcd3c4513c252ae062ff2fc19"
+  },
+  "request_nonce": "20812634066f3b14",
+  "request_sha256": "4a9646234789d4c42c4fe5752b435f421c0c0dba8d6d6cbadf9070d4a79de544",
+  "response_nonce": "20812634066f3b14",
+  "response_sha256": "63ed7c29f1f00630e221c895283451b1c8c67ac554c03d98a6782fbe4a51f8fe",
+  "revocation_verification_scope": "TSA_SIGNER_ONLY",
+  "rfc3161_response_status": "GRANTED",
+  "rfc3161_signature_verification": {
+    "detail": "OpenSSL RFC 3161 verification succeeded",
+    "verified": true
+  },
+  "schema_version": "1.2",
+  "semantic_assertion_evidence": {
+    "accuracy_review_disposition": "TOKEN_ACCURACY_ACCEPTED",
+    "available": true,
+    "classification": "REVIEWED_RFC3161_QUALIFICATION_SEMANTICS",
+    "content_sha256": "25d4639026032fa1ae17eea6382a40cd096539f52f6d91b07529d615e0dc2c92",
+    "evidence_locator": "Sectigo eIDAS TSPPS v1.1.4: page 13 sections 5.1-5.2 (one-second UTC accuracy and best-practices-ts-policy OID 0.4.0.2023.1.1 applicability); page 15 section 6.2.2 (accuracy under +/-1 second to UTC); page 35 sections 8.1-8.2 (qualified-token semantics and qualified TSA endpoint); page 38 Annex B (token Accuracy 0x01 seconds).",
+    "observed_token_accuracy": "0x01 seconds, unspecified millis, unspecified micros",
+    "policy_review_disposition": "DOCUMENTED_APPLICABLE",
+    "provider_id": "sectigo_qualified_rfc3161",
+    "provider_policy_sha256": "6d721d8ca07976bd4b331cd25f8d3c07cbef25874172702612bc08c737dca2ae",
+    "raw_sha256": "f9a2abaf1b2486f229e04496fa1045a6536e1da3cb75652ec29ea92d4ae20c45",
+    "review_authority": "GEN_001_INDEPENDENT_QUALIFICATION_REVIEW",
+    "review_basis": "Independent review of the retained current Sectigo eIDAS TSPPS, the observed token policy OID, and observed token Accuracy.",
+    "reviewed_at": "2026-09-11T10:23:36Z",
+    "reviewer_id": "independent-review:gen001-sectigo-qualified-v1",
+    "token_policy_oid": "0.4.0.2023.1.1",
+    "verified": true
+  },
+  "subject_sha256": "3837b8ce2e012a913cbdab6f7e52bdc045013bdc4acfbc88abc99cee149275c6",
+  "token_accuracy": "0x01 seconds, unspecified millis, unspecified micros",
+  "token_gen_time": "2026-09-11T10:01:43Z",
+  "token_ordering": "no",
+  "token_policy_oid": "0.4.0.2023.1.1",
+  "tool_versions": [
+    "OpenSSL 3.5.7 9 Jun 2026 (Library: OpenSSL 3.5.7 9 Jun 2026)",
+    "curl 8.21.0 (x86_64-w64-mingw32) libcurl/8.21.0 Schannel zlib/1.3.2 brotli/1.2.0 zstd/1.5.7 libidn2/2.3.8 libpsl/0.21.5 libssh2/1.11.1 WinLDAP",
+    "Release-Date: 2026-06-24",
+    "Python 3.12.14"
+  ],
+  "trust_anchor_matches_embedded_certificate": false,
+  "trust_anchor_sha256_der": "f871f8976b4068d700d5f281084b4a29eaf4b8f35743330ba062fab46f58c2ed",
+  "trust_anchor_source": "independently retained Sectigo Qualified Time Stamping Root R45 certificate",
+  "tsa_certificate_extended_key_usage": [
+    "Time Stamping"
+  ],
+  "tsa_certificate_extended_key_usage_critical": true,
+  "tsa_certificate_not_after": "2034-08-02T23:59:59Z",
+  "tsa_certificate_not_before": "2023-05-03T00:00:00Z",
+  "tsa_certificate_serial": "660A98F14E15B2EC83C59581BED2E038",
+  "tsa_certificate_sha256_der": "4ffc3bcb2da5c1623a5e98714df0c4e9ca622db07cb0eb6b2083388a0602029d",
+  "unresolved_qualification_blockers": []
+}

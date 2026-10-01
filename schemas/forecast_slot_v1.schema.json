@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "fpp:forecast-slot:v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "object_type", "trusted_manifest_ref",
+    "issuance_schedule_policy_ref", "target_instance_ref",
+    "schedule_derivation_evidence_ref", "method_ref", "source_contract_refs",
+    "information_cutoff", "output_schema", "selection_control_class",
+    "forecast_cardinality", "object_id", "payload_sha256", "content_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "object_type": {"const": "ForecastSlot"},
+    "trusted_manifest_ref": {"$ref": "#/$defs/ref"},
+    "issuance_schedule_policy_ref": {"$ref": "#/$defs/ref"},
+    "target_instance_ref": {"$ref": "#/$defs/ref"},
+    "schedule_derivation_evidence_ref": {"$ref": "#/$defs/ref"},
+    "method_ref": {"$ref": "#/$defs/ref"},
+    "source_contract_refs": {
+      "type": "array", "minItems": 2, "maxItems": 2, "uniqueItems": true,
+      "items": {"$ref": "#/$defs/ref"}
+    },
+    "information_cutoff": {"$ref": "#/$defs/utc"},
+    "output_schema": {"const": "continuous_scalar_forecast_v1"},
+    "selection_control_class": {"const": "DETERMINISTIC_REPLAY"},
+    "forecast_cardinality": {"const": 1},
+    "object_id": {"$ref": "#/$defs/token"},
+    "payload_sha256": {"$ref": "#/$defs/sha256"},
+    "content_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "token": {"type": "string", "pattern": "^[A-Za-z0-9._:/-]+$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "utc": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"},
+    "ref": {
+      "type": "object", "additionalProperties": false,
+      "required": ["object_id", "content_sha256"],
+      "properties": {
+        "object_id": {"$ref": "#/$defs/token"},
+        "content_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}

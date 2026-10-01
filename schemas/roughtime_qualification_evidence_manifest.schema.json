@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://forecastprovenance.org/schemas/roughtime_qualification_evidence_manifest.schema.json",
+  "title": "Roughtime Qualification Evidence Manifest",
+  "type": "object",
+  "required": ["schema_version", "object_type", "criteria_id", "criteria_sha256", "provider_id", "entries"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "object_type": {"const": "RoughtimeQualificationEvidenceManifest"},
+    "criteria_id": {"const": "FPP_ROUGHTIME_PRODUCTION_QUALIFICATION_V1"},
+    "criteria_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "provider_id": {"enum": ["roughtime.se", "time.txryan.com", "TimeNL-Roughtime"]},
+    "entries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["relative_path", "size", "sha256", "artifact_type", "required"],
+        "properties": {
+          "relative_path": {"type": "string", "minLength": 1},
+          "size": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "artifact_type": {"type": "string", "pattern": "^[A-Za-z0-9._:/-]+$"},
+          "required": {"type": "boolean"},
+          "provider_id": {"enum": ["roughtime.se", "time.txryan.com", "TimeNL-Roughtime"]},
+          "attempt_number": {"type": "integer", "minimum": 1, "maximum": 2}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

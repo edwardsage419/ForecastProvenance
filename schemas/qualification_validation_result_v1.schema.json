@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://forecastprovenance.org/schemas/qualification_validation_result_v1.schema.json",
+  "title": "Qualification Validation Result V1",
+  "oneOf": [
+    {"$ref": "#/$defs/invalid_result"},
+    {"$ref": "#/$defs/valid_result"}
+  ],
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "utc": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"},
+    "ref": {
+      "type": "object",
+      "unevaluatedProperties": false,
+      "required": ["object_id", "content_sha256"],
+      "properties": {
+        "object_id": {"type": "string", "pattern": "^[A-Za-z0-9._:/-]+$"},
+        "content_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "identity": {
+      "type": "object",
+      "properties": {
+        "schema_version": {"const": "1.0"},
+        "object_type": {"const": "QualificationValidationResult"},
+        "qualification_validation_contract_ref": {"$ref": "#/$defs/ref"},
+        "qualification_validation_invocation_ref": {"$ref": "#/$defs/ref"},
+        "qualification_state_package_ref": {"$ref": "#/$defs/ref"},
+        "object_id": {"type": "string", "pattern": "^qualificationvalidationresult:v1:[0-9a-f]{12}$"},
+        "payload_sha256": {"$ref": "#/$defs/sha256"},
+        "content_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "invalid_result": {
+      "$ref": "#/$defs/identity",
+      "unevaluatedProperties": false,
+      "required": [
+        "schema_version",
+        "object_type",
+        "qualification_validation_contract_ref",
+        "qualification_validation_invocation_ref",
+        "qualification_state_package_ref",
+        "validation_status",
+        "primary_invalid_reason_code",
+        "object_id",
+        "payload_sha256",
+        "content_sha256"
+      ],
+      "properties": {
+        "validation_status": {"const": "INVALID"},
+        "primary_invalid_reason_code": {
+          "enum": [
+            "PACKAGE_STRICT_JSON_INVALID",
+            "PACKAGE_SCHEMA_INVALID",
+            "PACKAGE_SEALED_IDENTITY_OR_REFERENCE_INVALID",
+            "PACKAGE_MEMBER_MANIFEST_INVALID",
+            "PACKAGE_MEMBER_CLOSURE_INVALID",
+            "QUALIFICATION_INPUT_SCHEMA_INVALID",
+            "STATE_REPORT_MEMBER_INVALID",
+            "HISTORY_SNAPSHOT_AUTHENTICATION_INVALID",
+            "HISTORY_CUTOFF_INVALID",
+            "HISTORY_SUCCESSION_INVALID",
+            "HISTORY_COMPLETENESS_INVALID",
+            "QUALIFICATION_EVIDENCE_PACKAGE_INVALID",
+            "QUALIFICATION_AUTHORITY_CHAIN_INVALID",
+            "QUALIFICATION_STATE_DERIVATION_INVALID",
+            "STATE_REPORT_SEMANTIC_MISMATCH"
+          ]
+        }
+      }
+    },
+    "valid_result": {
+      "$ref": "#/$defs/identity",
+      "unevaluatedProperties": false,
+      "required": [
+        "schema_version",
+        "object_type",
+        "qualification_validation_contract_ref",
+        "qualification_validation_invocation_ref",
+        "qualification_state_package_ref",
+        "validation_status",
+        "provider_profile_ref",
+        "qualification_decision_ref",
+        "qualification_state_history_snapshot_ref",
+        "as_of_utc",
+        "qualification_state",
+        "derived_state_report_semantic_sha256",
+        "object_id",
+        "payload_sha256",
+        "content_sha256"
+      ],
+      "properties": {
+        "validation_status": {"const": "VALID"},
+        "provider_profile_ref": {"$ref": "#/$defs/ref"},
+        "qualification_decision_ref": {"$ref": "#/$defs/ref"},
+        "qualification_state_history_snapshot_ref": {"$ref": "#/$defs/ref"},
+        "as_of_utc": {"$ref": "#/$defs/utc"},
+        "qualification_state": {
+          "enum": [
+            "QUALIFICATION_BLOCKED",
+            "QUALIFICATION_EXPIRED",
+            "REQUALIFICATION_REQUIRED",
+            "PRODUCTION_QUALIFIED"
+          ]
+        },
+        "derived_state_report_semantic_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}

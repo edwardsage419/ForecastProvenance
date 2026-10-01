@@ -1,0 +1,43 @@
+{
+  "$defs": {
+    "digest": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
+    "gitsha1": {"pattern": "^[0-9a-f]{40}$", "type": "string"}
+  },
+  "$id": "https://forecastprovenance.org/schemas/roughtime_verifier_dependency_lock.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": "1.1"},
+    "object_type": {"const": "RoughtimeVerifierDependencyLock"},
+    "upstream_repository": {"const": "github.com/tannerryan/roughtime"},
+    "upstream_tag": {"const": "v1.27.0"},
+    "upstream_commit": {"const": "56b346a16cd7e8317bb0d24f1ec15549cf93a4c9"},
+    "upstream_tag_object_sha": {"const": "e1ae332e5920429b11ec4f10a7dda399ebeb6df8"},
+    "upstream_tag_signature_verified": {"const": true},
+    "source_scope": {"const": "protocol package compile inputs only"},
+    "files": {
+      "type": "array",
+      "minItems": 12,
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": {"type": "string", "pattern": "^protocol/[^/]+\\.go$"},
+          "git_blob_sha1": {"$ref": "#/$defs/gitsha1"},
+          "sha256": {"$ref": "#/$defs/digest"}
+        },
+        "required": ["path", "git_blob_sha1", "sha256"]
+      }
+    },
+    "upstream_source_tree_sha256": {"$ref": "#/$defs/digest"},
+    "lock_sha256": {"$ref": "#/$defs/digest"}
+  },
+  "required": [
+    "schema_version", "object_type", "upstream_repository", "upstream_tag",
+    "upstream_commit", "upstream_tag_object_sha", "upstream_tag_signature_verified",
+    "source_scope", "files", "upstream_source_tree_sha256", "lock_sha256"
+  ],
+  "title": "Roughtime Verifier Vendored Dependency Lock",
+  "type": "object"
+}

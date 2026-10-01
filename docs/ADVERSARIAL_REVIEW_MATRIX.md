@@ -29,7 +29,7 @@ All FTC_001 test material is synthetic. No fixture may be represented as genuine
 | ADV020 | Anchor proof loss | Required proof bytes unavailable | Current verifiability degrades |
 | ADV021 | Late anchor | Verified forecast existence bound exceeds frozen deadline | LATE_OR_INELIGIBLE |
 | ADV022 | Synthetic contamination | Synthetic fixture is reported as prospective eligible | INVALID |
-| ADV023 | Predecessor contamination | Psychohistory artifact is represented as native prospective evidence | INVALID |
+| ADV023 | Predecessor contamination | External or predecessor artifact is represented as native prospective evidence | INVALID |
 | ADV024 | Non substantive correction abuse | Change prediction through metadata correction | INVALID |
 | ADV025 | Correction erasure | Correction deletes original forecast | INVALID |
 | ADV026 | Replacement overwrite | Substantive replacement reuses original forecast identity | INVALID |

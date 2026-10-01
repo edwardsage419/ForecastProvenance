@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "fpp:issuance-cycle-plan:v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "object_type", "trusted_manifest_ref", "schedule_policy_ref",
+    "schedule_derivation_evidence_ref", "target_instance_ref", "method_refs",
+    "information_cutoff", "plan_commitment_deadline", "execution_window_open",
+    "execution_window_close", "external_proof_deadline",
+    "durability_completion_deadline", "expected_slots", "retry_policy_ref",
+    "omission_policy_ref", "object_id", "payload_sha256", "content_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "object_type": {"const": "IssuanceCyclePlan"},
+    "trusted_manifest_ref": {"$ref": "#/$defs/ref"},
+    "schedule_policy_ref": {"$ref": "#/$defs/ref"},
+    "schedule_derivation_evidence_ref": {"$ref": "#/$defs/ref"},
+    "target_instance_ref": {"$ref": "#/$defs/ref"},
+    "method_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/ref"}},
+    "information_cutoff": {"$ref": "#/$defs/utc"},
+    "plan_commitment_deadline": {"$ref": "#/$defs/utc"},
+    "execution_window_open": {"$ref": "#/$defs/utc"},
+    "execution_window_close": {"$ref": "#/$defs/utc"},
+    "external_proof_deadline": {"$ref": "#/$defs/utc"},
+    "durability_completion_deadline": {"$ref": "#/$defs/utc"},
+    "expected_slots": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/ref"}},
+    "retry_policy_ref": {"$ref": "#/$defs/ref"},
+    "omission_policy_ref": {"$ref": "#/$defs/ref"},
+    "object_id": {"$ref": "#/$defs/token"},
+    "payload_sha256": {"$ref": "#/$defs/sha256"},
+    "content_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "token": {"type": "string", "pattern": "^[A-Za-z0-9._:/-]+$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "utc": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"},
+    "ref": {
+      "type": "object", "additionalProperties": false,
+      "required": ["object_id", "content_sha256"],
+      "properties": {
+        "object_id": {"$ref": "#/$defs/token"},
+        "content_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}

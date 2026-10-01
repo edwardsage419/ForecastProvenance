@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://forecastprovenance.org/schemas/roughtime_provider_metadata_review.schema.json",
+  "title": "Roughtime Provider Metadata Review",
+  "type": "object",
+  "required": [
+    "schema_version", "object_type", "provider_id", "provider_profile_ref", "reviewed_at",
+    "source_captures", "operator_identity_status", "service_status", "endpoint_status",
+    "root_key_status", "protocol_status", "use_permission_status", "lifecycle_status",
+    "rotation_notice_status", "change_disposition", "reason_codes", "object_id", "payload_sha256", "content_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "object_type": {"const": "RoughtimeProviderMetadataReview"},
+    "provider_id": {"enum": ["roughtime.se", "time.txryan.com", "TimeNL-Roughtime"]},
+    "provider_profile_ref": {
+      "type": "object",
+      "required": ["object_id", "content_sha256"],
+      "properties": {
+        "object_id": {"type": "string", "pattern": "^[A-Za-z0-9._:/-]+$"},
+        "content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      },
+      "additionalProperties": false
+    },
+    "reviewed_at": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"},
+    "source_captures": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["source_id", "evidence_locator", "retrieved_at", "capture_sha256"],
+        "properties": {
+          "source_id": {"type": "string", "pattern": "^[A-Za-z0-9._:/-]+$"},
+          "evidence_locator": {"type": "string", "minLength": 1},
+          "retrieved_at": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"},
+          "capture_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "operator_identity_status": {"enum": ["UNCHANGED", "CHANGED", "UNKNOWN"]},
+    "service_status": {"enum": ["ACTIVE", "INACTIVE", "RETIRED", "UNKNOWN"]},
+    "endpoint_status": {"enum": ["UNCHANGED", "CHANGED", "UNKNOWN"]},
+    "root_key_status": {"enum": ["UNCHANGED", "CHANGED", "UNKNOWN"]},
+    "protocol_status": {"enum": ["UNCHANGED", "CHANGED", "TRANSITION_ANNOUNCED", "UNKNOWN"]},
+    "use_permission_status": {"enum": ["AFFIRMATIVE", "WITHDRAWN", "CONFLICTING", "UNKNOWN"]},
+    "lifecycle_status": {"enum": ["STANDARD", "PILOT_EXPERIMENTAL", "DEPRECATED", "RETIRED", "UNKNOWN"]},
+    "rotation_notice_status": {"enum": ["NONE_PUBLISHED", "PUBLISHED_CHANGE", "UNKNOWN"]},
+    "change_disposition": {"enum": ["UNCHANGED", "QUALIFICATION_RELEVANT_CHANGE", "BLOCKING_UNKNOWN"]},
+    "reason_codes": {
+      "type": "array",
+      "items": {"type": "string", "pattern": "^[A-Za-z0-9._:/-]+$"}
+    },
+    "object_id": {"type": "string", "pattern": "^[A-Za-z0-9._:/-]+$"},
+    "payload_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "additionalProperties": false
+}
