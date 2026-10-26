@@ -1,0 +1,19 @@
+{
+  "role": "HISTORICAL_CANDIDATE_SELECTOR_NOT_ACTUAL_RULE",
+  "source": {
+    "path": "genesis/candidate/objects/candidate_object_set_v0_2.json",
+    "bytes": 17699,
+    "sha256": "4ed0a8e9a84b4732c0a96d5c009951d209b1c7cca0279aa9142b4679cbc5fe7c"
+  },
+  "target_candidate_ref": {
+    "object_id": "target:us-cpi-all-items-mom-sa:v1",
+    "content_sha256": "878a0746d8106a35c949010d2b9dcb79fc94c119713d56b7d6bc1db82c33b230"
+  },
+  "resolution_candidate_ref": {
+    "object_id": "resolution:us-cpi-all-items-mom-sa:v1",
+    "content_sha256": "c53664a87813e5854e944c6d79233111ef45c733a0d7a5accbe90582c752a724"
+  },
+  "semantic_selector": "CPI_TABLE_1_ALL_ITEMS_SEASONALLY_ADJUSTED_PERCENT_CHANGE_PRECEDING_MONTH",
+  "actual_rule_adopted": false,
+  "actual_source_admission": "NOT_ESTABLISHED"
+}

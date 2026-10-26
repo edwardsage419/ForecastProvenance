@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/Users/sage/Projects/ForecastProvenance/docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/replay_exact.py", line 120, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/Users/sage/Projects/ForecastProvenance/docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/replay_exact.py", line 88, in main
+    else:(root/r['alias']).write_bytes(raw);seen[r['alias']]=raw
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sage/.pyenv/versions/3.12.3/lib/python3.12/pathlib.py", line 1036, in write_bytes
+    with self.open(mode='wb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sage/.pyenv/versions/3.12.3/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/var/folders/s3/ngz2fgkx6qbdbd28crfsdndc0000gn/T/d228-mixed-rht23hcv/binding/expected.json'

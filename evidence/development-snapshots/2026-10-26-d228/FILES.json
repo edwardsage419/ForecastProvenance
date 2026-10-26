@@ -1,0 +1,687 @@
+{
+  "files": [
+    {
+      "bytes": 15024382,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/base/q1-gate-mainline-replay.zip",
+      "restore_to": "docs/development/q1-gate-mainline-replay-delivery-2026-10-25-rev-001/q1-gate-mainline-replay.zip",
+      "role": "FROZEN_FINITE_DEVELOPMENT_BASE",
+      "sha256": "929c335232c9eae1ccde94bab6dca9b2395cf8c6600579a673e4f09ba69f648f",
+      "source_path": "docs/development/q1-gate-mainline-replay-delivery-2026-10-25-rev-001/q1-gate-mainline-replay.zip"
+    },
+    {
+      "bytes": 913,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/ACTUAL_RESULTS.json",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/ACTUAL_RESULTS.json",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "c5e061d2be2d800590bbb59e726a35606bdf0cf9c57e84b655ae7d3b3cdcbdc2",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/ACTUAL_RESULTS.json"
+    },
+    {
+      "bytes": 690,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/BEFORE.json",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/BEFORE.json",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "c8dc3db57956f1003c630ee682113baeedd5a33969898a566675dea5e4a77c35",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/BEFORE.json"
+    },
+    {
+      "bytes": 1284,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/BEFORE_TESTS.json",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/BEFORE_TESTS.json",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "9220d35e5b2f2c4bd721484d4d8df566dc88f6980b5490b463adee0e9bf7a066",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/BEFORE_TESTS.json"
+    },
+    {
+      "bytes": 793,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/CANDIDATE_SELECTOR_IDENTITY.json",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/CANDIDATE_SELECTOR_IDENTITY.json",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "d1ca59ae67f25679945c8f2b240a4c6dc0876892f05ad64b9565cf43b126d502",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/CANDIDATE_SELECTOR_IDENTITY.json"
+    },
+    {
+      "bytes": 19512,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/DIFFERENCES_RELOCATED_A.json",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/DIFFERENCES_RELOCATED_A.json",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "8b94a17b892367aabe95177073ae73045046480b9f25c996772c8ab36de3bdc5",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/DIFFERENCES_RELOCATED_A.json"
+    },
+    {
+      "bytes": 19512,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/DIFFERENCES_RELOCATED_B.json",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/DIFFERENCES_RELOCATED_B.json",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "2041018b3515ffa083e61913050880832904e59ca1d0c494a25a36a227cb1119",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/DIFFERENCES_RELOCATED_B.json"
+    },
+    {
+      "bytes": 111,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/GREEN.txt",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/GREEN.txt",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "4b4fb5fa6509b317475ac650c7eab655c6cc60f80a91cb3d675ed5a03aa47b25",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/GREEN.txt"
+    },
+    {
+      "bytes": 1194,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/GREEN_FIRST.txt",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/GREEN_FIRST.txt",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "f92beacb6170b1b076f7fdd3031a9e80283ba8f4219ea680e90855cddfd99354",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/GREEN_FIRST.txt"
+    },
+    {
+      "bytes": 230120,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/MAINLINE_A.json",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/MAINLINE_A.json",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "1320e26acf8004b4078c160c5a33fc1518ffae38d1e8e377fd71d78d42395d4e",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/MAINLINE_A.json"
+    },
+    {
+      "bytes": 0,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/MAINLINE_A.stderr.txt",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/MAINLINE_A.stderr.txt",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/MAINLINE_A.stderr.txt"
+    },
+    {
+      "bytes": 230120,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/MAINLINE_B.json",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/MAINLINE_B.json",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "1320e26acf8004b4078c160c5a33fc1518ffae38d1e8e377fd71d78d42395d4e",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/MAINLINE_B.json"
+    },
+    {
+      "bytes": 0,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/MAINLINE_B.stderr.txt",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/MAINLINE_B.stderr.txt",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/MAINLINE_B.stderr.txt"
+    },
+    {
+      "bytes": 227907,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/MIXED_BAD_AND_MISSING.json",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/MIXED_BAD_AND_MISSING.json",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "92166511bdaab53a0374cb55fe565a74261b69ab70ac7c7a295fa06f147fff64",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/MIXED_BAD_AND_MISSING.json"
+    },
+    {
+      "bytes": 0,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/MIXED_BAD_AND_MISSING.stderr.txt",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/MIXED_BAD_AND_MISSING.stderr.txt",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/MIXED_BAD_AND_MISSING.stderr.txt"
+    },
+    {
+      "bytes": 2808,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/OVERLAY.json",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/OVERLAY.json",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "e5a352a38f081dbff2a190941a39d37e4940f5c0c00353c024ba11c9366f563c",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/OVERLAY.json"
+    },
+    {
+      "bytes": 2038,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/PLAN.md",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/PLAN.md",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "3437f3927c97d4735edcccfce17d120362ab35168b997f1318ff71f2ac48210b",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/PLAN.md"
+    },
+    {
+      "bytes": 2409,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/PROGRESS.md",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/PROGRESS.md",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "dd73bf234635e78bb8af5eaea4e65049b31cd29c0d31b86f84325344afa67430",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/PROGRESS.md"
+    },
+    {
+      "bytes": 462,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/PUBLIC_INPUT.json",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/PUBLIC_INPUT.json",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "b6391356c763e4fc7b1e2c8ae709ecc7bfc4c92ca150caa05d1bf5335b3d8396",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/PUBLIC_INPUT.json"
+    },
+    {
+      "bytes": 11049,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/RED.txt",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/RED.txt",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "3dc780c0d9e9f66231849e23d54340af2cf2c00546a8b1c686aaaadff1185583",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/RED.txt"
+    },
+    {
+      "bytes": 3429,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/REGRESSION_ABORTED_CWD.txt",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/REGRESSION_ABORTED_CWD.txt",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "92aed74170fd77b227f6ccfef2d6d4666c55143be929df6fae65e2866aada1c4",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/REGRESSION_ABORTED_CWD.txt"
+    },
+    {
+      "bytes": 176,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/REGRESSION_FINAL.txt",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/REGRESSION_FINAL.txt",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "9e82ddc34d2f4ad79527498565e9bedc50c9f30c9900bf75e8d477d3e48a2084",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/REGRESSION_FINAL.txt"
+    },
+    {
+      "bytes": 51,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/REGRESSION_FIRST.txt",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/REGRESSION_FIRST.txt",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "e85b0cf43d10e96fca984acdc22f6a26f0cf5842e74c048865aa30307745d6b3",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/REGRESSION_FIRST.txt"
+    },
+    {
+      "bytes": 7607,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/REGRESSION_FIRST_VALID.txt",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/REGRESSION_FIRST_VALID.txt",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "51b3c7d1fc5f136113d0ee09009914aab5ea36dde8b61c061dc0a7d341738847",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/REGRESSION_FIRST_VALID.txt"
+    },
+    {
+      "bytes": 107,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/REGRESSION_PDF_FINAL.txt",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/REGRESSION_PDF_FINAL.txt",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "d0c808b0b998231c53a7dd7972936a29dbe3e67c509d0a21e5e717b4cc2afba1",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/REGRESSION_PDF_FINAL.txt"
+    },
+    {
+      "bytes": 230120,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/RELOCATED_A.json",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/RELOCATED_A.json",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "355d476f1bbf55978da470d052906996c5618445e9506ffb84032d1d59cff367",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/RELOCATED_A.json"
+    },
+    {
+      "bytes": 0,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/RELOCATED_A.stderr.txt",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/RELOCATED_A.stderr.txt",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/RELOCATED_A.stderr.txt"
+    },
+    {
+      "bytes": 230120,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/RELOCATED_B.json",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/RELOCATED_B.json",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "f2f3343ee148e96ce72b08a2e306f1f0836d22375475bc805704fc22b3699e20",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/RELOCATED_B.json"
+    },
+    {
+      "bytes": 0,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/RELOCATED_B.stderr.txt",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/RELOCATED_B.stderr.txt",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/RELOCATED_B.stderr.txt"
+    },
+    {
+      "bytes": 1055,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/REPLAY_FIRST_MISSING_ALIAS_PARENT.txt",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/REPLAY_FIRST_MISSING_ALIAS_PARENT.txt",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "0d5eab59f03de574490ae71f2593679ed9adca67ad7f69844e1128e55fe1c28c",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/REPLAY_FIRST_MISSING_ALIAS_PARENT.txt"
+    },
+    {
+      "bytes": 805,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/REPLAY_LOG.txt",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/REPLAY_LOG.txt",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "e98a9e46a3df3eb5a2e9fd9e7d200030bec4cf114a76f1d9fa157096987a5ac8",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/REPLAY_LOG.txt"
+    },
+    {
+      "bytes": 4024,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/REPORT.md",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/REPORT.md",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "0334924f18a7daa2231257130ac7ec3b238d135fc32d9fed0afd56778616dd0f",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/REPORT.md"
+    },
+    {
+      "bytes": 5385,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/REVIEW.md",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/REVIEW.md",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "b8d9c2b1aa957f173a706610db6e5e6cefe43c2b1251ab4b00e9aa28c3121243",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/REVIEW.md"
+    },
+    {
+      "bytes": 33170,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/SCOPED_DIFF.patch",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/SCOPED_DIFF.patch",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "d05156416a41f8f78058f7f480088959d92a6c077b1815e50575b5fa3c7c597d",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/SCOPED_DIFF.patch"
+    },
+    {
+      "bytes": 2327,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/SOURCE_IDENTITIES.json",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/SOURCE_IDENTITIES.json",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "a878f8c57550303e1b5ab4e75303defcc9b936ffa55d08a57420da48e2e6680c",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/SOURCE_IDENTITIES.json"
+    },
+    {
+      "bytes": 726,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/START_HERE.md",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/START_HERE.md",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "0201c2818f5e6e6d429d5a51293e76961d2dbc7d67a27b4e0e781f226d7ea7ea",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/START_HERE.md"
+    },
+    {
+      "bytes": 5158,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/TABLE1_EXTRACTED.txt",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/TABLE1_EXTRACTED.txt",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "21b9234461091c4297cb698b919247fdba6150ad19e7d86f0deeb8f3c20b1f3a",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/TABLE1_EXTRACTED.txt"
+    },
+    {
+      "bytes": 408,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/VERIFY_TABLE1_HUMAN.txt",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/VERIFY_TABLE1_HUMAN.txt",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "de875c7e80c51f64f602fc3e70391a42061ce9eaee70d6af6297b6b5cad313a5",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/VERIFY_TABLE1_HUMAN.txt"
+    },
+    {
+      "bytes": 36455,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/before-source/README.md",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/before-source/README.md",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "cc8b697a27cbed83cebbf6a754fc7cf4d0b62a82e9e648101aa0555facc77439",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/before-source/README.md"
+    },
+    {
+      "bytes": 17626,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/before-source/catalog.json",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/before-source/catalog.json",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "02c624daa0da2f6a358a52d51412d1019dbd137ff7fe69aa1719a4384dc5cbff",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/before-source/catalog.json"
+    },
+    {
+      "bytes": 48532,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/before-source/cli.py",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/before-source/cli.py",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "6ace716584fad2590f95e4685ef814dd4eea752c713bbc719df54779c91b7391",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/before-source/cli.py"
+    },
+    {
+      "bytes": 31231,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/before-source/test_cli.py",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/before-source/test_cli.py",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "dfdcf6952eba0064e6b53221acfa066df5c33134fa6515b65141ee18bde4b3cd",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/before-source/test_cli.py"
+    },
+    {
+      "bytes": 18909,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/before-source/test_mainline_verifier.py",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/before-source/test_mainline_verifier.py",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "992e807bf55b0dfbeebd99ee6cb4a396f699f3d04fe0c66dc2e1b0ba5c7d1389",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/before-source/test_mainline_verifier.py"
+    },
+    {
+      "bytes": 11220,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/before-source/test_predecessor_binding.py",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/before-source/test_predecessor_binding.py",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "5552d8134bd964a549066878d0b8d648912df2e1f60e9337482cf8f4ddeebd75",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/before-source/test_predecessor_binding.py"
+    },
+    {
+      "bytes": 13493,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/before-source/test_q1_scope.py",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/before-source/test_q1_scope.py",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "6381d6f951da3be516a307506f65e7c6e37c48a1965b2c5164431133be190699",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/before-source/test_q1_scope.py"
+    },
+    {
+      "bytes": 6748,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/before-source/test_runtime_availability.py",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/before-source/test_runtime_availability.py",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "6a7d90be448378cc198b57587d71261c92aacd1f1408023012082ec4391e6194",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/before-source/test_runtime_availability.py"
+    },
+    {
+      "bytes": 10651,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/before-source/test_u3_a1.py",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/before-source/test_u3_a1.py",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "2061f57a929b435e9c4245f9b738d3c38a38306441fdc3549f1a6e1debb187b8",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/before-source/test_u3_a1.py"
+    },
+    {
+      "bytes": 12411,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/before-source/test_verifier_gate.py",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/before-source/test_verifier_gate.py",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "0ed9e367b5ebed6a3cf4df31cf5b76a48854ece738f8f018784e9838d2b2a97d",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/before-source/test_verifier_gate.py"
+    },
+    {
+      "bytes": 9941,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/before-source/worker.py",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/before-source/worker.py",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "48ba7696a5738c889ca1480043cd893f453d937561365f7a2c23b24549f305d6",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/before-source/worker.py"
+    },
+    {
+      "bytes": 18648,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/overlay/scripts/development/offline_evidence/catalog.json",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/overlay/scripts/development/offline_evidence/catalog.json",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "bd8501c5930dc2d521bb9717f577ab20f3d0598101a9575e23fd503d3d8d5e85",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/overlay/scripts/development/offline_evidence/catalog.json"
+    },
+    {
+      "bytes": 51784,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/overlay/scripts/development/offline_evidence/cli.py",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/overlay/scripts/development/offline_evidence/cli.py",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "103c75a5c9d82755296ecd778c0a104d44e24e66dcdbde2e3f2d9eea301e25d9",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/overlay/scripts/development/offline_evidence/cli.py"
+    },
+    {
+      "bytes": 3689,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/overlay/scripts/development/offline_evidence/cpi_table1.py",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/overlay/scripts/development/offline_evidence/cpi_table1.py",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "2c72df24979aa27671816819029e416ce12a27f2d684939f239cd3d5521e1e93",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/overlay/scripts/development/offline_evidence/cpi_table1.py"
+    },
+    {
+      "bytes": 38883,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/overlay/scripts/development/offline_evidence/mainline_worker.py",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/overlay/scripts/development/offline_evidence/mainline_worker.py",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "e91900adf10a405f7ff4b1672d6af8d570d80bc059b074211fc1aff640bdc32e",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/overlay/scripts/development/offline_evidence/mainline_worker.py"
+    },
+    {
+      "bytes": 4974,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/overlay/scripts/development/offline_evidence/u3_a1.py",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/overlay/scripts/development/offline_evidence/u3_a1.py",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "29f48c62859ccf45f0b07e590fcceb9d2bd7af86a1b5e1a1d0a47a3b3ea897c5",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/overlay/scripts/development/offline_evidence/u3_a1.py"
+    },
+    {
+      "bytes": 10426,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/overlay/scripts/development/offline_evidence/worker.py",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/overlay/scripts/development/offline_evidence/worker.py",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "dfee8d478e23b19be52d3e443608ba89d007ee25c2c045aef90910e40a821128",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/overlay/scripts/development/offline_evidence/worker.py"
+    },
+    {
+      "bytes": 7389,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/replay_exact.py",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/replay_exact.py",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "afa1c710616de41d65d05aa70c4702cce65e9c771bbdcb4c0a2860a779e1b41c",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/replay_exact.py"
+    },
+    {
+      "bytes": 379393,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/visual/cpi-table1.png",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/visual/cpi-table1.png",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "a6503d6a60d02e97cc098eaa748031747dea2b94513b640ea9e2eef7c73275cd",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/visual/cpi-table1.png"
+    },
+    {
+      "bytes": 16198,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/D228/VERIFICATION.json",
+      "restore_to": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/VERIFICATION.json",
+      "role": "D228_RETAINED_DEVELOPMENT_RECORD",
+      "sha256": "02aad20e6096ddba5b32f26933f9a6edee0abde879ac9663d62c5331dc4fc05e",
+      "source_path": "docs/development/cpi-exact-table1-consumption-2026-10-26-rev-001/VERIFICATION.json"
+    },
+    {
+      "bytes": 2557,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/reports/fp-cpi-exact-table1-consumption-2026-10-26-173650.md",
+      "restore_to": "docs/development/codex-checkpoints/fp-cpi-exact-table1-consumption-2026-10-26-173650.md",
+      "role": "D228_CHECKPOINT",
+      "sha256": "d57be44bc346771ee9d68c8a4f3ded08ee8e2397860ade0340586a3d777eb498",
+      "source_path": "docs/development/codex-checkpoints/fp-cpi-exact-table1-consumption-2026-10-26-173650.md"
+    },
+    {
+      "base_before": null,
+      "bytes": 10668,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/source-overlay/scripts/development/offline_evidence/test_u3_a1.py",
+      "restore_to": "scripts/development/offline_evidence/test_u3_a1.py",
+      "role": "CURRENT_SELECTED_SOURCE",
+      "sha256": "74f133bee036b5a95283553fb50f4caeaeb71cfc47bd5c77614f9493cf8fe04f",
+      "source_path": "scripts/development/offline_evidence/test_u3_a1.py"
+    },
+    {
+      "base_before": {
+        "bytes": 9539,
+        "sha256": "2d97c1c339bf63f8ba83337a852eff804614503e47e54749d079502db1cdb59f"
+      },
+      "bytes": 10426,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/source-overlay/scripts/development/offline_evidence/worker.py",
+      "restore_to": "scripts/development/offline_evidence/worker.py",
+      "role": "CURRENT_SELECTED_SOURCE",
+      "sha256": "dfee8d478e23b19be52d3e443608ba89d007ee25c2c045aef90910e40a821128",
+      "source_path": "scripts/development/offline_evidence/worker.py"
+    },
+    {
+      "base_before": null,
+      "bytes": 18926,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/source-overlay/scripts/development/offline_evidence/test_mainline_verifier.py",
+      "restore_to": "scripts/development/offline_evidence/test_mainline_verifier.py",
+      "role": "CURRENT_SELECTED_SOURCE",
+      "sha256": "11cf7c958861b4a7c85b58bf4346cf456586753a71168591947650748b4d5a5e",
+      "source_path": "scripts/development/offline_evidence/test_mainline_verifier.py"
+    },
+    {
+      "base_before": null,
+      "bytes": 11230,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/source-overlay/scripts/development/offline_evidence/test_predecessor_binding.py",
+      "restore_to": "scripts/development/offline_evidence/test_predecessor_binding.py",
+      "role": "CURRENT_SELECTED_SOURCE",
+      "sha256": "e970162f59cee9afcc51769141fbdf31967b354c24e388f4ed4dd5d1c04f12d3",
+      "source_path": "scripts/development/offline_evidence/test_predecessor_binding.py"
+    },
+    {
+      "base_before": {
+        "bytes": 34736,
+        "sha256": "3546fa3f6b494aed88ec7d2a1661de1f526d1357d00a4b83b3fdf5394f550c2c"
+      },
+      "bytes": 37568,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/source-overlay/scripts/development/offline_evidence/README.md",
+      "restore_to": "scripts/development/offline_evidence/README.md",
+      "role": "CURRENT_SELECTED_SOURCE",
+      "sha256": "5ae87b222786cf8b053bbc361ab1c74c5847c3ba1087688c4424d195d934a170",
+      "source_path": "scripts/development/offline_evidence/README.md"
+    },
+    {
+      "base_before": null,
+      "bytes": 13503,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/source-overlay/scripts/development/offline_evidence/test_q1_scope.py",
+      "restore_to": "scripts/development/offline_evidence/test_q1_scope.py",
+      "role": "CURRENT_SELECTED_SOURCE",
+      "sha256": "9046a60de5cf8391f5867b23d41a1c403e58ec33aa4d7e62b58c4ba39d2eb6d9",
+      "source_path": "scripts/development/offline_evidence/test_q1_scope.py"
+    },
+    {
+      "base_before": null,
+      "bytes": 12421,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/source-overlay/scripts/development/offline_evidence/test_verifier_gate.py",
+      "restore_to": "scripts/development/offline_evidence/test_verifier_gate.py",
+      "role": "CURRENT_SELECTED_SOURCE",
+      "sha256": "c50e993e1c7a6f6fb0a2b8fbfca38a8639368aba304a2ff7b9baa58fcee7f497",
+      "source_path": "scripts/development/offline_evidence/test_verifier_gate.py"
+    },
+    {
+      "base_before": {
+        "bytes": 45590,
+        "sha256": "24f141f7624e031ddf8b3741f0080c559b528c99d040ad0491107aef3dcabe5a"
+      },
+      "bytes": 51784,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/source-overlay/scripts/development/offline_evidence/cli.py",
+      "restore_to": "scripts/development/offline_evidence/cli.py",
+      "role": "CURRENT_SELECTED_SOURCE",
+      "sha256": "103c75a5c9d82755296ecd778c0a104d44e24e66dcdbde2e3f2d9eea301e25d9",
+      "source_path": "scripts/development/offline_evidence/cli.py"
+    },
+    {
+      "base_before": {
+        "bytes": 15441,
+        "sha256": "4f9c5bf00f38b9baea484f6658331c39e4fdc217bdcbbb3c9c0659f59e8c38db"
+      },
+      "bytes": 18648,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/source-overlay/scripts/development/offline_evidence/catalog.json",
+      "restore_to": "scripts/development/offline_evidence/catalog.json",
+      "role": "CURRENT_SELECTED_SOURCE",
+      "sha256": "bd8501c5930dc2d521bb9717f577ab20f3d0598101a9575e23fd503d3d8d5e85",
+      "source_path": "scripts/development/offline_evidence/catalog.json"
+    },
+    {
+      "base_before": null,
+      "bytes": 31231,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/source-overlay/scripts/development/offline_evidence/test_cli.py",
+      "restore_to": "scripts/development/offline_evidence/test_cli.py",
+      "role": "CURRENT_SELECTED_SOURCE",
+      "sha256": "ef575ee37662193fd3bb5d129758c9b64888f6d135f56c7808e3778e702efebc",
+      "source_path": "scripts/development/offline_evidence/test_cli.py"
+    },
+    {
+      "base_before": null,
+      "bytes": 6772,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/source-overlay/scripts/development/offline_evidence/test_runtime_availability.py",
+      "restore_to": "scripts/development/offline_evidence/test_runtime_availability.py",
+      "role": "CURRENT_SELECTED_SOURCE",
+      "sha256": "34139da0f0a295d4ae70ba501266f9b8d93aa8ff0120bba0d43865edbac0aea6",
+      "source_path": "scripts/development/offline_evidence/test_runtime_availability.py"
+    },
+    {
+      "base_before": null,
+      "bytes": 3689,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/source-overlay/scripts/development/offline_evidence/cpi_table1.py",
+      "restore_to": "scripts/development/offline_evidence/cpi_table1.py",
+      "role": "CURRENT_SELECTED_SOURCE",
+      "sha256": "2c72df24979aa27671816819029e416ce12a27f2d684939f239cd3d5521e1e93",
+      "source_path": "scripts/development/offline_evidence/cpi_table1.py"
+    },
+    {
+      "base_before": null,
+      "bytes": 9418,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/source-overlay/scripts/development/offline_evidence/test_cpi_table1.py",
+      "restore_to": "scripts/development/offline_evidence/test_cpi_table1.py",
+      "role": "CURRENT_SELECTED_SOURCE",
+      "sha256": "a215fde21ffc9780cb2a63f5211443fda0e8be127db9f0947a35564d5b9ca149",
+      "source_path": "scripts/development/offline_evidence/test_cpi_table1.py"
+    },
+    {
+      "base_before": {
+        "bytes": 38033,
+        "sha256": "c4419ed7f1208921a43292eaa3095c582878aed3c7b6546b6fb51de46e5e0893"
+      },
+      "bytes": 38883,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/source-overlay/scripts/development/offline_evidence/mainline_worker.py",
+      "restore_to": "scripts/development/offline_evidence/mainline_worker.py",
+      "role": "UNCHANGED_D222_SOURCE",
+      "sha256": "e91900adf10a405f7ff4b1672d6af8d570d80bc059b074211fc1aff640bdc32e",
+      "source_path": "scripts/development/offline_evidence/mainline_worker.py"
+    },
+    {
+      "base_before": null,
+      "bytes": 7872,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/source-overlay/docs/development/q1-gate-mainline-replay-delivery-2026-10-25-rev-001/test_q1_gate_delivery.py",
+      "restore_to": "docs/development/q1-gate-mainline-replay-delivery-2026-10-25-rev-001/test_q1_gate_delivery.py",
+      "role": "EXISTING_PINNED_REPLAY_HELPER",
+      "sha256": "3c16d177f1d584a7d8a7042984497eee79802c29ed638c956f1f2b9bf455a5cb",
+      "source_path": "docs/development/q1-gate-mainline-replay-delivery-2026-10-25-rev-001/test_q1_gate_delivery.py"
+    },
+    {
+      "base_before": null,
+      "bytes": 17699,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/source-overlay/genesis/candidate/objects/candidate_object_set_v0_2.json",
+      "restore_to": "genesis/candidate/objects/candidate_object_set_v0_2.json",
+      "role": "HISTORICAL_CANDIDATE_LOCATOR_NOT_ADOPTED",
+      "sha256": "4ed0a8e9a84b4732c0a96d5c009951d209b1c7cca0279aa9142b4679cbc5fe7c",
+      "source_path": "genesis/candidate/objects/candidate_object_set_v0_2.json"
+    },
+    {
+      "bytes": 2308,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/README.md",
+      "restore_to": null,
+      "role": "PUBLICATION_EXPLANATION_NOT_PROTOCOL_EVIDENCE",
+      "sha256": "addeec9e10d0dc831484a00fea512af060c3fd1d0b177b2598aa95c305f8c41e",
+      "source_path": "docs/development/public-retention-exact-proposal-2026-10-26-rev-001/README.md"
+    },
+    {
+      "bytes": 2922,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/FREE_CONDITIONS.md",
+      "restore_to": null,
+      "role": "PUBLICATION_EXPLANATION_NOT_PROTOCOL_EVIDENCE",
+      "sha256": "55854711d8a4fc59488499f99c69fa939bacbf680225577af87389edd754cdf0",
+      "source_path": "docs/development/public-retention-exact-proposal-2026-10-26-rev-001/FREE_CONDITIONS.md"
+    },
+    {
+      "bytes": 3582,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/RECOVERY.md",
+      "restore_to": null,
+      "role": "PUBLICATION_EXPLANATION_NOT_PROTOCOL_EVIDENCE",
+      "sha256": "39453ce861e62dc56374d9fde31f1b703b5923e067389629ca6cbb81a3b3ab07",
+      "source_path": "docs/development/public-retention-exact-proposal-2026-10-26-rev-001/RECOVERY.md"
+    },
+    {
+      "bytes": 2519,
+      "repository_path": "evidence/development-snapshots/2026-10-26-d228/PUBLISH_SCOPE.md",
+      "restore_to": null,
+      "role": "PUBLICATION_EXPLANATION_NOT_PROTOCOL_EVIDENCE",
+      "sha256": "1af1cad4fb96d7ffe4662ebad4532a87f9a6173b94aab3c0a8891d4a8569be53",
+      "source_path": "docs/development/public-retention-exact-proposal-2026-10-26-rev-001/PUBLISH_SCOPE.md"
+    }
+  ],
+  "full_project_retention_established": false,
+  "index_self": {
+    "repository_path": "evidence/development-snapshots/2026-10-26-d228/FILES.json",
+    "sha256_bound_outside_this_index": true
+  },
+  "observed_parent": "fc32ccfbd07359bd672a452ff3a7b7f3765ad965",
+  "ordinary_entry_bytes": 17363199,
+  "ordinary_entry_count": 79,
+  "parent_must_be_revalidated": true,
+  "payload_bytes": 17351868,
+  "payload_count": 75,
+  "protocol_state_change": "NONE",
+  "publication_performed": false,
+  "real_admission": "NOT_READY",
+  "remote_restore_verified": false,
+  "repository": "edwardsage419/ForecastProvenance",
+  "repository_prefix": "evidence/development-snapshots/2026-10-26-d228/",
+  "role": "EXACT_PROPOSED_FINITE_DEVELOPMENT_PUBLICATION_NOT_ADOPTED",
+  "source_overlay_count": 16,
+  "total_publication_files_including_index": 80
+}

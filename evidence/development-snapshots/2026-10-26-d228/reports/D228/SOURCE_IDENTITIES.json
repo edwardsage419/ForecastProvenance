@@ -1,0 +1,67 @@
+[
+  {
+    "path": "scripts/development/offline_evidence/test_u3_a1.py",
+    "bytes": 10668,
+    "sha256": "74f133bee036b5a95283553fb50f4caeaeb71cfc47bd5c77614f9493cf8fe04f"
+  },
+  {
+    "path": "scripts/development/offline_evidence/worker.py",
+    "bytes": 10426,
+    "sha256": "dfee8d478e23b19be52d3e443608ba89d007ee25c2c045aef90910e40a821128"
+  },
+  {
+    "path": "scripts/development/offline_evidence/test_mainline_verifier.py",
+    "bytes": 18926,
+    "sha256": "11cf7c958861b4a7c85b58bf4346cf456586753a71168591947650748b4d5a5e"
+  },
+  {
+    "path": "scripts/development/offline_evidence/test_predecessor_binding.py",
+    "bytes": 11230,
+    "sha256": "e970162f59cee9afcc51769141fbdf31967b354c24e388f4ed4dd5d1c04f12d3"
+  },
+  {
+    "path": "scripts/development/offline_evidence/README.md",
+    "bytes": 37568,
+    "sha256": "5ae87b222786cf8b053bbc361ab1c74c5847c3ba1087688c4424d195d934a170"
+  },
+  {
+    "path": "scripts/development/offline_evidence/test_q1_scope.py",
+    "bytes": 13503,
+    "sha256": "9046a60de5cf8391f5867b23d41a1c403e58ec33aa4d7e62b58c4ba39d2eb6d9"
+  },
+  {
+    "path": "scripts/development/offline_evidence/test_verifier_gate.py",
+    "bytes": 12421,
+    "sha256": "c50e993e1c7a6f6fb0a2b8fbfca38a8639368aba304a2ff7b9baa58fcee7f497"
+  },
+  {
+    "path": "scripts/development/offline_evidence/cli.py",
+    "bytes": 51784,
+    "sha256": "103c75a5c9d82755296ecd778c0a104d44e24e66dcdbde2e3f2d9eea301e25d9"
+  },
+  {
+    "path": "scripts/development/offline_evidence/catalog.json",
+    "bytes": 18648,
+    "sha256": "bd8501c5930dc2d521bb9717f577ab20f3d0598101a9575e23fd503d3d8d5e85"
+  },
+  {
+    "path": "scripts/development/offline_evidence/test_cli.py",
+    "bytes": 31231,
+    "sha256": "ef575ee37662193fd3bb5d129758c9b64888f6d135f56c7808e3778e702efebc"
+  },
+  {
+    "path": "scripts/development/offline_evidence/test_runtime_availability.py",
+    "bytes": 6772,
+    "sha256": "34139da0f0a295d4ae70ba501266f9b8d93aa8ff0120bba0d43865edbac0aea6"
+  },
+  {
+    "path": "scripts/development/offline_evidence/cpi_table1.py",
+    "bytes": 3689,
+    "sha256": "2c72df24979aa27671816819029e416ce12a27f2d684939f239cd3d5521e1e93"
+  },
+  {
+    "path": "scripts/development/offline_evidence/test_cpi_table1.py",
+    "bytes": 9418,
+    "sha256": "a215fde21ffc9780cb2a63f5211443fda0e8be127db9f0947a35564d5b9ca149"
+  }
+]

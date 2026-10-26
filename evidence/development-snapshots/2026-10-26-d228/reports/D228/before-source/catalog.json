@@ -1,0 +1,439 @@
+{
+  "u3-july-2025": {
+    "title": "2025年7月失业率 PDF",
+    "kind": "u3",
+    "scope": "TWO_RETAINED_ARCHIVAL_EDITIONS_ONLY",
+    "sources": [
+      {
+        "alias": "source",
+        "path": "docs/development/mainline-execution-2026-10-09-rev-001/unemployment-pdf-consumption/consumer.py",
+        "sha256": "366776f13f4fcc5497969ba920f4c06ba7a7f21d01d6d2ca2c72388f05e95a66",
+        "bytes": 5360
+      }
+    ],
+    "inputs": [
+      {
+        "alias": "u3-july2025.pdf",
+        "path": "docs/development/mainline-execution-2026-10-09-rev-001/unemployment-issuance-pair-evidence-2026-10-11-rev-001/raw/july2025.pdf",
+        "sha256": "3cab42e98aae44f6e90678d75c7c028d1703729e95e1f1f91724519bacf42a84",
+        "bytes": 435526
+      }
+    ],
+    "month": "2025-07"
+  },
+  "u3-november-2025": {
+    "title": "2025年11月失业率 PDF",
+    "kind": "u3",
+    "scope": "TWO_RETAINED_ARCHIVAL_EDITIONS_ONLY",
+    "sources": [
+      {
+        "alias": "source",
+        "path": "docs/development/mainline-execution-2026-10-09-rev-001/unemployment-pdf-consumption/consumer.py",
+        "sha256": "366776f13f4fcc5497969ba920f4c06ba7a7f21d01d6d2ca2c72388f05e95a66",
+        "bytes": 5360
+      }
+    ],
+    "inputs": [
+      {
+        "alias": "u3-november2025.pdf",
+        "path": "docs/development/mainline-execution-2026-10-09-rev-001/unemployment-issuance-pair-evidence-2026-10-11-rev-001/raw/november2025.pdf",
+        "sha256": "6408e38172c272f3d8416f01873d3bc40d11c9ceb90933feb4939830cd63f6d2",
+        "bytes": 591295
+      }
+    ],
+    "month": "2025-11"
+  },
+  "gdp-2026-vintages": {
+    "title": "2026年Q1/Q2 GDP 七个发行声明与两次配对",
+    "kind": "gdp",
+    "scope": "SEVEN_DECLARATIONS_TWO_ADVANCE_BINDINGS_ONLY",
+    "sources": [
+      {
+        "alias": "source",
+        "path": "docs/development/mainline-execution-2026-10-09-rev-001/gdp-vintage-binding/binding.py",
+        "sha256": "5c3fac35d4f10941feb11ebfab46ff4659998d5cf606584da2fbbcd1da273761",
+        "bytes": 11098
+      },
+      {
+        "alias": "archive",
+        "path": "docs/development/mainline-execution-2026-10-09-rev-001/bea-archive-candidate/archive.py",
+        "sha256": "50373d31f96100ef3716cbfbf19ad6647168e5bf853eb7d0d296ac38a5f6b5e8",
+        "bytes": 11043
+      }
+    ],
+    "inputs": [
+      {
+        "alias": "gdp-history.xlsx",
+        "path": "docs/development/mainline-execution-2026-10-09-rev-001/public-evidence-search-2026-10-10-rev-001/gdp-gdi-vintage-history.xlsx",
+        "sha256": "49ef37def79cf5990992f57f1cc819e50fa5b0f8d0e2f5df824f0f19d5d38bf8",
+        "bytes": 75070
+      },
+      {
+        "alias": "gdp-q1-advance.xlsx",
+        "path": "docs/development/mainline-execution-2026-10-09-rev-001/bea-vintage-discovery/raw/09_q1_advance_section1.xlsx",
+        "sha256": "f18f12ece24c3ab3f4b236bc0a37254e4e58754f98ab2a3f7eca8ea8ee5f0224",
+        "bytes": 4045849
+      },
+      {
+        "alias": "gdp-q2-advance.xlsx",
+        "path": "docs/development/mainline-execution-2026-10-09-rev-001/bea-vintage-discovery/raw/10_q2_advance_section1.xlsx",
+        "sha256": "ddcd0c5b693cb5d179198e67dda60f817e0e97196e6f1c158152971bbc80b136",
+        "bytes": 4056562
+      }
+    ]
+  },
+  "bea-calendar": {
+    "title": "BEA 八个有限日历声明",
+    "kind": "calendar",
+    "scope": "EIGHT_CALENDAR_DECLARATIONS_ONLY",
+    "sources": [
+      {
+        "alias": "source",
+        "path": "docs/development/mainline-execution-2026-10-09-rev-001/calendar-declaration-binding/binding.py",
+        "sha256": "fa22f79d3da54258350dec1a5388fb0a09e8d63c87e64fd988b948f9ff764b67",
+        "bytes": 11798
+      }
+    ],
+    "inputs": [
+      {
+        "alias": "bea-calendar.ics",
+        "path": "docs/development/mainline-execution-2026-10-09-rev-001/calendar-origin-discovery-2026-10-11-rev-001/raw/02_online_calendar.ics",
+        "sha256": "c6320686f93a1200c1226ed92eed1c7d2531491006b6da7099fadaab57c433e9",
+        "bytes": 42706
+      },
+      {
+        "alias": "bea-2025.html",
+        "path": "docs/development/mainline-execution-2026-10-09-rev-001/annual-view-evidence-2026-10-11-rev-001/raw/01_full_2025.html",
+        "sha256": "5adb84f7719daff98e756ae8e78ee47a9a6b4b8bae4b153c5dd793a0ab58180c",
+        "bytes": 120536
+      },
+      {
+        "alias": "bea-2026.html",
+        "path": "docs/development/mainline-execution-2026-10-09-rev-001/annual-view-evidence-2026-10-11-rev-001/raw/02_full_2026.html",
+        "sha256": "4451aa2f5c1debdeeeff958ee0a7249c38b8c4392e18e529a2e4496bb6ac4fc9",
+        "bytes": 125026
+      }
+    ]
+  },
+  "bindings-demo": {
+    "title": "IB2/TC2 合成开发绑定样本",
+    "kind": "bindings",
+    "scope": "KEYLESS_SYNTHETIC_BINDINGS_ONLY_NOT_ACTUAL_EXECUTION",
+    "sources": [
+      {
+        "alias": "schemas/implementation_binding_v2.schema.json",
+        "path": "schemas/implementation_binding_v2.schema.json",
+        "sha256": "6ecc1a6bed47e47cb3627d5fc0bb9dc58a55ea0aeebff153ce407f315c339d5f",
+        "bytes": 5011
+      },
+      {
+        "alias": "schemas/test_contract_v2.schema.json",
+        "path": "schemas/test_contract_v2.schema.json",
+        "sha256": "bf68dffb9893568652a96116d27729c3b08c37c77a3ed77b515314eef34a7124",
+        "bytes": 4018
+      },
+      {
+        "alias": "scripts/development/ib2_tc2_bindings/consumer.py",
+        "path": "scripts/development/ib2_tc2_bindings/consumer.py",
+        "sha256": "e9efe26bc0645b1314a75171a9d8a2a6bbda6da4f6dabd6108c90076703e0a29",
+        "bytes": 13839
+      },
+      {
+        "alias": "scripts/development/ib2_tc2_bindings/canonical_helper.py",
+        "path": "scripts/development/ib2_tc2_bindings/canonical_helper.py",
+        "sha256": "f9ef49579a5c54757c6660d377275a0ed5f8afdf646f33130651a711005ac9ba",
+        "bytes": 8126
+      },
+      {
+        "alias": "scripts/development/ib2_tc2_bindings/real_missing.json",
+        "path": "scripts/development/ib2_tc2_bindings/real_missing.json",
+        "sha256": "d0d39c0456c9f5063f00eb9b890fe8f1bafb61e2c687383ed9ddf1fb4beaac5f",
+        "bytes": 1425
+      },
+      {
+        "alias": "schemas/validator_contract_v1.schema.json",
+        "path": "schemas/validator_contract_v1.schema.json",
+        "sha256": "ad312dfa33f7d09b14d3abd5123799aafdb9f83caa6a87022eb5f5d11730c34e",
+        "bytes": 1773
+      },
+      {
+        "alias": "schemas/test_contract_v1.schema.json",
+        "path": "schemas/test_contract_v1.schema.json",
+        "sha256": "934342de9d45ca584b8d4dedd61865edcef563a8ba33927dd24215af54f80545",
+        "bytes": 2640
+      },
+      {
+        "alias": "schemas/runtime_profile_v1.schema.json",
+        "path": "schemas/runtime_profile_v1.schema.json",
+        "sha256": "b2fc759be85d115415c8ca37aec487d4b57537c6e155ac36d3851bed3069ab6a",
+        "bytes": 3371
+      }
+    ],
+    "inputs": [
+      {
+        "alias": "binding/expected.json",
+        "path": "docs/development/mainline-execution-2026-10-09-rev-001/ib2-tc2-development-rollout-2026-10-11-rev-001/evidence/inputs/expected.json",
+        "sha256": "3b8e119b9df8164768aec3193d5e87189ec037f885731f3a23140eb77b92bfc9",
+        "bytes": 2032
+      },
+      {
+        "alias": "binding/vc.json",
+        "path": "docs/development/mainline-execution-2026-10-09-rev-001/ib2-tc2-development-rollout-2026-10-11-rev-001/evidence/inputs/vc.json",
+        "sha256": "1523bc1bdebaf6898d535c36c04559a34dc228aa089a7f5f0522dd322d3eb902",
+        "bytes": 1170
+      },
+      {
+        "alias": "binding/ib.json",
+        "path": "docs/development/mainline-execution-2026-10-09-rev-001/ib2-tc2-development-rollout-2026-10-11-rev-001/evidence/inputs/ib.json",
+        "sha256": "295969fd02defe1cbe265431cf2ccd4e9edb4f12fbda962b573bf68ad37395a1",
+        "bytes": 1927
+      },
+      {
+        "alias": "binding/tc1.json",
+        "path": "docs/development/mainline-execution-2026-10-09-rev-001/ib2-tc2-development-rollout-2026-10-11-rev-001/evidence/inputs/tc1.json",
+        "sha256": "d11aafef8fc5da41e32053d2fe2c7f97eb9e04a174a20889779d77d3c6c7173a",
+        "bytes": 998
+      },
+      {
+        "alias": "binding/tc2.json",
+        "path": "docs/development/mainline-execution-2026-10-09-rev-001/ib2-tc2-development-rollout-2026-10-11-rev-001/evidence/inputs/tc2.json",
+        "sha256": "abe87756633f9745fc18705c25a2fd4853baacbfadcf0dc54000e4f6e309d68c",
+        "bytes": 1489
+      },
+      {
+        "alias": "binding/r4t.json",
+        "path": "docs/development/mainline-execution-2026-10-09-rev-001/ib2-tc2-development-rollout-2026-10-11-rev-001/evidence/inputs/r4t.json",
+        "sha256": "0e7510888a2f09fec0dfed5ed4afbf8bd8c6a4f5b07fe3a316239b12fc02012b",
+        "bytes": 797
+      },
+      {
+        "alias": "binding/runtime.json",
+        "path": "docs/development/mainline-execution-2026-10-09-rev-001/ib2-tc2-development-rollout-2026-10-11-rev-001/evidence/inputs/runtime.json",
+        "sha256": "4fd245784f09cb21c0abb0eda5c0aa873f56e55a646919d14ef84eebf5c89f2e",
+        "bytes": 860
+      }
+    ]
+  },
+  "gdp-news-pdfs": {
+    "title": "GDP三份新闻稿PDF的七条声明与舍入说明",
+    "kind": "gdp_news",
+    "scope": "THREE_RELEASE_PDFS_SEVEN_DECLARATIONS_ONLY",
+    "default_demo": false,
+    "sources": [
+      {
+        "alias": "source",
+        "path": "scripts/development/offline_evidence/gdp_pdf.py",
+        "sha256": "c34a253401827c377664d7f0b8eeac307034362ea9ff7167c3bcc975781d34fa",
+        "bytes": 5789
+      }
+    ],
+    "inputs": [
+      {
+        "alias": "gdp1q26-3rd.pdf",
+        "path": "docs/development/mainline-execution-2026-10-09-rev-001/gdp-news-pdf-carrier-2026-10-15-rev-001/raw/gdp1q26-3rd.pdf",
+        "sha256": "24194657c9036e5e1ed056f2ff3c523db1273a2dd789ec1b53b1d84164bc199e",
+        "bytes": 700549
+      },
+      {
+        "alias": "gdp2q26-3rd.pdf",
+        "path": "docs/development/mainline-execution-2026-10-09-rev-001/gdp-news-pdf-carrier-2026-10-15-rev-001/raw/gdp2q26-3rd.pdf",
+        "sha256": "2f07c1f39a3f79329e8d7f81fa58580426791c7ce7bd49307f0fc8c79c79192d",
+        "bytes": 918914
+      },
+      {
+        "alias": "gdp2q26-2nd.pdf",
+        "path": "docs/development/mainline-execution-2026-10-09-rev-001/gdp-news-pdf-carrier-2026-10-15-rev-001/raw/gdp2q26-2nd.pdf",
+        "sha256": "f2c083bb3d68f307808dfc8b4b7f4a298f119315a8efb6a0ea6902b9655b23fe",
+        "bytes": 432137
+      }
+    ]
+  },
+  "cpi-june-2026-copy": {
+    "title": "2026年6月 CPI-U 季调月变化（用户正文副本）",
+    "kind": "cpi_text",
+    "scope": "ONE_RETAINED_USER_RENDERED_COPY_DECLARATIONS_ONLY_NOT_PUBLISHER_BYTES",
+    "default_demo": false,
+    "sources": [
+      {
+        "alias": "source",
+        "path": "scripts/development/offline_evidence/cpi_text.py",
+        "sha256": "29066569c5a7086ab2a66659845a2bcfda79aad2e4131cf42a2ffcd999b8a4c5",
+        "bytes": 3434
+      }
+    ],
+    "inputs": [
+      {
+        "alias": "cpi-june2026-copy.txt",
+        "path": "docs/development/mainline-execution-2026-10-09-rev-001/bls-cpi-pasted-observation/public-rendered-copy.txt",
+        "sha256": "6801f88bba316af7e6aa1af85a719bd60261f2bfa2ed097ed1ff7950a5f0c4d2",
+        "bytes": 111396
+      }
+    ]
+  },
+  "cpi-june-2026-archive": {
+    "title": "2026年6月 CPI-U FRASER归档PDF第一页声明",
+    "kind": "cpi_archive_pdf",
+    "scope": "ONE_RETAINED_FRASER_ARCHIVE_PDF_FIRST_PAGE_HEADLINES_ONLY",
+    "default_demo": false,
+    "sources": [
+      {
+        "alias": "source",
+        "path": "scripts/development/offline_evidence/cpi_pdf.py",
+        "sha256": "e95d9277ac68b8587db95b64caa3444f8ce43647b64798feca90d96d4c1de535",
+        "bytes": 3061
+      }
+    ],
+    "inputs": [
+      {
+        "alias": "cpi-june2026-fraser.pdf",
+        "path": "docs/development/mainline-execution-2026-10-25-cpi-archive-carrier-rev-001/raw/cpi_20260714.fraser.pdf",
+        "sha256": "dd9288175bd38ef9c05b1e5d5ce03ea6c6032a1c2900355208905f78f94aea81",
+        "bytes": 502033
+      }
+    ]
+  },
+  "calendar-predecessors-2026": {
+    "title": "三项前置输入的官方汇编日历研究",
+    "kind": "calendar_predecessors",
+    "scope": "THREE_FIXED_OFFICIAL_COMPILATION_PLANNING_DECLARATIONS_NOT_SOURCE_ADMISSION",
+    "default_demo": false,
+    "sources": [
+      {
+        "alias": "source",
+        "path": "scripts/development/offline_evidence/predecessor_calendar.py",
+        "bytes": 12141,
+        "sha256": "4fdabf00e7e2dadc161de2a3508422fc0824112175a4bcc2b6c2e9f32a21b3eb"
+      }
+    ],
+    "inputs": [
+      {
+        "alias": "nyfed-oct2026.html",
+        "path": "docs/development/predecessor-calendar-times-2026-10-25-rev-001/raw/nyfed-oct2026.html",
+        "bytes": 117497,
+        "sha256": "86ed87d3d824da61cf3f97042f7609a9e75660f61c7a696b21eb2e636a46dfa0"
+      },
+      {
+        "alias": "nyfed-dec2026.html",
+        "path": "docs/development/predecessor-calendar-times-2026-10-25-rev-001/raw/nyfed-dec2026.html",
+        "bytes": 112312,
+        "sha256": "62b208375a57b8740afe9ae5effe9af762ebdb4b5a06c88eab87410e50df5f78"
+      },
+      {
+        "alias": "omb-2026-pfei.pdf",
+        "path": "docs/development/predecessor-calendar-times-2026-10-25-rev-001/raw/omb-2026-pfei.pdf",
+        "bytes": 266111,
+        "sha256": "5d2c16011a816bc527f628c1e20ff781ed309ed5de55c262ba7ba5bb7718c734"
+      }
+    ]
+  },
+  "q1-2027-read-only-assessment": {
+    "title": "2027Q1用户选定只读范围评估",
+    "kind": "q1_scope",
+    "scope": "USER_SELECTED_READ_ONLY_QUARTER_NOT_GOVERNING_OR_COMPLETE_MANDATORY_SCOPE",
+    "default_demo": false,
+    "sources": [
+      {
+        "alias": "source",
+        "path": "scripts/development/offline_evidence/q1_scope.py",
+        "bytes": 10290,
+        "sha256": "293b6c9c50ee8bc4b1311b65da8be15766b3501b632a078894275361f86c8cac"
+      },
+      {
+        "alias": "predecessor_parser",
+        "path": "scripts/development/offline_evidence/predecessor_calendar.py",
+        "bytes": 12141,
+        "sha256": "4fdabf00e7e2dadc161de2a3508422fc0824112175a4bcc2b6c2e9f32a21b3eb"
+      },
+      {
+        "alias": "annual_parser",
+        "path": "docs/development/mainline-execution-2026-10-09-rev-001/calendar-declaration-binding/binding.py",
+        "bytes": 11798,
+        "sha256": "fa22f79d3da54258350dec1a5388fb0a09e8d63c87e64fd988b948f9ff764b67"
+      }
+    ],
+    "inputs": [
+      {
+        "path": "docs/development/forward-quarter-calendar-evidence-2026-10-25-rev-001/raw/omb-2027-pfei.pdf",
+        "bytes": 218990,
+        "sha256": "20482c7a2c35871c387c0d86d77d2f63a9e1dcc53ec301b32d331845414bde20",
+        "alias": "omb-2027-pfei.pdf"
+      },
+      {
+        "path": "docs/development/forward-quarter-calendar-evidence-2026-10-25-rev-001/raw/bea-2027-next-year.html",
+        "bytes": 106652,
+        "sha256": "a54b35967680161b604b2d114079a7392e002043b94994274945f89603f74fcd",
+        "alias": "bea-2027-next-year.html"
+      },
+      {
+        "path": "docs/development/forward-quarter-calendar-evidence-2026-10-25-rev-001/PLANNING_INVENTORY.json",
+        "bytes": 9633,
+        "sha256": "3849eb9e0dbf69ab41fa172c86a66356a9702a7346dacb3ac1f1dbed13537dab",
+        "alias": "q1-2027-planning-inventory.json"
+      },
+      {
+        "path": "docs/development/q1-2027-read-only-assessment-2026-10-25-rev-001/READ_ONLY_SCOPE_SELECTION.json",
+        "bytes": 606,
+        "sha256": "5a1df97d428389e18f51b2f5ded021aa5fea5159acb7ed592187fa545fdcb4a8",
+        "alias": "q1-2027-read-only-scope.json"
+      }
+    ]
+  },
+  "u3-july-2025-a1": {
+    "title": "2025年7月失业率 PDF A-1总体季调表项",
+    "kind": "u3_a1",
+    "scope": "TWO_RETAINED_A1_TOTAL_SA_DECLARATIONS_NOT_FIRST_OR_ADMISSION",
+    "sources": [
+      {
+        "alias": "source",
+        "path": "docs/development/mainline-execution-2026-10-09-rev-001/unemployment-pdf-consumption/consumer.py",
+        "sha256": "366776f13f4fcc5497969ba920f4c06ba7a7f21d01d6d2ca2c72388f05e95a66",
+        "bytes": 5360
+      },
+      {
+        "alias": "exact_a1_source",
+        "path": "scripts/development/offline_evidence/u3_a1.py",
+        "bytes": 4974,
+        "sha256": "29f48c62859ccf45f0b07e590fcceb9d2bd7af86a1b5e1a1d0a47a3b3ea897c5"
+      }
+    ],
+    "inputs": [
+      {
+        "alias": "u3-july2025.pdf",
+        "path": "docs/development/mainline-execution-2026-10-09-rev-001/unemployment-issuance-pair-evidence-2026-10-11-rev-001/raw/july2025.pdf",
+        "sha256": "3cab42e98aae44f6e90678d75c7c028d1703729e95e1f1f91724519bacf42a84",
+        "bytes": 435526
+      }
+    ],
+    "month": "2025-07",
+    "default_demo": false
+  },
+  "u3-november-2025-a1": {
+    "title": "2025年11月失业率 PDF A-1总体季调表项",
+    "kind": "u3_a1",
+    "scope": "TWO_RETAINED_A1_TOTAL_SA_DECLARATIONS_NOT_FIRST_OR_ADMISSION",
+    "sources": [
+      {
+        "alias": "source",
+        "path": "docs/development/mainline-execution-2026-10-09-rev-001/unemployment-pdf-consumption/consumer.py",
+        "sha256": "366776f13f4fcc5497969ba920f4c06ba7a7f21d01d6d2ca2c72388f05e95a66",
+        "bytes": 5360
+      },
+      {
+        "alias": "exact_a1_source",
+        "path": "scripts/development/offline_evidence/u3_a1.py",
+        "bytes": 4974,
+        "sha256": "29f48c62859ccf45f0b07e590fcceb9d2bd7af86a1b5e1a1d0a47a3b3ea897c5"
+      }
+    ],
+    "inputs": [
+      {
+        "alias": "u3-november2025.pdf",
+        "path": "docs/development/mainline-execution-2026-10-09-rev-001/unemployment-issuance-pair-evidence-2026-10-11-rev-001/raw/november2025.pdf",
+        "sha256": "6408e38172c272f3d8416f01873d3bc40d11c9ceb90933feb4939830cd63f6d2",
+        "bytes": 591295
+      }
+    ],
+    "month": "2025-11",
+    "default_demo": false
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "scope": "EXISTING_EXACT_FRASER_CPI_PDF_TABLE1_ONLY",
+  "input": {
+    "alias": "cpi-june2026-fraser.pdf",
+    "path": "docs/development/mainline-execution-2026-10-25-cpi-archive-carrier-rev-001/raw/cpi_20260714.fraser.pdf",
+    "sha256": "dd9288175bd38ef9c05b1e5d5ce03ea6c6032a1c2900355208905f78f94aea81",
+    "bytes": 502033
+  },
+  "table_pdf_page_1_based": 9,
+  "not_original_publisher_bytes": true,
+  "not_historical_first_or_authenticated_time": true
+}

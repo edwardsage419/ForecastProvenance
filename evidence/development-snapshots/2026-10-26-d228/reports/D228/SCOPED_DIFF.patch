@@ -1,0 +1,462 @@
+--- D227/scripts/development/offline_evidence/README.md
++++ D228/scripts/development/offline_evidence/README.md
+@@ -276,3 +276,10 @@
+ `verify u3-july-2025-a1 --json` and `verify u3-november-2025-a1 --json` consume the same two retained PDF editions via the admitted existing summary observer and new exact Table A-1 TOTAL/SA parser. Nine column identities distinguish three NSA from six SA columns; the last SA total rate is selected. November October absence stays absent. Mainline adds `target_table_support` plus a same-edition/selector/value comparison to each existing unemployment module. Legacy observations remain unchanged; failed/missing exact support is retained and affects the module verdict.
+ 
+ The catalog now has12 finite cases/29 input references (some aliases/raw identities shared), demo remains5, mainline remains14 modules. No new PDF/network, installed package, actual source admission, historical FIRST, authenticated availability, governing applicability, real report or readiness is established. Existing D221 ZIP/D222 single-worker overlay do not contain this increment; keep them frozen and use their exact documented scope. This is public archival declaration support only, not a full Table A-1 product parser or arbitrary PDF certification.
++
++
++### Exact archival CPI Table 1 support (2026-10-26)
++
++`verify cpi-june-2026-table1 --json` consumes the retained FRASER PDF page9 Table1 All items row, selecting the ninth numeric column: seasonally adjusted May-to-June2026 monthly change -0.4%. The unadjusted monthly -0.3% and yearly3.5% remain distinct. It reuses the existing admitted headline observer on the same immutable bytes and binds the new row to the already-consumed carrier declarations. Mainline inflation-data adds only `target_table_support`; original copy/headline/comparison results remain intact. Rejection or missing exact support affects the module verdict. Table A remains an unverified raster table.
++
++Catalog13 cases/30 input references, demo5 and14 mainline modules. This is one archived table row, not original-publisher bytes, historical FIRST, authenticated availability, actual source admission, complete table/document/runtime/universe or real readiness. No new download, installation, fee, protocol or Git action. Use D228's six-file verified overlay against frozen D221 ZIP; it includes unchanged D227 A1 and D222 runtime fixes.
+--- D227/scripts/development/offline_evidence/catalog.json
++++ D228/scripts/development/offline_evidence/catalog.json
+@@ -435,5 +435,33 @@
+     ],
+     "month": "2025-11",
+     "default_demo": false
++  },
++  "cpi-june-2026-table1": {
++    "title": "2026年6月 CPI-U FRASER归档Table1精确表项",
++    "kind": "cpi_table1",
++    "scope": "ONE_RETAINED_ARCHIVE_TABLE1_ALL_ITEMS_SA_MONTH_DECLARATION_ONLY",
++    "default_demo": false,
++    "sources": [
++      {
++        "alias": "source",
++        "path": "scripts/development/offline_evidence/cpi_pdf.py",
++        "sha256": "e95d9277ac68b8587db95b64caa3444f8ce43647b64798feca90d96d4c1de535",
++        "bytes": 3061
++      },
++      {
++        "alias": "exact_table1_source",
++        "path": "scripts/development/offline_evidence/cpi_table1.py",
++        "bytes": 3689,
++        "sha256": "2c72df24979aa27671816819029e416ce12a27f2d684939f239cd3d5521e1e93"
++      }
++    ],
++    "inputs": [
++      {
++        "alias": "cpi-june2026-fraser.pdf",
++        "path": "docs/development/mainline-execution-2026-10-25-cpi-archive-carrier-rev-001/raw/cpi_20260714.fraser.pdf",
++        "sha256": "dd9288175bd38ef9c05b1e5d5ce03ea6c6032a1c2900355208905f78f94aea81",
++        "bytes": 502033
++      }
++    ]
+   }
+ }
+--- D227/scripts/development/offline_evidence/cli.py
++++ D228/scripts/development/offline_evidence/cli.py
+@@ -23,7 +23,7 @@
+         return {'id': name, 'status': 'UNSUPPORTED', 'error': 'UNSUPPORTED_CASE'}
+     case = CASES[name]
+     base = {'id': name, 'title': case['title'], 'scope': case['scope']}
+-    runtime = PDF_PYTHON if case['kind'] in {'u3', 'u3_a1', 'gdp_news', 'cpi_archive_pdf', 'calendar_predecessors', 'q1_scope'} else Path(sys.executable)
++    runtime = PDF_PYTHON if case['kind'] in {'u3', 'u3_a1', 'cpi_table1', 'gdp_news', 'cpi_archive_pdf', 'calendar_predecessors', 'q1_scope'} else Path(sys.executable)
+     if not runtime.is_file():
+         return dict(base, status='UNAVAILABLE', error='MISSING_RUNTIME')
+     request = {'case': name, 'repository_root': str(Path(repository_root or ROOT).absolute()),
+@@ -205,6 +205,38 @@
+     return result
+ 
+ 
++def compare_cpi_table1(carriers, archive, table):
++    """Reuse carrier comparison and compare this exact archive's table row."""
++    result={'id':'cpi-table1-comparison','findings':[],
++        'comparison_scope':'SHARED_DECLARATIONS_AND_ONE_ARCHIVE_TABLE1_ROW_ONLY',
++        'source_independence':'NOT_ESTABLISHED','authenticated_availability':'NOT_ESTABLISHED',
++        'actual_source_admission':'NOT_ESTABLISHED','same_carrier_and_target_match':False,'protocol_state_change':'NONE'}
++    for label,child in [('carriers',carriers),('archive',archive),('table1',table)]:
++        if child['status']!='OBSERVED':
++            result['findings'].extend(deepcopy(child.get('findings') or [
++                {'item':label,'status':child['status'],'error':child.get('error','CHILD_NOT_OBSERVED')}]))
++    if not result['findings']:
++        try:
++            a,b,shared=archive['observations'],table['observations'],carriers['matched_declarations']
++            if a['raw_sha256']!=b['raw_sha256'] or a['source_url']!=b['source_url']:
++                raise ValueError('same archive required')
++            for key in ('reference_month','publication_date_declaration','release_id','target','measure','adjustment','display_value','unadjusted_yearly_change'):
++                if type(b[key]) is not str or not b[key]==a[key]==shared[key]:raise ValueError('shared declaration mismatch')
++            if (b['semantic_selector']!='CPI_TABLE_1_ALL_ITEMS_SEASONALLY_ADJUSTED_PERCENT_CHANGE_PRECEDING_MONTH'
++                or b['table']!='1' or b['row']!='All items' or b['page_1_based']!=9 or b['selected_column_1_based']!=9
++                or type(b['column_values']) is not list or len(b['column_values'])!=9
++                or b['column_values'][8]!=b['display_value'] or b['column_values'][4]!=b['unadjusted_yearly_change']
++                or b['column_values'][5]!=b['unadjusted_monthly_change'] or b['column_values'][6:]!=b['seasonally_adjusted_monthly_values']
++                or b['original_publisher_bytes'] is not False or b['evidence_class']!='FRASER_ARCHIVE_TABLE1_DECLARATIONS_ONLY'):
++                raise ValueError('exact finite Table1 selector required')
++            result['same_carrier_and_target_match']=True
++        except (KeyError,TypeError,ValueError):
++            result['findings'].append({'item':'cpi-table1-binding','status':'REJECTED','error':'CPI_TABLE1_BINDING_MISMATCH'})
++    rank={'REJECTED':0,'UNSUPPORTED':0,'MISSING':1,'UNAVAILABLE':2}
++    result['status']=min(result['findings'],key=lambda f:rank[f['status']])['status'] if result['findings'] else 'OBSERVED'
++    return result
++
++
+ def bind_predecessor_calendars(assessment, research):
+     """Join already-consumed D218/D208 planning records, without reads or admission.
+ 
+@@ -424,6 +456,10 @@
+             row.update(title='2026年6月 CPI 两份载体声明', archive_carrier=archive,
+                        carrier_comparison=comparison, status=comparison['status'],
+                        findings=deepcopy(comparison['findings']))
++            table=run_case('cpi-june-2026-table1',input_root)
++            table_comparison=compare_cpi_table1(comparison,archive,table)
++            row.update(target_table_support={'table':table,'comparison':table_comparison},
++                       status=table_comparison['status'],findings=deepcopy(table_comparison['findings']))
+         if name == 'official-calendar':
+             research = run_case('calendar-predecessors-2026', input_root)
+             assessment = run_case('q1-2027-read-only-assessment', input_root)
+@@ -512,7 +548,8 @@
+                     lines.append('  '+finding['item']+'：'+finding['error'])
+             if 'target_table_support' in row:
+                 support=row['target_table_support']
+-                lines.append('  Table A-1 总体季调表项：'+labels[support['comparison']['status']]+'；仅归档版本声明，非历史首次/认证时间/来源准入。')
++                label='CPI Table 1 All items季调月变动' if row['id']=='inflation-data' else 'Table A-1 总体季调表项'
++                lines.append('  '+label+'：'+labels[support['comparison']['status']]+'；仅归档版本声明，非历史首次/认证时间/来源准入。')
+             if 'public_example' in row:
+                 example = row['public_example']
+                 paths = example.get('body_computation')
+@@ -632,6 +669,8 @@
+                 lines.append('  '+data['reference_month']+' CPI-U季调月变化='+data['display_value']+'%')
+                 scope = ('FRASER归档PDF第一页声明，表A图片未自动核验。'
+                          if data.get('evidence_class') == 'FRASER_ARCHIVE_HOSTED_BLS_PDF_HEADLINE_DECLARATIONS_ONLY'
++                         else 'FRASER归档PDF Table 1 All items季调月变动，仅所选表项。'
++                         if data.get('evidence_class') == 'FRASER_ARCHIVE_TABLE1_DECLARATIONS_ONLY'
+                          else '仅用户正文副本，非发布者原字节。')
+                 lines.append('  未季调同比='+data['unadjusted_yearly_change']+'%；'+scope)
+             else:
+--- D227/scripts/development/offline_evidence/test_cli.py
++++ D228/scripts/development/offline_evidence/test_cli.py
+@@ -117,7 +117,7 @@
+             proc, data = self.json_command('list', script=repo/'scripts/development/offline_evidence/cli.py')
+             self.assertEqual(proc.returncode, 0)
+             self.assertFalse(marker.exists())
+-            self.assertEqual(len(data['cases']), 12)
++            self.assertEqual(len(data['cases']), 13)
+ 
+     def test_actual_gdp_seven_versions_and_two_bindings(self):
+         data = self.observed('gdp-2026-vintages')
+@@ -218,7 +218,7 @@
+         self.assertEqual(proc.returncode, 0)
+         self.assertEqual(data['mode'], 'CATALOG_ONLY_NOT_VERIFIED')
+         self.assertEqual({x['id'] for x in data['cases']}, set(CASES))
+-        self.assertEqual(sum(len(x['inputs']) for x in data['cases']), 29)
++        self.assertEqual(sum(len(x['inputs']) for x in data['cases']), 30)
+ 
+     def test_demo_success_is_local_only(self):
+         proc, data = self.json_command('demo')
+--- D227/scripts/development/offline_evidence/test_mainline_verifier.py
++++ D228/scripts/development/offline_evidence/test_mainline_verifier.py
+@@ -85,7 +85,7 @@
+         next(row for row in new['modules'] if row['id']=='official-calendar').pop('predecessor_calendar_binding')
+         self.authority(new)['result'].pop('technical_verifier_identity_gate')
+         for module in new['modules']:
+-            if module['id'] in ('unemployment-july','unemployment-november'):
++            if module['id'] in ('unemployment-july','unemployment-november','inflation-data'):
+                 self.assertEqual(module.pop('target_table_support')['comparison']['status'],'OBSERVED')
+         changed=[a['id'] for a,b in zip(new['modules'],old['modules']) if a!=b]
+         self.assertEqual(changed,['initial-authority'])
+--- D227/scripts/development/offline_evidence/test_predecessor_binding.py
++++ D228/scripts/development/offline_evidence/test_predecessor_binding.py
+@@ -138,13 +138,13 @@
+         self.assertIn('predecessor_calendar_binding',row)
+         self.assertEqual(row.pop('predecessor_calendar_binding')['status'],'OBSERVED')
+         next(x for x in report['modules'] if x['id']=='initial-authority')['result'].pop('technical_verifier_identity_gate')
+-        # New A1 children are independently asserted in test_u3_a1; preserve this older projection.
++        # New A1/Table1 children have their own exact tests; preserve this older projection.
+         for module in report['modules']:
+-            if module['id'] in ('unemployment-july','unemployment-november'):
++            if module['id'] in ('unemployment-july','unemployment-november','inflation-data'):
+                 self.assertEqual(module.pop('target_table_support')['comparison']['status'],'OBSERVED')
+         self.assertEqual(report,self.baseline)
+-        self.assertEqual(len(report['modules']),14);self.assertEqual(len(self.cli.CASES),12)
+-        self.assertEqual(sum(len(c['inputs']) for c in self.cli.CASES.values()),29)
++        self.assertEqual(len(report['modules']),14);self.assertEqual(len(self.cli.CASES),13)
++        self.assertEqual(sum(len(c['inputs']) for c in self.cli.CASES.values()),30)
+         self.assertEqual(sum(c.get('default_demo',True) for c in self.cli.CASES.values()),5)
+ 
+     def test_failed_child_empty_findings_cannot_pass(self):
+--- D227/scripts/development/offline_evidence/test_q1_scope.py
++++ D228/scripts/development/offline_evidence/test_q1_scope.py
+@@ -167,9 +167,9 @@
+         self.assertEqual(row.pop('predecessor_calendar_binding')['status'],'OBSERVED')
+         next(x for x in report['modules'] if x['id']=='initial-authority')['result'].pop('technical_verifier_identity_gate')
+         baseline=json.loads((ROOT/'docs/development/mainline-summary-truthfulness-2026-10-25-rev-001/MAINLINE_JSON.json').read_text())
+-        # New A1 children are independently asserted in test_u3_a1; preserve this older projection.
++        # New A1/Table1 children have their own exact tests; preserve this older projection.
+         for module in report['modules']:
+-            if module['id'] in ('unemployment-july','unemployment-november'):
++            if module['id'] in ('unemployment-july','unemployment-november','inflation-data'):
+                 self.assertEqual(module.pop('target_table_support')['comparison']['status'],'OBSERVED')
+         self.assertEqual(report,baseline)
+ 
+--- D227/scripts/development/offline_evidence/test_runtime_availability.py
++++ D228/scripts/development/offline_evidence/test_runtime_availability.py
+@@ -43,9 +43,9 @@
+     def test_compatible_runtime_has_exactly_unchanged_report(self):
+         p,r=self.command(ROOT/'.venv/bin/python')
+         self.assertEqual(p.returncode,1)
+-        # Only the two newly added A1 children are removed for historical parity.
++        # Only the two A1 and one CPI Table1 children are removed for historical parity.
+         for module in r['modules']:
+-            if module['id'] in ('unemployment-july','unemployment-november'):
++            if module['id'] in ('unemployment-july','unemployment-november','inflation-data'):
+                 self.assertEqual(module.pop('target_table_support')['comparison']['status'],'OBSERVED')
+         projected=json.dumps(r,ensure_ascii=False,sort_keys=True,indent=2)+'\n'
+         self.assertEqual(projected.encode(),BASELINE.read_bytes())
+--- D227/scripts/development/offline_evidence/test_u3_a1.py
++++ D228/scripts/development/offline_evidence/test_u3_a1.py
+@@ -149,13 +149,13 @@
+     def test_mainline_only_two_new_children_change_retained_normal_report(self):
+         self.module();p,r=self.command('mainline');self.assertEqual(p.returncode,1)
+         for row in r['modules']:
+-            if row['id'] in ('unemployment-july','unemployment-november'):
++            if row['id'] in ('unemployment-july','unemployment-november','inflation-data'):
+                 child=row.pop('target_table_support');self.assertEqual(child['comparison']['status'],'OBSERVED')
+                 self.assertEqual(child['table']['status'],'OBSERVED')
+         prior=json.loads((ROOT/'docs/development/mainline-runtime-availability-2026-10-26-rev-001/COMPATIBLE_AFTER.json').read_text())
+         self.assertEqual(r,prior);self.assertEqual(len(r['modules']),14)
+-        cli=load(HERE/'cli.py','a1_count_cli');self.assertEqual(len(cli.CASES),12)
+-        self.assertEqual(sum(len(c['inputs']) for c in cli.CASES.values()),29)
++        cli=load(HERE/'cli.py','a1_count_cli');self.assertEqual(len(cli.CASES),13)
++        self.assertEqual(sum(len(c['inputs']) for c in cli.CASES.values()),30)
+         p,r=self.command('demo');self.assertEqual(p.returncode,0);self.assertEqual(len(r['cases']),5)
+ 
+ 
+--- D227/scripts/development/offline_evidence/test_verifier_gate.py
++++ D228/scripts/development/offline_evidence/test_verifier_gate.py
+@@ -115,9 +115,9 @@
+         self.assertEqual(result['status'],'OBSERVED');self.assertEqual(result['reused_admitted_snapshots'],8)
+         self.assertEqual(result['consumed_distinct_gate_inputs'],63)
+         baseline=json.loads((ROOT/'docs/development/q1-predecessor-calendar-binding-2026-10-25-rev-001/MAINLINE_A.json').read_text())
+-        # New A1 children are independently asserted in test_u3_a1; preserve this older projection.
++        # New A1/Table1 children have their own exact tests; preserve this older projection.
+         for module in report['modules']:
+-            if module['id'] in ('unemployment-july','unemployment-november'):
++            if module['id'] in ('unemployment-july','unemployment-november','inflation-data'):
+                 self.assertEqual(module.pop('target_table_support')['comparison']['status'],'OBSERVED')
+         self.assertEqual(report,baseline);self.assertEqual(len(report['modules']),14)
+         self.assertEqual(row['result']['technical_verifier_contract_candidate']['all_source_and_gate_inputs_checked'],'NOT_ESTABLISHED')
+--- D227/scripts/development/offline_evidence/worker.py
++++ D228/scripts/development/offline_evidence/worker.py
+@@ -95,7 +95,7 @@
+         primary = next((f for f in findings if f['status'] == 'REJECTED'), findings[0])
+         raise OfflineFailure(primary['error'], primary['status'], findings)
+     kind = case['kind']
+-    suffix = '/u3_a1.py' if kind == 'u3_a1' else '/q1_scope.py' if kind == 'q1_scope' else '/predecessor_calendar.py' if kind == 'calendar_predecessors' else '/cpi_pdf.py' if kind == 'cpi_archive_pdf' else '/cpi_text.py' if kind == 'cpi_text' else '/gdp_pdf.py' if kind == 'gdp_news' else (
++    suffix = '/cpi_table1.py' if kind == 'cpi_table1' else '/u3_a1.py' if kind == 'u3_a1' else '/q1_scope.py' if kind == 'q1_scope' else '/predecessor_calendar.py' if kind == 'calendar_predecessors' else '/cpi_pdf.py' if kind == 'cpi_archive_pdf' else '/cpi_text.py' if kind == 'cpi_text' else '/gdp_pdf.py' if kind == 'gdp_news' else (
+         '/consumer.py' if kind in {'u3', 'bindings'} else '/binding.py')
+     source = next(row for row in case['sources'] if row['path'].endswith(suffix))
+     # Sealed GDP code imports its archive helper through SourceFileLoader. -B only
+@@ -137,6 +137,12 @@
+         calendar=source_module('/calendar-declaration-binding/binding.py')
+         return module.observe_q1_assessment(dict(zip(('omb','bea','inventory','selection'),inputs)),
+             parse_omb_pages=predecessor.parse_omb_pages,annual_parser=calendar.annual)
++    if kind == 'cpi_table1':
++        if importlib.metadata.version('pypdf') != '6.10.0':
++            raise OfflineFailure('UNSUPPORTED_RUNTIME', 'UNAVAILABLE')
++        legacy=next(row for row in case['sources'] if row['path'].endswith('/cpi_pdf.py'))
++        old=load_source(root/legacy['path'],checked[legacy['path']],'_fp_cpi_table1_headline')
++        return module.observe_table1_pdf(inputs[0],archive_observer=old.observe_archive_pdf)
+     if kind == 'cpi_archive_pdf':
+         if importlib.metadata.version('pypdf') != '6.10.0':
+             raise OfflineFailure('UNSUPPORTED_RUNTIME', 'UNAVAILABLE')
+--- /dev/null
++++ D228/scripts/development/offline_evidence/cpi_table1.py
+@@ -0,0 +1,58 @@
++"""Exact Table1/All items/SA month declaration in one retained archive PDF."""
++from hashlib import sha256
++from importlib.metadata import version
++from io import BytesIO
++import re
++from pypdf import PdfReader
++
++PDF_SHA='dd9288175bd38ef9c05b1e5d5ce03ea6c6032a1c2900355208905f78f94aea81'
++SELECTOR='CPI_TABLE_1_ALL_ITEMS_SEASONALLY_ADJUSTED_PERCENT_CHANGE_PRECEDING_MONTH'
++HEADER=('Table 1. Consumer Price Index for All Urban Consumers (CPI-U): U.S. city average, by expenditure category, '
++ 'June 2026 [1982-84=100, unless otherwise noted] Expenditure category Relative impor- tance May 2026 '
++ 'Unadjusted indexes Unadjusted percent change Seasonally adjusted percent change '
++ 'Jun. 2025 May 2026 Jun. 2026 Jun. 2025- Jun. 2026 May 2026- Jun. 2026 '
++ 'Mar. 2026- Apr. 2026 Apr. 2026- May 2026 May 2026- Jun. 2026')
++
++
++def require(condition,message):
++    if not condition:raise ValueError(message)
++
++
++def parse_table1_text(text):
++    """Consume this exact page representation; not a PDF authenticity check."""
++    require(type(text) is str,'Table1 text required')
++    lines=[s.strip() for s in text.splitlines() if s.strip()]
++    matches=[i for i,s in enumerate(lines) if s.startswith('All items.')]
++    require(len(matches)==1 and text.count('Table 1.')==1,'unique own All items/Table1 required')
++    i=matches[0]
++    require(' '.join(lines[:i])==HEADER,'exact Table1 period and columns required')
++    cells=lines[i][len('All items'):].strip(' .').split()
++    require(len(cells)==9,'nine distinct Table1 columns required')
++    cells=[s.replace('−','-') for s in cells]
++    require(all(re.fullmatch(r'\d+\.\d{3}',s) is not None for s in cells[:4]) and cells[0]=='100.000',
++            'All items importance and index columns required')
++    require(all(re.fullmatch(r'-?\d+\.\d',s) is not None for s in cells[4:]),'displayed percent columns required')
++    return {'reference_month':'2026-06','target':'CPI_U_ALL_ITEMS',
++        'measure':'PERCENT_CHANGE_FROM_PRECEDING_MONTH','adjustment':'SEASONALLY_ADJUSTED',
++        'table':'1','row':'All items','semantic_selector':SELECTOR,'page_1_based':9,
++        'selected_column_1_based':9,'column_values':cells,'display_value':cells[8],
++        'unadjusted_yearly_change':cells[4],'unadjusted_monthly_change':cells[5],
++        'seasonally_adjusted_monthly_values':cells[6:],
++        'seasonally_adjusted_reference_months':['2026-04','2026-05','2026-06']}
++
++
++def observe_table1_pdf(raw,*,archive_observer):
++    """The worker supplies the fixed admitted existing archive observer."""
++    require(type(raw) is bytes and len(raw)==502033 and sha256(raw).hexdigest()==PDF_SHA,'exact retained archive required')
++    require(version('pypdf')=='6.10.0','checked pypdf required')
++    archive=archive_observer(raw)
++    require(type(archive) is dict and archive.get('raw_sha256')==PDF_SHA,'same retained archive observer required')
++    reader=PdfReader(BytesIO(raw),strict=True)
++    parsed=parse_table1_text(reader.pages[8].extract_text())
++    for key in ('reference_month','target','measure','adjustment','display_value','unadjusted_yearly_change'):
++        require(parsed[key]==archive.get(key),'Table1/headline mismatch')
++    return dict(parsed,publication_date_declaration=archive['publication_date_declaration'],release_id=archive['release_id'],
++        raw_sha256=PDF_SHA,source_url=archive['source_url'],parser_version=version('pypdf'),
++        evidence_class='FRASER_ARCHIVE_TABLE1_DECLARATIONS_ONLY',original_publisher_bytes=False,
++        full_document_completeness='NOT_ESTABLISHED',historical_first_release='NOT_ESTABLISHED',
++        authenticated_availability='NOT_ESTABLISHED',actual_source_admission='NOT_ESTABLISHED',protocol_state_change='NONE')
+--- /dev/null
++++ D228/scripts/development/offline_evidence/test_cpi_table1.py
+@@ -0,0 +1,133 @@
++"""One exact archived CPI Table1, with old carrier observations preserved."""
++from copy import deepcopy
++import importlib.util
++from io import BytesIO
++import json
++from pathlib import Path
++import subprocess
++import sys
++import tempfile
++import unittest
++from pypdf import PdfReader
++
++HERE=Path(__file__).resolve().parent
++ROOT=HERE.parents[2]
++CASE='cpi-june-2026-table1'
++CAT=json.loads((HERE/'catalog.json').read_text())
++PDF=ROOT/CAT['cpi-june-2026-archive']['inputs'][0]['path']
++
++
++def load(path,name):
++    spec=importlib.util.spec_from_file_location(name,path);m=importlib.util.module_from_spec(spec);sys.modules[name]=m;spec.loader.exec_module(m);return m
++
++
++class Table1Tests(unittest.TestCase):
++    def module(self):
++        self.assertTrue((HERE/'cpi_table1.py').is_file(),'exact CPI Table1 consumer absent')
++        return load(HERE/'cpi_table1.py','cpi_table1_test')
++    def text(self):return PdfReader(BytesIO(PDF.read_bytes()),strict=True).pages[8].extract_text()
++    def command(self,*args,human=False):
++        p=subprocess.run([str(ROOT/'.venv/bin/python'),'-I','-B',str(HERE/'cli.py'),*args,*([] if human else ['--json'])],capture_output=True,text=True,timeout=60)
++        self.assertTrue(p.stdout.strip(),p.stderr);return p,p.stdout if human else json.loads(p.stdout)
++    def inputs(self):
++        cli=load(HERE/'cli.py','cpi_table1_cli');copy=cli.run_case('cpi-june-2026-copy');archive=cli.run_case('cpi-june-2026-archive');table=cli.run_case(CASE)
++        return cli,cli.compare_cpi_carriers(copy,archive),archive,table
++
++    def test_actual_pdf_uses_monthly_SA_allitems_not_index_NSA_or_yearly(self):
++        m=self.module();archive=load(HERE/'cpi_pdf.py','cpi_table1_archive');raw=PDF.read_bytes();calls=[]
++        def observe(b):calls.append(b);return archive.observe_archive_pdf(b)
++        r=m.observe_table1_pdf(raw,archive_observer=observe)
++        self.assertEqual(len(calls),1);self.assertIs(calls[0],raw)
++        self.assertEqual(r['display_value'],'-0.4');self.assertEqual(r['unadjusted_monthly_change'],'-0.3');self.assertEqual(r['unadjusted_yearly_change'],'3.5')
++        self.assertEqual(r['seasonally_adjusted_monthly_values'],['0.6','0.5','-0.4'])
++        self.assertEqual(r['selected_column_1_based'],9);self.assertEqual(r['page_1_based'],9)
++        self.assertEqual(r['evidence_class'],'FRASER_ARCHIVE_TABLE1_DECLARATIONS_ONLY')
++        self.assertFalse(r['original_publisher_bytes']);self.assertEqual(r['historical_first_release'],'NOT_ESTABLISHED')
++        self.assertEqual(r['authenticated_availability'],'NOT_ESTABLISHED')
++
++    def test_own_title_period_and_adjustment_column_context_required(self):
++        m=self.module();t=self.text()
++        for old,new in [('Table 1.','Table 2.'),('June\n2026','June\n2025'),('Seasonally adjusted percent\nchange','Unadjusted percent\nchange'),('Mar.\n2026-\nApr.\n2026','Apr.\n2026-\nMay\n2026')]:
++            self.assertIn(old,t)
++            with self.assertRaises(ValueError):m.parse_table1_text(t.replace(old,new,1))
++
++    def test_missing_duplicate_or_core_allitems_cannot_supply_target(self):
++        m=self.module();t=self.text();line=next(l for l in t.splitlines() if l.startswith('All items.'))
++        for changed in [t.replace(line,''),t.replace(line,line+'\n'+line),t.replace(line,line.replace('All items.','All items less food and energy.',1))]:
++            with self.assertRaises(ValueError):m.parse_table1_text(changed)
++
++    def test_malformed_missing_or_wrong_column_count_rejected(self):
++        m=self.module();t=self.text();line=next(l for l in t.splitlines() if l.startswith('All items.'))
++        for tail in ['100.000 322.561 335.123 333.952 3.5 -0.3 0.6 -0.4','100.000 322.561 335.123 333.952 3.5 -0.3 0.6 0.5 –',
++                     '100.000 322.561 335.123 333.952 3.5 -0.3 0.6 0.5 NaN','100.000 322.561 335.123 333.952 3.5 -0.3 0.6 0.5 -0.40']:
++            changed=t.replace(line,'All items. . . '+tail)
++            with self.assertRaises(ValueError):m.parse_table1_text(changed)
++
++    def test_table_value_and_sign_are_derived_not_filled_from_headline(self):
++        m=self.module();t=self.text();line=next(l for l in t.splitlines() if l.startswith('All items.'))
++        self.assertEqual(m.parse_table1_text(t.replace(line,line[:-4]+'0.7'))['display_value'],'0.7')
++
++    def test_actual_raw_identity_and_headline_disagreement_are_rejected(self):
++        m=self.module();old=load(HERE/'cpi_pdf.py','cpi_table1_mismatch_archive');raw=PDF.read_bytes()
++        with self.assertRaises(ValueError):m.observe_table1_pdf(raw+b' ',archive_observer=old.observe_archive_pdf)
++        data=old.observe_archive_pdf(raw);data['display_value']='0.4'
++        with self.assertRaises(ValueError):m.observe_table1_pdf(raw,archive_observer=lambda b:data)
++
++    def test_new_fixed_case_and_original_observations_are_separate(self):
++        self.module();p,r=self.command('verify',CASE);self.assertEqual(p.returncode,0)
++        p,old=self.command('verify','cpi-june-2026-archive');self.assertEqual(p.returncode,0)
++        self.assertEqual(r['cases'][0]['observations']['raw_sha256'],old['cases'][0]['observations']['raw_sha256'])
++        self.assertEqual(old['cases'][0]['observations']['page_1_based'],1)
++        self.assertEqual(old['cases'][0]['observations']['table_A_machine_verification'],'NOT_CHECKED_RASTER_TABLE')
++
++    def test_empty_corrupt_and_symlink_explicit_inputs_have_no_fallback(self):
++        self.module();alias=CAT['cpi-june-2026-archive']['inputs'][0]['alias']
++        with tempfile.TemporaryDirectory() as n:
++            p,r=self.command('verify',CASE,'--inputs',n);self.assertEqual(p.returncode,1)
++            target=Path(n)/alias;target.write_bytes(b'wrong archive')
++            p,r=self.command('verify',CASE,'--inputs',n);self.assertEqual(p.returncode,2)
++            target.unlink();target.symlink_to(PDF)
++            p,r=self.command('verify',CASE,'--inputs',n);self.assertEqual(p.returncode,2)
++
++    def test_new_source_refusal_keeps_old_archive_independent_and_mixed_findings(self):
++        self.module();cli,comparison,archive,table=self.inputs();case=cli.CASES[CASE]
++        with tempfile.TemporaryDirectory() as n:
++            root=Path(n)
++            for r in case['sources']+case['inputs']:
++                target=root/r['path'];target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes((ROOT/r['path']).read_bytes())
++            helper=root/'scripts/development/offline_evidence/cpi_table1.py';helper.write_bytes(helper.read_bytes()+b' ')
++            self.assertEqual(cli.run_case(CASE,repository_root=root)['status'],'REJECTED')
++            self.assertEqual(cli.run_case('cpi-june-2026-archive',repository_root=root)['status'],'OBSERVED')
++            helper.unlink();(root/case['inputs'][0]['path']).write_bytes(b'wrong')
++            bad=cli.run_case(CASE,repository_root=root);self.assertEqual({f['status'] for f in bad['findings']},{'REJECTED','MISSING'})
++
++    def test_same_carrier_selector_and_values_are_bound_without_mutation(self):
++        self.module();cli,comparison,archive,table=self.inputs();self.assertTrue(hasattr(cli,'compare_cpi_table1'))
++        before=deepcopy((comparison,archive,table));r=cli.compare_cpi_table1(comparison,archive,table)
++        self.assertEqual(r['status'],'OBSERVED');self.assertEqual((comparison,archive,table),before)
++        for key,value in [('raw_sha256','f'*64),('display_value','0.4'),('row','All items less food and energy'),('selected_column_1_based',6),('original_publisher_bytes',True)]:
++            changed=deepcopy(table);changed['observations'][key]=value
++            self.assertEqual(cli.compare_cpi_table1(comparison,archive,changed)['status'],'REJECTED',key)
++        changed=deepcopy(table);changed['observations']['column_values'][8]='0.7'
++        self.assertEqual(cli.compare_cpi_table1(comparison,archive,changed)['status'],'REJECTED')
++        comparison.update(status='MISSING',findings=[]);table.update(status='REJECTED',findings=[])
++        mixed=cli.compare_cpi_table1(comparison,archive,table);self.assertEqual(mixed['status'],'REJECTED')
++        self.assertEqual({f['status'] for f in mixed['findings']},{'MISSING','REJECTED'})
++
++    def test_mainline_only_one_new_child_changes_actual_D227_report(self):
++        self.module();p,r=self.command('mainline');self.assertEqual(p.returncode,1)
++        row=next(x for x in r['modules'] if x['id']=='inflation-data');child=row.pop('target_table_support')
++        self.assertEqual(child['table']['status'],'OBSERVED');self.assertEqual(child['comparison']['status'],'OBSERVED')
++        prior=ROOT/'docs/development/u3-exact-a1-table-consumption-2026-10-26-rev-001/MAINLINE_A.json'
++        self.assertEqual((json.dumps(r,ensure_ascii=False,sort_keys=True,indent=2)+'\n').encode(),prior.read_bytes())
++        cli=load(HERE/'cli.py','cpi_table1_count_cli');self.assertEqual(len(cli.CASES),13)
++        self.assertEqual(sum(len(c['inputs']) for c in cli.CASES.values()),30)
++        p,r=self.command('demo');self.assertEqual(p.returncode,0);self.assertEqual(len(r['cases']),5)
++
++    def test_human_case_and_mainline_explain_table1_archive_scope(self):
++        self.module();p,text=self.command('verify',CASE,human=True);self.assertEqual(p.returncode,0)
++        self.assertIn('Table 1',text);self.assertIn('归档',text);self.assertIn('-0.4',text)
++        p,text=self.command('mainline',human=True);self.assertEqual(p.returncode,1);self.assertIn('CPI Table 1',text)
++
++
++if __name__=='__main__':unittest.main()

@@ -1,0 +1,54 @@
+.................................F.........F..........Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Users/sage/.pyenv/versions/3.12.3/lib/python3.12/unittest/__main__.py", line 18, in <module>
+    main(module=None)
+  File "/Users/sage/.pyenv/versions/3.12.3/lib/python3.12/unittest/main.py", line 105, in __init__
+    self.runTests()
+  File "/Users/sage/.pyenv/versions/3.12.3/lib/python3.12/unittest/main.py", line 281, in runTests
+    self.result = testRunner.run(self.test)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sage/.pyenv/versions/3.12.3/lib/python3.12/unittest/runner.py", line 240, in run
+    test(result)
+  File "/Users/sage/.pyenv/versions/3.12.3/lib/python3.12/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sage/.pyenv/versions/3.12.3/lib/python3.12/unittest/suite.py", line 122, in run
+    test(result)
+  File "/Users/sage/.pyenv/versions/3.12.3/lib/python3.12/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sage/.pyenv/versions/3.12.3/lib/python3.12/unittest/suite.py", line 122, in run
+    test(result)
+  File "/Users/sage/.pyenv/versions/3.12.3/lib/python3.12/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sage/.pyenv/versions/3.12.3/lib/python3.12/unittest/suite.py", line 122, in run
+    test(result)
+  File "/Users/sage/.pyenv/versions/3.12.3/lib/python3.12/unittest/case.py", line 690, in __call__
+    return self.run(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sage/.pyenv/versions/3.12.3/lib/python3.12/unittest/case.py", line 634, in run
+    self._callTestMethod(testMethod)
+  File "/Users/sage/.pyenv/versions/3.12.3/lib/python3.12/unittest/case.py", line 589, in _callTestMethod
+    if method() is not None:
+       ^^^^^^^^
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/test_mainline.py", line 180, in test_human_output_distinguishes_framework_and_real_gaps
+    process, text = self.command(json_output=False)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/test_mainline.py", line 43, in command
+    process = subprocess.run(command, capture_output=True, text=True, timeout=45)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sage/.pyenv/versions/3.12.3/lib/python3.12/subprocess.py", line 550, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sage/.pyenv/versions/3.12.3/lib/python3.12/subprocess.py", line 1209, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sage/.pyenv/versions/3.12.3/lib/python3.12/subprocess.py", line 2115, in _communicate
+    ready = selector.select(timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sage/.pyenv/versions/3.12.3/lib/python3.12/selectors.py", line 415, in select
+    fd_event_list = self._selector.poll(timeout)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt
