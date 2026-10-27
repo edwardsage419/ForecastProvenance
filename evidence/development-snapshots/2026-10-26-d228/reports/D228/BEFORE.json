@@ -1,0 +1,22 @@
+[
+  {
+    "path": "scripts/development/offline_evidence/cli.py",
+    "bytes": 48532,
+    "sha256": "6ace716584fad2590f95e4685ef814dd4eea752c713bbc719df54779c91b7391"
+  },
+  {
+    "path": "scripts/development/offline_evidence/worker.py",
+    "bytes": 9941,
+    "sha256": "48ba7696a5738c889ca1480043cd893f453d937561365f7a2c23b24549f305d6"
+  },
+  {
+    "path": "scripts/development/offline_evidence/catalog.json",
+    "bytes": 17626,
+    "sha256": "02c624daa0da2f6a358a52d51412d1019dbd137ff7fe69aa1719a4384dc5cbff"
+  },
+  {
+    "path": "scripts/development/offline_evidence/README.md",
+    "bytes": 36455,
+    "sha256": "cc8b697a27cbed83cebbf6a754fc7cf4d0b62a82e9e648101aa0555facc77439"
+  }
+]

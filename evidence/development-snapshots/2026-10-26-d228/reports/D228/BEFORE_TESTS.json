@@ -1,0 +1,37 @@
+[
+  {
+    "path": "scripts/development/offline_evidence/test_cli.py",
+    "bytes": 31231,
+    "sha256": "dfdcf6952eba0064e6b53221acfa066df5c33134fa6515b65141ee18bde4b3cd"
+  },
+  {
+    "path": "scripts/development/offline_evidence/test_q1_scope.py",
+    "bytes": 13493,
+    "sha256": "6381d6f951da3be516a307506f65e7c6e37c48a1965b2c5164431133be190699"
+  },
+  {
+    "path": "scripts/development/offline_evidence/test_predecessor_binding.py",
+    "bytes": 11220,
+    "sha256": "5552d8134bd964a549066878d0b8d648912df2e1f60e9337482cf8f4ddeebd75"
+  },
+  {
+    "path": "scripts/development/offline_evidence/test_mainline_verifier.py",
+    "bytes": 18909,
+    "sha256": "992e807bf55b0dfbeebd99ee6cb4a396f699f3d04fe0c66dc2e1b0ba5c7d1389"
+  },
+  {
+    "path": "scripts/development/offline_evidence/test_verifier_gate.py",
+    "bytes": 12411,
+    "sha256": "0ed9e367b5ebed6a3cf4df31cf5b76a48854ece738f8f018784e9838d2b2a97d"
+  },
+  {
+    "path": "scripts/development/offline_evidence/test_runtime_availability.py",
+    "bytes": 6748,
+    "sha256": "6a7d90be448378cc198b57587d71261c92aacd1f1408023012082ec4391e6194"
+  },
+  {
+    "path": "scripts/development/offline_evidence/test_u3_a1.py",
+    "bytes": 10651,
+    "sha256": "2061f57a929b435e9c4245f9b738d3c38a38306441fdc3549f1a6e1debb187b8"
+  }
+]

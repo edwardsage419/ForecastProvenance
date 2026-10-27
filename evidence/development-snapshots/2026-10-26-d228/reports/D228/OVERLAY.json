@@ -1,0 +1,85 @@
+{
+  "apply_scope": "NEW_VERIFIED_EXTRACTION_ONLY_NOT_EXISTING_UNKNOWN_WORK",
+  "base_manifest_describes_original_zip_only": true,
+  "base_zip_sha256": "929c335232c9eae1ccde94bab6dca9b2395cf8c6600579a673e4f09ba69f648f",
+  "files": [
+    {
+      "after": {
+        "bytes": 51784,
+        "sha256": "103c75a5c9d82755296ecd778c0a104d44e24e66dcdbde2e3f2d9eea301e25d9"
+      },
+      "before": {
+        "bytes": 45590,
+        "origin": {
+          "kind": "FIXED_REPOSITORY_PUBLIC_FILE"
+        },
+        "path": "scripts/development/offline_evidence/cli.py",
+        "sha256": "24f141f7624e031ddf8b3741f0080c559b528c99d040ad0491107aef3dcabe5a"
+      },
+      "path": "scripts/development/offline_evidence/cli.py"
+    },
+    {
+      "after": {
+        "bytes": 10426,
+        "sha256": "dfee8d478e23b19be52d3e443608ba89d007ee25c2c045aef90910e40a821128"
+      },
+      "before": {
+        "bytes": 9539,
+        "origin": {
+          "kind": "FIXED_REPOSITORY_PUBLIC_FILE"
+        },
+        "path": "scripts/development/offline_evidence/worker.py",
+        "sha256": "2d97c1c339bf63f8ba83337a852eff804614503e47e54749d079502db1cdb59f"
+      },
+      "path": "scripts/development/offline_evidence/worker.py"
+    },
+    {
+      "after": {
+        "bytes": 18648,
+        "sha256": "bd8501c5930dc2d521bb9717f577ab20f3d0598101a9575e23fd503d3d8d5e85"
+      },
+      "before": {
+        "bytes": 15441,
+        "origin": {
+          "kind": "FIXED_REPOSITORY_PUBLIC_FILE"
+        },
+        "path": "scripts/development/offline_evidence/catalog.json",
+        "sha256": "4f9c5bf00f38b9baea484f6658331c39e4fdc217bdcbbb3c9c0659f59e8c38db"
+      },
+      "path": "scripts/development/offline_evidence/catalog.json"
+    },
+    {
+      "after": {
+        "bytes": 4974,
+        "sha256": "29f48c62859ccf45f0b07e590fcceb9d2bd7af86a1b5e1a1d0a47a3b3ea897c5"
+      },
+      "before": null,
+      "path": "scripts/development/offline_evidence/u3_a1.py"
+    },
+    {
+      "after": {
+        "bytes": 3689,
+        "sha256": "2c72df24979aa27671816819029e416ce12a27f2d684939f239cd3d5521e1e93"
+      },
+      "before": null,
+      "path": "scripts/development/offline_evidence/cpi_table1.py"
+    },
+    {
+      "after": {
+        "bytes": 38883,
+        "sha256": "e91900adf10a405f7ff4b1672d6af8d570d80bc059b074211fc1aff640bdc32e"
+      },
+      "before": {
+        "bytes": 38033,
+        "origin": {
+          "kind": "FIXED_REPOSITORY_PUBLIC_FILE"
+        },
+        "path": "scripts/development/offline_evidence/mainline_worker.py",
+        "sha256": "c4419ed7f1208921a43292eaa3095c582878aed3c7b6546b6fb51de46e5e0893"
+      },
+      "path": "scripts/development/offline_evidence/mainline_worker.py"
+    }
+  ],
+  "role": "DEVELOPMENT_EXACT_FILE_OVERLAY_NOT_PROTOCOL_STATE",
+  "unchanged_D227_A1_and_D222_runtime_fixes": true
+}

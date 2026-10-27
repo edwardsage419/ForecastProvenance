@@ -1,0 +1,14 @@
+...F........
+======================================================================
+FAIL: test_human_case_and_mainline_explain_table1_archive_scope (test_cpi_table1.Table1Tests.test_human_case_and_mainline_explain_table1_archive_scope)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/test_cpi_table1.py", line 129, in test_human_case_and_mainline_explain_table1_archive_scope
+    self.assertIn('Table 1',text);self.assertIn('归档',text);self.assertIn('-0.4',text)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'Table 1' not found in '有限离线证据核验\n2026年6月 CPI-U FRASER归档Table1精确表项：已核对（局部）\n  2026-06 CPI-U季调月变化=-0.4%\n  未季调同比=3.5%；仅用户正文副本，非发布者原字节。\n整体真实准入尚未建立（NOT_READY）；历史首次可得时间与完整性仍未建立。\n未建立正式时间认证、Bitcoin或Genesis；没有协议状态改变。\n'
+
+----------------------------------------------------------------------
+Ran 12 tests in 3.815s
+
+FAILED (failures=1)

@@ -1,0 +1,137 @@
+FFFFFFFFFFFF
+======================================================================
+FAIL: test_actual_pdf_uses_monthly_SA_allitems_not_index_NSA_or_yearly (test_cpi_table1.Table1Tests.test_actual_pdf_uses_monthly_SA_allitems_not_index_NSA_or_yearly)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/test_cpi_table1.py", line 37, in test_actual_pdf_uses_monthly_SA_allitems_not_index_NSA_or_yearly
+    m=self.module();archive=load(HERE/'cpi_pdf.py','cpi_table1_archive');raw=PDF.read_bytes();calls=[]
+      ^^^^^^^^^^^^^
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/test_cpi_table1.py", line 26, in module
+    self.assertTrue((HERE/'cpi_table1.py').is_file(),'exact CPI Table1 consumer absent')
+AssertionError: False is not true : exact CPI Table1 consumer absent
+
+======================================================================
+FAIL: test_actual_raw_identity_and_headline_disagreement_are_rejected (test_cpi_table1.Table1Tests.test_actual_raw_identity_and_headline_disagreement_are_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/test_cpi_table1.py", line 71, in test_actual_raw_identity_and_headline_disagreement_are_rejected
+    m=self.module();old=load(HERE/'cpi_pdf.py','cpi_table1_mismatch_archive');raw=PDF.read_bytes()
+      ^^^^^^^^^^^^^
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/test_cpi_table1.py", line 26, in module
+    self.assertTrue((HERE/'cpi_table1.py').is_file(),'exact CPI Table1 consumer absent')
+AssertionError: False is not true : exact CPI Table1 consumer absent
+
+======================================================================
+FAIL: test_empty_corrupt_and_symlink_explicit_inputs_have_no_fallback (test_cpi_table1.Table1Tests.test_empty_corrupt_and_symlink_explicit_inputs_have_no_fallback)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/test_cpi_table1.py", line 84, in test_empty_corrupt_and_symlink_explicit_inputs_have_no_fallback
+    self.module();alias=CAT['cpi-june-2026-archive']['inputs'][0]['alias']
+    ^^^^^^^^^^^^^
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/test_cpi_table1.py", line 26, in module
+    self.assertTrue((HERE/'cpi_table1.py').is_file(),'exact CPI Table1 consumer absent')
+AssertionError: False is not true : exact CPI Table1 consumer absent
+
+======================================================================
+FAIL: test_human_case_and_mainline_explain_table1_archive_scope (test_cpi_table1.Table1Tests.test_human_case_and_mainline_explain_table1_archive_scope)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/test_cpi_table1.py", line 128, in test_human_case_and_mainline_explain_table1_archive_scope
+    self.module();p,text=self.command('verify',CASE,human=True);self.assertEqual(p.returncode,0)
+    ^^^^^^^^^^^^^
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/test_cpi_table1.py", line 26, in module
+    self.assertTrue((HERE/'cpi_table1.py').is_file(),'exact CPI Table1 consumer absent')
+AssertionError: False is not true : exact CPI Table1 consumer absent
+
+======================================================================
+FAIL: test_mainline_only_one_new_child_changes_actual_D227_report (test_cpi_table1.Table1Tests.test_mainline_only_one_new_child_changes_actual_D227_report)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/test_cpi_table1.py", line 118, in test_mainline_only_one_new_child_changes_actual_D227_report
+    self.module();p,r=self.command('mainline');self.assertEqual(p.returncode,1)
+    ^^^^^^^^^^^^^
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/test_cpi_table1.py", line 26, in module
+    self.assertTrue((HERE/'cpi_table1.py').is_file(),'exact CPI Table1 consumer absent')
+AssertionError: False is not true : exact CPI Table1 consumer absent
+
+======================================================================
+FAIL: test_malformed_missing_or_wrong_column_count_rejected (test_cpi_table1.Table1Tests.test_malformed_missing_or_wrong_column_count_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/test_cpi_table1.py", line 60, in test_malformed_missing_or_wrong_column_count_rejected
+    m=self.module();t=self.text();line=next(l for l in t.splitlines() if l.startswith('All items.'))
+      ^^^^^^^^^^^^^
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/test_cpi_table1.py", line 26, in module
+    self.assertTrue((HERE/'cpi_table1.py').is_file(),'exact CPI Table1 consumer absent')
+AssertionError: False is not true : exact CPI Table1 consumer absent
+
+======================================================================
+FAIL: test_missing_duplicate_or_core_allitems_cannot_supply_target (test_cpi_table1.Table1Tests.test_missing_duplicate_or_core_allitems_cannot_supply_target)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/test_cpi_table1.py", line 55, in test_missing_duplicate_or_core_allitems_cannot_supply_target
+    m=self.module();t=self.text();line=next(l for l in t.splitlines() if l.startswith('All items.'))
+      ^^^^^^^^^^^^^
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/test_cpi_table1.py", line 26, in module
+    self.assertTrue((HERE/'cpi_table1.py').is_file(),'exact CPI Table1 consumer absent')
+AssertionError: False is not true : exact CPI Table1 consumer absent
+
+======================================================================
+FAIL: test_new_fixed_case_and_original_observations_are_separate (test_cpi_table1.Table1Tests.test_new_fixed_case_and_original_observations_are_separate)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/test_cpi_table1.py", line 77, in test_new_fixed_case_and_original_observations_are_separate
+    self.module();p,r=self.command('verify',CASE);self.assertEqual(p.returncode,0)
+    ^^^^^^^^^^^^^
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/test_cpi_table1.py", line 26, in module
+    self.assertTrue((HERE/'cpi_table1.py').is_file(),'exact CPI Table1 consumer absent')
+AssertionError: False is not true : exact CPI Table1 consumer absent
+
+======================================================================
+FAIL: test_new_source_refusal_keeps_old_archive_independent_and_mixed_findings (test_cpi_table1.Table1Tests.test_new_source_refusal_keeps_old_archive_independent_and_mixed_findings)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/test_cpi_table1.py", line 93, in test_new_source_refusal_keeps_old_archive_independent_and_mixed_findings
+    self.module();cli,comparison,archive,table=self.inputs();case=cli.CASES[CASE]
+    ^^^^^^^^^^^^^
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/test_cpi_table1.py", line 26, in module
+    self.assertTrue((HERE/'cpi_table1.py').is_file(),'exact CPI Table1 consumer absent')
+AssertionError: False is not true : exact CPI Table1 consumer absent
+
+======================================================================
+FAIL: test_own_title_period_and_adjustment_column_context_required (test_cpi_table1.Table1Tests.test_own_title_period_and_adjustment_column_context_required)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/test_cpi_table1.py", line 49, in test_own_title_period_and_adjustment_column_context_required
+    m=self.module();t=self.text()
+      ^^^^^^^^^^^^^
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/test_cpi_table1.py", line 26, in module
+    self.assertTrue((HERE/'cpi_table1.py').is_file(),'exact CPI Table1 consumer absent')
+AssertionError: False is not true : exact CPI Table1 consumer absent
+
+======================================================================
+FAIL: test_same_carrier_selector_and_values_are_bound_without_mutation (test_cpi_table1.Table1Tests.test_same_carrier_selector_and_values_are_bound_without_mutation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/test_cpi_table1.py", line 105, in test_same_carrier_selector_and_values_are_bound_without_mutation
+    self.module();cli,comparison,archive,table=self.inputs();self.assertTrue(hasattr(cli,'compare_cpi_table1'))
+    ^^^^^^^^^^^^^
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/test_cpi_table1.py", line 26, in module
+    self.assertTrue((HERE/'cpi_table1.py').is_file(),'exact CPI Table1 consumer absent')
+AssertionError: False is not true : exact CPI Table1 consumer absent
+
+======================================================================
+FAIL: test_table_value_and_sign_are_derived_not_filled_from_headline (test_cpi_table1.Table1Tests.test_table_value_and_sign_are_derived_not_filled_from_headline)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/test_cpi_table1.py", line 67, in test_table_value_and_sign_are_derived_not_filled_from_headline
+    m=self.module();t=self.text();line=next(l for l in t.splitlines() if l.startswith('All items.'))
+      ^^^^^^^^^^^^^
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/test_cpi_table1.py", line 26, in module
+    self.assertTrue((HERE/'cpi_table1.py').is_file(),'exact CPI Table1 consumer absent')
+AssertionError: False is not true : exact CPI Table1 consumer absent
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.001s
+
+FAILED (failures=12)

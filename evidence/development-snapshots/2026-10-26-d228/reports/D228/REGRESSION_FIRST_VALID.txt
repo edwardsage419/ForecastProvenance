@@ -1,0 +1,97 @@
+.................................F.........F.........................F........EEFFFF
+======================================================================
+ERROR: test_pdf_first_page_scope_is_explicit_and_measures_are_separate (test_cpi_archive.CPIArchiveTests.test_pdf_first_page_scope_is_explicit_and_measures_are_separate)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/test_cpi_archive.py", line 40, in test_pdf_first_page_scope_is_explicit_and_measures_are_separate
+    data = load('cpi_pdf').observe_archive_pdf(PDF.read_bytes())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/cpi_pdf.py", line 42, in observe_archive_pdf
+    from pypdf import PdfReader
+ModuleNotFoundError: No module named 'pypdf'
+
+======================================================================
+ERROR: test_shared_declarations_compare_without_upgrading_either_source (test_cpi_archive.CPIArchiveTests.test_shared_declarations_compare_without_upgrading_either_source)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/test_cpi_archive.py", line 75, in test_shared_declarations_compare_without_upgrading_either_source
+    copy, archive = self.pair()
+                    ^^^^^^^^^^^
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/test_cpi_archive.py", line 37, in pair
+    'observations': load('cpi_pdf').observe_archive_pdf(PDF.read_bytes())})
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/cpi_pdf.py", line 42, in observe_archive_pdf
+    from pypdf import PdfReader
+ModuleNotFoundError: No module named 'pypdf'
+
+======================================================================
+FAIL: test_list_catalog_is_finite_and_not_a_verification (test_cli.OfflineEntryTests.test_list_catalog_is_finite_and_not_a_verification)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/test_cli.py", line 221, in test_list_catalog_is_finite_and_not_a_verification
+    self.assertEqual(sum(len(x['inputs']) for x in data['cases']), 29)
+AssertionError: 30 != 29
+
+======================================================================
+FAIL: test_review_unregistered_catalog_cache_is_ignored (test_cli.OfflineEntryTests.test_review_unregistered_catalog_cache_is_ignored)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/test_cli.py", line 120, in test_review_unregistered_catalog_cache_is_ignored
+    self.assertEqual(len(data['cases']), 12)
+AssertionError: 13 != 12
+
+======================================================================
+FAIL: test_compatible_runtime_has_exactly_unchanged_report (test_runtime_availability.RuntimeAvailabilityTests.test_compatible_runtime_has_exactly_unchanged_report)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/test_runtime_availability.py", line 51, in test_compatible_runtime_has_exactly_unchanged_report
+    self.assertEqual(projected.encode(),BASELINE.read_bytes())
+AssertionError: b'{\n[225952 chars]   "target_table_support": {\n        "compari[5589 chars]n}\n' != b'{\n[225952 chars]   "title": "2026\xe5\xb9\xb46\xe6\x9c\x88 CPI[2785 chars]n}\n'
+
+======================================================================
+FAIL: test_standalone_and_mainline_reuse_legacy_results_with_new_child_only (test_q1_scope.Q1ScopeTests.test_standalone_and_mainline_reuse_legacy_results_with_new_child_only)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/test_q1_scope.py", line 174, in test_standalone_and_mainline_reuse_legacy_results_with_new_child_only
+    self.assertEqual(report,baseline)
+AssertionError: {'aut[126246 chars]', 'target_table_support': {'comparison': {'ac[3639 chars]lay'} != {'aut[126246 chars]', 'title': '2026年6月 CPI 两份载体声明'}, {'id': 'une[1767 chars]lay'}
+Diff is 394737 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_actual_mainline_only_new_binding_changes_and_counts_preserved (test_predecessor_binding.PredecessorBindingTests.test_actual_mainline_only_new_binding_changes_and_counts_preserved)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/test_predecessor_binding.py", line 145, in test_actual_mainline_only_new_binding_changes_and_counts_preserved
+    self.assertEqual(report,self.baseline)
+AssertionError: {'aut[136773 chars]', 'target_table_support': {'comparison': {'ac[3639 chars]lay'} != {'aut[136773 chars]', 'title': '2026年6月 CPI 两份载体声明'}, {'id': 'une[1767 chars]lay'}
+Diff is 428621 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_default_only_initial_authority_changes_against_prior_actual_output (test_mainline_verifier.MainlineVerifierTests.test_default_only_initial_authority_changes_against_prior_actual_output)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/test_mainline_verifier.py", line 91, in test_default_only_initial_authority_changes_against_prior_actual_output
+    self.assertEqual(changed,['initial-authority'])
+AssertionError: Lists differ: ['initial-authority', 'inflation-data'] != ['initial-authority']
+
+First list contains 1 additional elements.
+First extra element 1:
+'inflation-data'
+
+- ['initial-authority', 'inflation-data']
++ ['initial-authority']
+
+======================================================================
+FAIL: test_actual_default_mainline_adds_only_gate_child_and_reuses_eight_snapshots (test_verifier_gate.VerifierGateTests.test_actual_default_mainline_adds_only_gate_child_and_reuses_eight_snapshots)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/sage/Projects/ForecastProvenance/scripts/development/offline_evidence/test_verifier_gate.py", line 122, in test_actual_default_mainline_adds_only_gate_child_and_reuses_eight_snapshots
+    self.assertEqual(report,baseline);self.assertEqual(len(report['modules']),14)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'aut[142539 chars]', 'target_table_support': {'comparison': {'ac[3639 chars]lay'} != {'aut[142539 chars]', 'title': '2026年6月 CPI 两份载体声明'}, {'id': 'une[1767 chars]lay'}
+Diff is 452333 characters long. Set self.maxDiff to None to see it.
+
+----------------------------------------------------------------------
+Ran 84 tests in 53.569s
+
+FAILED (failures=7, errors=2)
