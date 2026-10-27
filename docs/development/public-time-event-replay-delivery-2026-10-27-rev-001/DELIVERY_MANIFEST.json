@@ -1,0 +1,690 @@
+{
+  "role": "PUBLIC_NONFORECAST_EVENT_REPLAY_DELIVERY_NOT_PROTOCOL_AUTHORITY",
+  "archive": {
+    "path": "public-time-event-replay.zip",
+    "bytes": 2742486,
+    "sha256": "6f8b62c87aba43d5bb044061b6e5884fc2c1db4eab77e4ab224b2033353e89ba"
+  },
+  "source_subject": {
+    "path": "docs/development/public-retention-exact-proposal-2026-10-26-rev-001/FILES.json",
+    "bytes": 41024,
+    "sha256": "3731bc1ab028cad46ffeb3fcf79f9c116d3b6029647fa99d86f30c37f79db242",
+    "this_new_archive_is_not_original_timestamp_subject": true
+  },
+  "original_report_content_sha256": "6dd4e12457d9e8c774b453cda2d18157b083666ad9420935a17b8de5ddf81dad",
+  "one_consumed_authorization_sha256": "3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63",
+  "retry_after_state_sha256": "9844c8fc2f7e42560f44cb5cdb3cf00a324c71b2c7573f54189c599a5ecdc9c4",
+  "native_binary_sha256": "55af6512c6c9b53786c0605b2d444ba970ba32f70746797001000cb36e572fa5",
+  "validation": {
+    "local_send_records": 4,
+    "outbound_application_payload_bytes": 4144,
+    "retained_valid_responses": 2,
+    "retained_timeout_attempts": 2,
+    "offline_native_positive_replays": 2,
+    "offline_mutation_rejections": 4,
+    "new_directory_native_result_equals_original": true,
+    "native_result_sha256": "0e958df92b17c7b8bb19dc34de7188d085d46143dd08f49ca9f794359b3bd0c5",
+    "passive_only_entry_no_native": true,
+    "transport_tests": 8,
+    "independent_review": "NO_REMAINING_ACTIONABLE_FINDINGS"
+  },
+  "qualification_count_change": 0,
+  "new_network_permission": false,
+  "real_admission": "NOT_READY",
+  "protocol_state_change": "NONE",
+  "member_count": 82,
+  "manifest_files": 81,
+  "uncompressed_bytes": 4871129,
+  "internal_member_identities": [
+    {
+      "bytes": 2856,
+      "origin": {
+        "kind": "DEVELOPMENT_SCOPE_GUIDE"
+      },
+      "path": "README.md",
+      "sha256": "53013baa2b5b8185b939a0e3a490351ba0f2b05ef81f31c3748014e74c7745ab"
+    },
+    {
+      "bytes": 1001,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/AUTHORIZATION.json",
+      "sha256": "df1f22e23ac534a88e5a31ccfed76b4a6f6c98872e583235ded00fc0981fad1e"
+    },
+    {
+      "bytes": 284,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/LAUNCH_RESERVED.json",
+      "sha256": "26f48b2cca74c5fec04668bad8451ad12eda3e132bf3eb19a6be7b3a128b9749"
+    },
+    {
+      "bytes": 167,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/LAUNCH_RESULT.json",
+      "sha256": "fe07c211c62e26316b8d9c6e711cb1e3a6670806ebd3e40bdcd20b8706c11abe"
+    },
+    {
+      "bytes": 4691,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/PLAN_CANDIDATE.json",
+      "sha256": "86acacaf3a81e80c4ba857f9a2da0a4fd5a39ed20bc2b2754e1b858df7f40675"
+    },
+    {
+      "bytes": 0,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/RUN_STDERR.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 429,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/RUN_STDOUT.log",
+      "sha256": "c740cd0c1fc026f24d238197ddd2a3506416255e2243e3b5e3de5c992c08f1a2"
+    },
+    {
+      "bytes": 2038,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/SOURCE_IDENTITIES.json",
+      "sha256": "95ea9609c6e1fbae92af8132e5697fc8d82a24d676d137c6ab1d41d3325274d5"
+    },
+    {
+      "bytes": 259,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/run-evidence/consumed/3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63.json",
+      "sha256": "1730b6f85f19fe639a45288b4f53215b4f9e0be21b1b4f619d4218af893d2a74"
+    },
+    {
+      "bytes": 922,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/run-evidence/events/3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63/authorization.json",
+      "sha256": "45e4a9e27510363ee1cae9901705cadee60de3e26d88440a0f4aab3c8bc448c1"
+    },
+    {
+      "bytes": 3326,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/run-evidence/events/3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63/execution-transcript.json",
+      "sha256": "34459f9471ae6ac6fc5fea64833c7f5c8d55ec94a9f45d83d261f7c24cd74bae"
+    },
+    {
+      "bytes": 3997,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/run-evidence/events/3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63/plan.json",
+      "sha256": "fa0380d1bd0268dd166e364d2e7049a6a5235caccdec4e5617597c04c2a4aa56"
+    },
+    {
+      "bytes": 1836,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/run-evidence/events/3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63/providers/TimeNL-Roughtime/attempt-1/request-builder.json",
+      "sha256": "c1d7d49c640960d5e3ce7d89b88a0c0d1395eb189212b56997510605357032da"
+    },
+    {
+      "bytes": 1036,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/run-evidence/events/3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63/providers/TimeNL-Roughtime/attempt-1/request.bin",
+      "sha256": "78165d2c41a212f669c41e047c1fbb9aa33541ba6a9f1cd4a30905bcfd6e1593"
+    },
+    {
+      "bytes": 65,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/run-evidence/events/3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63/providers/TimeNL-Roughtime/attempt-1/request.sha256",
+      "sha256": "d576426b56a10af0e665901fda46f2681cdf32279583c5b61d514ba3b615d217"
+    },
+    {
+      "bytes": 448,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/run-evidence/events/3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63/providers/TimeNL-Roughtime/attempt-1/response.bin",
+      "sha256": "8aa384fa94d39ffd08c872cc8bbc0128fe9ed138c696d5d4fd54eadba2fa46c3"
+    },
+    {
+      "bytes": 65,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/run-evidence/events/3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63/providers/TimeNL-Roughtime/attempt-1/response.sha256",
+      "sha256": "8b62542a4445d75aadf011aa4727ba673f9d1e5e0b6da5c11687302e280811e1"
+    },
+    {
+      "bytes": 797,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/run-evidence/events/3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63/providers/TimeNL-Roughtime/attempt-1/retry-state-reserved.json",
+      "sha256": "63b226fb8f873925bb158a8e860e1aa06d7c4e4741454bc95d161710d1795ce1"
+    },
+    {
+      "bytes": 356,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/run-evidence/events/3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63/providers/TimeNL-Roughtime/attempt-1/send-reservation.json",
+      "sha256": "cedb33747a289fd6403020b3497c96178f7bb24e88288985932ed185163fc403"
+    },
+    {
+      "bytes": 351,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/run-evidence/events/3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63/providers/TimeNL-Roughtime/attempt-1/transport.json",
+      "sha256": "24402baadca8061ab7b59076082f9e9f7237e43962390df8bba05069204142a5"
+    },
+    {
+      "bytes": 548,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/run-evidence/events/3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63/providers/TimeNL-Roughtime/attempt-1/verification.json",
+      "sha256": "ad181c8ec90d9633e99f97c736c01ab4634b7c1a7894de9394eaac48fbbfbe7e"
+    },
+    {
+      "bytes": 1844,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/run-evidence/events/3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63/providers/roughtime.se/attempt-1/request-builder.json",
+      "sha256": "47d70d3d2bfd19b6be6940e4d4f6275c271c6ca2e0acd096439c527c6b3965dd"
+    },
+    {
+      "bytes": 1036,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/run-evidence/events/3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63/providers/roughtime.se/attempt-1/request.bin",
+      "sha256": "a1461c8a3eefe8f24155ad1015c9152b921e7af4d72779ce5fe086f085456156"
+    },
+    {
+      "bytes": 65,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/run-evidence/events/3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63/providers/roughtime.se/attempt-1/request.sha256",
+      "sha256": "9cb5d3259fe7d3bcd23adc72162406d1e648f0e62784855c38dc99b32514da4f"
+    },
+    {
+      "bytes": 773,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/run-evidence/events/3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63/providers/roughtime.se/attempt-1/retry-state-reserved.json",
+      "sha256": "864f3b49a905407c5cde1e602280d74bec0457b3f9763bda42aa0c8a6c6beaf4"
+    },
+    {
+      "bytes": 355,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/run-evidence/events/3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63/providers/roughtime.se/attempt-1/send-reservation.json",
+      "sha256": "d1545d3dfae9bd50a6d602f069d75e7fe316a3cd645dc0a101b4b586dedf409e"
+    },
+    {
+      "bytes": 350,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/run-evidence/events/3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63/providers/roughtime.se/attempt-1/transport.json",
+      "sha256": "a905a47dc64760008c0092e8ff733fa07ca3ee2dfea59c813dc20638f0323061"
+    },
+    {
+      "bytes": 1844,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/run-evidence/events/3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63/providers/roughtime.se/attempt-2/request-builder.json",
+      "sha256": "47d70d3d2bfd19b6be6940e4d4f6275c271c6ca2e0acd096439c527c6b3965dd"
+    },
+    {
+      "bytes": 1036,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/run-evidence/events/3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63/providers/roughtime.se/attempt-2/request.bin",
+      "sha256": "a1461c8a3eefe8f24155ad1015c9152b921e7af4d72779ce5fe086f085456156"
+    },
+    {
+      "bytes": 65,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/run-evidence/events/3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63/providers/roughtime.se/attempt-2/request.sha256",
+      "sha256": "9cb5d3259fe7d3bcd23adc72162406d1e648f0e62784855c38dc99b32514da4f"
+    },
+    {
+      "bytes": 773,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/run-evidence/events/3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63/providers/roughtime.se/attempt-2/retry-state-reserved.json",
+      "sha256": "3475c90f09bcdc9cf49ce3b1d0b101f7cc6d22421fa4321dd27fb0494720a6a0"
+    },
+    {
+      "bytes": 355,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/run-evidence/events/3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63/providers/roughtime.se/attempt-2/send-reservation.json",
+      "sha256": "e31233a3bf8acbdbc7dfb97d8ee2cfcfce30589c4978adbb9b04c1925ba0bf0c"
+    },
+    {
+      "bytes": 350,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/run-evidence/events/3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63/providers/roughtime.se/attempt-2/transport.json",
+      "sha256": "f66294d08a48c5b5a0ae2092ccaa4310cf4120cd1a50af32aaeb009435e3166b"
+    },
+    {
+      "bytes": 1847,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/run-evidence/events/3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63/providers/time.txryan.com/attempt-1/request-builder.json",
+      "sha256": "03acad1a0c2a3c4f41a56fdbf163c165004619970d64c511c61b2791b13bb7b7"
+    },
+    {
+      "bytes": 1036,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/run-evidence/events/3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63/providers/time.txryan.com/attempt-1/request.bin",
+      "sha256": "fb5b0600e28caaa81e3e96b421d91cb96cce616e7efd8aa82b757362be573eb6"
+    },
+    {
+      "bytes": 65,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/run-evidence/events/3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63/providers/time.txryan.com/attempt-1/request.sha256",
+      "sha256": "5f049a12be7c573d1a3cfbdfc2a06d5fc9497ae3ff2a137869ee1a7856707645"
+    },
+    {
+      "bytes": 464,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/run-evidence/events/3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63/providers/time.txryan.com/attempt-1/response.bin",
+      "sha256": "0ff3b4f351cb2e59d3721ca60482aa8ae2e776bc50b5650ba9d68949c0a266a4"
+    },
+    {
+      "bytes": 65,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/run-evidence/events/3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63/providers/time.txryan.com/attempt-1/response.sha256",
+      "sha256": "d4d1034f8be7723266146366922d032754fe2441916edd4fbfb6b303feb0ee9d"
+    },
+    {
+      "bytes": 797,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/run-evidence/events/3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63/providers/time.txryan.com/attempt-1/retry-state-reserved.json",
+      "sha256": "e8771085fe80e255d0b2184695f853cbdbca85edf38baa5ec7aab2257125b9c9"
+    },
+    {
+      "bytes": 358,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/run-evidence/events/3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63/providers/time.txryan.com/attempt-1/send-reservation.json",
+      "sha256": "a3e1260501a5b4ba22472162d1d186c44f44033183e1eed87f59e97bedbebf9b"
+    },
+    {
+      "bytes": 353,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/run-evidence/events/3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63/providers/time.txryan.com/attempt-1/transport.json",
+      "sha256": "4242b894fe4ddd793266b531cb5d228a4bf839533c526cefe95219e9e22942e2"
+    },
+    {
+      "bytes": 559,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/run-evidence/events/3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63/providers/time.txryan.com/attempt-1/verification.json",
+      "sha256": "ff32922e521a587afbfc301092ed00fd65751dd63c4a5149c2b1ee89341f433c"
+    },
+    {
+      "bytes": 18408,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/run-evidence/events/3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63/report.json",
+      "sha256": "b87bfa68227a50d0ded9fd567fbd173041411289d44d6d2d4d6477144cb6847f"
+    },
+    {
+      "bytes": 773,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/run-evidence/events/3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63/retry-state-after.json",
+      "sha256": "3475c90f09bcdc9cf49ce3b1d0b101f7cc6d22421fa4321dd27fb0494720a6a0"
+    },
+    {
+      "bytes": 749,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/run-evidence/events/3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63/retry-state-before.json",
+      "sha256": "8839971bd2ce726e128b7deca98fca10f8e5a53e0f6d9e6f7a9f648acb483274"
+    },
+    {
+      "bytes": 1484,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-exact-proposal-2026-10-27-rev-001/run-evidence/events/3ec15749be99e527c17644002b7ed36958c99594e54e7118a9c30e109360aa63/verifier-build-profile.json",
+      "sha256": "20e90e6a8a3918202556e4bab994cb6ee4835f1b37ab9bdc4bed251e6cddefa9"
+    },
+    {
+      "bytes": 3870,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-execution-2026-10-27-rev-001/OFFLINE_REPLAY.json",
+      "sha256": "0e958df92b17c7b8bb19dc34de7188d085d46143dd08f49ca9f794359b3bd0c5"
+    },
+    {
+      "bytes": 4893,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-execution-2026-10-27-rev-001/REVIEW.md",
+      "sha256": "80b05c683d1132ea049fdb0e2cb6890d705f7f2ea0e9596973c23db75296edaa"
+    },
+    {
+      "bytes": 7605,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/first-nonforecast-roughtime-execution-2026-10-27-rev-001/replay_public_event.py",
+      "sha256": "795923620144f9a370b387874a6c47e67547d74260a1e1e375f7207ff6c0b3df"
+    },
+    {
+      "bytes": 3008,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/owner-roughtime-build-results.K0fixS/dependency-lock.json",
+      "sha256": "0ebfa7d4ceda120547530b9ac73cac6fe780266af4f798267aa9bba9c112490b"
+    },
+    {
+      "bytes": 2305,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/owner-roughtime-build-results.K0fixS/fixture-report.json",
+      "sha256": "1f005f50a94677f3faa45e7b7a20905f00a78e18c93186f2c26a81c08ae16c08"
+    },
+    {
+      "bytes": 4462818,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/owner-roughtime-build-results.K0fixS/fpp-roughtime-strict",
+      "sha256": "55af6512c6c9b53786c0605b2d444ba970ba32f70746797001000cb36e572fa5"
+    },
+    {
+      "bytes": 1573,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/owner-roughtime-build-results.K0fixS/verifier-build-profile.json",
+      "sha256": "d3941c0f4ce698b50cb1ff308a5eabe783394367260d9217aba52cdfdf3651da"
+    },
+    {
+      "bytes": 4346,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/provider-origin-current-root-evidence-2026-10-27-rev-001/CURRENT_ORIGIN_BINDINGS.json",
+      "sha256": "7332e2acb9b50c33800b489c1076ecc39701550c1996ef5f78aedaaadfee7fd0"
+    },
+    {
+      "bytes": 2690,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/provider-origin-current-root-evidence-2026-10-27-rev-001/REPORT.md",
+      "sha256": "c6cb04b9f886bbb8068d8572ac247971b2f76e6874ef7fd4e568dc63aa907f75"
+    },
+    {
+      "bytes": 688,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/provider-origin-current-root-evidence-2026-10-27-rev-001/SCOPE.md",
+      "sha256": "8de850c5c7660bf73305ae0d4567ad07e7420894607e5e8e9c5c8b31fe77b445"
+    },
+    {
+      "bytes": 1480,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/provider-origin-current-root-evidence-2026-10-27-rev-001/VERIFICATION.json",
+      "sha256": "b422b3467395d00f375a761f642683d19d7b354e672e4da6def9112acb2f2a69"
+    },
+    {
+      "bytes": 44335,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/provider-origin-current-root-evidence-2026-10-27-rev-001/timenl-index-en-commit-462312ae.html",
+      "sha256": "aa981fcd57b2febdeef9406ab6111c58a47439d6591f3e904ff57d48c250ecd1"
+    },
+    {
+      "bytes": 9103,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/provider-origin-current-root-evidence-2026-10-27-rev-001/timenl-nts.html",
+      "sha256": "d02107aa5a9b1e547486abbee3e762bbb88367575c44eaf52e6502279afbb1f0"
+    },
+    {
+      "bytes": 20652,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/provider-origin-current-root-evidence-2026-10-27-rev-001/txryan.html",
+      "sha256": "5839286df28c5617752134a837eecd598c5feb2493016f6d059320edcc807743"
+    },
+    {
+      "bytes": 41024,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/public-retention-exact-proposal-2026-10-26-rev-001/FILES.json",
+      "sha256": "3731bc1ab028cad46ffeb3fcf79f9c116d3b6029647fa99d86f30c37f79db242"
+    },
+    {
+      "bytes": 1453,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/public-time-event-replay-delivery-2026-10-27-rev-001/GO1.27.3_LICENSE.txt",
+      "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad"
+    },
+    {
+      "bytes": 710,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "docs/development/public-time-event-replay-delivery-2026-10-27-rev-001/UPSTREAM_NOTICES.md",
+      "sha256": "8dbf56d33a9cd814bde13e2c87f3d5379d3a8035ef70fbf19564632485b24e7b"
+    },
+    {
+      "bytes": 8432,
+      "origin": {
+        "kind": "ORIGINAL_REPLAY_WITH_PHYSICAL_ROOT_SUBJECT_IDENTITY_AND_EXCLUSIVE_OUTPUT",
+        "original": "docs/development/first-nonforecast-roughtime-execution-2026-10-27-rev-001/replay_public_event.py",
+        "original_sha256": "795923620144f9a370b387874a6c47e67547d74260a1e1e375f7207ff6c0b3df"
+      },
+      "path": "docs/development/public-time-event-replay-delivery-2026-10-27-rev-001/replay_public_event_portable.py",
+      "sha256": "a2ed57ed8ab8c75c7f0c6c2411beebdf7e63311a3914177c2b2a8de88782c8b3"
+    },
+    {
+      "bytes": 18648,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "scripts/development/offline_evidence/catalog.json",
+      "sha256": "bd8501c5930dc2d521bb9717f577ab20f3d0598101a9575e23fd503d3d8d5e85"
+    },
+    {
+      "bytes": 11131,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "scripts/development/offline_evidence/roughtime_event.py",
+      "sha256": "f17912037d785d0e42cc17bb1a45c9d744a4aee3d89de843721dfae34d2de6d6"
+    },
+    {
+      "bytes": 16734,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "scripts/development/offline_evidence/roughtime_event_inputs.json",
+      "sha256": "f31555ba9edc34adae241f7736d1990d48de57fe50b06fa9b832dcea6c3df9b9"
+    },
+    {
+      "bytes": 10426,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "scripts/development/offline_evidence/worker.py",
+      "sha256": "dfee8d478e23b19be52d3e443608ba89d007ee25c2c045aef90910e40a821128"
+    },
+    {
+      "bytes": 2294,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "scripts/genesis/execute_roughtime_rehearsal.py",
+      "sha256": "ef5c57e50b03895b97c275b9bae0398f67d36a3b3cf54334676c6717c8ce0341"
+    },
+    {
+      "bytes": 4508,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "scripts/genesis/prepare_roughtime_rehearsal.py",
+      "sha256": "1433e35a64a043e440a101c96649ec6f89d5f694abdbc480add5d6dbc9c95b9c"
+    },
+    {
+      "bytes": 1321,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "scripts/genesis/roughtime_strict_verifier/pinned/roughtime/LICENSE",
+      "sha256": "ee848ea5471ef081d0c4f54f68f900dc12c3079693b37adede58f57037b308f2"
+    },
+    {
+      "bytes": 15966,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "src/forecast_trust_core/_roughtime_control.py",
+      "sha256": "2470285ddc04c618d64c398523819c8a45ad3e3c6f733d23e8ba40b11f123e47"
+    },
+    {
+      "bytes": 31952,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "src/forecast_trust_core/_roughtime_execution.py",
+      "sha256": "236219cac468d0e1de4b965fb3a9b3be3a408b162340160411a791fb93609d74"
+    },
+    {
+      "bytes": 7654,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "src/forecast_trust_core/_roughtime_plan.py",
+      "sha256": "db9cb4390266b883c413ac265108cf0a08526a6cfc4d3118136de356fc65b3fe"
+    },
+    {
+      "bytes": 3598,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "src/forecast_trust_core/_roughtime_profile.py",
+      "sha256": "7bdd60de603875c1fc71f8b295dd286dc6d4a1366ab13d147284fd191762a727"
+    },
+    {
+      "bytes": 6352,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "src/forecast_trust_core/_roughtime_receipt.py",
+      "sha256": "8af2f97cb11d5b12695660af39d5207b74861942618d39165cf9a42425614494"
+    },
+    {
+      "bytes": 9217,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "src/forecast_trust_core/_roughtime_report.py",
+      "sha256": "0af510721ca6177918131397fc2436ecadb66b96757be29372975f9cfbe55f13"
+    },
+    {
+      "bytes": 9600,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "src/forecast_trust_core/_roughtime_support.py",
+      "sha256": "dc638e4a2edc4dd39382d64ef78073777ec490ca2f49f94ab6d7b8f77503e228"
+    },
+    {
+      "bytes": 2755,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "src/forecast_trust_core/_verified_executable.py",
+      "sha256": "6c31156c85a4813344e7a9fa196a4647faa86fc1db02087f91acf58a53548103"
+    },
+    {
+      "bytes": 8126,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "src/forecast_trust_core/canonical.py",
+      "sha256": "f9ef49579a5c54757c6660d377275a0ed5f8afdf646f33130651a711005ac9ba"
+    },
+    {
+      "bytes": 987,
+      "origin": {
+        "kind": "FIXED_PUBLIC_FILE"
+      },
+      "path": "src/forecast_trust_core/roughtime_rehearsal.py",
+      "sha256": "8234cbc698c0c6e85c4c56c67199021d31d0986d56a7bcf5c534697979b2a103"
+    }
+  ]
+}
