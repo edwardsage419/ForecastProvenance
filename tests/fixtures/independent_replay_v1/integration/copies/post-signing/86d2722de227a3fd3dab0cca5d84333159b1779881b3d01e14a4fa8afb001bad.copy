@@ -1,0 +1,95 @@
+{
+  "content_sha256": "7cf1f8a6bc749656426a8d8bb83bc59824a15429b67d4fe24e6b930628112e1e",
+  "kind": "obligation_rules",
+  "model_only": true,
+  "model_version": "M1_FIXED_MODEL_V1",
+  "object_id": "model:source:qualification:v1",
+  "object_type": "SyntheticReplaySource",
+  "payload_sha256": "5c0a16bcef376ff6db8a0b0c306cd636a4a5d31e2e86508108c64ff38fffba0b",
+  "requirements": [
+    {
+      "check": "formation_authority",
+      "domain": "providers",
+      "id": "formation_authority",
+      "parameters": {},
+      "predicate": "P14"
+    },
+    {
+      "check": "formation_criteria",
+      "domain": "providers",
+      "id": "formation_criteria",
+      "parameters": {},
+      "predicate": "P14"
+    },
+    {
+      "check": "formation_permission",
+      "domain": "providers",
+      "id": "formation_permission",
+      "parameters": {},
+      "predicate": "P14"
+    },
+    {
+      "check": "formation_repeatability_freshness",
+      "domain": "providers",
+      "id": "formation_repeatability_freshness",
+      "parameters": {},
+      "predicate": "P14"
+    },
+    {
+      "check": "formation_independence_review",
+      "domain": "providers",
+      "id": "formation_independence_review",
+      "parameters": {},
+      "predicate": "P14"
+    },
+    {
+      "check": "history_scope_head",
+      "domain": "provider_boundaries",
+      "id": "history_scope_head",
+      "parameters": {},
+      "predicate": "P15"
+    },
+    {
+      "check": "history_succession_coverage",
+      "domain": "provider_boundaries",
+      "id": "history_succession_coverage",
+      "parameters": {},
+      "predicate": "P15"
+    },
+    {
+      "check": "history_authentication",
+      "domain": "provider_boundaries",
+      "id": "history_authentication",
+      "parameters": {},
+      "predicate": "P15"
+    },
+    {
+      "check": "history_effective_selection",
+      "domain": "provider_boundaries",
+      "id": "history_effective_selection",
+      "parameters": {},
+      "predicate": "P15"
+    },
+    {
+      "check": "history_deadline_binding",
+      "domain": "provider_boundaries",
+      "id": "history_deadline_binding",
+      "parameters": {},
+      "predicate": "P15"
+    },
+    {
+      "check": "history_validation",
+      "domain": "provider_boundaries",
+      "id": "history_validation",
+      "parameters": {},
+      "predicate": "P15"
+    },
+    {
+      "check": "history_admission_consumed",
+      "domain": "provider_boundaries",
+      "id": "history_admission_consumed",
+      "parameters": {},
+      "predicate": "P15"
+    }
+  ]
+}

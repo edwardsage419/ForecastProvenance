@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://forecastprovenance.org/schemas/manifest_acceptance_v3.schema.json",
+  "title": "ManifestAcceptance V3",
+  "$comment": "PROPOSED_NOT_ADOPTED. Structure only; no object, message or signature is instantiated. This schema does not register an operational profile, establish authority/applicability, or grant acceptance, Genesis or execution permission. ML-D124 confirms only the isolated development interpretation that authority_ref targets the same independent BootstrapGovernanceRoot as bootstrap_governance_root_ref; the two exact refs must be checked by a semantic consumer. Independent profiles and semantic consumption must check ordered sets, exact five kind/stage/subject/support/coverage, root/rule/role/key/effective bindings, canonical identities, approved public authentication and complete G10. A structurally empty blocker list is not evidence of no blockers. Missing inputs remain unresolved. Existing MA2, policy drafts and guards are unchanged. ML-D134 repository-schema admission preview only; the proposed URI does not establish publication or applicability.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "object_type",
+    "candidate_manifest_ref",
+    "bootstrap_governance_root_ref",
+    "acceptance_rule_ref",
+    "required_validation_report_refs",
+    "authority_ref",
+    "decision",
+    "reason_codes",
+    "blocking_finding_refs",
+    "signature_ref",
+    "object_id",
+    "payload_sha256",
+    "content_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "3.0"},
+    "object_type": {"const": "ManifestAcceptance"},
+    "candidate_manifest_ref": {"$ref": "#/$defs/exact_ref"},
+    "bootstrap_governance_root_ref": {"$ref": "#/$defs/exact_ref"},
+    "acceptance_rule_ref": {"$ref": "#/$defs/exact_ref"},
+    "required_validation_report_refs": {
+      "$comment": "Five distinct full pairs only. Ordering and one exact instance per required kind need independent semantic checks, not uniqueItems alone. R4T support and post-signature RfinalB are outside these five.",
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/exact_ref"}
+    },
+    "authority_ref": {
+      "$comment": "ML-D124 confirms the isolated development interpretation: authority_ref must equal bootstrap_governance_root_ref and target the independently supplied BootstrapGovernanceRoot. This generic exact-ref shape cannot check equality, target type, authority, role, scope or effective history; semantic consumption and independent evidence remain required. No operational adoption is implied.",
+      "$ref": "#/$defs/exact_ref"
+    },
+    "decision": {"enum": ["ACCEPT", "REJECT"]},
+    "reason_codes": {
+      "$comment": "ASCII sorted-set order and applicable vocabulary require semantic consumption. Empty remains structurally permitted.",
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/token"}
+    },
+    "blocking_finding_refs": {
+      "$comment": "Full-pair order, exact finding content and independently complete blocker coverage are semantic duties.",
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/exact_ref"}
+    },
+    "signature_ref": {"$ref": "#/$defs/exact_ref"},
+    "object_id": {"$ref": "#/$defs/token"},
+    "payload_sha256": {"$ref": "#/$defs/sha256"},
+    "content_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "allOf": [
+    {
+      "if": {
+        "required": ["decision"],
+        "properties": {"decision": {"const": "ACCEPT"}}
+      },
+      "then": {"properties": {"blocking_finding_refs": {"maxItems": 0}}}
+    }
+  ],
+  "$defs": {
+    "token": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9._:/-]+$",
+      "not": {"pattern": "[^A-Za-z0-9._:/-]"}
+    },
+    "sha256": {
+      "type": "string",
+      "minLength": 64,
+      "maxLength": 64,
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "exact_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["object_id", "content_sha256"],
+      "properties": {
+        "object_id": {"$ref": "#/$defs/token"},
+        "content_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}

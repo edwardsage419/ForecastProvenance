@@ -1,0 +1,14 @@
+{
+  "content_sha256": "804c6bbeb42ef5020505922ee7d63c96149dadd7bf502d7964b96aade3c7064e",
+  "kind": "target",
+  "method": "last-observed-value-v1",
+  "model_only": true,
+  "model_version": "M1_FIXED_MODEL_V1",
+  "name": "t1",
+  "object_id": "model:source:target-t1:v1",
+  "object_type": "SyntheticReplaySource",
+  "payload_sha256": "316f66e9e0d42ea3007d9be62f31238eeeaf2442057f29668f8e9949357e14a0",
+  "prediction_type": "DECIMAL",
+  "resolution": "first-release-t1",
+  "unit": "model-index"
+}

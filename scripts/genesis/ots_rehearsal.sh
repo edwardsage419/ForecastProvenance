@@ -126,7 +126,8 @@ case "$MODE" in
     cp "$COPY" "$EVENT/subject.bin"
     cp "$PROOF" "$EVENT/subject.bin.ots"
     sha256sum "$EVENT/subject.bin.ots" > "$EVENT/proof_before.sha256"
-    run_logged ots --bitcoin-node "$OTS_BITCOIN_NODE" verify "$EVENT/subject.bin.ots"
+    # Disable default calendar selection and timestamp cache for this verification.
+    run_logged ots --no-default-whitelist --no-cache --bitcoin-node "$OTS_BITCOIN_NODE" verify "$EVENT/subject.bin.ots"
     ots info "$EVENT/subject.bin.ots" > "$EVENT/ots_info_verified.txt"
     sha256sum "$EVENT/subject.bin.ots" > "$EVENT/proof_after.sha256"
     ;;

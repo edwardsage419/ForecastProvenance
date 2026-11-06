@@ -1,0 +1,130 @@
+{
+  "content_sha256": "cccf43fb0e93b208176fd018436df3d4d66814668c79555980b3e774998886ae",
+  "kind": "obligation_rules",
+  "model_only": true,
+  "model_version": "M1_FIXED_MODEL_V1",
+  "object_id": "model:source:external:v1",
+  "object_type": "SyntheticReplaySource",
+  "payload_sha256": "76605cb21055699c2face6cd44bf38e5a463eb53b72d3ffd8b5f6874fc342cce",
+  "requirements": [
+    {
+      "check": "wall_subject_nonce",
+      "domain": "events",
+      "id": "wall_subject_nonce",
+      "parameters": {},
+      "predicate": "P18"
+    },
+    {
+      "check": "wall_signature_delegation",
+      "domain": "events",
+      "id": "wall_signature_delegation",
+      "parameters": {},
+      "predicate": "P18"
+    },
+    {
+      "check": "wall_provider_independence",
+      "domain": "events",
+      "id": "wall_provider_independence",
+      "parameters": {},
+      "predicate": "P18"
+    },
+    {
+      "check": "wall_historical_admission",
+      "domain": "events",
+      "id": "wall_historical_admission",
+      "parameters": {},
+      "predicate": "P18"
+    },
+    {
+      "check": "wall_quorum_transcript",
+      "domain": "events",
+      "id": "wall_quorum_transcript",
+      "parameters": {},
+      "predicate": "P18"
+    },
+    {
+      "check": "wall_conservative_bound",
+      "domain": "events",
+      "id": "wall_conservative_bound",
+      "parameters": {},
+      "predicate": "P18"
+    },
+    {
+      "check": "deadline_subject_frozen",
+      "domain": "events",
+      "id": "deadline_subject_frozen",
+      "parameters": {},
+      "predicate": "P19"
+    },
+    {
+      "check": "deadline_upper_bound",
+      "domain": "events",
+      "id": "deadline_upper_bound",
+      "parameters": {},
+      "predicate": "P19"
+    },
+    {
+      "check": "bitcoin_subject_bundle",
+      "domain": "events",
+      "id": "bitcoin_subject_bundle",
+      "parameters": {},
+      "predicate": "P20"
+    },
+    {
+      "check": "bitcoin_pin_chain",
+      "domain": "events",
+      "id": "bitcoin_pin_chain",
+      "parameters": {},
+      "predicate": "P20"
+    },
+    {
+      "check": "bitcoin_fresh_execution",
+      "domain": "events",
+      "id": "bitcoin_fresh_execution",
+      "parameters": {},
+      "predicate": "P20"
+    },
+    {
+      "check": "final_full_signed_subject",
+      "domain": "governance",
+      "id": "final_full_signed_subject",
+      "parameters": {},
+      "predicate": "P23"
+    },
+    {
+      "check": "final_wall_bitcoin_same_bundle",
+      "domain": "governance",
+      "id": "final_wall_bitcoin_same_bundle",
+      "parameters": {},
+      "predicate": "P23"
+    },
+    {
+      "check": "raw_result_coverage",
+      "domain": "governance",
+      "id": "raw_result_coverage",
+      "parameters": {},
+      "predicate": "P24"
+    },
+    {
+      "check": "raw_result_precedence",
+      "domain": "governance",
+      "id": "raw_result_precedence",
+      "parameters": {},
+      "predicate": "P24"
+    },
+    {
+      "check": "output_exact_bindings",
+      "domain": "governance",
+      "id": "output_exact_bindings",
+      "parameters": {},
+      "predicate": "P25"
+    },
+    {
+      "check": "output_independent_replay",
+      "domain": "governance",
+      "id": "output_independent_replay",
+      "parameters": {},
+      "predicate": "P25"
+    }
+  ]
+}

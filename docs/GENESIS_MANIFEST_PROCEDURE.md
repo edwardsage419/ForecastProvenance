@@ -48,9 +48,10 @@ The final candidate manifest binds exact full-hash references for:
 15. CorrectionPolicy.
 16. RetentionPolicy.
 17. EvaluationPolicy and scoring rules.
-18. HumanReviewPolicy.
-19. Project cost doctrine and allowed operational dependencies.
-20. Required source-adapter and external-evidence verifier contract versions.
+18. Project cost doctrine and allowed operational dependencies.
+19. Required source-adapter and external-evidence verifier contract versions.
+
+`HumanReviewPolicy` remains a historical design and possible future-extension reference. Genesis v1 does not instantiate or admit scientific Human Review authority; `HumanReviewPolicy` is not a required authority dependency of the current Candidate Freeze Package or a prerequisite for Genesis `ManifestAcceptance`. Any later exercise of scientific Human Review authority requires an exact, accepted review rule for the applicable scope under the governing manifest; reference or retention alone grants no authority. This clarification does not reinterpret historical objects, frozen contracts, or validation semantics.
 
 No reference is valid by semantic ID alone.
 

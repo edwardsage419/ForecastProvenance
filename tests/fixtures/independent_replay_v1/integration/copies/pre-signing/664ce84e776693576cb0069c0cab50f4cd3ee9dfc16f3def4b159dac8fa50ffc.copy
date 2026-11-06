@@ -1,0 +1,14 @@
+{
+  "ambiguity": "UNRESOLVED",
+  "content_sha256": "1ca08c7a34da879753a1ff2d58cfbc73af6171e9b7135123442b93d0f922262b",
+  "corrections": "PRESERVE_ORIGINAL",
+  "kind": "resolution",
+  "model_only": true,
+  "model_version": "M1_FIXED_MODEL_V1",
+  "name": "first-release-t3",
+  "object_id": "model:source:resolution-t3:v1",
+  "object_type": "SyntheticReplaySource",
+  "payload_sha256": "ca89b969bf6cbc17238aaf942eb90a5c437b97baf3a2ec9eb20dc14cfdeeb938",
+  "scoring": "SQUARED_ERROR",
+  "vintage": "FIRST_OFFICIAL_RELEASE"
+}

@@ -1,0 +1,102 @@
+{
+  "content_sha256": "e25478ed70df3ab617f281e891944163d13891f7365312071146cb4512477569",
+  "kind": "obligation_rules",
+  "model_only": true,
+  "model_version": "M1_FIXED_MODEL_V1",
+  "object_id": "model:source:schedule:v1",
+  "object_type": "SyntheticReplaySource",
+  "payload_sha256": "ecad6aee54bf08ff43f3692d0068c58d2789e21d79393cea565deba0e1774c79",
+  "requirements": [
+    {
+      "check": "calendar_target_period_coverage",
+      "domain": "targets",
+      "id": "calendar_target_period_coverage",
+      "parameters": {},
+      "predicate": "P12"
+    },
+    {
+      "check": "calendar_page_revision_coverage",
+      "domain": "targets",
+      "id": "calendar_page_revision_coverage",
+      "parameters": {},
+      "predicate": "P12"
+    },
+    {
+      "check": "calendar_entry_disposition",
+      "domain": "targets",
+      "id": "calendar_entry_disposition",
+      "parameters": {},
+      "predicate": "P12"
+    },
+    {
+      "check": "calendar_parser_tzdb",
+      "domain": "targets",
+      "id": "calendar_parser_tzdb",
+      "parameters": {},
+      "predicate": "P12"
+    },
+    {
+      "check": "calendar_horizon_boundaries",
+      "domain": "governance",
+      "id": "calendar_horizon_boundaries",
+      "parameters": {},
+      "predicate": "P12"
+    },
+    {
+      "check": "cycle_identity",
+      "domain": "cycles",
+      "id": "cycle_identity",
+      "parameters": {},
+      "predicate": "P12"
+    },
+    {
+      "check": "slot_method_matrix",
+      "domain": "slots",
+      "id": "slot_method_matrix",
+      "parameters": {},
+      "predicate": "P12"
+    },
+    {
+      "check": "cycle_record_coverage",
+      "domain": "cycles",
+      "id": "cycle_record_coverage",
+      "parameters": {},
+      "predicate": "P13"
+    },
+    {
+      "check": "slot_record_coverage",
+      "domain": "slots",
+      "id": "slot_record_coverage",
+      "parameters": {},
+      "predicate": "P13"
+    },
+    {
+      "check": "lifecycle_partition",
+      "domain": "slots",
+      "id": "lifecycle_partition",
+      "parameters": {},
+      "predicate": "P13"
+    },
+    {
+      "check": "issued_withdrawn_accounting",
+      "domain": "slots",
+      "id": "issued_withdrawn_accounting",
+      "parameters": {},
+      "predicate": "P13"
+    },
+    {
+      "check": "resolution_partition",
+      "domain": "slots",
+      "id": "resolution_partition",
+      "parameters": {},
+      "predicate": "P13"
+    },
+    {
+      "check": "omission_evidence",
+      "domain": "slots",
+      "id": "omission_evidence",
+      "parameters": {},
+      "predicate": "P13"
+    }
+  ]
+}

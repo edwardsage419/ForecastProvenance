@@ -1,0 +1,206 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:forecast-provenance:development-draft:implementation-binding-v2:rev-001",
+  "title": "ImplementationBinding 2.0 — development candidate only",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "object_type",
+    "schema_version",
+    "binding_version",
+    "source_file_manifest_ref",
+    "package_artifact_ref",
+    "dependency_lock_ref",
+    "runtime_profile_ref",
+    "entrypoint_bindings",
+    "object_id",
+    "payload_sha256",
+    "content_sha256",
+    "legacy_validator_binding"
+  ],
+  "properties": {
+    "object_type": {
+      "const": "ImplementationBinding"
+    },
+    "schema_version": {
+      "const": "2.0"
+    },
+    "binding_version": {
+      "$ref": "#/$defs/token"
+    },
+    "source_file_manifest_ref": {
+      "$ref": "#/$defs/exact_ref"
+    },
+    "package_artifact_ref": {
+      "$ref": "#/$defs/exact_ref"
+    },
+    "dependency_lock_ref": {
+      "$ref": "#/$defs/exact_ref"
+    },
+    "runtime_profile_ref": {
+      "$ref": "#/$defs/exact_ref"
+    },
+    "entrypoint_bindings": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/entrypoint_binding"
+      }
+    },
+    "object_id": {
+      "$ref": "#/$defs/object_id"
+    },
+    "payload_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "content_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "legacy_validator_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "object_role",
+        "validator_version",
+        "git_commit",
+        "implementation_language",
+        "python_requirement",
+        "runtime_dependencies",
+        "source_files",
+        "test_report",
+        "required_test_scope",
+        "change_policy"
+      ],
+      "properties": {
+        "object_role": {
+          "const": "NORMATIVE"
+        },
+        "validator_version": {
+          "$ref": "#/$defs/token"
+        },
+        "git_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "implementation_language": {
+          "const": "PYTHON"
+        },
+        "python_requirement": {
+          "$ref": "#/$defs/token"
+        },
+        "runtime_dependencies": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/token"
+          }
+        },
+        "source_files": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "sha256"
+            ],
+            "properties": {
+              "path": {
+                "$ref": "#/$defs/token"
+              },
+              "sha256": {
+                "$ref": "#/$defs/sha256"
+              }
+            }
+          }
+        },
+        "test_report": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "filename",
+            "sha256"
+          ],
+          "properties": {
+            "filename": {
+              "$ref": "#/$defs/token"
+            },
+            "sha256": {
+              "$ref": "#/$defs/sha256"
+            }
+          }
+        },
+        "required_test_scope": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/token"
+          }
+        },
+        "change_policy": {
+          "const": "ANY_CONSEQUENTIAL_FILE_OR_RUNTIME_CHANGE_REQUIRES_NEW_VALIDATOR_CONTRACT"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "object_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$"
+    },
+    "token": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[^\\r\\n]+$"
+    },
+    "exact_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "object_id",
+        "content_sha256"
+      ],
+      "properties": {
+        "object_id": {
+          "$ref": "#/$defs/object_id"
+        },
+        "content_sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "entrypoint_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation_id",
+        "logical_entrypoint_id",
+        "source_unit_ref",
+        "symbol"
+      ],
+      "properties": {
+        "operation_id": {
+          "$ref": "#/$defs/token"
+        },
+        "logical_entrypoint_id": {
+          "$ref": "#/$defs/token"
+        },
+        "source_unit_ref": {
+          "$ref": "#/$defs/exact_ref"
+        },
+        "symbol": {
+          "$ref": "#/$defs/token"
+        }
+      }
+    }
+  },
+  "$comment": "PROPOSED_NOT_ADOPTED; candidate schema only; validity does not establish authority, completeness, applicability, admission or readiness."
+}

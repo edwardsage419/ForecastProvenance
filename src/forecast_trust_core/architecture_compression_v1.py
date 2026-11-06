@@ -14,8 +14,9 @@ from .canonical import (
     validate_ref,
     verify_sealed_object,
 )
-from .core import Validation, aggregate
+from .core import Check, Validation, aggregate
 from ._checks import check as _check, required as _required
+from .claim_authority_contract_gate_v1 import validate_manifest_acceptance_v3_contract
 
 CLAIM_TYPES = frozenset({
     "EXTERNAL_EXISTENCE_BOUND_VERIFIED",
@@ -289,6 +290,51 @@ def validate_manifest_acceptance_v2(
     blocking = acceptance.get("blocking_finding_refs")
     checks.append(_check("acceptance_v2.blocking", isinstance(blocking, list) and len(blocking) == 0, "BLOCKING_FINDINGS_PRESENT"))
     return aggregate(checks)
+
+
+def check_manifest_acceptance_v3_bindings(
+    manifest: Mapping[str, Any],
+    acceptance: Mapping[str, Any],
+    *,
+    bootstrap_root_ref: Mapping[str, Any],
+    acceptance_rule_ref: Mapping[str, Any],
+    required_validation_report_refs: Sequence[Mapping[str, Any]],
+) -> tuple[Check, ...]:
+    """Return local consistency checks, never a Validation or admission result.
+
+    Supplied controls are not proof of independent authority or completeness.
+    Generic manifest seals do not establish candidate semantics. Report targets,
+    authentication, history, time, Bitcoin, workflow and G10 remain unchecked.
+    """
+    try:
+        validate_manifest_acceptance_v3_contract(acceptance)
+    except ValueError:
+        return (_check("acceptance_v3.contract", False, "ACCEPTANCE_CONTRACT_INVALID"),)
+    if not isinstance(manifest, Mapping) or not verify_sealed_object(manifest):
+        return (_check("acceptance_v3.manifest_seal", False, "INVALID_MANIFEST_SEAL"),)
+
+    try:
+        if not isinstance(required_validation_report_refs, (list, tuple)) or len(required_validation_report_refs) != 5:
+            raise ValueError("expected exactly five report references")
+        for ref in (bootstrap_root_ref, acceptance_rule_ref, *required_validation_report_refs):
+            if not isinstance(ref, Mapping):
+                raise ValueError("expected reference object")
+            validate_ref(ref)
+        pairs = [(ref["object_id"], ref["content_sha256"]) for ref in required_validation_report_refs]
+        if len(set(pairs)) != 5 or pairs != sorted(pairs):
+            raise ValueError("expected sorted distinct full reference pairs")
+    except (ValueError, TypeError, KeyError):
+        return (_check("acceptance_v3.inputs", False, "MALFORMED_ACCEPTANCE_BINDING_INPUTS"),)
+
+    exact_manifest = {"object_id": manifest["object_id"], "content_sha256": manifest["content_sha256"]}
+    relations = (
+        ("manifest", acceptance["candidate_manifest_ref"] == exact_manifest, "MANIFEST_HASH_MISMATCH"),
+        ("bootstrap", acceptance["bootstrap_governance_root_ref"] == bootstrap_root_ref, "BOOTSTRAP_ROOT_MISMATCH"),
+        ("rule", acceptance["acceptance_rule_ref"] == acceptance_rule_ref, "ACCEPTANCE_RULE_MISMATCH"),
+        ("reports", acceptance["required_validation_report_refs"] == list(required_validation_report_refs), "VALIDATION_REPORT_SET_MISMATCH"),
+        ("decision", acceptance["decision"] == "ACCEPT", "MANIFEST_NOT_ACCEPTED"),
+    )
+    return tuple(_check(f"acceptance_v3.{name}", passed, "OK" if passed else reason) for name, passed, reason in relations)
 
 
 def validate_final_genesis_acceptance(

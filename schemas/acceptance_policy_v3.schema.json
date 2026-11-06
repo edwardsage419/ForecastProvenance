@@ -1,0 +1,553 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "object_type",
+    "schema_version",
+    "policy_id",
+    "policy_version",
+    "policy_type",
+    "scope",
+    "rules",
+    "change_policy",
+    "object_id",
+    "payload_sha256",
+    "content_sha256"
+  ],
+  "properties": {
+    "object_type": {
+      "const": "PolicyDefinition"
+    },
+    "schema_version": {
+      "const": "3.0"
+    },
+    "policy_id": {
+      "$ref": "#/$defs/token"
+    },
+    "policy_version": {
+      "const": 3
+    },
+    "policy_type": {
+      "const": "ACCEPTANCE"
+    },
+    "scope": {
+      "const": "GENESIS_INITIAL_MANIFEST"
+    },
+    "rules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_subject_type",
+        "authority_requirement",
+        "required_validation_reports",
+        "required_external_anchor_evidence",
+        "decision_values",
+        "predecessor_binding_rule",
+        "successor_fork_rule",
+        "signing_semantics",
+        "report_semantics",
+        "final_acceptance_checks",
+        "workflow_applicability"
+      ],
+      "properties": {
+        "candidate_subject_type": {
+          "const": "TrustedManifest"
+        },
+        "authority_requirement": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "root_source",
+            "permission_source",
+            "authentication_rule"
+          ],
+          "properties": {
+            "root_source": {
+              "const": "INDEPENDENT_INPUT_OUTSIDE_CANDIDATE_GRAPH"
+            },
+            "permission_source": {
+              "const": "EXACT_ROOT_PERMISSION"
+            },
+            "authentication_rule": {
+              "const": "INDEPENDENT_ROLE_KEY_CHECK_AND_APPROVED_A_PUBLIC_VERIFICATION"
+            }
+          }
+        },
+        "required_validation_reports": {
+          "const": [
+            "GENESIS_ADVERSARIAL_REPORT",
+            "OTS_BITCOIN_STRONG_VERIFICATION_REPORT",
+            "PROVIDER_REHEARSAL_REPORT",
+            "TARGET_SOURCE_PARSER_REPORT",
+            "TRUST_CORE_TEST_REPORT"
+          ]
+        },
+        "required_external_anchor_evidence": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "subject",
+            "time_evidence_policy_ref",
+            "quorum_policy_ref",
+            "strong_verifier_contract_ref",
+            "final_report_rule",
+            "standalone_root_anchor",
+            "evidence_role"
+          ],
+          "properties": {
+            "subject": {
+              "const": "EXACT_FINAL_SIGNED_MANIFEST_ACCEPTANCE"
+            },
+            "time_evidence_policy_ref": {
+              "$ref": "#/$defs/exact_ref"
+            },
+            "quorum_policy_ref": {
+              "$ref": "#/$defs/exact_ref"
+            },
+            "strong_verifier_contract_ref": {
+              "$ref": "#/$defs/exact_ref"
+            },
+            "final_report_rule": {
+              "const": "APPLICABLE_RFINALB_INDEPENDENT_OF_REQUIRED_FIVE"
+            },
+            "standalone_root_anchor": {
+              "const": "OPTIONAL_NOT_SUBSTITUTE"
+            },
+            "evidence_role": {
+              "const": "EXTERNAL_FINAL_VALIDATION_INPUT"
+            }
+          }
+        },
+        "decision_values": {
+          "const": [
+            "ACCEPT",
+            "REJECT"
+          ]
+        },
+        "predecessor_binding_rule": {
+          "const": "INITIAL_HAS_NO_ACCEPTED_PREDECESSOR"
+        },
+        "successor_fork_rule": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "mode",
+            "governing_source",
+            "unresolved_fork"
+          ],
+          "properties": {
+            "mode": {
+              "const": "SUCCESSOR_NOT_AUTHORIZED_BY_THIS_INITIAL_POLICY"
+            },
+            "governing_source": {
+              "const": "PREVIOUSLY_ACCEPTED_GOVERNANCE"
+            },
+            "unresolved_fork": {
+              "const": "FAIL_CLOSED"
+            }
+          }
+        },
+        "signing_semantics": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "profile_ref",
+            "verifier_contract_ref",
+            "carrier_profile_ref",
+            "manifest_acceptance_schema_version",
+            "algorithm",
+            "public_key_encoding",
+            "signature_encoding",
+            "domain_source",
+            "projection_source",
+            "context_fields",
+            "unsigned_fields",
+            "excluded_fields",
+            "array_ordering"
+          ],
+          "properties": {
+            "profile_ref": {
+              "$ref": "#/$defs/exact_ref"
+            },
+            "verifier_contract_ref": {
+              "$ref": "#/$defs/exact_ref"
+            },
+            "carrier_profile_ref": {
+              "$ref": "#/$defs/exact_ref"
+            },
+            "manifest_acceptance_schema_version": {
+              "const": "3.0"
+            },
+            "algorithm": {
+              "const": "ED25519_PURE_STRICT_SUBGROUP_V1"
+            },
+            "public_key_encoding": {
+              "const": "LOWERCASE_HEX_32_BYTES"
+            },
+            "signature_encoding": {
+              "const": "LOWERCASE_HEX_64_BYTES"
+            },
+            "domain_source": {
+              "const": "INDEPENDENT_FIXED_PROFILE"
+            },
+            "projection_source": {
+              "const": "APPROVED_A_WITH_EXPLICIT_MA3_VERSION_MAPPING"
+            },
+            "context_fields": {
+              "const": [
+                "action",
+                "actor_id",
+                "effective_scope_ref",
+                "project_id",
+                "public_key_sha256",
+                "role",
+                "scope",
+                "validator_contract_ref"
+              ]
+            },
+            "unsigned_fields": {
+              "const": [
+                "acceptance_rule_ref",
+                "authority_ref",
+                "blocking_finding_refs",
+                "bootstrap_governance_root_ref",
+                "candidate_manifest_ref",
+                "decision",
+                "object_type",
+                "reason_codes",
+                "required_validation_report_refs",
+                "schema_version"
+              ]
+            },
+            "excluded_fields": {
+              "const": [
+                "content_sha256",
+                "object_id",
+                "payload_sha256",
+                "signature_ref"
+              ]
+            },
+            "array_ordering": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "required_validation_report_refs",
+                "blocking_finding_refs",
+                "reason_codes"
+              ],
+              "properties": {
+                "required_validation_report_refs": {
+                  "const": "OBJECT_ID_THEN_CONTENT_SHA256_SET"
+                },
+                "blocking_finding_refs": {
+                  "const": "OBJECT_ID_THEN_CONTENT_SHA256_SET"
+                },
+                "reason_codes": {
+                  "const": "ASCII_TOKEN_SET"
+                }
+              }
+            }
+          }
+        },
+        "report_semantics": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "prefixItems": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "required_count",
+                "stage",
+                "subject_relation",
+                "profile_ref"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "GENESIS_ADVERSARIAL_REPORT"
+                },
+                "required_count": {
+                  "const": 1
+                },
+                "stage": {
+                  "const": "G6"
+                },
+                "subject_relation": {
+                  "const": "EXACT_FINAL_CANDIDATE_MANIFEST"
+                },
+                "profile_ref": {
+                  "$ref": "#/$defs/exact_ref"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "required_count",
+                "stage",
+                "subject_relation",
+                "profile_ref"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "OTS_BITCOIN_STRONG_VERIFICATION_REPORT"
+                },
+                "required_count": {
+                  "const": 1
+                },
+                "stage": {
+                  "const": "AFTER_G4_BEFORE_G8"
+                },
+                "subject_relation": {
+                  "const": "EXACT_VC_BOUND_R4T"
+                },
+                "profile_ref": {
+                  "$ref": "#/$defs/exact_ref"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "required_count",
+                "stage",
+                "subject_relation",
+                "profile_ref"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "PROVIDER_REHEARSAL_REPORT"
+                },
+                "required_count": {
+                  "const": 1
+                },
+                "stage": {
+                  "const": "G6"
+                },
+                "subject_relation": {
+                  "const": "EXACT_FINAL_CANDIDATE_MANIFEST"
+                },
+                "profile_ref": {
+                  "$ref": "#/$defs/exact_ref"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "required_count",
+                "stage",
+                "subject_relation",
+                "profile_ref"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "TARGET_SOURCE_PARSER_REPORT"
+                },
+                "required_count": {
+                  "const": 1
+                },
+                "stage": {
+                  "const": "G6"
+                },
+                "subject_relation": {
+                  "const": "EXACT_FINAL_CANDIDATE_MANIFEST"
+                },
+                "profile_ref": {
+                  "$ref": "#/$defs/exact_ref"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "required_count",
+                "stage",
+                "subject_relation",
+                "profile_ref"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "TRUST_CORE_TEST_REPORT"
+                },
+                "required_count": {
+                  "const": 1
+                },
+                "stage": {
+                  "const": "G6"
+                },
+                "subject_relation": {
+                  "const": "EXACT_FINAL_CANDIDATE_MANIFEST"
+                },
+                "profile_ref": {
+                  "$ref": "#/$defs/exact_ref"
+                }
+              }
+            }
+          ],
+          "items": false
+        },
+        "final_acceptance_checks": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "profile_ref",
+            "mandatory_conjunction",
+            "preserved_guards",
+            "missing_required_input",
+            "diagnostics",
+            "model_separation"
+          ],
+          "properties": {
+            "profile_ref": {
+              "$ref": "#/$defs/exact_ref"
+            },
+            "mandatory_conjunction": {
+              "const": [
+                "APPLICABLE_PACKAGE_ACCEPTANCE_AND_CANDIDATE_FREEZE",
+                "AUTHENTICATED_TIMING_ORDER_AND_AVAILABILITY",
+                "COMPLETE_FIVE_REPORT_KIND_STAGE_SUBJECT_SUPPORT_COVERAGE",
+                "EXACT_MANIFEST_COMPLETE_DEPENDENCIES_AND_VERIFIER",
+                "FINAL_SIGNED_SA_WALL_BITCOIN_OTS_DURABILITY",
+                "INDEPENDENT_EXACT_ROOT_RULE_RETENTION_AND_RECOVERY",
+                "INDEPENDENT_ROOT_RULE_ROLE_KEY_SCOPE_EFFECTIVE",
+                "NO_BLOCKING_FINDINGS",
+                "VALID_DECISION_AND_APPROVED_A_PUBLIC_AUTHENTICATION"
+              ]
+            },
+            "preserved_guards": {
+              "const": [
+                "C01",
+                "C05",
+                "C06",
+                "G10"
+              ]
+            },
+            "missing_required_input": {
+              "const": "UNRESOLVED"
+            },
+            "diagnostics": {
+              "const": "RETAIN_MISSING_AND_HARD_FAILURE"
+            },
+            "model_separation": {
+              "const": "MODEL_NEVER_REAL_EVIDENCE"
+            }
+          }
+        },
+        "workflow_applicability": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "profile_ref",
+            "package_acceptance",
+            "candidate_freeze",
+            "genesis_authorization",
+            "first_execution_rule"
+          ],
+          "properties": {
+            "profile_ref": {
+              "$ref": "#/$defs/exact_ref"
+            },
+            "package_acceptance": {
+              "const": "APPLICABLE_RECORDS_REQUIRED"
+            },
+            "candidate_freeze": {
+              "const": "APPLICABLE_SEPARATE_INSTRUCTION_AND_RECORDS_REQUIRED"
+            },
+            "genesis_authorization": {
+              "const": "SEPARATE_ACTION_NOT_GRANTED_BY_THIS_INITIAL_ACCEPTANCE_POLICY"
+            },
+            "first_execution_rule": {
+              "const": "STRICTLY_AFTER_FINAL_VALIDATION_AND_EXPLICIT_GENESIS_AUTHORIZATION"
+            }
+          }
+        }
+      }
+    },
+    "change_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version_change",
+        "historical_objects",
+        "successor",
+        "in_place_rewrite"
+      ],
+      "properties": {
+        "version_change": {
+          "const": "NEW_POLICY_AND_SCHEMA_PROFILE_FOR_SECURITY_OR_APPLICABILITY_CHANGE"
+        },
+        "historical_objects": {
+          "const": "PRESERVE_EXACT_BYTES_AND_OLD_APPLICABLE_RULES"
+        },
+        "successor": {
+          "const": "WHERE_APPLICABLE_UNDER_PREVIOUSLY_ACCEPTED_GOVERNANCE"
+        },
+        "in_place_rewrite": {
+          "const": "FORBIDDEN"
+        }
+      }
+    },
+    "object_id": {
+      "$ref": "#/$defs/token"
+    },
+    "payload_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "content_sha256": {
+      "$ref": "#/$defs/sha256"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://forecastprovenance.org/schemas/acceptance_policy_v3.schema.json",
+  "title": "AcceptancePolicy V3",
+  "$comment": "PROPOSED_NOT_ADOPTED. A rule/profile literal is a required obligation, never a verified finding. Profile refs must resolve to independently fixed exact complete applicable profiles, not arbitrary objects. Structural validity cannot establish authority, signing semantics completeness, actual evidence, historical applicability, acceptance or G10. No real signed message, carrier or event is instantiated. MA3 mapping requires explicit independent applicability; this schema does not change approved A. Parallel ML-D115 structural draft; the earlier ML-A05 draft remains unchanged. Added explicit final evidence role and first-execution obligation retain policy2 commitments. ML-D124 confirms only the isolated development interpretation that authority_ref targets the same independent BootstrapGovernanceRoot as bootstrap_governance_root_ref. No operational schema/profile version or authority_ref mapping is adopted. These constants are duties, not evidence that final validation, Genesis authorization or execution happened. No future authorization/evidence ref is added. Complete exact dependency closure for the 13 profile/contract positions remains unresolved. ML-D134 repository-schema admission preview only; the proposed URI does not establish publication or applicability.",
+  "$defs": {
+    "token": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9._:/-]+$",
+      "not": {
+        "pattern": "[^A-Za-z0-9._:/-]"
+      }
+    },
+    "sha256": {
+      "type": "string",
+      "minLength": 64,
+      "maxLength": 64,
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "public_key": {
+      "type": "string",
+      "minLength": 64,
+      "maxLength": 64,
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "exact_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "object_id",
+        "content_sha256"
+      ],
+      "properties": {
+        "object_id": {
+          "$ref": "#/$defs/token"
+        },
+        "content_sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    }
+  }
+}

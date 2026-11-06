@@ -1,0 +1,179 @@
+{
+  "content_sha256": "43c5ba1a7ba679b38ae6836ccd99765f91e7c9bea993158cbdd6885020272187",
+  "kind": "obligation_rules",
+  "model_only": true,
+  "model_version": "M1_FIXED_MODEL_V1",
+  "object_id": "model:source:scientific:v1",
+  "object_type": "SyntheticReplaySource",
+  "payload_sha256": "eb4b8ad0f7e51d197acdf437f1f85ab1244b787cef62b7f187e339750ac1463a",
+  "requirements": [
+    {
+      "check": "NT01_historical_bindings",
+      "domain": "slots",
+      "id": "NT01_historical_bindings",
+      "parameters": {},
+      "predicate": "P21"
+    },
+    {
+      "check": "NT01_policy_compatibility",
+      "domain": "slots",
+      "id": "NT01_policy_compatibility",
+      "parameters": {},
+      "predicate": "P21"
+    },
+    {
+      "check": "NT02_snapshot_recursive_bytes",
+      "domain": "slots",
+      "id": "NT02_snapshot_recursive_bytes",
+      "parameters": {},
+      "predicate": "P21"
+    },
+    {
+      "check": "NT02_source_vintage",
+      "domain": "slots",
+      "id": "NT02_source_vintage",
+      "parameters": {},
+      "predicate": "P21"
+    },
+    {
+      "check": "NT02_input_availability",
+      "domain": "slots",
+      "id": "NT02_input_availability",
+      "parameters": {},
+      "predicate": "P21"
+    },
+    {
+      "check": "NT03_method_configuration",
+      "domain": "slots",
+      "id": "NT03_method_configuration",
+      "parameters": {},
+      "predicate": "P21"
+    },
+    {
+      "check": "NT03_environment_identity",
+      "domain": "slots",
+      "id": "NT03_environment_identity",
+      "parameters": {},
+      "predicate": "P21"
+    },
+    {
+      "check": "NT03_deterministic_reexecution",
+      "domain": "slots",
+      "id": "NT03_deterministic_reexecution",
+      "parameters": {},
+      "predicate": "P21"
+    },
+    {
+      "check": "NT04_attempt_succession",
+      "domain": "slots",
+      "id": "NT04_attempt_succession",
+      "parameters": {},
+      "predicate": "P21"
+    },
+    {
+      "check": "NT04_failure_retry_budget",
+      "domain": "slots",
+      "id": "NT04_failure_retry_budget",
+      "parameters": {},
+      "predicate": "P21"
+    },
+    {
+      "check": "NT04_first_success_output",
+      "domain": "slots",
+      "id": "NT04_first_success_output",
+      "parameters": {},
+      "predicate": "P21"
+    },
+    {
+      "check": "NT05_precommitted_selection",
+      "domain": "slots",
+      "id": "NT05_precommitted_selection",
+      "parameters": {},
+      "predicate": "P21"
+    },
+    {
+      "check": "NT05_control_class",
+      "domain": "slots",
+      "id": "NT05_control_class",
+      "parameters": {},
+      "predicate": "P21"
+    },
+    {
+      "check": "NT06_type_unit_decimal",
+      "domain": "slots",
+      "id": "NT06_type_unit_decimal",
+      "parameters": {},
+      "predicate": "P21"
+    },
+    {
+      "check": "NT06_cutoff_horizon_bindings",
+      "domain": "slots",
+      "id": "NT06_cutoff_horizon_bindings",
+      "parameters": {},
+      "predicate": "P21"
+    },
+    {
+      "check": "NT06_origin_preservation",
+      "domain": "slots",
+      "id": "NT06_origin_preservation",
+      "parameters": {},
+      "predicate": "P21"
+    },
+    {
+      "check": "NT07_first_release_resolution",
+      "domain": "slots",
+      "id": "NT07_first_release_resolution",
+      "parameters": {},
+      "predicate": "P21"
+    },
+    {
+      "check": "NT07_conflict_ambiguity",
+      "domain": "slots",
+      "id": "NT07_conflict_ambiguity",
+      "parameters": {},
+      "predicate": "P21"
+    },
+    {
+      "check": "NT07_correction_withdrawal",
+      "domain": "slots",
+      "id": "NT07_correction_withdrawal",
+      "parameters": {},
+      "predicate": "P21"
+    },
+    {
+      "check": "NT08_denominator",
+      "domain": "slots",
+      "id": "NT08_denominator",
+      "parameters": {},
+      "predicate": "P21"
+    },
+    {
+      "check": "NT08_cohort_scoring",
+      "domain": "slots",
+      "id": "NT08_cohort_scoring",
+      "parameters": {},
+      "predicate": "P21"
+    },
+    {
+      "check": "scientific_preoutcome",
+      "domain": "slots",
+      "id": "scientific_preoutcome",
+      "parameters": {},
+      "predicate": "P21"
+    },
+    {
+      "check": "governance_scientific_exclusion",
+      "domain": "governance",
+      "id": "governance_scientific_exclusion",
+      "parameters": {},
+      "predicate": "P21"
+    },
+    {
+      "check": "C01_capability_gate",
+      "domain": "governance",
+      "id": "C01_capability_gate",
+      "parameters": {},
+      "predicate": "P21"
+    }
+  ]
+}

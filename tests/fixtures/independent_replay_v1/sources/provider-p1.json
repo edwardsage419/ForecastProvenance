@@ -1,0 +1,14 @@
+{
+  "authority_role": "MODEL_QUALIFICATION_OWNER",
+  "content_sha256": "5a97cbd370309ddbbcd6db4bf98581343519887a5e45a2c72c9d512e9837823c",
+  "history_rule": "COMPLETE_FIXED_HEAD",
+  "independence": "owner-p1",
+  "kind": "provider",
+  "model_only": true,
+  "model_version": "M1_FIXED_MODEL_V1",
+  "name": "p1",
+  "object_id": "model:source:provider-p1:v1",
+  "object_type": "SyntheticReplaySource",
+  "payload_sha256": "a1bd0885895b48e4726c9dd38e3b5c67d6d2a59fd282f1a40726caacf31ae454",
+  "permission": "MODEL_EXPLICIT"
+}

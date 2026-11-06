@@ -1,0 +1,102 @@
+{
+  "content_sha256": "dbdab12225fcd84d4cb0b110b61eda87b853a83dd2c39156463c6776008d1b1a",
+  "kind": "obligation_rules",
+  "model_only": true,
+  "model_version": "M1_FIXED_MODEL_V1",
+  "object_id": "model:source:reports:v1",
+  "object_type": "SyntheticReplaySource",
+  "payload_sha256": "fb4a350e5592da1bff346b09f51d8de226bc7f416df09b0d80e9ffe552bc2c27",
+  "requirements": [
+    {
+      "check": "required_report_roles",
+      "domain": "reports",
+      "id": "required_report_roles",
+      "parameters": {},
+      "predicate": "P16"
+    },
+    {
+      "check": "report_subject_stage",
+      "domain": "reports",
+      "id": "report_subject_stage",
+      "parameters": {},
+      "predicate": "P16"
+    },
+    {
+      "check": "report_validator_dependencies",
+      "domain": "reports",
+      "id": "report_validator_dependencies",
+      "parameters": {},
+      "predicate": "P16"
+    },
+    {
+      "check": "report_raw_replay",
+      "domain": "reports",
+      "id": "report_raw_replay",
+      "parameters": {},
+      "predicate": "P16"
+    },
+    {
+      "check": "report_cardinality",
+      "domain": "governance",
+      "id": "report_cardinality",
+      "parameters": {},
+      "predicate": "P16"
+    },
+    {
+      "check": "report_formation_acyclic",
+      "domain": "governance",
+      "id": "report_formation_acyclic",
+      "parameters": {},
+      "predicate": "P16"
+    },
+    {
+      "check": "retrospective_raw_identity",
+      "domain": "fixtures",
+      "id": "retrospective_raw_identity",
+      "parameters": {},
+      "predicate": "P17"
+    },
+    {
+      "check": "retrospective_source_vintage",
+      "domain": "fixtures",
+      "id": "retrospective_source_vintage",
+      "parameters": {},
+      "predicate": "P17"
+    },
+    {
+      "check": "retrospective_parser_replay",
+      "domain": "fixtures",
+      "id": "retrospective_parser_replay",
+      "parameters": {},
+      "predicate": "P17"
+    },
+    {
+      "check": "retrospective_origin",
+      "domain": "fixtures",
+      "id": "retrospective_origin",
+      "parameters": {},
+      "predicate": "P17"
+    },
+    {
+      "check": "finding_union",
+      "domain": "governance",
+      "id": "finding_union",
+      "parameters": {},
+      "predicate": "P22"
+    },
+    {
+      "check": "finding_exact_closure",
+      "domain": "governance",
+      "id": "finding_exact_closure",
+      "parameters": {},
+      "predicate": "P22"
+    },
+    {
+      "check": "finding_no_waiver",
+      "domain": "governance",
+      "id": "finding_no_waiver",
+      "parameters": {},
+      "predicate": "P22"
+    }
+  ]
+}

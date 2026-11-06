@@ -376,6 +376,53 @@ def validate_manifest_acceptance_v2_contract(acceptance: Mapping[str, Any]) -> N
         _fail("ManifestAcceptance decision invalid")
 
 
+def validate_manifest_acceptance_v3_contract(acceptance: Mapping[str, Any]) -> None:
+    """Check only the local MA3 contract, never authentication or admission.
+
+    Equal authority/root refs implement the D124 development interpretation;
+    they do not establish an independent root, permissions or applicability.
+    Report targets, blocker completeness, signatures and G10 remain unchecked.
+    """
+    _exact_sealed(
+        acceptance,
+        object_type="ManifestAcceptance",
+        keys=MANIFEST_ACCEPTANCE_V2_KEYS,
+        schema_version="3.0",
+    )
+    for field in (
+        "candidate_manifest_ref",
+        "bootstrap_governance_root_ref",
+        "acceptance_rule_ref",
+        "authority_ref",
+        "signature_ref",
+    ):
+        _ref(acceptance.get(field), f"ManifestAcceptance.{field}")
+    if acceptance["authority_ref"] != acceptance["bootstrap_governance_root_ref"]:
+        _fail("ManifestAcceptance.authority_ref must equal bootstrap_governance_root_ref")
+
+    reports = acceptance["required_validation_report_refs"]
+    _ref_array(reports, "ManifestAcceptance.required_validation_report_refs", minimum=5, maximum=5)
+    blocking = acceptance["blocking_finding_refs"]
+    _ref_array_unbounded(blocking, "ManifestAcceptance.blocking_finding_refs")
+    for field, refs in (
+        ("required_validation_report_refs", reports),
+        ("blocking_finding_refs", blocking),
+    ):
+        pairs = [(ref["object_id"], ref["content_sha256"]) for ref in refs]
+        if pairs != sorted(pairs):
+            _fail(f"ManifestAcceptance.{field} must be sorted by full reference pair")
+
+    reasons = acceptance["reason_codes"]
+    _token_array(reasons, "ManifestAcceptance.reason_codes")
+    if reasons != sorted(set(reasons)):
+        _fail("ManifestAcceptance.reason_codes must be sorted and unique")
+    decision = acceptance["decision"]
+    if not isinstance(decision, str) or decision not in {"ACCEPT", "REJECT"}:
+        _fail("ManifestAcceptance decision invalid")
+    if decision == "ACCEPT" and blocking:
+        _fail("ManifestAcceptance ACCEPT requires empty blocking_finding_refs")
+
+
 def validate_wall_inputs(inputs: Mapping[str, Any]) -> None:
     if not isinstance(inputs, Mapping):
         _fail("wall-clock inputs must be a mapping")

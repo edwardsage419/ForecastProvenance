@@ -1,0 +1,432 @@
+{
+  "action": "INITIAL_ACCEPT",
+  "content_sha256": "6c7b4f760e22411873b7f1226949b44f41fb8815bb361227df1634df219b7f7a",
+  "domains": {
+    "cycles": [
+      {
+        "boundary": "2030-02-20T13:30:00Z",
+        "name": "t1",
+        "subject": {
+          "content_sha256": "5c7dcde80916216343c285c8b1e7982fd82e7c0371f360477d0fe50e1caf2b95",
+          "object_id": "model:subject:cycle:t1:v1"
+        }
+      },
+      {
+        "boundary": "2030-02-20T13:30:00Z",
+        "name": "t2",
+        "subject": {
+          "content_sha256": "a33f577c8b812b98a0e6ebe440dca47c4efa31b68125a443cdfd5d3a67150d94",
+          "object_id": "model:subject:cycle:t2:v1"
+        }
+      },
+      {
+        "boundary": "2030-02-20T13:30:00Z",
+        "name": "t3",
+        "subject": {
+          "content_sha256": "351cd8bea7e6961a09522db4b8de040b6495ed081538baf1130541d3f5590f30",
+          "object_id": "model:subject:cycle:t3:v1"
+        }
+      }
+    ],
+    "events": [
+      {
+        "boundary": "2030-02-01T00:00:00Z",
+        "name": "final-acceptance",
+        "subject": {
+          "content_sha256": "05c962b2879fda8634977525735b819b01112bca1da7b6e5a3d757b3f37d2c00",
+          "object_id": "model:subject:event:final-acceptance:v1"
+        }
+      },
+      {
+        "boundary": "2030-02-12T13:30:00Z",
+        "name": "plan-t1",
+        "subject": {
+          "content_sha256": "d28b61f3d573962e7676c673d3f8beaaccfef27791b9975c827e1295e5c5f6c4",
+          "object_id": "model:subject:event:plan-t1:v1"
+        }
+      },
+      {
+        "boundary": "2030-02-19T13:30:00Z",
+        "name": "cycle-t1",
+        "subject": {
+          "content_sha256": "2b6573a641e885b09962f26a7860ce0fda4c45476372c6bcd49136dcef0d8e42",
+          "object_id": "model:subject:event:cycle-t1:v1"
+        }
+      },
+      {
+        "boundary": "2030-02-19T13:30:00Z",
+        "name": "dvr-t1",
+        "subject": {
+          "content_sha256": "02691c4c5567ed1fb99ce44c553c497f4ff1975d3107fb99144eb3bc7ed1e258",
+          "object_id": "model:subject:event:dvr-t1:v1"
+        }
+      },
+      {
+        "boundary": "2030-02-12T13:30:00Z",
+        "name": "plan-t2",
+        "subject": {
+          "content_sha256": "c57183e5589a406ab963433dff82441fd2a1203ebec6b0de77f19af85c6785eb",
+          "object_id": "model:subject:event:plan-t2:v1"
+        }
+      },
+      {
+        "boundary": "2030-02-19T13:30:00Z",
+        "name": "cycle-t2",
+        "subject": {
+          "content_sha256": "524677de9a11f88b250d6b81188dc02f74d2490eb283015c0991c6d344b6f33c",
+          "object_id": "model:subject:event:cycle-t2:v1"
+        }
+      },
+      {
+        "boundary": "2030-02-19T13:30:00Z",
+        "name": "dvr-t2",
+        "subject": {
+          "content_sha256": "491e83ee603f3f8de294572ec10cbdeac245efa22fd8a258b5348287f088e92c",
+          "object_id": "model:subject:event:dvr-t2:v1"
+        }
+      },
+      {
+        "boundary": "2030-02-12T13:30:00Z",
+        "name": "plan-t3",
+        "subject": {
+          "content_sha256": "ab5386bd698e2231c67f99cce16f23b63e13ba54166a8e780cbcfa4b2f525c7c",
+          "object_id": "model:subject:event:plan-t3:v1"
+        }
+      },
+      {
+        "boundary": "2030-02-19T13:30:00Z",
+        "name": "cycle-t3",
+        "subject": {
+          "content_sha256": "6f968763c5c46f96783d7e5c4c43ca379d5151c50a1087a942f52a6ef38a730a",
+          "object_id": "model:subject:event:cycle-t3:v1"
+        }
+      },
+      {
+        "boundary": "2030-02-19T13:30:00Z",
+        "name": "dvr-t3",
+        "subject": {
+          "content_sha256": "e8b66c6b5d7900e46dcd7beaabeb3c4a2caf8baef9406b2c41bbdeb07a17c5cc",
+          "object_id": "model:subject:event:dvr-t3:v1"
+        }
+      }
+    ],
+    "fixtures": [
+      {
+        "boundary": "2030-02-01T00:00:00Z",
+        "name": "t1",
+        "subject": {
+          "content_sha256": "519208d13e2343bebcb0b9e31cf849fc78eb335b08ac5b59f761ce75380debcc",
+          "object_id": "model:subject:fixture:t1:v1"
+        }
+      },
+      {
+        "boundary": "2030-02-01T00:00:00Z",
+        "name": "t2",
+        "subject": {
+          "content_sha256": "35dba4fde853270e6450303e2b4fb15529dd543842b44c6cc3a61cd0ee94a9f2",
+          "object_id": "model:subject:fixture:t2:v1"
+        }
+      },
+      {
+        "boundary": "2030-02-01T00:00:00Z",
+        "name": "t3",
+        "subject": {
+          "content_sha256": "02440c71b985781de468b29e1629664df0030a3610ba617f38425b01b2b9cbc4",
+          "object_id": "model:subject:fixture:t3:v1"
+        }
+      }
+    ],
+    "governance": [
+      {
+        "boundary": "2030-02-01T00:00:00Z",
+        "name": "initial-acceptance",
+        "subject": {
+          "content_sha256": "620ba31cce707921e447a7effaf88ff2866b564243b8ce8aba463702b7a3cfa1",
+          "object_id": "model:candidate-manifest:v1"
+        }
+      }
+    ],
+    "providers": [
+      {
+        "boundary": "2030-02-01T00:00:00Z",
+        "name": "p1",
+        "subject": {
+          "content_sha256": "a7015a649f788644f1cc84a49ad9dfab526f44a422bd4f815b10f20bdb5fde67",
+          "object_id": "model:subject:provider:p1:v1"
+        }
+      },
+      {
+        "boundary": "2030-02-01T00:00:00Z",
+        "name": "p2",
+        "subject": {
+          "content_sha256": "834160cac932a56448c2815627aaae986597174082642823777c16aaf284b6dc",
+          "object_id": "model:subject:provider:p2:v1"
+        }
+      },
+      {
+        "boundary": "2030-02-01T00:00:00Z",
+        "name": "p3",
+        "subject": {
+          "content_sha256": "5db49526d8800d68aa7fafa379efdf79064bba43fae1e0196b454f49f1011c65",
+          "object_id": "model:subject:provider:p3:v1"
+        }
+      }
+    ],
+    "reports": [
+      {
+        "boundary": "2030-02-01T00:00:00Z",
+        "name": "runtime",
+        "subject": {
+          "content_sha256": "5a205863984e6f92af8bc9453db10b4412d6f661bf9d21b7b2cd0cc146b9752a",
+          "object_id": "model:subject:report:runtime:v1"
+        }
+      },
+      {
+        "boundary": "2030-02-01T00:00:00Z",
+        "name": "sources",
+        "subject": {
+          "content_sha256": "9ca8ffade5be77406dd6294c6dcac3cae5f41407bb29aa33ffd8d717b4a6c21b",
+          "object_id": "model:subject:report:sources:v1"
+        }
+      },
+      {
+        "boundary": "2030-02-01T00:00:00Z",
+        "name": "qualification",
+        "subject": {
+          "content_sha256": "91b772e01f15fc8696f30190618f20fe1a0dbb7f7915eb937dfbb0c469e640c2",
+          "object_id": "model:subject:report:qualification:v1"
+        }
+      },
+      {
+        "boundary": "2030-02-01T00:00:00Z",
+        "name": "bitcoin-pre-signing",
+        "subject": {
+          "content_sha256": "a1ee65292094f430db59879d10340ce57d3e9b59a75f7adbd8b00e25c8fae882",
+          "object_id": "model:subject:report:bitcoin-pre-signing:v1"
+        }
+      },
+      {
+        "boundary": "2030-02-01T00:00:00Z",
+        "name": "candidate-review",
+        "subject": {
+          "content_sha256": "27fe4ca514cdad74ad90857c0e77416a592fca5d5b338db5f7f7d93ed21770b1",
+          "object_id": "model:subject:report:candidate-review:v1"
+        }
+      }
+    ],
+    "slots": [
+      {
+        "boundary": "2030-02-20T13:30:00Z",
+        "name": "t1",
+        "subject": {
+          "content_sha256": "491d2e491fd0942e695a44d72b7abe248d1151bc8eb58d12263f933ba45497b3",
+          "object_id": "model:subject:slot:t1:v1"
+        }
+      },
+      {
+        "boundary": "2030-02-20T13:30:00Z",
+        "name": "t2",
+        "subject": {
+          "content_sha256": "aac071f26c7d1c1535747f8f9276361be293600e46bc8ef6385aca7a2024d14d",
+          "object_id": "model:subject:slot:t2:v1"
+        }
+      },
+      {
+        "boundary": "2030-02-20T13:30:00Z",
+        "name": "t3",
+        "subject": {
+          "content_sha256": "4ca739743b6ed760406500f6bf4def9453b2e11ae06bb22abcfdeed5fda6ab64",
+          "object_id": "model:subject:slot:t3:v1"
+        }
+      }
+    ],
+    "source_contracts": [
+      {
+        "boundary": "2030-02-01T00:00:00Z",
+        "name": "t1-schedule",
+        "subject": {
+          "content_sha256": "5060ed294f809985cbd76341bca41ca1cc8690cd15f6260847a93d75b6df0859",
+          "object_id": "model:subject:source:t1-schedule:v1"
+        }
+      },
+      {
+        "boundary": "2030-02-01T00:00:00Z",
+        "name": "t1-measurement",
+        "subject": {
+          "content_sha256": "a31dda81c48b2a273c1239f5ce977f51bc0449085676c00f556a98235945ac52",
+          "object_id": "model:subject:source:t1-measurement:v1"
+        }
+      },
+      {
+        "boundary": "2030-02-01T00:00:00Z",
+        "name": "t2-schedule",
+        "subject": {
+          "content_sha256": "5a4fcc754065f306af1559393abf3bd63bf982eec663267d3a0479ce8f698289",
+          "object_id": "model:subject:source:t2-schedule:v1"
+        }
+      },
+      {
+        "boundary": "2030-02-01T00:00:00Z",
+        "name": "t2-measurement",
+        "subject": {
+          "content_sha256": "99e25fb6afb747e17f8894ed584117b9d988b6f37fd5c0fda77e7a45b49bdc37",
+          "object_id": "model:subject:source:t2-measurement:v1"
+        }
+      },
+      {
+        "boundary": "2030-02-01T00:00:00Z",
+        "name": "t3-schedule",
+        "subject": {
+          "content_sha256": "8f556118bbe7996cf157e6f6a3b089e093c0dd2181aab4a25fbdde625265c7e0",
+          "object_id": "model:subject:source:t3-schedule:v1"
+        }
+      },
+      {
+        "boundary": "2030-02-01T00:00:00Z",
+        "name": "t3-measurement",
+        "subject": {
+          "content_sha256": "77517e246d6348f5e48a24d00e404fbb6b224d38c0787eb892c6da61414e5fcf",
+          "object_id": "model:subject:source:t3-measurement:v1"
+        }
+      }
+    ],
+    "targets": [
+      {
+        "boundary": "2030-02-01T00:00:00Z",
+        "name": "t1",
+        "subject": {
+          "content_sha256": "3fa3ff93744b0af7a7411c73c35e3d4928d99b47bf915e512d82f732a9ec3bfc",
+          "object_id": "model:subject:target:t1:v1"
+        }
+      },
+      {
+        "boundary": "2030-02-01T00:00:00Z",
+        "name": "t2",
+        "subject": {
+          "content_sha256": "4099b72383257f09550a5395e216048378e64e70207744a70c307544b06de071",
+          "object_id": "model:subject:target:t2:v1"
+        }
+      },
+      {
+        "boundary": "2030-02-01T00:00:00Z",
+        "name": "t3",
+        "subject": {
+          "content_sha256": "8ceafb40fff46928c8d9879ae8dbfeb34ec303a20ee07dc00321a8be40a42e1e",
+          "object_id": "model:subject:target:t3:v1"
+        }
+      }
+    ],
+    "workflow": [
+      {
+        "boundary": "2030-02-01T00:00:00Z",
+        "name": "candidate-package",
+        "subject": {
+          "content_sha256": "79cfec596c58e603f3d6d4a91a79ffcdc0554c2648765189b467176d7d82b19f",
+          "object_id": "model:subject:workflow:candidate-package:v1"
+        }
+      }
+    ]
+  },
+  "horizon": {
+    "end": "2030-03-01T00:00:00Z",
+    "start": "2030-02-01T00:00:00Z"
+  },
+  "kind": "scope",
+  "model_only": true,
+  "model_version": "M1_FIXED_MODEL_V1",
+  "object_id": "model:source:scope:v1",
+  "object_type": "SyntheticReplaySource",
+  "payload_sha256": "756fb3651c9dd2992a05941efac4c44e714b132032aefabea470047db094a0ce",
+  "project": "M1_SYNTHETIC_PROJECT",
+  "qualification_boundaries": [
+    {
+      "boundary": "2030-01-01T00:00:00Z",
+      "name": "formation",
+      "subject": {
+        "content_sha256": "2f5c0863216818e37b9f1c796eb981963c54b949cb9212f788416c93cff9f5c2",
+        "object_id": "model:subject:boundary:formation:v1"
+      }
+    },
+    {
+      "boundary": "2030-02-01T00:00:00Z",
+      "name": "final-acceptance",
+      "subject": {
+        "content_sha256": "3950b122444854b8d74c0abfb8e2942e7a9958a3fe8c195f0640211b71631566",
+        "object_id": "model:subject:boundary:final-acceptance:v1"
+      }
+    },
+    {
+      "boundary": "2030-02-12T13:30:00Z",
+      "name": "plan-t1",
+      "subject": {
+        "content_sha256": "bd8e6e3597f2128bc7871310ad88b19390e359dd2ac5b9e083b349994cf49d35",
+        "object_id": "model:subject:boundary:plan-t1:v1"
+      }
+    },
+    {
+      "boundary": "2030-02-19T13:30:00Z",
+      "name": "cycle-t1",
+      "subject": {
+        "content_sha256": "0c8b3c9f99f2240159a8aad97ec82ec60261865f126d2ddfb49478af2b82a5a0",
+        "object_id": "model:subject:boundary:cycle-t1:v1"
+      }
+    },
+    {
+      "boundary": "2030-02-19T13:30:00Z",
+      "name": "dvr-t1",
+      "subject": {
+        "content_sha256": "dde91f731e0ad2b5664c4cf4479cbedb23da0eb50127f28ccfed201b0a267a9c",
+        "object_id": "model:subject:boundary:dvr-t1:v1"
+      }
+    },
+    {
+      "boundary": "2030-02-12T13:30:00Z",
+      "name": "plan-t2",
+      "subject": {
+        "content_sha256": "d68fbd6cc7e33b5ca5e9bb5e2ba91d76c480271b9d1af4c6a47d26e6776b70ea",
+        "object_id": "model:subject:boundary:plan-t2:v1"
+      }
+    },
+    {
+      "boundary": "2030-02-19T13:30:00Z",
+      "name": "cycle-t2",
+      "subject": {
+        "content_sha256": "bb6f74f607334b78ce9ea23ff1eb33e4ef013fc1e7d650024f201b0a9c38f4e8",
+        "object_id": "model:subject:boundary:cycle-t2:v1"
+      }
+    },
+    {
+      "boundary": "2030-02-19T13:30:00Z",
+      "name": "dvr-t2",
+      "subject": {
+        "content_sha256": "6fe11745ae85c861c60a8bf4383340e809d382cdbeb9af68a61c8ee347965c9b",
+        "object_id": "model:subject:boundary:dvr-t2:v1"
+      }
+    },
+    {
+      "boundary": "2030-02-12T13:30:00Z",
+      "name": "plan-t3",
+      "subject": {
+        "content_sha256": "0cb52f701f5ee069f488fb299e2cfaf27be0692235c54cfcdfc275173d10dc2c",
+        "object_id": "model:subject:boundary:plan-t3:v1"
+      }
+    },
+    {
+      "boundary": "2030-02-19T13:30:00Z",
+      "name": "cycle-t3",
+      "subject": {
+        "content_sha256": "7bd7ffab8c594229f01bd9de09b805671d934744413fc834f5013dbf9e803e67",
+        "object_id": "model:subject:boundary:cycle-t3:v1"
+      }
+    },
+    {
+      "boundary": "2030-02-19T13:30:00Z",
+      "name": "dvr-t3",
+      "subject": {
+        "content_sha256": "4fb87c8c89cccd5d64f178b7625bd9bf50f0ab6f267f4481fbee486c4bc30221",
+        "object_id": "model:subject:boundary:dvr-t3:v1"
+      }
+    }
+  ],
+  "subject_class": "SyntheticCandidateManifest"
+}

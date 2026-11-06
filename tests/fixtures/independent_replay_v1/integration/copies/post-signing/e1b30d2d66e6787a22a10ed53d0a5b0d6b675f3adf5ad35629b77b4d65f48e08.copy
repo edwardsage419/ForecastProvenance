@@ -1,0 +1,18 @@
+{
+  "bitcoin": "EXPLICIT_MODEL_CHAIN_SEAM",
+  "content_sha256": "5e8779578827f035bd911b797556d13cd2b06da4c7566354cfd6912948a835ee",
+  "jsonschema": "4.26.0",
+  "kind": "profile",
+  "model_only": true,
+  "model_version": "M1_FIXED_MODEL_V1",
+  "name": "M1_FIXED_MODEL_V1",
+  "object_id": "model:source:profile:v1",
+  "object_type": "SyntheticReplaySource",
+  "parser": "strict-json-model-v1",
+  "payload_sha256": "b63129eec1c0593d491ad39e53ce7ad85f5c9abe9d66ac7697d95029cb11cce5",
+  "pytest": "9.0.2",
+  "python": "3.12.3",
+  "signing": "EXPLICIT_MODEL_SEAM_NO_FORMULA",
+  "tzdb": "RETAINED_TZIF_MODEL_V1",
+  "wall": "EXPLICIT_MODEL_AUTH_SEAM"
+}

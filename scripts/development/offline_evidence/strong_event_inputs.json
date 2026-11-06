@@ -1,0 +1,203 @@
+{
+  "inputs": [
+    {
+      "bytes": 1370386,
+      "path": "docs/development/mainline-execution-2026-10-09-rev-001/gdp-public-proof-pair-2026-10-15-rev-001/raw/gdp2q25-2nd.pdf",
+      "sha256": "c70972a12908b73c2407d9cc6842ba2a02203a690f3090cd29f30c45f0cfd93d"
+    },
+    {
+      "bytes": 650,
+      "path": "docs/development/mainline-execution-2026-10-09-rev-001/gdp-public-proof-pair-2026-10-15-rev-001/raw/gdp2q25-2nd.pdf.ots",
+      "sha256": "0a63adf8a7b47b68d42aec05f365f78a631e64f734b8af5bc594188ee2d751e9"
+    },
+    {
+      "bytes": 681,
+      "path": "docs/development/mainline-execution-2026-10-19-pruned-core-sample-execution-rev-001/AUTHORIZATION.json",
+      "sha256": "81a4be8f29d2b92d2b274247c67e8d4b8d60ad6ee5fb5c65ca3e9ed37acb5d7f"
+    },
+    {
+      "bytes": 1217,
+      "path": "docs/development/mainline-execution-2026-10-19-pruned-core-sample-execution-rev-001/CONTINUOUS_FOREGROUND_AUTHORIZATION_2026-10-20.json",
+      "sha256": "1382d4e78fa8caa401148af60b872ea2100da482b6e8c0d1679ee43c97ee1a68"
+    },
+    {
+      "bytes": 22458,
+      "path": "docs/development/mainline-execution-2026-10-19-pruned-core-sample-execution-rev-001/supervise_core.metadata-rescan.py",
+      "sha256": "0b37b628c290bf34ac263ffe38a3d321c93e8217a3714b453561563809a8619f"
+    },
+    {
+      "bytes": 160,
+      "path": "docs/development/mainline-execution-2026-10-19-public-bitcoin-header-rev-001/raw/blockstream-header.hex",
+      "sha256": "e32a7c960950bc80adefad2bd7fdfadc133441e1fd7f98346da7f5cee8d76185"
+    },
+    {
+      "bytes": 0,
+      "path": "docs/development/strong-candidate-public-sample-run-2026-10-27-rev-001/CANDIDATE_STDERR.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 538,
+      "path": "docs/development/strong-candidate-public-sample-run-2026-10-27-rev-001/CANDIDATE_STDOUT.raw",
+      "sha256": "412c305dcf0fa2bd6dbc5984e319c3ca016bd07ba5da6d1a51c1e46a8c8d2df2"
+    },
+    {
+      "bytes": 109387,
+      "path": "docs/development/strong-candidate-public-sample-run-2026-10-27-rev-001/CORE_READ_EXECUTABLE.py",
+      "sha256": "c4b9b0ce94cca41d1c3478ec834e4b5de3a019780622e7955e7c7898530bfd88"
+    },
+    {
+      "bytes": 1828367,
+      "path": "docs/development/strong-candidate-public-sample-run-2026-10-27-rev-001/CORE_READ_REQUEST.raw",
+      "sha256": "225725834ec48d01e06dd82d12a7f6831b0ac83093450a2f13f06ed215a50381"
+    },
+    {
+      "bytes": 306,
+      "path": "docs/development/strong-candidate-public-sample-run-2026-10-27-rev-001/CORE_RESEARCH_LAUNCH.json",
+      "sha256": "017a163ab2ed71d8eeb3001a5ffa2c3bc3058618f31e3c52a5d5165d2a2d2772"
+    },
+    {
+      "bytes": 1828367,
+      "path": "docs/development/strong-candidate-public-sample-run-2026-10-27-rev-001/REQUEST.json",
+      "sha256": "225725834ec48d01e06dd82d12a7f6831b0ac83093450a2f13f06ed215a50381"
+    },
+    {
+      "bytes": 1642,
+      "path": "docs/development/strong-candidate-public-sample-run-2026-10-27-rev-001/RESULT.json",
+      "sha256": "f712995346d0b5e0e592ed38571f8bf9b5e388b52e4b519ab21b9617bf6e11d3"
+    },
+    {
+      "bytes": 1707,
+      "path": "docs/development/strong-candidate-public-sample-run-2026-10-27-rev-001/RETAINED_REPLAY_A.json",
+      "sha256": "7973ba9af16799d171db623b48857b937298b18d6fa5da6a4a1ccee857ab0c0d"
+    },
+    {
+      "bytes": 1707,
+      "path": "docs/development/strong-candidate-public-sample-run-2026-10-27-rev-001/RETAINED_REPLAY_B.json",
+      "sha256": "7973ba9af16799d171db623b48857b937298b18d6fa5da6a4a1ccee857ab0c0d"
+    },
+    {
+      "bytes": 4891,
+      "path": "docs/development/strong-candidate-public-sample-run-2026-10-27-rev-001/REVIEW.md",
+      "sha256": "16dd7748648562f83823cb4c0fb66dfce810d17d287244dfcb03adc62e8068ca"
+    },
+    {
+      "bytes": 4796,
+      "path": "docs/development/strong-candidate-public-sample-run-2026-10-27-rev-001/SCOPE.json",
+      "sha256": "37986180f7d2749046f1ed217adfbc7421e0113179c64c885aca70b6419fb2e7"
+    },
+    {
+      "bytes": 1262,
+      "path": "docs/development/strong-candidate-public-sample-run-2026-10-27-rev-001/SOURCE_REUSE.json",
+      "sha256": "f6d513a1cef881287e078310dd62755dc8459050be6d72be1bcef23e0c483a24"
+    },
+    {
+      "bytes": 1543,
+      "path": "docs/development/strong-candidate-public-sample-run-2026-10-27-rev-001/VERIFICATION.json",
+      "sha256": "6df0ca46ece870669515e45013219fd156f919e4b5d76ecf71dbdf254e2f1057"
+    },
+    {
+      "bytes": 19580,
+      "path": "docs/development/strong-candidate-public-sample-run-2026-10-27-rev-001/operation.py",
+      "sha256": "bb04bcd4ff5e984c87b5d42dee84264713bc102ff3b8567e96db012399c17013"
+    },
+    {
+      "bytes": 5439,
+      "path": "docs/development/strong-candidate-public-sample-run-2026-10-27-rev-001/replay_retained_observation.py",
+      "sha256": "231ffe251a61f2ba3ccf848583fdf55a8b2d7b4fc0bd3b6da990b056a5d9dfe0"
+    },
+    {
+      "bytes": 15407,
+      "path": "docs/development/strong-candidate-public-sample-run-2026-10-27-rev-001/test_operation.py",
+      "sha256": "b19cbe5c9905adbf1b6aad4748958383c601f45b065aa34e2eb2c623e8c721ed"
+    },
+    {
+      "bytes": 11604,
+      "path": "docs/development/strong-chain-refresh-2026-10-27-rev-001/online-1-RESULT.json",
+      "sha256": "9f45653325f1b5c610a8ae37c01f20933009306f647a1829ae33a9a8255f3382"
+    },
+    {
+      "bytes": 697,
+      "path": "docs/development/strong-macos-listener-correction-2026-10-27-rev-001/CANDIDATE_BINDINGS.json",
+      "sha256": "a487e3adb3d3ffbfa80d6e09549241f88dc70d9fbc1b5721e4280feea9e16deb"
+    },
+    {
+      "bytes": 746,
+      "path": "docs/development/strong-macos-listener-correction-2026-10-27-rev-001/CONTRACT_CANDIDATE.json",
+      "sha256": "2ac10a3e381a0a8e131c5f2b8c9bdf02e77c445e7da733089d3d5770b2aa488d"
+    },
+    {
+      "bytes": 799,
+      "path": "docs/development/strong-macos-listener-correction-2026-10-27-rev-001/CORE_OPERATION_AUTHORIZATION.json",
+      "sha256": "56f5c98e404b4aa09287a2429c248ba7fb9e792adea640b999278fb50503b745"
+    },
+    {
+      "bytes": 246,
+      "path": "docs/development/strong-macos-listener-correction-2026-10-27-rev-001/CORE_READ_RESERVED.json",
+      "sha256": "e39d62982b9a8ab314b08a5cbc55f5435096fd244845acedf50c9750b2349e96"
+    },
+    {
+      "bytes": 19578,
+      "path": "docs/development/strong-macos-listener-correction-2026-10-27-rev-001/operation.py",
+      "sha256": "0c3f77c293dc12e350f8d8ef206bb7d62ea1f1c23bc7ae861bd4f2e87db9c047"
+    },
+    {
+      "bytes": 109387,
+      "path": "docs/development/strong-macos-listener-correction-2026-10-27-rev-001/strong-verifier-candidate.py",
+      "sha256": "c4b9b0ce94cca41d1c3478ec834e4b5de3a019780622e7955e7c7898530bfd88"
+    },
+    {
+      "bytes": 3562,
+      "path": "docs/development/strong-macos-listener-correction-2026-10-27-rev-001/strong-verifier-candidate.py.runtime.json",
+      "sha256": "f9eadd8f3053bc896108694406d2a19716895b77dda2034308655585e3cb5e82"
+    },
+    {
+      "bytes": 15407,
+      "path": "docs/development/strong-macos-listener-correction-2026-10-27-rev-001/test_operation.py",
+      "sha256": "ab9ea86a822aef335a7c88e2e0d29ab37cb3a67e06ff2390489f98e0d64502a1"
+    },
+    {
+      "bytes": 9553,
+      "path": "scripts/development/offline_evidence/core_cli.py",
+      "sha256": "b99540a5971b2fa1143cade6c2ccb4727931dc4a57b3d5990e2a1b9a4e62bd48"
+    },
+    {
+      "bytes": 8126,
+      "path": "src/forecast_trust_core/canonical.py",
+      "sha256": "f9ef49579a5c54757c6660d377275a0ed5f8afdf646f33130651a711005ac9ba"
+    }
+  ],
+  "roles": {
+    "adapter": "scripts/development/offline_evidence/core_cli.py",
+    "artifact": "docs/development/strong-macos-listener-correction-2026-10-27-rev-001/strong-verifier-candidate.py",
+    "authorization": "docs/development/strong-macos-listener-correction-2026-10-27-rev-001/CORE_OPERATION_AUTHORIZATION.json",
+    "bindings": "docs/development/strong-macos-listener-correction-2026-10-27-rev-001/CANDIDATE_BINDINGS.json",
+    "canonical": "src/forecast_trust_core/canonical.py",
+    "contract": "docs/development/strong-macos-listener-correction-2026-10-27-rev-001/CONTRACT_CANDIDATE.json",
+    "launch": "docs/development/strong-candidate-public-sample-run-2026-10-27-rev-001/CORE_RESEARCH_LAUNCH.json",
+    "legacy": "docs/development/mainline-execution-2026-10-19-pruned-core-sample-execution-rev-001/supervise_core.metadata-rescan.py",
+    "loaded_executable": "docs/development/strong-candidate-public-sample-run-2026-10-27-rev-001/CORE_READ_EXECUTABLE.py",
+    "loaded_request": "docs/development/strong-candidate-public-sample-run-2026-10-27-rev-001/CORE_READ_REQUEST.raw",
+    "operation": "docs/development/strong-candidate-public-sample-run-2026-10-27-rev-001/operation.py",
+    "original_authorization": "docs/development/mainline-execution-2026-10-19-pruned-core-sample-execution-rev-001/AUTHORIZATION.json",
+    "prior_operation": "docs/development/strong-macos-listener-correction-2026-10-27-rev-001/operation.py",
+    "prior_test": "docs/development/strong-macos-listener-correction-2026-10-27-rev-001/test_operation.py",
+    "proof": "docs/development/mainline-execution-2026-10-09-rev-001/gdp-public-proof-pair-2026-10-15-rev-001/raw/gdp2q25-2nd.pdf.ots",
+    "replay_a": "docs/development/strong-candidate-public-sample-run-2026-10-27-rev-001/RETAINED_REPLAY_A.json",
+    "replay_b": "docs/development/strong-candidate-public-sample-run-2026-10-27-rev-001/RETAINED_REPLAY_B.json",
+    "replay_source": "docs/development/strong-candidate-public-sample-run-2026-10-27-rev-001/replay_retained_observation.py",
+    "request": "docs/development/strong-candidate-public-sample-run-2026-10-27-rev-001/REQUEST.json",
+    "reservation": "docs/development/strong-macos-listener-correction-2026-10-27-rev-001/CORE_READ_RESERVED.json",
+    "result": "docs/development/strong-candidate-public-sample-run-2026-10-27-rev-001/RESULT.json",
+    "retained_core": "docs/development/strong-chain-refresh-2026-10-27-rev-001/online-1-RESULT.json",
+    "reuse": "docs/development/strong-candidate-public-sample-run-2026-10-27-rev-001/SOURCE_REUSE.json",
+    "review": "docs/development/strong-candidate-public-sample-run-2026-10-27-rev-001/REVIEW.md",
+    "runtime": "docs/development/strong-macos-listener-correction-2026-10-27-rev-001/strong-verifier-candidate.py.runtime.json",
+    "scope": "docs/development/strong-candidate-public-sample-run-2026-10-27-rev-001/SCOPE.json",
+    "stderr": "docs/development/strong-candidate-public-sample-run-2026-10-27-rev-001/CANDIDATE_STDERR.raw",
+    "stdout": "docs/development/strong-candidate-public-sample-run-2026-10-27-rev-001/CANDIDATE_STDOUT.raw",
+    "subject": "docs/development/mainline-execution-2026-10-09-rev-001/gdp-public-proof-pair-2026-10-15-rev-001/raw/gdp2q25-2nd.pdf",
+    "test": "docs/development/strong-candidate-public-sample-run-2026-10-27-rev-001/test_operation.py",
+    "verification": "docs/development/strong-candidate-public-sample-run-2026-10-27-rev-001/VERIFICATION.json"
+  },
+  "scope": "ONE_RETAINED_D255_PUBLIC_SAMPLE_AND_SEPARATE_D254_CALCULATION_NOT_FULL_RUNTIME_OR_PROJECT_STRONG"
+}

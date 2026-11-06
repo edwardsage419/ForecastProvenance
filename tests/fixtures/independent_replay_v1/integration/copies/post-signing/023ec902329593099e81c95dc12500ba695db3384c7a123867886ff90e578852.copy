@@ -1,0 +1,15 @@
+{
+  "content_sha256": "cdf6a716ca986729c79020114daec99e2abd88927b4fed01607862fc0ef7b01e",
+  "kind": "source_contract",
+  "model_only": true,
+  "model_version": "M1_FIXED_MODEL_V1",
+  "name": "t3-measurement",
+  "object_id": "model:source:measurement-t3:v1",
+  "object_type": "SyntheticReplaySource",
+  "official_model_source": "model-official-t3",
+  "parser": "strict-json-model-v1",
+  "payload_sha256": "88e12c46da0ac70d34cf6a47410b45dc0ddda33a04eef60ba233e4a2ca9696f1",
+  "revision_policy": "COMPLETE_RETAINED_REVISIONS",
+  "source_kind": "measurement",
+  "target": "t3"
+}

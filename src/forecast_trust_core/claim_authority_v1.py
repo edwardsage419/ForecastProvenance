@@ -221,7 +221,9 @@ def validate_final_genesis_acceptance_authoritatively(
         bitcoin_inputs=bitcoin_inputs,
     )
     _gate.validate_strong_report(result[2])
-    return result
+    validation, claims, report = result
+    from .initial_replay_guard_v1 import require_complete_initial_replay
+    return require_complete_initial_replay(validation), claims, report
 
 
 def recompute_pre_outcome_durability_authoritatively(
@@ -416,10 +418,14 @@ def validate_persisted_final_acceptance_report_authoritatively(
         validation=validation,
         derived_claims=claims,
     )
-    return _legacy.compare_persisted_validation_report_to_recomputed(
+    comparison = _legacy.compare_persisted_validation_report_to_recomputed(
         persisted_report,
         recomputed,
-    ), recomputed
+    )
+    from .initial_replay_guard_v1 import require_complete_initial_replay
+    from .core import aggregate
+    guarded = require_complete_initial_replay(validation)
+    return aggregate(guarded.checks + comparison.checks), recomputed
 
 
 def validate_persisted_cycle_plan_report_authoritatively(

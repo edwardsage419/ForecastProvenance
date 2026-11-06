@@ -1,0 +1,277 @@
+{
+  "content_sha256": "fddc0a6e3d837ac1391b539ce54d590b331943bc22f7742ad3c01893c8a97ab4",
+  "kind": "obligation_rules",
+  "model_only": true,
+  "model_version": "M1_FIXED_MODEL_V1",
+  "object_id": "model:source:initial:v1",
+  "object_type": "SyntheticReplaySource",
+  "payload_sha256": "b90398e3adb72552823cf98c885fef228ba1b69a7db6928d37f27da04ed48043",
+  "requirements": [
+    {
+      "check": "source_closure",
+      "domain": "governance",
+      "id": "source_closure",
+      "parameters": {},
+      "predicate": "P01"
+    },
+    {
+      "check": "root_identity",
+      "domain": "governance",
+      "id": "root_identity",
+      "parameters": {},
+      "predicate": "P02"
+    },
+    {
+      "check": "root_project",
+      "domain": "governance",
+      "id": "root_project",
+      "parameters": {},
+      "predicate": "P02"
+    },
+    {
+      "check": "root_role",
+      "domain": "governance",
+      "id": "root_role",
+      "parameters": {},
+      "predicate": "P02"
+    },
+    {
+      "check": "initial_authority",
+      "domain": "governance",
+      "id": "initial_authority",
+      "parameters": {},
+      "predicate": "P03"
+    },
+    {
+      "check": "initial_action_scope",
+      "domain": "governance",
+      "id": "initial_action_scope",
+      "parameters": {},
+      "predicate": "P03"
+    },
+    {
+      "check": "initial_effective_boundary",
+      "domain": "governance",
+      "id": "initial_effective_boundary",
+      "parameters": {},
+      "predicate": "P03"
+    },
+    {
+      "check": "authority_fork_absent",
+      "domain": "governance",
+      "id": "authority_fork_absent",
+      "parameters": {},
+      "predicate": "P03"
+    },
+    {
+      "check": "initial_rule_binding",
+      "domain": "governance",
+      "id": "initial_rule_binding",
+      "parameters": {},
+      "predicate": "P04"
+    },
+    {
+      "check": "initial_subject_class",
+      "domain": "governance",
+      "id": "initial_subject_class",
+      "parameters": {},
+      "predicate": "P04"
+    },
+    {
+      "check": "initial_no_predecessor",
+      "domain": "governance",
+      "id": "initial_no_predecessor",
+      "parameters": {},
+      "predicate": "P04"
+    },
+    {
+      "check": "authentication_contract",
+      "domain": "governance",
+      "id": "authentication_contract",
+      "parameters": {},
+      "predicate": "P05"
+    },
+    {
+      "check": "authentication_consequential_coverage",
+      "domain": "governance",
+      "id": "authentication_consequential_coverage",
+      "parameters": {},
+      "predicate": "P05"
+    },
+    {
+      "check": "authentication_acyclic",
+      "domain": "governance",
+      "id": "authentication_acyclic",
+      "parameters": {},
+      "predicate": "P05"
+    },
+    {
+      "check": "acceptance_actor_authority",
+      "domain": "governance",
+      "id": "acceptance_actor_authority",
+      "parameters": {},
+      "predicate": "P06"
+    },
+    {
+      "check": "acceptance_authentication",
+      "domain": "governance",
+      "id": "acceptance_authentication",
+      "parameters": {},
+      "predicate": "P06"
+    },
+    {
+      "check": "acceptance_identity",
+      "domain": "governance",
+      "id": "acceptance_identity",
+      "parameters": {},
+      "predicate": "P07"
+    },
+    {
+      "check": "acceptance_decision",
+      "domain": "governance",
+      "id": "acceptance_decision",
+      "parameters": {},
+      "predicate": "P07"
+    },
+    {
+      "check": "acceptance_exact_refs",
+      "domain": "governance",
+      "id": "acceptance_exact_refs",
+      "parameters": {},
+      "predicate": "P07"
+    },
+    {
+      "check": "acceptance_blockers",
+      "domain": "governance",
+      "id": "acceptance_blockers",
+      "parameters": {},
+      "predicate": "P07"
+    },
+    {
+      "check": "manifest_identity",
+      "domain": "governance",
+      "id": "manifest_identity",
+      "parameters": {},
+      "predicate": "P08"
+    },
+    {
+      "check": "manifest_scope_sequence",
+      "domain": "governance",
+      "id": "manifest_scope_sequence",
+      "parameters": {},
+      "predicate": "P08"
+    },
+    {
+      "check": "manifest_no_self_acceptance",
+      "domain": "governance",
+      "id": "manifest_no_self_acceptance",
+      "parameters": {},
+      "predicate": "P08"
+    },
+    {
+      "check": "dependency_roles",
+      "domain": "source_contracts",
+      "id": "dependency_roles",
+      "parameters": {},
+      "predicate": "P09"
+    },
+    {
+      "check": "dependency_cardinality",
+      "domain": "governance",
+      "id": "dependency_cardinality",
+      "parameters": {},
+      "predicate": "P09"
+    },
+    {
+      "check": "dependency_types",
+      "domain": "source_contracts",
+      "id": "dependency_types",
+      "parameters": {},
+      "predicate": "P09"
+    },
+    {
+      "check": "dependency_acyclic",
+      "domain": "governance",
+      "id": "dependency_acyclic",
+      "parameters": {},
+      "predicate": "P09"
+    },
+    {
+      "check": "runtime_pairing",
+      "domain": "governance",
+      "id": "runtime_pairing",
+      "parameters": {},
+      "predicate": "P10"
+    },
+    {
+      "check": "parser_pairing",
+      "domain": "source_contracts",
+      "id": "parser_pairing",
+      "parameters": {},
+      "predicate": "P10"
+    },
+    {
+      "check": "retained_build_identity",
+      "domain": "governance",
+      "id": "retained_build_identity",
+      "parameters": {},
+      "predicate": "P10"
+    },
+    {
+      "check": "target_method_compatibility",
+      "domain": "targets",
+      "id": "target_method_compatibility",
+      "parameters": {},
+      "predicate": "P11"
+    },
+    {
+      "check": "source_resolution_binding",
+      "domain": "source_contracts",
+      "id": "source_resolution_binding",
+      "parameters": {},
+      "predicate": "P11"
+    },
+    {
+      "check": "offline_backup_rule",
+      "domain": "governance",
+      "id": "offline_backup_rule",
+      "parameters": {},
+      "predicate": "P11"
+    },
+    {
+      "check": "retention_corpus",
+      "domain": "governance",
+      "id": "retention_corpus",
+      "parameters": {},
+      "predicate": "P11"
+    },
+    {
+      "check": "retention_owner_control",
+      "domain": "governance",
+      "id": "retention_owner_control",
+      "parameters": {},
+      "predicate": "P11"
+    },
+    {
+      "check": "retention_offline",
+      "domain": "governance",
+      "id": "retention_offline",
+      "parameters": {},
+      "predicate": "P11"
+    },
+    {
+      "check": "retention_before_acceptance",
+      "domain": "governance",
+      "id": "retention_before_acceptance",
+      "parameters": {},
+      "predicate": "P11"
+    },
+    {
+      "check": "canonicalization_cost",
+      "domain": "governance",
+      "id": "canonicalization_cost",
+      "parameters": {},
+      "predicate": "P11"
+    }
+  ]
+}

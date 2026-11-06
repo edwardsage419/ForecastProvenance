@@ -1,0 +1,26 @@
+{
+  "actor": "MODEL_OWNER",
+  "authority": "MODEL_INITIAL_ACCEPT_ONLY",
+  "content_sha256": "2e6b0ad5eece59384651fa581a305bd5a601feac9c7e4b7c73baebf8c4981eaa",
+  "effective": "2030-01-01T00:00:00Z",
+  "forks": [],
+  "initial_rule": {
+    "content_sha256": "fddc0a6e3d837ac1391b539ce54d590b331943bc22f7742ad3c01893c8a97ab4",
+    "object_id": "model:source:initial:v1"
+  },
+  "kind": "root",
+  "model_only": true,
+  "model_version": "M1_FIXED_MODEL_V1",
+  "object_id": "model:source:root:v1",
+  "object_type": "SyntheticReplaySource",
+  "payload_sha256": "0ad853d142669d4a2c778dfdee4eb88df60732a66483b6b0e627f890279531f0",
+  "project": "M1_SYNTHETIC_PROJECT",
+  "scope": {
+    "content_sha256": "6c7b4f760e22411873b7f1226949b44f41fb8815bb361227df1634df219b7f7a",
+    "object_id": "model:source:scope:v1"
+  },
+  "selection_rule": {
+    "content_sha256": "7874c90ec6a55f7e8102869bb2db7f35c225a9bd2ae06a1e7f78940cf15fd6b6",
+    "object_id": "model:source:selection:v1"
+  }
+}

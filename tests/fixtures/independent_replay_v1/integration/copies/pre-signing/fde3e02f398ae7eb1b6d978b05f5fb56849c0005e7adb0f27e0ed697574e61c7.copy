@@ -1,0 +1,181 @@
+{
+  "content_sha256": "620ba31cce707921e447a7effaf88ff2866b564243b8ce8aba463702b7a3cfa1",
+  "dependency_roles": [
+    {
+      "ref": {
+        "content_sha256": "cccf43fb0e93b208176fd018436df3d4d66814668c79555980b3e774998886ae",
+        "object_id": "model:source:external:v1"
+      },
+      "role": "external"
+    },
+    {
+      "ref": {
+        "content_sha256": "fddc0a6e3d837ac1391b539ce54d590b331943bc22f7742ad3c01893c8a97ab4",
+        "object_id": "model:source:initial:v1"
+      },
+      "role": "initial"
+    },
+    {
+      "ref": {
+        "content_sha256": "3033a259512aa9fe7944d6c9dcbe350a00774969fcbf344e78d7ec1aaacb472f",
+        "object_id": "model:source:measurement-t1:v1"
+      },
+      "role": "measurement-t1"
+    },
+    {
+      "ref": {
+        "content_sha256": "74f216a30a1e4cb3108e9111ccd0d8b8f1007139a4a8f938db435bfe9074e15f",
+        "object_id": "model:source:measurement-t2:v1"
+      },
+      "role": "measurement-t2"
+    },
+    {
+      "ref": {
+        "content_sha256": "cdf6a716ca986729c79020114daec99e2abd88927b4fed01607862fc0ef7b01e",
+        "object_id": "model:source:measurement-t3:v1"
+      },
+      "role": "measurement-t3"
+    },
+    {
+      "ref": {
+        "content_sha256": "d6386ab44c7900c1860e39d38d8c7ec48d835bed4e84ab0f99ad77001faf514d",
+        "object_id": "model:source:method:v1"
+      },
+      "role": "method"
+    },
+    {
+      "ref": {
+        "content_sha256": "5e8779578827f035bd911b797556d13cd2b06da4c7566354cfd6912948a835ee",
+        "object_id": "model:source:profile:v1"
+      },
+      "role": "profile"
+    },
+    {
+      "ref": {
+        "content_sha256": "5a97cbd370309ddbbcd6db4bf98581343519887a5e45a2c72c9d512e9837823c",
+        "object_id": "model:source:provider-p1:v1"
+      },
+      "role": "provider-p1"
+    },
+    {
+      "ref": {
+        "content_sha256": "74ada92ba933826ae059bc9f04960fad39b9471dc7cfe5dbcb0cba4f6747f5ac",
+        "object_id": "model:source:provider-p2:v1"
+      },
+      "role": "provider-p2"
+    },
+    {
+      "ref": {
+        "content_sha256": "c2d7861bdd4283807d3934ba779eab3670f953d97ff9afe6279dccbc0b48f9b4",
+        "object_id": "model:source:provider-p3:v1"
+      },
+      "role": "provider-p3"
+    },
+    {
+      "ref": {
+        "content_sha256": "7cf1f8a6bc749656426a8d8bb83bc59824a15429b67d4fe24e6b930628112e1e",
+        "object_id": "model:source:qualification:v1"
+      },
+      "role": "qualification"
+    },
+    {
+      "ref": {
+        "content_sha256": "dbdab12225fcd84d4cb0b110b61eda87b853a83dd2c39156463c6776008d1b1a",
+        "object_id": "model:source:reports:v1"
+      },
+      "role": "reports"
+    },
+    {
+      "ref": {
+        "content_sha256": "703fe52a8f39571358279461ca8fa1f8297e063caf76ec993369b3f798e3d41a",
+        "object_id": "model:source:resolution-t1:v1"
+      },
+      "role": "resolution-t1"
+    },
+    {
+      "ref": {
+        "content_sha256": "f404f81b95b294375f03d5ce585dd1dae4db820f5645e74c1bd279ecd12b3eb9",
+        "object_id": "model:source:resolution-t2:v1"
+      },
+      "role": "resolution-t2"
+    },
+    {
+      "ref": {
+        "content_sha256": "1ca08c7a34da879753a1ff2d58cfbc73af6171e9b7135123442b93d0f922262b",
+        "object_id": "model:source:resolution-t3:v1"
+      },
+      "role": "resolution-t3"
+    },
+    {
+      "ref": {
+        "content_sha256": "e25478ed70df3ab617f281e891944163d13891f7365312071146cb4512477569",
+        "object_id": "model:source:schedule:v1"
+      },
+      "role": "schedule"
+    },
+    {
+      "ref": {
+        "content_sha256": "e48b9a2b9e7bc9afd2c3ad07a0105f3b5dd236421d4b4facd77814aa70c4cdfe",
+        "object_id": "model:source:schedule-t1:v1"
+      },
+      "role": "schedule-t1"
+    },
+    {
+      "ref": {
+        "content_sha256": "8b91db62ba509260109e39c14ab7ff93231c14cedc535527ff6a31532b5b1544",
+        "object_id": "model:source:schedule-t2:v1"
+      },
+      "role": "schedule-t2"
+    },
+    {
+      "ref": {
+        "content_sha256": "4a0a8fc92dd721fa036de125908baea5b3f3a61c835d59159f46d582edff3322",
+        "object_id": "model:source:schedule-t3:v1"
+      },
+      "role": "schedule-t3"
+    },
+    {
+      "ref": {
+        "content_sha256": "43c5ba1a7ba679b38ae6836ccd99765f91e7c9bea993158cbdd6885020272187",
+        "object_id": "model:source:scientific:v1"
+      },
+      "role": "scientific"
+    },
+    {
+      "ref": {
+        "content_sha256": "804c6bbeb42ef5020505922ee7d63c96149dadd7bf502d7964b96aade3c7064e",
+        "object_id": "model:source:target-t1:v1"
+      },
+      "role": "target-t1"
+    },
+    {
+      "ref": {
+        "content_sha256": "f4001b2e0930054547e42836fa59d0f452619e446e5cb36627630405f3e9d770",
+        "object_id": "model:source:target-t2:v1"
+      },
+      "role": "target-t2"
+    },
+    {
+      "ref": {
+        "content_sha256": "04cb6e7a423e19ede7e6dc037269269b014b77f0cb1191a380ff601a8d4b36e7",
+        "object_id": "model:source:target-t3:v1"
+      },
+      "role": "target-t3"
+    },
+    {
+      "ref": {
+        "content_sha256": "f9e13b572a467d8241e815288efd95d34286971c044fa017146d830899fc17fa",
+        "object_id": "model:source:workflow:v1"
+      },
+      "role": "workflow"
+    }
+  ],
+  "model_only": true,
+  "object_id": "model:candidate-manifest:v1",
+  "object_type": "SyntheticCandidateManifest",
+  "payload_sha256": "746135fd904d423c1ac23d63e8857ba6fa185dfe38133f0b98a2dbe3a98d4730",
+  "project": "M1_SYNTHETIC_PROJECT",
+  "scope": "M1_FINITE_THREE_TARGET_SCOPE",
+  "sequence": 0,
+  "status": "MODEL_UNACCEPTED"
+}

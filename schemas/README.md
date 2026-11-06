@@ -4,6 +4,14 @@ These JSON Schema files are interoperability descriptions. Python validators rem
 
 No schema in this directory authorizes prospective issuance, production qualification execution, Genesis, or Forecast Ledger creation. The concrete Genesis AnchorScheme and BootstrapGovernanceRoot remain uninstantiated.
 
+## IB2/TC2 development binding schemas
+
+`implementation_binding_v2.schema.json` and `test_contract_v2.schema.json` retain their reviewed development-draft identities and `PROPOSED_NOT_ADOPTED` labels. They describe IB2 legacy-validator metadata and TC2 post-run bindings to a preceding TC1 and exact retained R4T bytes; registering these shapes does not adopt an operational profile or authorize protocol actions.
+
+The repository development entry is `scripts/development/ib2_tc2_bindings/replay.py`. It reads explicitly supplied safe inputs and checks pinned shared schemas and cross-object raw/full bindings. A local positive remains `LOCAL_CANDIDATE_BINDINGS_VERIFIED` with overall `UNRESOLVED`; it does not establish complete runtime, actual execution, authenticated chronology, authority, historical applicability, or Genesis readiness. Existing v1 contracts and authority guards are unchanged.
+
+Run the bounded tests with the repository Python environment from `scripts/development/ib2_tc2_bindings` using `python -m unittest -v test_consumer`. Invoke `python /absolute/repository/scripts/development/ib2_tc2_bindings/replay.py /explicit/authorized/input-directory` for an authorized safe input set. The CLI reads only `expected.json` and the six fixed record filenames; it does not discover inputs or handle keys/signatures.
+
 ## Genesis v1 runtime-contract schemas
 
 Successor candidate v0.9 adds closed structural schemas for `TargetInstance`, `ForecastSlot`, `ScheduleDerivationEvidence`, `IssuanceCyclePlan`, and `IssuanceCycleManifest`:

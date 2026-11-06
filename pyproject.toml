@@ -7,7 +7,7 @@ name = "forecast-trust-core"
 version = "0.1.0"
 description = "Synthetic implementation of Forecast Provenance Project Trust Core v0.4"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = ["jsonschema==4.26.0"]
 
 [project.optional-dependencies]
 test = ["pytest==9.0.2", "jsonschema==4.26.0"]

@@ -33,6 +33,7 @@ from .canonical import (
     verify_sealed_object,
 )
 from .core import Validation, aggregate, validate_cycle_plan
+from .initial_replay_guard_v1 import require_complete_initial_replay
 from ._verified_executable import PinnedExecutable
 
 
@@ -655,7 +656,9 @@ def validate_persisted_final_acceptance_report_authoritatively(
         validation=validation,
         derived_claims=claims,
     )
-    return compare_persisted_validation_report_to_recomputed(persisted_report, recomputed), recomputed
+    comparison = compare_persisted_validation_report_to_recomputed(persisted_report, recomputed)
+    guarded = require_complete_initial_replay(validation)
+    return aggregate(guarded.checks + comparison.checks), recomputed
 
 
 def validate_persisted_cycle_plan_report_authoritatively(
@@ -759,7 +762,7 @@ def validate_final_genesis_acceptance_authoritatively(
         pre_outcome,
         scientific,
     )
-    return checks, claims, bitcoin.strong_verification_report
+    return require_complete_initial_replay(checks), claims, bitcoin.strong_verification_report
 
 
 def recompute_pre_outcome_durability_authoritatively(

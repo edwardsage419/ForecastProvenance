@@ -1,0 +1,156 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "object_type",
+    "schema_version",
+    "bootstrap_version",
+    "bootstrap_root_id",
+    "project_id",
+    "authority_id",
+    "actor_id",
+    "authority_key_type",
+    "authority_public_key",
+    "authority_public_key_sha256",
+    "acceptance_rule_ref",
+    "canonicalization_scheme",
+    "hash_algorithm",
+    "permission",
+    "effective_boundary",
+    "object_id",
+    "payload_sha256",
+    "content_sha256"
+  ],
+  "properties": {
+    "object_type": {
+      "const": "BootstrapGovernanceRoot"
+    },
+    "schema_version": {
+      "const": "1.0"
+    },
+    "bootstrap_version": {
+      "const": 1
+    },
+    "bootstrap_root_id": {
+      "$ref": "#/$defs/token"
+    },
+    "project_id": {
+      "$ref": "#/$defs/token"
+    },
+    "authority_id": {
+      "$ref": "#/$defs/token"
+    },
+    "actor_id": {
+      "$ref": "#/$defs/token"
+    },
+    "authority_key_type": {
+      "const": "ED25519"
+    },
+    "authority_public_key": {
+      "$ref": "#/$defs/public_key"
+    },
+    "authority_public_key_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "acceptance_rule_ref": {
+      "$ref": "#/$defs/exact_ref"
+    },
+    "canonicalization_scheme": {
+      "const": "FPP_JCS_1"
+    },
+    "hash_algorithm": {
+      "const": "SHA-256"
+    },
+    "permission": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "action",
+        "role",
+        "scope",
+        "subject_type"
+      ],
+      "properties": {
+        "action": {
+          "const": "MANIFEST_ACCEPTANCE_DECISION"
+        },
+        "role": {
+          "const": "BOOTSTRAP_MANIFEST_ACCEPTANCE"
+        },
+        "scope": {
+          "const": "GENESIS_INITIAL_MANIFEST"
+        },
+        "subject_type": {
+          "const": "TrustedManifest"
+        }
+      }
+    },
+    "effective_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "historical_retroactivity"
+      ],
+      "properties": {
+        "mode": {
+          "const": "FORWARD_ONLY_AFTER_INDEPENDENT_INITIAL_CHOICE"
+        },
+        "historical_retroactivity": {
+          "const": "FORBIDDEN"
+        }
+      }
+    },
+    "object_id": {
+      "$ref": "#/$defs/token"
+    },
+    "payload_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "content_sha256": {
+      "$ref": "#/$defs/sha256"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://forecastprovenance.org/schemas/bootstrap_governance_root_v1.schema.json",
+  "title": "BootstrapGovernanceRoot V1",
+  "$comment": "PROPOSED_NOT_ADOPTED. Structure only. Independent expected identity, semantic-ID equality, seal/raw/key hash, strict curve/subgroup, authority, effective history, retention and full G10 require separate actual consumption. A candidate cannot self-select this root. ML-D134 repository-schema admission preview only: the proposed URI is an identifier, not evidence of publication, domain control, authority or applicability. No protocol object is created.",
+  "$defs": {
+    "token": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9._:/-]+$",
+      "not": {
+        "pattern": "[^A-Za-z0-9._:/-]"
+      }
+    },
+    "sha256": {
+      "type": "string",
+      "minLength": 64,
+      "maxLength": 64,
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "public_key": {
+      "type": "string",
+      "minLength": 64,
+      "maxLength": 64,
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "exact_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "object_id",
+        "content_sha256"
+      ],
+      "properties": {
+        "object_id": {
+          "$ref": "#/$defs/token"
+        },
+        "content_sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    }
+  }
+}

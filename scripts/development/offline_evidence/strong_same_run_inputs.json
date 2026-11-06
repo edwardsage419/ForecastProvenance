@@ -1,0 +1,161 @@
+{
+  "inputs": [
+    {
+      "bytes": 1370386,
+      "path": "docs/development/mainline-execution-2026-10-09-rev-001/gdp-public-proof-pair-2026-10-15-rev-001/raw/gdp2q25-2nd.pdf",
+      "sha256": "c70972a12908b73c2407d9cc6842ba2a02203a690f3090cd29f30c45f0cfd93d"
+    },
+    {
+      "bytes": 650,
+      "path": "docs/development/mainline-execution-2026-10-09-rev-001/gdp-public-proof-pair-2026-10-15-rev-001/raw/gdp2q25-2nd.pdf.ots",
+      "sha256": "0a63adf8a7b47b68d42aec05f365f78a631e64f734b8af5bc594188ee2d751e9"
+    },
+    {
+      "bytes": 681,
+      "path": "docs/development/mainline-execution-2026-10-19-pruned-core-sample-execution-rev-001/AUTHORIZATION.json",
+      "sha256": "81a4be8f29d2b92d2b274247c67e8d4b8d60ad6ee5fb5c65ca3e9ed37acb5d7f"
+    },
+    {
+      "bytes": 1217,
+      "path": "docs/development/mainline-execution-2026-10-19-pruned-core-sample-execution-rev-001/CONTINUOUS_FOREGROUND_AUTHORIZATION_2026-10-20.json",
+      "sha256": "1382d4e78fa8caa401148af60b872ea2100da482b6e8c0d1679ee43c97ee1a68"
+    },
+    {
+      "bytes": 22458,
+      "path": "docs/development/mainline-execution-2026-10-19-pruned-core-sample-execution-rev-001/supervise_core.metadata-rescan.py",
+      "sha256": "0b37b628c290bf34ac263ffe38a3d321c93e8217a3714b453561563809a8619f"
+    },
+    {
+      "bytes": 160,
+      "path": "docs/development/mainline-execution-2026-10-19-public-bitcoin-header-rev-001/raw/blockstream-header.hex",
+      "sha256": "e32a7c960950bc80adefad2bd7fdfadc133441e1fd7f98346da7f5cee8d76185"
+    },
+    {
+      "bytes": 4778,
+      "path": "docs/development/strong-same-run-rpc-retention-2026-10-27-rev-001/ACTUAL_EVENT_REVIEW.md",
+      "sha256": "2632727a8b1456829137c6dc39c431633dc9bf7f5dbb9b892944ff507f6fd861"
+    },
+    {
+      "bytes": 699,
+      "path": "docs/development/strong-same-run-rpc-retention-2026-10-27-rev-001/CANDIDATE_BINDINGS.json",
+      "sha256": "d5ff8cf36c367c2df54ed3e9ca71016dea0eaab21ab3bdcd1124a158aa7b7c2f"
+    },
+    {
+      "bytes": 0,
+      "path": "docs/development/strong-same-run-rpc-retention-2026-10-27-rev-001/CANDIDATE_STDERR.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 538,
+      "path": "docs/development/strong-same-run-rpc-retention-2026-10-27-rev-001/CANDIDATE_STDOUT.raw",
+      "sha256": "412c305dcf0fa2bd6dbc5984e319c3ca016bd07ba5da6d1a51c1e46a8c8d2df2"
+    },
+    {
+      "bytes": 746,
+      "path": "docs/development/strong-same-run-rpc-retention-2026-10-27-rev-001/CONTRACT_CANDIDATE.json",
+      "sha256": "65d71536ba42eb6224989425e4f7b06193f82bdc6d39efbb1dcb2d3e359d195d"
+    },
+    {
+      "bytes": 799,
+      "path": "docs/development/strong-same-run-rpc-retention-2026-10-27-rev-001/CORE_OPERATION_AUTHORIZATION.json",
+      "sha256": "5618c6b4987b50ae2470e8733c15df12379b43de5be62ed5295df6dce15ce608"
+    },
+    {
+      "bytes": 129773,
+      "path": "docs/development/strong-same-run-rpc-retention-2026-10-27-rev-001/CORE_READ_EXECUTABLE.py",
+      "sha256": "617548b607adfacc5d927ce29b5f86825951a2f06cf30c34d19d5e303e90dd9d"
+    },
+    {
+      "bytes": 1828367,
+      "path": "docs/development/strong-same-run-rpc-retention-2026-10-27-rev-001/CORE_READ_REQUEST.raw",
+      "sha256": "225725834ec48d01e06dd82d12a7f6831b0ac83093450a2f13f06ed215a50381"
+    },
+    {
+      "bytes": 246,
+      "path": "docs/development/strong-same-run-rpc-retention-2026-10-27-rev-001/CORE_READ_RESERVED.json",
+      "sha256": "a639a4f2e6b8d88cbed2ff516168e4676f8318e83c73abcebbb1b5c29ecccc92"
+    },
+    {
+      "bytes": 3277,
+      "path": "docs/development/strong-same-run-rpc-retention-2026-10-27-rev-001/RECHECK.md",
+      "sha256": "082dec2d06b7c0b616099fe5954db83dbfe2f5ecfca6bfcc27c3b5c4a732a08c"
+    },
+    {
+      "bytes": 1828367,
+      "path": "docs/development/strong-same-run-rpc-retention-2026-10-27-rev-001/REQUEST.json",
+      "sha256": "225725834ec48d01e06dd82d12a7f6831b0ac83093450a2f13f06ed215a50381"
+    },
+    {
+      "bytes": 1642,
+      "path": "docs/development/strong-same-run-rpc-retention-2026-10-27-rev-001/RESULT.json",
+      "sha256": "450d0eef38636b720d82972aa27e4620622674afc9f9571b77e7be497f32fcd9"
+    },
+    {
+      "bytes": 7110,
+      "path": "docs/development/strong-same-run-rpc-retention-2026-10-27-rev-001/RPC_TRANSCRIPT.jsonl",
+      "sha256": "fbafb5bdb75e3e6717fdf01d55fad3694ff9417d79bb68f9d22929de6bc581b4"
+    },
+    {
+      "bytes": 1409,
+      "path": "docs/development/strong-same-run-rpc-retention-2026-10-27-rev-001/SAME_RUN_REPLAY_A.json",
+      "sha256": "9f110eeff034419f2345d46ad995db282218a175d3064f1425ba5b26d42fec38"
+    },
+    {
+      "bytes": 1409,
+      "path": "docs/development/strong-same-run-rpc-retention-2026-10-27-rev-001/SAME_RUN_REPLAY_B.json",
+      "sha256": "9f110eeff034419f2345d46ad995db282218a175d3064f1425ba5b26d42fec38"
+    },
+    {
+      "bytes": 4831,
+      "path": "docs/development/strong-same-run-rpc-retention-2026-10-27-rev-001/SCOPE.json",
+      "sha256": "4b8d47cd20405a7b146276fec61a983a76ffab9924e1552f529ef3437b2a46b0"
+    },
+    {
+      "bytes": 19751,
+      "path": "docs/development/strong-same-run-rpc-retention-2026-10-27-rev-001/operation.py",
+      "sha256": "05e7391854992c742cccfdead751751d5367f2b808494265b51a01a5ad3a5666"
+    },
+    {
+      "bytes": 7301,
+      "path": "docs/development/strong-same-run-rpc-retention-2026-10-27-rev-001/replay_same_run.py",
+      "sha256": "2a4b70e33d1d20bf3ad59a16622937f3d47c1dbd8cac383e216af2269cac98ad"
+    },
+    {
+      "bytes": 19081,
+      "path": "docs/development/strong-same-run-rpc-retention-2026-10-27-rev-001/source/core_cli.py",
+      "sha256": "105e2b3f657da1dfadd5f6dc950e5d65e0d86fe48defd390ad8fee09493d90b9"
+    },
+    {
+      "bytes": 129773,
+      "path": "docs/development/strong-same-run-rpc-retention-2026-10-27-rev-001/strong-verifier-candidate.py",
+      "sha256": "617548b607adfacc5d927ce29b5f86825951a2f06cf30c34d19d5e303e90dd9d"
+    },
+    {
+      "bytes": 3924,
+      "path": "docs/development/strong-same-run-rpc-retention-2026-10-27-rev-001/strong-verifier-candidate.py.runtime.json",
+      "sha256": "3c50dc6fa56d751a63f20c14debd0bb401260718fec1c3bdace5e7696a7c800f"
+    },
+    {
+      "bytes": 15814,
+      "path": "docs/development/strong-same-run-rpc-retention-2026-10-27-rev-001/test_operation.py",
+      "sha256": "0c9fad4cc88a791fff1d636ba503b16704f559ee4c5a651fdf1c5583c419c4e3"
+    }
+  ],
+  "roles": {
+    "CANDIDATE_STDERR.raw": "docs/development/strong-same-run-rpc-retention-2026-10-27-rev-001/CANDIDATE_STDERR.raw",
+    "CANDIDATE_STDOUT.raw": "docs/development/strong-same-run-rpc-retention-2026-10-27-rev-001/CANDIDATE_STDOUT.raw",
+    "CORE_OPERATION_AUTHORIZATION.json": "docs/development/strong-same-run-rpc-retention-2026-10-27-rev-001/CORE_OPERATION_AUTHORIZATION.json",
+    "CORE_READ_EXECUTABLE.py": "docs/development/strong-same-run-rpc-retention-2026-10-27-rev-001/CORE_READ_EXECUTABLE.py",
+    "CORE_READ_REQUEST.raw": "docs/development/strong-same-run-rpc-retention-2026-10-27-rev-001/CORE_READ_REQUEST.raw",
+    "CORE_READ_RESERVED.json": "docs/development/strong-same-run-rpc-retention-2026-10-27-rev-001/CORE_READ_RESERVED.json",
+    "RESULT.json": "docs/development/strong-same-run-rpc-retention-2026-10-27-rev-001/RESULT.json",
+    "RPC_TRANSCRIPT.jsonl": "docs/development/strong-same-run-rpc-retention-2026-10-27-rev-001/RPC_TRANSCRIPT.jsonl",
+    "audit_source": "docs/development/strong-same-run-rpc-retention-2026-10-27-rev-001/replay_same_run.py",
+    "recheck": "docs/development/strong-same-run-rpc-retention-2026-10-27-rev-001/RECHECK.md",
+    "replay_a": "docs/development/strong-same-run-rpc-retention-2026-10-27-rev-001/SAME_RUN_REPLAY_A.json",
+    "replay_b": "docs/development/strong-same-run-rpc-retention-2026-10-27-rev-001/SAME_RUN_REPLAY_B.json",
+    "review": "docs/development/strong-same-run-rpc-retention-2026-10-27-rev-001/ACTUAL_EVENT_REVIEW.md",
+    "scope": "docs/development/strong-same-run-rpc-retention-2026-10-27-rev-001/SCOPE.json"
+  },
+  "scope": "D257_SAME_RECORDED_PUBLIC_CLI_STDOUT_AND_LOCAL_SUCCESS_REFERENCES_NOT_EXECUTION_AUTHENTICATION"
+}

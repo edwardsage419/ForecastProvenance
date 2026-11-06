@@ -1,0 +1,44 @@
+{
+  "mode": "SYNTHETIC_MODEL",
+  "project": "M1_SYNTHETIC_PROJECT",
+  "claim": "G10",
+  "stage": "PRE_GENESIS_MODEL",
+  "subject": {
+    "object_id": "model:candidate-manifest:v1",
+    "content_sha256": "620ba31cce707921e447a7effaf88ff2866b564243b8ce8aba463702b7a3cfa1"
+  },
+  "root_ref": {
+    "object_id": "model:source:root:v1",
+    "content_sha256": "2e6b0ad5eece59384651fa581a305bd5a601feac9c7e4b7c73baebf8c4981eaa"
+  },
+  "rule_ref": {
+    "object_id": "model:source:initial:v1",
+    "content_sha256": "fddc0a6e3d837ac1391b539ce54d590b331943bc22f7742ad3c01893c8a97ab4"
+  },
+  "scope_ref": {
+    "object_id": "model:source:scope:v1",
+    "content_sha256": "6c7b4f760e22411873b7f1226949b44f41fb8815bb361227df1634df219b7f7a"
+  },
+  "effective_ref": {
+    "object_id": "model:source:root:v1",
+    "content_sha256": "2e6b0ad5eece59384651fa581a305bd5a601feac9c7e4b7c73baebf8c4981eaa"
+  },
+  "source_selection_rule_ref": {
+    "object_id": "model:source:selection:v1",
+    "content_sha256": "7874c90ec6a55f7e8102869bb2db7f35c225a9bd2ae06a1e7f78940cf15fd6b6"
+  },
+  "historical_rule_ref": {
+    "object_id": "model:source:qualification:v1",
+    "content_sha256": "7cf1f8a6bc749656426a8d8bb83bc59824a15429b67d4fe24e6b930628112e1e"
+  },
+  "workflow_rule_ref": {
+    "object_id": "model:source:workflow:v1",
+    "content_sha256": "f9e13b572a467d8241e815288efd95d34286971c044fa017146d830899fc17fa"
+  },
+  "profile": [
+    {
+      "object_id": "model:source:profile:v1",
+      "content_sha256": "5e8779578827f035bd911b797556d13cd2b06da4c7566354cfd6912948a835ee"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "content_sha256": "8b91db62ba509260109e39c14ab7ff93231c14cedc535527ff6a31532b5b1544",
+  "kind": "source_contract",
+  "model_only": true,
+  "model_version": "M1_FIXED_MODEL_V1",
+  "name": "t2-schedule",
+  "object_id": "model:source:schedule-t2:v1",
+  "object_type": "SyntheticReplaySource",
+  "official_model_source": "model-official-t2",
+  "parser": "strict-json-model-v1",
+  "payload_sha256": "e90f4b4adf7b0a582bf08ee8425d4afa30ddd7325be63946f46a7df08b936471",
+  "revision_policy": "COMPLETE_RETAINED_REVISIONS",
+  "source_kind": "schedule",
+  "target": "t2"
+}

@@ -1,0 +1,21 @@
+{
+  "configuration": {
+    "arithmetic": "DECIMAL",
+    "selection": "LAST_AVAILABLE"
+  },
+  "content_sha256": "d6386ab44c7900c1860e39d38d8c7ec48d835bed4e84ab0f99ad77001faf514d",
+  "control": "DETERMINISTIC_REPLAY",
+  "kind": "method",
+  "model_only": true,
+  "model_version": "M1_FIXED_MODEL_V1",
+  "name": "last-observed-value-v1",
+  "object_id": "model:source:method:v1",
+  "object_type": "SyntheticReplaySource",
+  "payload_sha256": "d0fc1d105d6f66ba38247d80f3c12c149a045de8e4486116f17f034747cb8381",
+  "retry": {
+    "budget": 2,
+    "eligible_failures": [
+      "TRANSIENT"
+    ]
+  }
+}

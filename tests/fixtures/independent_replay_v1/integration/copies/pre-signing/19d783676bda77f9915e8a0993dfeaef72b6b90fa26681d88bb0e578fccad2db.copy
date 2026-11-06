@@ -1,0 +1,46 @@
+{
+  "content_sha256": "f9e13b572a467d8241e815288efd95d34286971c044fa017146d830899fc17fa",
+  "kind": "obligation_rules",
+  "model_only": true,
+  "model_version": "M1_FIXED_MODEL_V1",
+  "object_id": "model:source:workflow:v1",
+  "object_type": "SyntheticReplaySource",
+  "payload_sha256": "d85f760f8c6cf870396d3dc3156cc67310cb8840ef026be02fc862ef308d4406",
+  "requirements": [
+    {
+      "check": "workflow_package_acceptance",
+      "domain": "workflow",
+      "id": "workflow_package_acceptance",
+      "parameters": {},
+      "predicate": "P11"
+    },
+    {
+      "check": "workflow_required_review",
+      "domain": "workflow",
+      "id": "workflow_required_review",
+      "parameters": {},
+      "predicate": "P11"
+    },
+    {
+      "check": "workflow_candidate_freeze",
+      "domain": "workflow",
+      "id": "workflow_candidate_freeze",
+      "parameters": {},
+      "predicate": "P11"
+    },
+    {
+      "check": "workflow_exact_manifest_inputs",
+      "domain": "workflow",
+      "id": "workflow_exact_manifest_inputs",
+      "parameters": {},
+      "predicate": "P11"
+    },
+    {
+      "check": "workflow_retained_evidence",
+      "domain": "workflow",
+      "id": "workflow_retained_evidence",
+      "parameters": {},
+      "predicate": "P11"
+    }
+  ]
+}
